@@ -1,0 +1,71 @@
+package com.hngd.retrofit;
+
+import java.util.List;
+
+import com.hngd.model.*;
+import retrofit.client.Response;
+import com.hngd.entity.*;
+import com.hngd.entity.CMS_MsgEntry.Device_Info;
+import com.hngd.entity.ResourceType;
+
+import retrofit.http.Field;
+import retrofit.http.FormUrlEncoded;
+import retrofit.http.GET;
+import retrofit.http.Multipart;
+import retrofit.http.POST;
+import retrofit.http.Part;
+import retrofit.http.Query;
+import retrofit.mime.TypedFile;
+import rx.Observable;
+public class WebInterface{
+<#list modules as module>
+public interface ${module.name?cap_first}{
+     
+    <#list module.interfaces as interf>
+    <#if interf.requestType="get">
+    @GET("${module.url}${interf.url}")
+    <#else>
+    @POST("${module.url}${interf.url}")
+    <#if interf.multipart>
+    @Multipart
+    <#else>
+    @FormUrlEncoded
+    </#if>
+    </#if>
+    Observable<${interf.returnType}> ${interf.name}(
+    	
+    	<#list interf.parameters as parameter>
+    	
+    	 <#if interf.requestType="get">
+    	 
+    	 
+    	 
+         @Query("${parameter.name}") <#if parameter.isPrimitive>${parameter.type}<#else>String</#if> ${parameter.name}<#sep>,
+         
+         <#else>
+         
+         <#if "MultipartFile"==parameter.type>@Part("${parameter.name}") TypedFile ${parameter.name}<#sep>,<#else>
+         <#if interf.multipart>
+         @Query("${parameter.name}") <#if parameter.isPrimitive>${parameter.type}<#else>String</#if> ${parameter.name}<#sep>,
+         <#else>
+         @Field("${parameter.name}") <#if parameter.isPrimitive>${parameter.type}<#else>String</#if> ${parameter.name}<#sep>,
+         </#if>
+         
+         </#if>
+         
+         </#if>
+    	<#else>
+    	<#if interf.requestType="post">
+    	@Field("test")String defaultNull
+    	<#else>
+    	</#if>
+    	</#list>
+    	 
+    	 
+    
+    );
+    </#list>
+ 
+}
+</#list>
+}

@@ -1,0 +1,38 @@
+<#list modules as module>
+function ${module.name}(){
+    var service=new Object();
+    service.url=host+"${module.url}";
+        <#list module.interfaces as interf>
+        /**
+        <#attempt>
+        *${interf.comment}
+        <#recover>
+         * no comments
+        </#attempt>
+         <#list interf.parameters as parameter>
+         *@param ${parameter.name} <#attempt>${parameter.comment}<#recover>no comment</#attempt>
+         </#list>
+         */
+        service.${interf.name}=function(<#list interf.parameters as parameter>${parameter.name},</#list>onSuccess)
+        {
+            var temp=this.url+"${interf.url}";
+            <#list interf.parameters as parameter>
+	        var ${parameter.name}Str=<#if parameter.isPrimitive>${parameter.name};<#else>JSON.stringify(${parameter.name});</#if>
+		    </#list>
+            $.ajax({
+                    url:temp,
+                    type:'${interf.requestType}',
+                    data:{
+                            <#list interf.parameters as parameter>
+                            ${parameter.name}:${parameter.name}Str,
+                            </#list>
+                        },
+                    cache:false,
+                    success:onSuccess,
+                    error:common.onError
+                    });
+        }
+        </#list>
+    return service;
+}
+</#list>
