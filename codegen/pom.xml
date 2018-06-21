@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.hngd</groupId>
 		<artifactId>HNVMNS6000</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<artifactId>codegen</artifactId>
@@ -30,9 +30,9 @@
 			<version>1.8.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.hngd</groupId>
+			<groupId>com.hngd.tool</groupId>
 			<artifactId>apidoc-core</artifactId>
-			<version>0.0.2</version>
+			<version>0.0.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit -->
 		<dependency>
