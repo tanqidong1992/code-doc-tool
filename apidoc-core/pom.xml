@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -26,21 +26,21 @@
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-core</artifactId>
-			<version>1.5.9</version>
+			<version>1.5.20</version>
 		</dependency>
 
 		<!-- http://mvnrepository.com/artifact/io.swagger/swagger-models -->
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-models</artifactId>
-			<version>1.5.9</version>
+			<version>1.5.20</version>
 		</dependency>
 
 		<!-- http://mvnrepository.com/artifact/io.swagger/swagger-parser -->
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-parser</artifactId>
-			<version>1.0.19</version>
+			<version>1.0.36</version>
 		</dependency>
 
 		<!-- http://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
@@ -91,7 +91,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>3.2.8.Release</version>
+			<version>5.0.7.Release</version>
 		</dependency>
 		<dependency>
 			<groupId>org.freemarker</groupId>
@@ -104,17 +104,25 @@
 			<artifactId>gson</artifactId>
 			<version>2.4</version>
 		</dependency>
-
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
+ <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-api</artifactId>
+    <version>1.7.25</version>
+</dependency>
+ <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-simple</artifactId>
+    <version>1.7.25</version>
+    <scope>test</scope>
+</dependency>
+ 
 	</dependencies>
 	<distributionManagement>
 		<repository>
 			<id>HNLocal</id>
-			<url>http://192.168.0.144:8081/nexus/content/repositories/HNLocal/</url>
+			<url>http://192.168.0.143:8082/nexus/content/repositories/HNLocal/</url>
 		</repository>
 
 	</distributionManagement>

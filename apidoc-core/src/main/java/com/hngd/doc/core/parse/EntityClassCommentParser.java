@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hngd.doc.core.FieldInfo;
 
@@ -27,7 +28,7 @@ import japa.parser.ast.type.Type;
 
 public class EntityClassCommentParser
 {
-    private static Logger                logger        = Logger.getLogger(EntityClassCommentParser.class);
+    private static Logger                logger        = LoggerFactory.getLogger(EntityClassCommentParser.class);
     public static Map<String, FieldInfo> fieldComments = new HashMap<String, FieldInfo>();
 
     public static void init(String[] roots)

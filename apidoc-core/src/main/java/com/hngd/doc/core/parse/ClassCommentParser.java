@@ -18,13 +18,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author
  */
 public class ClassCommentParser {
-	private static final Logger logger = Logger.getLogger(ClassCommentParser.class);
+	/**
+	 * java doc comment must has 2 lines
+	 */
+	public static final int MIN_JAVADOC_COMMENT_LINE_SIZE=2;
+	private static final Logger logger = LoggerFactory.getLogger(ClassCommentParser.class);
 
 	static class ParseResult {
 		int startIndex;
@@ -33,7 +38,7 @@ public class ClassCommentParser {
 	}
 
 	public static List<CommentElement> parseMethodComment(List<String> commentLines) {
-		if (commentLines.size() <= 2) {
+		if (commentLines.size() <= MIN_JAVADOC_COMMENT_LINE_SIZE) {
 			return null;
 		}
 		List<String> lines = commentLines.subList(1, commentLines.size() - 1);
@@ -49,7 +54,7 @@ public class ClassCommentParser {
 		}
 		return pce;
 	}
-
+    
 	private static ParseResult parseDesc(List<String> lines) {
 		ParseResult pr = new ParseResult();
 		pr.startIndex = 0;

@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hngd.doc.core.MethodInfo;
 import com.hngd.doc.core.MethodInfo.ParameterInfo;
@@ -39,7 +40,7 @@ public class ControllerClassCommentParser {
 		ExtensionManager.enableExtension(MobileElement.class);
 		ExtensionManager.enableExtension(AuthorElement.class);
 	}
-	private static Logger logger = Logger.getLogger(ControllerClassCommentParser.class);
+	private static Logger logger = LoggerFactory.getLogger(ControllerClassCommentParser.class);
 	public static Map<String, String> classComments = new HashMap<>();
 	public static Map<String, MethodInfo> methodComments = new HashMap<>();
 

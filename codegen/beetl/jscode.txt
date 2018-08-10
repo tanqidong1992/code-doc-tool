@@ -1,0 +1,34 @@
+<%for(module in modules){%>
+function ${module.moduleName}(){
+    var service=new Object();
+    service.url=host+"${module.moduleUrl}";
+    <%for(interf in module.interfaceInfos){%>
+    /**
+      *${interf.comment!"no comment for this interface"}
+      <%for(parameter in interf.parameterInfos){%>
+      *@param ${parameter.name} ${parameter.comment!"no comment"}
+      <%}%>
+      */
+     service.${interf.methodName}=function(<%for(parameter in interf.parameterInfos){%>${parameter.name},<%}%>onSuccess){
+         <%for(parameter in interf.parameterInfos){%>
+	     var ${parameter.name}Str=<%if(parameter.isPrimitive){%>${parameter.name}<%}else{%>JSON.stringify(${parameter.name})<%}%>;
+		 <%}%>
+		 var requestUrl=this.url+"${interf.methodUrl}";
+         $.ajax({
+             url:requestUrl,
+             type:'${interf.requestType}',
+             data:{
+                   <%for(parameter in interf.parameterInfos){%>
+                   ${parameter.name}:${parameter.name}Str,
+                   <%}%>
+             },
+             cache:false,
+             success:onSuccess,
+             error:common.onError
+             });
+    };
+           
+    <%}%>
+    return service;
+}
+<%}%>

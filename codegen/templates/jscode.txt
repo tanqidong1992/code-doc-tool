@@ -1,29 +1,29 @@
 <#list modules as module>
-function ${module.name}(){
+function ${module.moduleName}(){
     var service=new Object();
-    service.url=host+"${module.url}";
-        <#list module.interfaces as interf>
+    service.url=host+"${module.moduleUrl}";
+        <#list module.interfaceInfos as interf>
         /**
         <#attempt>
         *${interf.comment}
         <#recover>
          * no comments
         </#attempt>
-         <#list interf.parameters as parameter>
+         <#list interf.parameterInfos as parameter>
          *@param ${parameter.name} <#attempt>${parameter.comment}<#recover>no comment</#attempt>
          </#list>
          */
         service.${interf.name}=function(<#list interf.parameters as parameter>${parameter.name},</#list>onSuccess)
         {
-            var temp=this.url+"${interf.url}";
-            <#list interf.parameters as parameter>
+            var temp=this.url+"${interf.methodUrl}";
+            <#list interf.parameterInfos as parameter>
 	        var ${parameter.name}Str=<#if parameter.isPrimitive>${parameter.name};<#else>JSON.stringify(${parameter.name});</#if>
 		    </#list>
             $.ajax({
                     url:temp,
                     type:'${interf.requestType}',
                     data:{
-                            <#list interf.parameters as parameter>
+                            <#list interf.parameterInfos as parameter>
                             ${parameter.name}:${parameter.name}Str,
                             </#list>
                         },

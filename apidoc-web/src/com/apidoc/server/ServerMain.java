@@ -15,11 +15,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.apidoc.config.ServerConfig;
 import com.apidoc.servlet.App;
@@ -31,10 +31,8 @@ import com.google.common.io.Files;
  * @author
  */
 public class ServerMain {
-	static {
-		PropertyConfigurator.configure("./log4j.properties");
-	}
-	private static final Logger logger = Logger.getLogger(ServerMain.class);
+ 
+	private static final Logger logger = LoggerFactory.getLogger(ServerMain.class);
     public static final ServerConfig config=ServerConfig.load("./conf/app.json");
 	static {
 		

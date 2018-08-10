@@ -15,7 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hngd.doc.core.parse.CommentElement;
 
@@ -24,7 +25,7 @@ import com.hngd.doc.core.parse.CommentElement;
  */
 public class TimeElement extends CommentElement
 {
-    private static final Logger logger = Logger.getLogger(TimeElement.class);
+    private static final Logger logger = LoggerFactory.getLogger(TimeElement.class);
     public Date                 createTime;
     public String               createTimeStr;
 
@@ -59,7 +60,7 @@ public class TimeElement extends CommentElement
                 date = sdf.parse(source);
             } catch (java.text.ParseException e)
             {
-                logger.error(e);
+                logger.error("",e);
             }
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
@@ -73,7 +74,7 @@ public class TimeElement extends CommentElement
                 date = sdf.parse(source);
             } catch (java.text.ParseException e)
             {
-                logger.error(e);
+                logger.error("",e);
             }
         }
         return date;

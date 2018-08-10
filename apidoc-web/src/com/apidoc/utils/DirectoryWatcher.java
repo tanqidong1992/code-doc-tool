@@ -27,8 +27,8 @@ import java.util.List;
 import javax.management.RuntimeErrorException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,10 +43,8 @@ public class DirectoryWatcher
         
         void onFileChange();
     }
-    static{
-        PropertyConfigurator.configure("./log4j.properties");
-    }
-    static final Logger logger = Logger.getLogger(DirectoryWatcher.class);
+     
+    static final Logger logger = LoggerFactory.getLogger(DirectoryWatcher.class);
     String              mFilePath;
     FileListener mListener;
     public DirectoryWatcher(String mFilePath,FileListener listener) throws IOException

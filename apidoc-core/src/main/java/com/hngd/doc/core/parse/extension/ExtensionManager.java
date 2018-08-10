@@ -11,7 +11,9 @@
 
 package com.hngd.doc.core.parse.extension;
 
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hngd.doc.core.parse.CommentElement;
 
@@ -20,7 +22,7 @@ import com.hngd.doc.core.parse.CommentElement;
  */
 public class ExtensionManager
 {
-    private static final Logger logger = Logger.getLogger(ExtensionManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExtensionManager.class);
 
     public static void enableExtension(Class<? extends CommentElement> clazz)
     {

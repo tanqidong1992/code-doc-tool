@@ -11,7 +11,9 @@
 
 package com.apidoc.servlet;
 
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.apidoc.server.ServerMain;
 import com.apidoc.utils.DirectoryWatcher;
@@ -36,7 +38,7 @@ public class UpdateThread extends Thread
             }
         }
     };
-    static final Logger  logger   = Logger.getLogger(UpdateThread.class);
+    static final Logger  logger   = LoggerFactory.getLogger(UpdateThread.class);
     private String[]     mWatchDirectories;
     private Thread[]     mThreads;
 

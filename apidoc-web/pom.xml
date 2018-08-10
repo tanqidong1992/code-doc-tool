@@ -60,10 +60,17 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>com.hngd</groupId>
-			<artifactId>web</artifactId>
-			<version>1.0.0</version>
+		<groupId>com.hngd.vmns</groupId>
+	<artifactId>hnvmns-base-data</artifactId>
+	<version>0.0.1</version>
 		</dependency>
+		
+				<dependency>
+		<groupId>com.hngd.vmns</groupId>
+	<artifactId>hnvmns-auth</artifactId>
+	<version>0.0.1</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>

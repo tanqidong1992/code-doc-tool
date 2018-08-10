@@ -52,7 +52,7 @@ public class JsClientCodeGenerator {
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
 		Map<String, List<ModuleInfo>> map = new HashMap<>();
 		ControllerClassCommentParser.init(CONTROLLER_CLASS_SRC_DIC[0]);
-		List<Class<?>> clazzes = SwaggerDocGenerator.getPacakge("com.hngd.web.controller");
+		List<Class<?>> clazzes = SwaggerDocGenerator.getClassBelowPacakge("com.hngd.web.controller");
 		List<ModuleInfo> modules = new LinkedList<>();
 		clazzes.forEach(clazz -> {
 			ModuleInfo mi = SwaggerDocGenerator.processClass(clazz);

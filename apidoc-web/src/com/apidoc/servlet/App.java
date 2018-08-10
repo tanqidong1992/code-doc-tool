@@ -32,7 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.apidoc.config.ServerConfig;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -42,7 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hngd.doc.core.gen.SwaggerDocGenerator;
 import com.hngd.doc.core.parse.ControllerClassCommentParser;
 import com.hngd.doc.core.parse.EntityClassCommentParser;
-import com.hngd.entity.PageEntity;
+import com.hngd.web.controller.UserController;
 
 /**
  * Hello world!
@@ -50,7 +51,7 @@ import com.hngd.entity.PageEntity;
 @SuppressWarnings("deprecation")
 public class App
 {
-    private static final Logger logger                 = Logger.getLogger(App.class);
+    private static final Logger logger                 = LoggerFactory.getLogger(App.class);
     static final Charset        utf8                   = Charset.forName("UTF-8");
     static List<String>         application_json       = Arrays.asList("application/json", "*");
     static List<String>         application_url_encode = Arrays.asList("application/x-www-form-urlencoded");
@@ -128,15 +129,61 @@ public class App
      * entity类源代码所在位置
      */
     public static final String[] ENTITY_CLASS_SRC_DIC     =
-    {       "F:\\HNOE_TQD_JAVA\\JavaCode\\HNVMNS6000\\dao\\src\\main\\java\\com\\hngd\\model",
-            "F:\\HNOE_TQD_JAVA\\JavaCode\\HNVMNS6000\\dao\\src\\main\\java\\com\\hngd\\entity",
-            "F:\\HNOE_TQD_JAVA\\JavaCode\\HNVMNS6000\\service\\src\\main\\java\\com\\hngd\\entity"};
+    {       "E:\\Code\\STSCode\\hnvmns-auth\\src\\main\\java\\com\\hngd\\model",
+            "E:\\Code\\STSCode\\hnvmns-base-data\\src\\main\\java\\com\\hngd\\model",
+            "E:\\Code\\STSCode\\common-parent\\common-web\\src\\main\\java\\com\\hngd\\common\\entity"};
     /**
      * controller类源代码所在位置
      */
     public static final String[] CONTROLLER_CLASS_SRC_DIC =
-    { "F:\\HNOE_TQD_JAVA\\JavaCode\\HNVMNS6000\\web\\src\\main\\java\\com\\hngd\\web\\controller" };
+    { "E:\\Code\\STSCode\\hnvmns-auth\\\\src\\main\\java\\com\\hngd\\web\\controller",
+    		"E:\\Code\\STSCode\\hnvmns-base-data\\\\src\\main\\java\\com\\hngd\\web\\controller"
+    };
 
+    public static void main(String[] args) throws JsonProcessingException {
+		
+        long startTime = System.currentTimeMillis();
+        Thread t1 = new Thread(() ->
+        {
+            EntityClassCommentParser.init(ENTITY_CLASS_SRC_DIC);
+        });
+        Thread t2 = new Thread(() ->
+        {
+            for (String dir : CONTROLLER_CLASS_SRC_DIC)
+            {
+                ControllerClassCommentParser.init(dir);
+            }
+        });
+        t1.start();
+        t2.start();
+        try
+        {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        
+    	Info info =createInfo();
+        Swagger swagger = new Swagger();
+        swagger.setInfo(info);
+        swagger.setBasePath("/web/api");
+        swagger.setHost("192.168.0.156:8080");
+        Map<String, Model> definitions = new HashMap<String, Model>();
+        swagger.setDefinitions(definitions);
+        resolvePacakge("com.hngd.model", swagger);
+        // resolvePacakge("com.hngd.entity", swagger);
+       // SwaggerDocGenerator.resolveType(PageEntity.class, swagger);
+        SwaggerDocGenerator sdg = new SwaggerDocGenerator(swagger);
+        //sdg.parse(Arrays.asList(UserController.class));
+        sdg.parse("com.hngd.web.controller");
+        mSwagger=swagger;
+        String s=toJson("");
+        
+        System.out.println(s);
+	}
+    
     public static synchronized void init(ServerConfig config)
             throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException
     {
@@ -171,7 +218,7 @@ public class App
         swagger.setDefinitions(definitions);
         resolvePacakge("com.hngd.model", swagger);
         // resolvePacakge("com.hngd.entity", swagger);
-        SwaggerDocGenerator.resolveType(PageEntity.class, swagger);
+       // SwaggerDocGenerator.resolveType(PageEntity.class, swagger);
         SwaggerDocGenerator sdg = new SwaggerDocGenerator(swagger);
         sdg.parse("com.hngd.web.controller");
         List<Tag> tags=swagger.getTags();

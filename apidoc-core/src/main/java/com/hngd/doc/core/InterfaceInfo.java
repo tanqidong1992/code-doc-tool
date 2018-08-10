@@ -11,7 +11,7 @@ public class InterfaceInfo
 {
     public InterfaceInfo()
     {
-        parameterNames = new ArrayList<>();
+        parameterInfos = new ArrayList<>();
         parameterTypes = new ArrayList<>();
     }
     public String                     methodName;
@@ -19,20 +19,91 @@ public class InterfaceInfo
     public String                     requestType;
     public String                     retureTypeName;
     public Type                       retureType;
-    public List<RequestParameterInfo> parameterNames;
+    public List<RequestParameterInfo> parameterInfos;
     public boolean                    isMultipart;
     public List<Type>                 parameterTypes;
     public List<String>               consumes;
     public List<String>               produces;
+    
+    public String comment;
 
-    public static class RequestParameterInfo
+    public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public static class RequestParameterInfo
     {
+		public String typeName;
         public String    name;
         public boolean   required;
         public ParamType paramType;
+		public boolean isPathVariable;
+		public boolean isPrimitive;
+		public String comment;
+
+	    public String getTypeName() {
+			return typeName;
+		}
+
+		public void setTypeName(String typeName) {
+			this.typeName = typeName;
+		}
+
+		public String getComment() {
+			return comment;
+		}
+
+		public void setComment(String comment) {
+			this.comment = comment;
+		}
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+		public boolean isRequired() {
+			return required;
+		}
+		public void setRequired(boolean required) {
+			this.required = required;
+		}
+		public ParamType getParamType() {
+			return paramType;
+		}
+		public void setParamType(ParamType paramType) {
+			this.paramType = paramType;
+		}
+		public boolean isPathVariable() {
+			return isPathVariable;
+		}
+		public void setPathVariable(boolean isPathVariable) {
+			this.isPathVariable = isPathVariable;
+		}
+		public boolean isPrimitive() {
+			return isPrimitive;
+		}
+		public void setPrimitive(boolean isPrimitive) {
+			this.isPrimitive = isPrimitive;
+		}
+ 
+		
+		
     }
 
-    public enum ParamType
+    public List<RequestParameterInfo> getParameterInfos() {
+		return parameterInfos;
+	}
+
+	public void setParameterInfos(List<RequestParameterInfo> parameterInfos) {
+		this.parameterInfos = parameterInfos;
+	}
+
+	public enum ParamType
     {
         REQUEST, PATH,
     }
@@ -111,14 +182,14 @@ public class InterfaceInfo
 	 * @return the parameterNames
 	 */
 	public final List<RequestParameterInfo> getParameterNames() {
-		return parameterNames;
+		return parameterInfos;
 	}
 
 	/**
 	 * @param parameterNames the parameterNames to set
 	 */
 	public final void setParameterNames(List<RequestParameterInfo> parameterNames) {
-		this.parameterNames = parameterNames;
+		this.parameterInfos = parameterNames;
 	}
 
 	/**

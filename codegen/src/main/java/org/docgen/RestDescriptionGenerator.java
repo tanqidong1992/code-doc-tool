@@ -130,12 +130,12 @@ public class RestDescriptionGenerator
                     		ParameterInfo pi=methodComment.parameters.get(i);
                     		ic=pi.comment;
                     	}
-                        if (i >= ii.parameterNames.size())
+                        if (i >= ii.parameterInfos.size())
                         {
                             System.out.println("|" + "暂无" + "|" + ii.parameterTypes.get(i).getTypeName() + "|"+ic+"|");
                         } else
                         {
-                            String paramaterName = ii.parameterNames.get(i).name;
+                            String paramaterName = ii.parameterInfos.get(i).name;
                             if ("page".equals(paramaterName))
                             {
                                 System.out.println("|" + paramaterName + "|" + ii.parameterTypes.get(i).getTypeName()

@@ -124,9 +124,9 @@ public class HttpTestCodeGenerator
                     .addMember("value", "\"" + moduleInfo.moduleUrl.substring(1) + ii.methodUrl + "\"")
                     .build();
             mb.addAnnotation(annotationSpec);
-            for (int i = 0; i < ii.parameterNames.size(); i++)
+            for (int i = 0; i < ii.parameterInfos.size(); i++)
             {
-                RequestParameterInfo rpi = ii.parameterNames.get(i);
+                RequestParameterInfo rpi = ii.parameterInfos.get(i);
                 Type type = ii.parameterTypes.get(i);
                 ParameterSpec.Builder pb = ParameterSpec.builder(type != MultipartFile.class ? String.class : RequestBody.class,
                         rpi.name);
@@ -175,7 +175,7 @@ public class HttpTestCodeGenerator
                 ParameterSpec parameterSpec = pb.build();
                 mb.addParameter(parameterSpec);
             }
-            if (ii.requestType.equals("POST") && ii.parameterNames.size() == 0)
+            if (ii.requestType.equals("POST") && ii.parameterInfos.size() == 0)
             {
                 ParameterSpec.Builder pb = ParameterSpec.builder(String.class, "emptyStr");
                 AnnotationSpec mbA = AnnotationSpec

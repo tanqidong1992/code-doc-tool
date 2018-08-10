@@ -18,9 +18,10 @@ import java.util.Arrays;
  */
 public class Config
 {
-    static String controllerRoot = "..\\web\\src\\main\\java\\com\\hngd\\web\\controller";
-    static String daoRoot = "..\\dao\\src\\main\\java\\com\\hngd\\dao";
-    static String serviceRoot = "..\\service\\src\\main\\java\\com\\hngd\\service";
+	static String controllerRoot = "F:\\HNOE_TQD_JAVA\\JavaCode\\HNVMNS6000\\web\\src\\main\\java\\com\\hngd\\web\\controller";
+    static String daoRoot = "F:\\HNOE_TQD_JAVA\\JavaCode\\HNVMNS6000\\dao\\src\\main\\java\\com\\hngd\\dao";
+    static String serviceRoot = "F:\\HNOE_TQD_JAVA\\JavaCode\\HNVMNS6000\\service\\src\\main\\java\\com\\hngd\\service";
+    
     
     public static void main(String[] args)
     {
