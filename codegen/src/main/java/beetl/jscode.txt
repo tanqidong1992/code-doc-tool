@@ -1,7 +1,7 @@
 <%for(module in modules){%>
 function ${module.moduleName}(){
     var service=new Object();
-    service.url=host+"${module.moduleUrl}";
+    service.url=host+"${serviceUrl}"+"${module.moduleUrl}";
     <%for(interf in module.interfaceInfos){%>
     /**
       *${interf.comment!"no comment for this interface"}
