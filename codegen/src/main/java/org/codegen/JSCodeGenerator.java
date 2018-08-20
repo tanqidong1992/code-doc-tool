@@ -12,40 +12,22 @@
 package org.codegen;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
 import org.beetl.core.resource.ClasspathResourceLoader;
-import org.beetl.core.resource.FileResourceLoader;
-import org.beetl.core.resource.StringTemplateResourceLoader;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hngd.doc.core.InterfaceInfo.RequestParameterInfo;
 import com.hngd.doc.core.MethodInfo;
 import com.hngd.doc.core.ModuleInfo;
-import com.hngd.doc.core.gen.SwaggerDocGenerator;
 import com.hngd.doc.core.parse.CommonClassCommentParser;
-import com.hngd.doc.core.parse.ControllerClassCommentParser;
 import com.hngd.doc.core.parse.ModuleParser;
-import com.hngd.doc.core.util.TypeUtils;
-import com.hngd.doc.core.web.ModuleParserTest;
+
  
  
 

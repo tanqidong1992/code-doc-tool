@@ -10,8 +10,13 @@
  */
 package com.hngd.doc.core.parse;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -107,8 +112,9 @@ public class CommonClassCommentParser {
     }
 	public static void parse(File f) {
 		CompilationUnit cu=null;
-		try {
-			cu = JavaParser.parse(f);
+		try(InputStream in=new FileInputStream(f)) {
+			Reader reader=new BufferedReader(new InputStreamReader(in, "UTF-8"));
+			cu = JavaParser.parse(reader, true);
 		} catch (ParseException | IOException e) {
 			logger.error("", e);
 		}

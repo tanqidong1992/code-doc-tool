@@ -3,7 +3,6 @@ package com.hngd.doc.core.parse;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -13,9 +12,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import com.hngd.doc.core.InterfaceInfo;
 import com.hngd.doc.core.InterfaceInfo.RequestParameterInfo;
@@ -34,7 +33,6 @@ import japa.parser.ast.expr.FieldAccessExpr;
 import japa.parser.ast.expr.MemberValuePair;
 import japa.parser.ast.expr.NameExpr;
 import japa.parser.ast.expr.StringLiteralExpr;
-import japa.parser.ast.type.ReferenceType;
 import japa.parser.ast.type.Type;
 
 public class ModuleParser {
@@ -62,6 +60,9 @@ public class ModuleParser {
 	}
 	private static boolean isController(ClassOrInterfaceDeclaration clazz){
 		List<AnnotationExpr> annotaionExprs=clazz.getAnnotations();
+		if(CollectionUtils.isEmpty(annotaionExprs)){
+			return false;
+		}
 		return annotaionExprs.stream()
 		    .filter(ModuleParser::isControllerAnnotation)
 		    .findAny()
