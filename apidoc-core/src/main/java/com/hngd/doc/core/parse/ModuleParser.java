@@ -20,20 +20,20 @@ import com.hngd.doc.core.InterfaceInfo;
 import com.hngd.doc.core.InterfaceInfo.RequestParameterInfo;
 import com.hngd.doc.core.ModuleInfo;
 
-import japa.parser.JavaParser;
-import japa.parser.ParseException;
-import japa.parser.ast.CompilationUnit;
-import japa.parser.ast.Node;
-import japa.parser.ast.body.ClassOrInterfaceDeclaration;
-import japa.parser.ast.body.MethodDeclaration;
-import japa.parser.ast.body.Parameter;
-import japa.parser.ast.expr.AnnotationExpr;
-import japa.parser.ast.expr.Expression;
-import japa.parser.ast.expr.FieldAccessExpr;
-import japa.parser.ast.expr.MemberValuePair;
-import japa.parser.ast.expr.NameExpr;
-import japa.parser.ast.expr.StringLiteralExpr;
-import japa.parser.ast.type.Type;
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
+import com.github.javaparser.ast.expr.MemberValuePair;
+import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.StringLiteralExpr;
+import com.github.javaparser.ast.type.Type;
 
 public class ModuleParser {
 
@@ -44,13 +44,13 @@ public class ModuleParser {
 		CompilationUnit compilationUnit = null;
 		try {
 			compilationUnit = JavaParser.parse(f);
-		} catch (ParseException | IOException e) {
+		} catch (IOException e) {
 			logger.error("",e);
 		}
 		if(compilationUnit==null){
 			return null;
 		}
-		List<Node> nodes=compilationUnit.getChildrenNodes();
+		List<Node> nodes=compilationUnit.getChildNodes();
 		return nodes.stream()
 		    .filter(ClassOrInterfaceDeclaration.class::isInstance)
 		    .map(ClassOrInterfaceDeclaration.class::cast)
@@ -69,21 +69,21 @@ public class ModuleParser {
 		    .isPresent();
 	}
 	public static boolean isControllerAnnotation(AnnotationExpr annotationExpr){
-		String annotationName=annotationExpr.getName().getName();
+		String annotationName=annotationExpr.getName().asString();
 		return annotationName.equals("Controller") || annotationName.equals("RestController");
 	}
 	
 	public static boolean isAnnotationNameEqual(AnnotationExpr annotationExpr,String annotationName){
-		return annotationExpr.getName().getName().equals(annotationName);
+		return annotationExpr.getNameAsString().equals(annotationName);
 	}
 	
     private static ModuleInfo parseModule(ClassOrInterfaceDeclaration clazz){
     	ModuleInfo moduleInfo=new ModuleInfo();
-    	moduleInfo.className=clazz.getName();
-    	moduleInfo.moduleName=clazz.getName();
+    	moduleInfo.className=clazz.getName().asString();
+    	moduleInfo.moduleName=clazz.getName().asString();
     	Optional<AnnotationExpr> requestMappingAnnotation=getAnnotationByName(clazz.getAnnotations(), "RequestMapping");
-    	requestMappingAnnotation.ifPresent(a->moduleInfo.moduleUrl=parseHttpRequestPath(a.getChildrenNodes()));
-    	moduleInfo.interfaceInfos=clazz.getChildrenNodes().stream()
+    	requestMappingAnnotation.ifPresent(a->moduleInfo.moduleUrl=parseHttpRequestPath(a.getChildNodes()));
+    	moduleInfo.interfaceInfos=clazz.getChildNodes().stream()
     	    .filter(MethodDeclaration.class::isInstance)
 		    .map(MethodDeclaration.class::cast)
 		    .filter(ModuleParser::isInterface)
@@ -107,7 +107,7 @@ public class ModuleParser {
     private static InterfaceInfo parseInterface(MethodDeclaration method){
     	logger.info("start to parse interface: {}",method.getName());
     	InterfaceInfo info=new InterfaceInfo();
-    	info.methodName=method.getName();
+    	info.methodName=method.getName().asString();
     	Optional<HttpRequestInfo> requestInfo=parseHttpRequestInfo(method);
     	if(requestInfo.isPresent()){
     		info.methodUrl=requestInfo.get().path;
@@ -173,7 +173,7 @@ public class ModuleParser {
     	parameterInfo.isPrimitive=isPrimaryType(parameter.getType()) ;
     	String parameterName=null;
     	if(pathVariableAnnotation.isPresent()){
-    		List<Node> nodes=pathVariableAnnotation.get().getChildrenNodes();
+    		List<Node> nodes=pathVariableAnnotation.get().getChildNodes();
     		Optional<StringLiteralExpr> optionStr=nodes.stream()
     		    .filter(StringLiteralExpr.class::isInstance)
     		    .map(StringLiteralExpr.class::cast)
@@ -185,7 +185,7 @@ public class ModuleParser {
     	}else{
     	    Optional<AnnotationExpr> requestParamAnnotation=getAnnotationByName(parameter.getAnnotations(),"RequestParam");
     	    if(requestParamAnnotation.isPresent()){
-    	    	List<Node> nodes=requestParamAnnotation.get().getChildrenNodes();
+    	    	List<Node> nodes=requestParamAnnotation.get().getChildNodes();
     	    	Optional<StringLiteralExpr> optionStr=nodes.stream()
     	    		    .filter(StringLiteralExpr.class::isInstance)
     	    		    .map(StringLiteralExpr.class::cast)
@@ -241,12 +241,12 @@ public class ModuleParser {
     	List<AnnotationExpr> annotationExprs=method.getAnnotations();
     	Optional<AnnotationExpr> requestMapping=getRequestMappingAnnotation(annotationExprs);
     	if(requestMapping.isPresent()){
-    		List<Node> nodes=requestMapping.get().getChildrenNodes();
+    		List<Node> nodes=requestMapping.get().getChildNodes();
     		HttpRequestInfo requestInfo=new HttpRequestInfo();
     		requestInfo.path=parseHttpRequestPath(nodes);
     		requestInfo.method=parseHttpRequestMethod(nodes);
     		if(requestInfo.method==null){
-    			requestInfo.method=requestMapping.get().getName().getName().replace("Mapping", "");
+    			requestInfo.method=requestMapping.get().getName().asString().replace("Mapping", "");
     		}
     		//TODO parse more http request info
     		return Optional.of(requestInfo);
@@ -263,9 +263,9 @@ public class ModuleParser {
 		if(methodValuePair.isPresent()){
 			Expression expression=methodValuePair.get().getValue();
 			if(expression instanceof FieldAccessExpr){
-				return ((FieldAccessExpr)expression).getField();
+				return ((FieldAccessExpr)expression).getNameAsString();
 			}else if(expression instanceof NameExpr ){
-				return ((NameExpr)expression).getName();
+				return ((NameExpr)expression).getNameAsString();
 			}
 			return expression.toString();
 		}
@@ -284,7 +284,7 @@ public class ModuleParser {
     	Optional<MemberValuePair> optionalMvp= nodes.stream()
     	    .filter(MemberValuePair.class::isInstance)
     	    .map(MemberValuePair.class::cast)
-    	    .filter(mvp->mvp.getName().equals("value") || mvp.getName().equals("path"))
+    	    .filter(mvp->mvp.getNameAsString().equals("value") || mvp.getNameAsString().equals("path"))
     	    .findAny();
     	if(optionalMvp.isPresent()){
     	    String path=((StringLiteralExpr)optionalMvp.get().getValue()).getValue();  

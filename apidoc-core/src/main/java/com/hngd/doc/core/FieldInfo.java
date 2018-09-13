@@ -1,6 +1,6 @@
 package com.hngd.doc.core;
 
-import japa.parser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 
 public class FieldInfo {
 

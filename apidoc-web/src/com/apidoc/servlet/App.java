@@ -129,15 +129,14 @@ public class App
      * entity类源代码所在位置
      */
     public static final String[] ENTITY_CLASS_SRC_DIC     =
-    {       "E:\\Code\\STSCode\\hnvmns-auth\\src\\main\\java\\com\\hngd\\model",
-            "E:\\Code\\STSCode\\hnvmns-base-data\\src\\main\\java\\com\\hngd\\model",
-            "E:\\Code\\STSCode\\common-parent\\common-web\\src\\main\\java\\com\\hngd\\common\\entity"};
+    {       "F:\\HNOE_TQD_JAVA\\JavaCode\\HNVMNS6000\\dao\\src\\main\\java\\com\\hngd\\model",
+            "F:\\HNOE_TQD_JAVA\\JavaCode\\HNVMNS6000\\dao\\src\\main\\java\\com\\hngd\\common\\entity"};
     /**
      * controller类源代码所在位置
      */
     public static final String[] CONTROLLER_CLASS_SRC_DIC =
-    { "E:\\Code\\STSCode\\hnvmns-auth\\\\src\\main\\java\\com\\hngd\\web\\controller",
-    		"E:\\Code\\STSCode\\hnvmns-base-data\\\\src\\main\\java\\com\\hngd\\web\\controller"
+    { "F:\\HNOE_TQD_JAVA\\JavaCode\\HNVMNS6000\\web\\src\\main\\java\\com\\hngd\\web\\controller"
+    		 
     };
 
     public static void main(String[] args) throws JsonProcessingException {

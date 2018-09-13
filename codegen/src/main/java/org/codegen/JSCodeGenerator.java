@@ -49,9 +49,9 @@ public class JSCodeGenerator
     
     public static void main(String[] args) throws IOException
     {
-    	String serviceUrl="/auth";
+    	String serviceUrl="/";
         String filePath="./src/main/java/org/codegen/HttpTestCodeGenerator.java";
-        filePath="E:\\Code\\STSCode\\hnvmns-auth\\src\\main\\java\\com\\hngd\\web\\controller\\MenuController.java";
+        filePath="E:\\Code\\STSCode\\NativeClient\\src\\main\\java\\com\\hngd\\web\\NativeController.java";
         
 		//useBeetl();
     	String str=generate(filePath,serviceUrl);

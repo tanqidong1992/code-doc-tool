@@ -83,11 +83,11 @@
 		</dependency>
 
 		<!-- http://mvnrepository.com/artifact/com.google.code.javaparser/javaparser -->
-		<dependency>
-			<groupId>com.google.code.javaparser</groupId>
-			<artifactId>javaparser</artifactId>
-			<version>1.0.11</version>
-		</dependency>
+<dependency>
+    <groupId>com.github.javaparser</groupId>
+    <artifactId>javaparser-symbol-solver-core</artifactId>
+    <version>3.6.18</version>
+</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>

@@ -24,15 +24,15 @@ import com.hngd.doc.core.parse.extension.ExtensionManager;
 import com.hngd.doc.core.parse.extension.MobileElement;
 import com.hngd.doc.core.parse.extension.TimeElement;
 
-import japa.parser.JavaParser;
-import japa.parser.ParseException;
-import japa.parser.ast.CompilationUnit;
-import japa.parser.ast.Node;
-import japa.parser.ast.body.ClassOrInterfaceDeclaration;
-import japa.parser.ast.body.MethodDeclaration;
-import japa.parser.ast.comments.Comment;
-import japa.parser.ast.comments.JavadocComment;
-import japa.parser.ast.expr.AnnotationExpr;
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.expr.AnnotationExpr;
 
 public class ControllerClassCommentParser {
 	static {
@@ -62,11 +62,11 @@ public class ControllerClassCommentParser {
 
 	public static void parse(File f) throws ParseException, IOException {
 		CompilationUnit cu = JavaParser.parse(f);
-		List<Node> nodes = cu.getChildrenNodes();
+		List<Node> nodes = cu.getChildNodes();
 		nodes.stream().filter(n -> n instanceof ClassOrInterfaceDeclaration).flatMap(n -> {
 			ClassOrInterfaceDeclaration cid = (ClassOrInterfaceDeclaration) n;
-			Comment comment = cid.getComment();
-			String name = cid.getName();
+			Comment comment = cid.getComment().get();
+			String name = cid.getName().asString();
 			if (comment instanceof JavadocComment) {
 				JavadocComment jdc = (JavadocComment) comment;
 				String content = jdc.getContent();
@@ -81,7 +81,7 @@ public class ControllerClassCommentParser {
 				} else {
 				}
 			}
-			return n.getChildrenNodes().stream();
+			return n.getChildNodes().stream();
 		}).filter(n -> {
 			
 			if(n instanceof MethodDeclaration){
@@ -108,12 +108,12 @@ public class ControllerClassCommentParser {
 			}
 		}).forEach(n -> {
 			MethodDeclaration m = (MethodDeclaration) n;
-			String methodName = m.getName();
-			String className = ((ClassOrInterfaceDeclaration) m.getParentNode()).getName();
+			String methodName = m.getName().asString();
+			String className = ((ClassOrInterfaceDeclaration) m.getParentNode().get()).getName().asString();
 			methodName = className + "#" + methodName;
-			Comment comment = m.getComment();
+			Comment comment = m.getComment().orElse(null);
 			if (comment instanceof JavadocComment) {
-				JavadocComment jdoc = (JavadocComment) m.getComment();
+				JavadocComment jdoc = (JavadocComment) m.getComment().orElse(null);
 				if (jdoc != null) {
 					String content = jdoc.toString();
 					parse(m, methodName, content);

@@ -27,6 +27,14 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.comments.JavadocComment;
 import com.hngd.doc.core.MethodInfo;
 import com.hngd.doc.core.MethodInfo.ParameterInfo;
 import com.hngd.doc.core.parse.CommentElement.DescElement;
@@ -37,15 +45,7 @@ import com.hngd.doc.core.parse.extension.ExtensionManager;
 import com.hngd.doc.core.parse.extension.MobileElement;
 import com.hngd.doc.core.parse.extension.TimeElement;
 
-import japa.parser.JavaParser;
-import japa.parser.ParseException;
-import japa.parser.ast.CompilationUnit;
-import japa.parser.ast.Node;
-import japa.parser.ast.body.ClassOrInterfaceDeclaration;
-import japa.parser.ast.body.MethodDeclaration;
-import japa.parser.ast.comments.Comment;
-import japa.parser.ast.comments.JavadocComment;
-import japa.parser.ast.expr.AnnotationExpr;
+ 
 
 /**
  * @author tqd
@@ -83,8 +83,8 @@ public class CommonClassCommentParser {
     	if(node instanceof ClassOrInterfaceDeclaration){
     		
 			ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) node;
-			Comment comment = classOrInterfaceDeclaration.getComment();
-			String classOrInterfaceName = classOrInterfaceDeclaration.getName();
+			Comment comment = classOrInterfaceDeclaration.getComment().orElse(null);
+			String classOrInterfaceName = classOrInterfaceDeclaration.getName().asString();
 			if (comment instanceof JavadocComment) {
 				JavadocComment javadocComment = (JavadocComment) comment;
 				String content = javadocComment.getContent();
@@ -114,26 +114,26 @@ public class CommonClassCommentParser {
 		CompilationUnit cu=null;
 		try(InputStream in=new FileInputStream(f)) {
 			Reader reader=new BufferedReader(new InputStreamReader(in, "UTF-8"));
-			cu = JavaParser.parse(reader, true);
-		} catch (ParseException | IOException e) {
+			cu = JavaParser.parse(reader);//.parse(reader, true);
+		} catch (IOException e) {
 			logger.error("", e);
 		}
 		if(cu==null){
 			return ;
 		}
-		List<Node> nodes = cu.getChildrenNodes();
+		List<Node> nodes = cu.getChildNodes();
 		nodes.stream()
 		.filter(CommonClassCommentParser::filterAndParseClassComment)
-		.flatMap(n -> n.getChildrenNodes().stream())
+		.flatMap(n -> n.getChildNodes().stream())
 		.filter(n -> n instanceof MethodDeclaration)
 		.map(MethodDeclaration.class::cast)
 		.forEach(CommonClassCommentParser::parseMethodComment);
 	}
     private static void parseMethodComment(MethodDeclaration method){
-    	String methodName = method.getName();
-		String className = ((ClassOrInterfaceDeclaration) method.getParentNode()).getName();
+    	String methodName = method.getName().asString();
+		String className = ((ClassOrInterfaceDeclaration) method.getParentNode().get()).getName().asString();
 		methodName = className + "#" + methodName;
-		Comment comment = method.getComment();
+		Comment comment = method.getComment().orElse(null);
 		if (comment instanceof JavadocComment) {
 			JavadocComment javadocComment = (JavadocComment) comment;
 			String content = javadocComment.getContent();

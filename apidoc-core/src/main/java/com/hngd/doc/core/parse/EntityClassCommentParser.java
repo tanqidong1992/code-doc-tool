@@ -14,17 +14,17 @@ import org.slf4j.LoggerFactory;
 
 import com.hngd.doc.core.FieldInfo;
 
-import japa.parser.JavaParser;
-import japa.parser.ParseException;
-import japa.parser.ast.CompilationUnit;
-import japa.parser.ast.Node;
-import japa.parser.ast.body.ClassOrInterfaceDeclaration;
-import japa.parser.ast.body.FieldDeclaration;
-import japa.parser.ast.body.VariableDeclarator;
-import japa.parser.ast.body.VariableDeclaratorId;
-import japa.parser.ast.comments.Comment;
-import japa.parser.ast.comments.JavadocComment;
-import japa.parser.ast.type.Type;
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.type.Type;
 
 public class EntityClassCommentParser
 {
@@ -66,22 +66,22 @@ public class EntityClassCommentParser
     {
         logger.info("parsing " + f.getAbsolutePath());
         CompilationUnit cu = JavaParser.parse(f);
-        List<Node> nodes = cu.getChildrenNodes();
+        List<Node> nodes = cu.getChildNodes();
         nodes.stream().filter(n -> n instanceof ClassOrInterfaceDeclaration).flatMap(n ->
         {
-            return n.getChildrenNodes().stream();
+            return n.getChildNodes().stream();
         }).filter(n -> n instanceof FieldDeclaration).forEach(n ->
         {
             FieldDeclaration f1 = (FieldDeclaration) n;
             VariableDeclarator variable = f1.getVariables().get(0);
             if (variable != null)
             {
-                VariableDeclaratorId variableId = variable.getId();
+                SimpleName variableId = variable.getName();
                 if (variableId != null)
                 {
                     String variableName = variableId.toString();
                     // Type type = f1.getType();
-                    Comment comment = n.getComment();
+                    Comment comment = n.getComment().orElse(null);
                     if (comment instanceof JavadocComment)
                     {
                         JavadocComment jdoc = (JavadocComment) comment;
@@ -100,7 +100,7 @@ public class EntityClassCommentParser
                                 }
                             }
                         }
-                        ClassOrInterfaceDeclaration c = (ClassOrInterfaceDeclaration) f1.getParentNode();
+                        ClassOrInterfaceDeclaration c = (ClassOrInterfaceDeclaration) f1.getParentNode().orElse(null);
                         if (trimComment.length() > 0)
                         {
                             String key = c.getName() + "#" + variableName;
