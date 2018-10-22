@@ -4,7 +4,7 @@
 
 	<groupId>com.hngd.tool</groupId>
 	<artifactId>apidoc-core</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>apidoc-core</name>
 	<url>http://maven.apache.org</url>
@@ -12,7 +12,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
- 
+
 
 	<dependencies>
 		<dependency>
@@ -83,11 +83,11 @@
 		</dependency>
 
 		<!-- http://mvnrepository.com/artifact/com.google.code.javaparser/javaparser -->
-<dependency>
-    <groupId>com.github.javaparser</groupId>
-    <artifactId>javaparser-symbol-solver-core</artifactId>
-    <version>3.6.18</version>
-</dependency>
+		<dependency>
+			<groupId>com.github.javaparser</groupId>
+			<artifactId>javaparser-symbol-solver-core</artifactId>
+			<version>3.6.27</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
@@ -104,24 +104,24 @@
 			<artifactId>gson</artifactId>
 			<version>2.4</version>
 		</dependency>
- <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-<dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-api</artifactId>
-    <version>1.7.25</version>
-</dependency>
- <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
-<dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-simple</artifactId>
-    <version>1.7.25</version>
-    <scope>test</scope>
-</dependency>
- 
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.25</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.25</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
- 
-	
-		<build>
+
+
+	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -132,31 +132,31 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			
-			<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>3.0.1</version>
-					<executions>
-						<execution>
-							<id>attach-sources</id>
-							<phase>package</phase>
-							<goals>
-								<goal>jar-no-fork</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
 
-					</configuration>
-				</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+
+				</configuration>
+			</plugin>
 		</plugins>
 
 	</build>
-			<distributionManagement>
-  <repository>
-    <id>maven-deploy</id>
-    <url>http://192.168.0.143:8082/nexus/content/repositories/releases/</url>
-  </repository>
-</distributionManagement>
+	<distributionManagement>
+		<repository>
+			<id>maven-deploy</id>
+			<url>http://192.168.0.143:8082/nexus/content/repositories/snapshots/</url>
+		</repository>
+	</distributionManagement>
 </project>

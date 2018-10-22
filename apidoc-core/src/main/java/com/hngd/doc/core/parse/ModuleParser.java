@@ -45,7 +45,7 @@ public class ModuleParser {
 		try {
 			compilationUnit = JavaParser.parse(f);
 		} catch (IOException e) {
-			logger.error("",e);
+			logger.error("parse file["+f.getAbsolutePath()+"] fail",e);
 		}
 		if(compilationUnit==null){
 			return null;
@@ -139,6 +139,7 @@ public class ModuleParser {
     	
     }
     private static void resolvePathVariable(InterfaceInfo info) {
+    	System.out.println(info.getMethodName());
     	Map<String,Boolean> parameters=info.parameterInfos.stream()
     	.collect(Collectors.toMap(p->p.getName(), p->p.isPrimitive));
 		String url=replacePathVariable(info.methodUrl,parameters);
@@ -196,7 +197,7 @@ public class ModuleParser {
     	    			Optional<MemberValuePair> optionalMvp= nodes.stream()
     	    		    	    .filter(MemberValuePair.class::isInstance)
     	    		    	    .map(MemberValuePair.class::cast)
-    	    		    	    .filter(mvp->mvp.getName().equals("value"))
+    	    		    	    .filter(mvp->mvp.getNameAsString().equals("value"))
     	    		    	    .findAny();
     	    		    	if(optionalMvp.isPresent()){
     	    		    		parameterName=((StringLiteralExpr)optionalMvp.get().getValue()).getValue();  
