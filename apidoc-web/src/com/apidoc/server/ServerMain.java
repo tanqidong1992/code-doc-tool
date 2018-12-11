@@ -11,10 +11,9 @@
 
 package com.apidoc.server;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
@@ -25,13 +24,15 @@ import com.apidoc.config.ServerConfig;
 import com.apidoc.servlet.App;
 import com.apidoc.servlet.MainServlet;
 import com.apidoc.servlet.UpdateThread;
-import com.google.common.io.Files;
 
 /**
  * @author
  */
 public class ServerMain {
  
+	static{
+		PropertyConfigurator.configure("./log4j.properties");
+	}
 	private static final Logger logger = LoggerFactory.getLogger(ServerMain.class);
     public static final ServerConfig config=ServerConfig.load("./conf/app.json");
 	static {

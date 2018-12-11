@@ -48,7 +48,9 @@ public class ControllerClassCommentParser {
 		File file = new File(root);
 		if (file.exists() && file.isDirectory()) {
 			File files[] = file.listFiles();
-			Arrays.asList(files).stream().filter(f -> f.getName().endsWith(".java")).forEach(f -> {
+			Arrays.asList(files).stream()
+			.filter(f -> f.getName().endsWith(".java"))
+			.forEach(f -> {
 				try {
 					parse(f);
 				} catch (Exception e) {

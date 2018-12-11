@@ -168,7 +168,7 @@ public class ModuleParser {
 	}
 	private static RequestParameterInfo parseHttpParameterInfo(Parameter parameter){
     	RequestParameterInfo parameterInfo=new RequestParameterInfo();
-    	parameterInfo.typeName=parameter.getType().toString();
+    	parameterInfo.typeName=parameter.getType().getParentNode().toString();//.toString();
     	Optional<AnnotationExpr> pathVariableAnnotation=getAnnotationByName(parameter.getAnnotations(),"PathVariable");
     	parameterInfo.isPathVariable=pathVariableAnnotation.isPresent();
     	parameterInfo.isPrimitive=isPrimaryType(parameter.getType()) ;

@@ -43,7 +43,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hngd.doc.core.gen.SwaggerDocGenerator;
 import com.hngd.doc.core.parse.ControllerClassCommentParser;
 import com.hngd.doc.core.parse.EntityClassCommentParser;
-import com.hngd.web.controller.UserController;
 
 /**
  * Hello world!
@@ -130,7 +129,7 @@ public class App
      */
     public static final String[] ENTITY_CLASS_SRC_DIC     =
     {       "F:\\HNOE_TQD_JAVA\\JavaCode\\HNVMNS6000\\dao\\src\\main\\java\\com\\hngd\\model",
-            "F:\\HNOE_TQD_JAVA\\JavaCode\\HNVMNS6000\\dao\\src\\main\\java\\com\\hngd\\common\\entity"};
+            "F:\\HNOE_TQD_JAVA\\JavaCode\\HNVMNS6000\\dao\\src\\main\\java\\com\\hngd\\entity"};
     /**
      * controller类源代码所在位置
      */
@@ -219,7 +218,12 @@ public class App
         // resolvePacakge("com.hngd.entity", swagger);
        // SwaggerDocGenerator.resolveType(PageEntity.class, swagger);
         SwaggerDocGenerator sdg = new SwaggerDocGenerator(swagger);
-        sdg.parse("com.hngd.web.controller");
+        //sdg.parse("com.hngd.web.controller");
+        
+        for (String dir : CONTROLLER_CLASS_SRC_DIC)
+        {
+        	sdg.parse(new File(dir));
+        }
         List<Tag> tags=swagger.getTags();
         tags.sort(new Comparator<Tag>()
         {

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.hngd.tool</groupId>
 	<artifactId>apidoc-web</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -25,7 +25,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
- 
+
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -60,17 +60,23 @@
 	</build>
 	<dependencies>
 		<dependency>
-		<groupId>com.hngd.vmns</groupId>
-	<artifactId>hnvmns-base-data</artifactId>
-	<version>0.0.1</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>2.0.4.RELEASE</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-		
-				<dependency>
-		<groupId>com.hngd.vmns</groupId>
-	<artifactId>hnvmns-auth</artifactId>
-	<version>0.0.1</version>
-		</dependency>
-		
+
+<!-- 	 	<dependency>
+			<groupId>com.hngd</groupId>
+			<version>1.0.0</version>
+			<artifactId>web</artifactId>
+		</dependency>   -->
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
@@ -80,12 +86,19 @@
 		<dependency>
 			<groupId>com.hngd.tool</groupId>
 			<artifactId>apidoc-core</artifactId>
-			<version>0.0.1</version>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty.aggregate</groupId>
 			<artifactId>jetty-all-server</artifactId>
 			<version>8.1.16.v20140903</version>
+		</dependency>
+		
+		<dependency>
+		 <groupId>org.slf4j</groupId>
+ 
+    <version>1.7.25</version>
+		<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
 	</dependencies>
 </project>

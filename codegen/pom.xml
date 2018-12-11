@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.hngd.tool</groupId>
 	<artifactId>codegen</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>codegen</name>
 	<url>http://maven.apache.org</url>
@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>com.hngd.tool</groupId>
 			<artifactId>apidoc-core</artifactId>
-			<version>0.0.1</version>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit -->
 		<dependency>
@@ -135,7 +135,7 @@
 	<distributionManagement>
 		<repository>
 			<id>maven-deploy</id>
-			<url>http://192.168.0.143:8082/nexus/content/repositories/releases/</url>
+			<url>http://192.168.0.143:8082/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</distributionManagement>
 	
