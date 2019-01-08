@@ -139,7 +139,7 @@ public class HttpTestCodeGenerator {
 				RequestParameterInfo rpi = ii.parameterInfos.get(i);
 				Type type = ii.parameterTypes.get(i);
 				ParameterSpec.Builder pb = ParameterSpec
-						.builder(type != MultipartFile.class ? String.class : RequestBody.class, rpi.name);
+						.builder(type != MultipartFile.class ? String.class : MultipartBody.Part.class, rpi.name);
 				if (rpi.paramType.equals(HttpRequestParamType.PATH)) {
 					AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Path.class)
 							.addMember("value", "\"" + rpi.name + "\"").build();

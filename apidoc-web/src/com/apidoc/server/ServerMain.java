@@ -21,9 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apidoc.config.ServerConfig;
-import com.apidoc.servlet.App;
 import com.apidoc.servlet.MainServlet;
 import com.apidoc.servlet.UpdateThread;
+import com.hngd.webapi.doc.App;
 
 /**
  * @author
