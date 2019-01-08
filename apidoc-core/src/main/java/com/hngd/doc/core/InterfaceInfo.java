@@ -40,7 +40,7 @@ public class InterfaceInfo
 		public String typeName;
         public String    name;
         public boolean   required;
-        public ParamType paramType;
+        public HttpRequestParamType paramType;
 		public boolean isPathVariable;
 		public boolean isPrimitive;
 		public String comment;
@@ -72,10 +72,10 @@ public class InterfaceInfo
 		public void setRequired(boolean required) {
 			this.required = required;
 		}
-		public ParamType getParamType() {
+		public HttpRequestParamType getParamType() {
 			return paramType;
 		}
-		public void setParamType(ParamType paramType) {
+		public void setParamType(HttpRequestParamType paramType) {
 			this.paramType = paramType;
 		}
 		public boolean isPathVariable() {
@@ -103,7 +103,7 @@ public class InterfaceInfo
 		this.parameterInfos = parameterInfos;
 	}
 
-	public enum ParamType
+	public enum HttpRequestParamType
     {
         REQUEST, PATH,
     }

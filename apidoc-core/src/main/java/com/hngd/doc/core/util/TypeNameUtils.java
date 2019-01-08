@@ -8,7 +8,7 @@ public final class TypeNameUtils {
 	private TypeNameUtils(){
 		
 	}
-	@Deprecated
+
 	public static String getTypeName(Type type) {
 		
 		if(type==null){

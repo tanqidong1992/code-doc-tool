@@ -47,17 +47,7 @@ public class JSCodeGenerator
 
     static Map<String, Object> map = new HashMap<>();
     
-    public static void main(String[] args) throws IOException
-    {
-    	String serviceUrl="/";
-        String filePath="./src/main/java/org/codegen/HttpTestCodeGenerator.java";
-        filePath="E:\\Code\\STSCode\\NativeClient\\src\\main\\java\\com\\hngd\\web\\NativeController.java";
-        //filePath="E:\\Code\\STSCode\\hnvmns-base-data\\src\\main\\java\\com\\hngd\\web\\controller\\PersonnelController.java";
-    	filePath="E:\\Code\\spring-code\\hnvmns-event-processor\\src\\main\\java\\com\\hngd\\web\\controller\\ResourceController.java";
-		//useBeetl();
-    	String str=generate(filePath,serviceUrl);
-    	System.out.println(str);
-    }
+ 
     
     public static String generate(String javaFilePath,String serviceUrl) throws IOException{
     	
@@ -85,7 +75,7 @@ public class JSCodeGenerator
 		for(ModuleInfo mi:modules){
 			mi.interfaceInfos.forEach(ii->{
 				
-				String key=mi.className+"#"+ii.methodName;
+				String key=mi.simpleClassName+"#"+ii.methodName;
 				MethodInfo mm=CommonClassCommentParser.methodComments.get(key);
 				if(mm!=null){
 					ii.comment=mm.comment;

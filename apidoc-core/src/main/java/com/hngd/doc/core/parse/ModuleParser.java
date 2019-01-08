@@ -79,7 +79,7 @@ public class ModuleParser {
 	
     private static ModuleInfo parseModule(ClassOrInterfaceDeclaration clazz){
     	ModuleInfo moduleInfo=new ModuleInfo();
-    	moduleInfo.className=clazz.getName().asString();
+    	moduleInfo.simpleClassName=clazz.getName().asString();
     	moduleInfo.moduleName=clazz.getName().asString();
     	Optional<AnnotationExpr> requestMappingAnnotation=getAnnotationByName(clazz.getAnnotations(), "RequestMapping");
     	requestMappingAnnotation.ifPresent(a->moduleInfo.moduleUrl=parseHttpRequestPath(a.getChildNodes()));

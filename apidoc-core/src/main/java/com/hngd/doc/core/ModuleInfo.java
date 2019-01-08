@@ -3,6 +3,10 @@ package com.hngd.doc.core;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author hnoe-dev-tqd
+ *
+ */
 public class ModuleInfo {
 
 	public ModuleInfo() {
@@ -12,7 +16,8 @@ public class ModuleInfo {
 	public String moduleName;
 	public String moduleUrl;
 	public List<InterfaceInfo> interfaceInfos;
-	public String className;
+	public String simpleClassName;
+	public String canonicalClassName;
 	/**
 	 * @return the moduleName
 	 */
@@ -49,19 +54,18 @@ public class ModuleInfo {
 	public final void setInterfaceInfos(List<InterfaceInfo> interfaceInfos) {
 		this.interfaceInfos = interfaceInfos;
 	}
-	/**
-	 * @return the className
-	 */
-	public final String getClassName() {
-		return className;
+	public String getSimpleClassName() {
+		return simpleClassName;
 	}
-	/**
-	 * @param className the className to set
-	 */
-	public final void setClassName(String className) {
-		this.className = className;
+	public void setSimpleClassName(String simpleClassName) {
+		this.simpleClassName = simpleClassName;
 	}
-	
-	
+	public String getCanonicalClassName() {
+		return canonicalClassName;
+	}
+	public void setCanonicalClassName(String canonicalClassName) {
+		this.canonicalClassName = canonicalClassName;
+	}
+	 
 
 }

@@ -218,12 +218,12 @@ public class App
         // resolvePacakge("com.hngd.entity", swagger);
        // SwaggerDocGenerator.resolveType(PageEntity.class, swagger);
         SwaggerDocGenerator sdg = new SwaggerDocGenerator(swagger);
-        //sdg.parse("com.hngd.web.controller");
+        sdg.parse("com.hngd.web.controller");
         
-        for (String dir : CONTROLLER_CLASS_SRC_DIC)
+/*        for (String dir : CONTROLLER_CLASS_SRC_DIC)
         {
         	sdg.parse(new File(dir));
-        }
+        }*/
         List<Tag> tags=swagger.getTags();
         tags.sort(new Comparator<Tag>()
         {

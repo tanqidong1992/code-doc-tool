@@ -11,39 +11,26 @@
 
 package com.hngd.doc.core.gen;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.net.URL;
-import java.security.Policy.Parameters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -51,14 +38,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hngd.doc.core.FieldInfo;
 import com.hngd.doc.core.InterfaceInfo;
-import com.hngd.doc.core.InterfaceInfo.ParamType;
+import com.hngd.doc.core.InterfaceInfo.HttpRequestParamType;
 import com.hngd.doc.core.InterfaceInfo.RequestParameterInfo;
 import com.hngd.doc.core.MethodInfo;
 import com.hngd.doc.core.ModuleInfo;
 import com.hngd.doc.core.MethodInfo.ParameterInfo;
 import com.hngd.doc.core.parse.ControllerClassCommentParser;
 import com.hngd.doc.core.parse.EntityClassCommentParser;
-import com.hngd.doc.core.parse.ModuleParser;
+import com.hngd.doc.core.util.ClassUtils;
+import com.hngd.doc.core.util.RestClassUtils;
 import com.hngd.doc.core.util.TypeNameUtils;
 import com.hngd.doc.core.util.TypeUtils;
 
@@ -81,7 +69,7 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 
 /**
- * @author
+ * @author tqd
  */
 public class SwaggerDocGenerator {
 	static List<String> application_json = Arrays.asList("application/json", "*");
@@ -93,50 +81,10 @@ public class SwaggerDocGenerator {
 		this.mSwagger = mSwagger;
 	}
 
-	public static List<Class<?>> getClassBelowPacakge(String packageName) {
-		String packagePath = packageName.replaceAll("\\.", "/");
-		Enumeration<URL> dirs = null;
-		try {
-			dirs = SwaggerDocGenerator.class.getClassLoader().getResources(packagePath);
-		} catch (IOException e) {
-			logger.error("", e);
-		}
-		List<Class<?>> clazzs = new LinkedList<>();
-		while (dirs.hasMoreElements()) {
-			URL url = dirs.nextElement();
-			File file = new File(url.getFile());
-			// 把此目录下的所有文件列出
-			String[] classes = file.list();
-			// 循环此数组，并把.class去掉
-			for (String className : classes) {
-				if (!className.endsWith(".class")) {
-					logger.error("the file {} is not a class",file.getAbsolutePath() + className );
-					continue;
-				}
-				className = className.substring(0, className.length() - 6);
-				// 拼接上包名，变成全限定名
-				String qName = packageName + "." + className;
-				// 去掉Mybatis生成的Example类
-				if (qName.endsWith("Example")) {
-					continue;
-				}
-				// 如有需要，把每个类生实一个实例
-				Class<?> cls = null;
-				try {
-					cls = Class.forName(qName);
-				} catch (ClassNotFoundException e) {
-					logger.error("", e);
-				}
-				if (cls != null) {
-					clazzs.add(cls);
-				}
-			}
-		}
-		return clazzs;
-	}
-
+	
+   
 	public void parse(String packageName) {
-		List<Class<?>> clses = getClassBelowPacakge(packageName);
+		List<Class<?>> clses = ClassUtils.getClassBelowPacakge(packageName);
 		parse(clses);
 	}
 
@@ -145,240 +93,239 @@ public class SwaggerDocGenerator {
 		Map<String, Path> paths = new HashMap<String, Path>();
 		mSwagger.setPaths(paths);
 		mSwagger.setTags(tags);
-		for (Class<?> cls : clses) {
-			ModuleInfo moduleInfo = processClass(cls);
-			if (moduleInfo != null) {
-				String classComment = ControllerClassCommentParser.classComments.get(moduleInfo.className);
-				Tag classCommentTag = null;
-				if (classComment != null) {
-					classCommentTag = new Tag();
-					classCommentTag.setName(classComment);
-					tags.add(classCommentTag);
-				} else {
-					logger.warn("the comment for class:{} is empty",moduleInfo.className);
+		clses.stream()
+		  .map(clazz->processClass(clazz))
+		  .filter(mi->mi!=null)
+		  .forEach(mi->{
+			  module2doc(mi,paths,tags);
+		  });
+	}
+	
+	private void module2doc(ModuleInfo moduleInfo,Map<String, Path> paths,List<Tag> tags) {
+		
+		String classComment = ControllerClassCommentParser.classComments.get(moduleInfo.simpleClassName);
+		Tag classCommentTag = null;
+		if (classComment != null) {
+			classCommentTag = new Tag();
+			classCommentTag.setName(classComment);
+			tags.add(classCommentTag);
+		} else {
+			logger.warn("the comment for class:{} is empty",moduleInfo.canonicalClassName);
+		}
+		for (InterfaceInfo interfaceInfo : moduleInfo.interfaceInfos) {
+			String methodKey = moduleInfo.simpleClassName + "#" + interfaceInfo.methodName;
+			MethodInfo methodComment = ControllerClassCommentParser.methodComments.get(methodKey);
+			if (methodComment == null || methodComment.parameters == null) {
+				logger.warn("the method comment for method[{}] is empty",methodKey);
+				continue;
+			}
+			String pathStr = moduleInfo.moduleUrl + interfaceInfo.methodUrl;
+			Path path = new Path();
+			Operation op = new Operation();
+			List<String> operationTags = new ArrayList<>();
+			if (methodComment.createTimeStr != null) {
+				operationTags.add(methodComment.createTimeStr);
+			}
+			if (classCommentTag != null) {
+				operationTags.add(classCommentTag.getName());
+			}
+			op.setTags(operationTags);
+			op.setConsumes(CollectionUtils.isEmpty(interfaceInfo.consumes) ? application_url_encode : interfaceInfo.consumes);
+			op.setProduces(CollectionUtils.isEmpty(interfaceInfo.produces) ? application_json : interfaceInfo.produces);
+			op.setOperationId(interfaceInfo.methodName);
+			if (methodComment != null) {
+				op.setDescription(methodComment.comment);
+			}
+			if (interfaceInfo.parameterInfos.size() > methodComment.parameters.size()) {
+				logger.warn("the interface[{}]  parameter size is not equal to related method parameter size",methodKey);
+				continue;
+			}
+			List<io.swagger.models.parameters.Parameter> parameters = new ArrayList<>();
+			for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
+				RequestParameterInfo rpi = interfaceInfo.parameterInfos.get(i);
+				Type pt = interfaceInfo.parameterTypes.get(i);
+				if (i >= methodComment.parameters.size()) {
+					logger.error(moduleInfo.moduleName + "." + interfaceInfo.methodName + "." + rpi);
 				}
-				for (InterfaceInfo interfaceInfo : moduleInfo.interfaceInfos) {
-					String methodKey = cls.getSimpleName() + "#" + interfaceInfo.methodName;
-					MethodInfo methodComment = ControllerClassCommentParser.methodComments.get(methodKey);
-					if (methodComment == null || methodComment.parameters == null) {
-						logger.error("the method comment for method[" + methodKey + "] is empty");
-						continue;
+				ParameterInfo pc = methodComment.parameters.get(i);
+				Type parameterType = interfaceInfo.parameterTypes.get(i);
+				if (!TypeUtils.isPrimitiveType(parameterType)) {
+					pc.ref = TypeNameUtils.getTypeName(parameterType);
+					if (pc.ref.contains("<")) {
+						pc.ref = pc.ref.replace("<", "").replace(">", "");
 					}
-					String pathStr = moduleInfo.moduleUrl + interfaceInfo.methodUrl;
-					Path path = new Path();
-					Operation op = new Operation();
-					List<String> operationTags = new ArrayList<>();
-					if (methodComment.createTimeStr != null) {
-						operationTags.add(methodComment.createTimeStr);
-					}
-					if (classCommentTag != null) {
-						operationTags.add(classCommentTag.getName());
-					}
-					op.setTags(operationTags);
-					op.setConsumes(CollectionUtils.isEmpty(interfaceInfo.consumes) ? application_url_encode : interfaceInfo.consumes);
-					op.setProduces(CollectionUtils.isEmpty(interfaceInfo.produces) ? application_json : interfaceInfo.produces);
-					op.setOperationId(interfaceInfo.methodName);
-					if (methodComment != null) {
-						op.setDescription(methodComment.comment);
-					}
-					if (interfaceInfo.parameterInfos.size() > methodComment.parameters.size()) {
-						continue;
-					}
-					List<io.swagger.models.parameters.Parameter> parameters = new ArrayList<io.swagger.models.parameters.Parameter>();
-					for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
-						RequestParameterInfo rpi = interfaceInfo.parameterInfos.get(i);
-						Type pt = interfaceInfo.parameterTypes.get(i);
-						if (i >= methodComment.parameters.size()) {
-							logger.error(moduleInfo.moduleName + "." + interfaceInfo.methodName + "." + rpi);
-						}
-						ParameterInfo pc = methodComment.parameters.get(i);
-						Type parameterType = interfaceInfo.parameterTypes.get(i);
-						if (!isPrimitiveType(parameterType)) {
-							pc.ref = TypeNameUtils.getTypeName(parameterType);
-							if (pc.ref.contains("<")) {
-								pc.ref = pc.ref.replace("<", "").replace(">", "");
-							}
-							if (parameterType instanceof ParameterizedType) {
-								ParameterizedType ppt = (ParameterizedType) parameterType;
-								Type rawType = ppt.getRawType();
-								if (rawType instanceof Class<?>) {
-									Class<?> rawClass = (Class<?>) rawType;
-									if (Collection.class.isAssignableFrom(rawClass)) {
-										pc.isCollection = true;
-										Type[] argumentTypes = ppt.getActualTypeArguments();
-										if (argumentTypes != null && argumentTypes.length > 0) {
-											Type argumentType0 = argumentTypes[0];
-											Class<?> argumentClass = (Class<?>) argumentType0;
-											if (String.class.isAssignableFrom(argumentClass)) {
-												pc.format = "string";
-												pc.type = "string";
-												pc.isArgumentTypePrimitive = true;
-											} else if (Number.class.isAssignableFrom(argumentClass)) {
-												pc.format = "Number";
-												pc.type = argumentClass.getSimpleName();
-												pc.isArgumentTypePrimitive = true;
-											} else if (Boolean.class.isAssignableFrom(argumentClass)) {
-												pc.format = "Boolean";
-												pc.type = argumentClass.getSimpleName();
-												pc.isArgumentTypePrimitive = true;
-											} else {
-												pc.format = "Object";
-												pc.type = argumentClass.getSimpleName();
-												pc.isArgumentTypePrimitive = false;
-											}
-										}
+					if (parameterType instanceof ParameterizedType) {
+						ParameterizedType ppt = (ParameterizedType) parameterType;
+						Type rawType = ppt.getRawType();
+						if (rawType instanceof Class<?>) {
+							Class<?> rawClass = (Class<?>) rawType;
+							if (Collection.class.isAssignableFrom(rawClass)) {
+								pc.isCollection = true;
+								Type[] argumentTypes = ppt.getActualTypeArguments();
+								if (argumentTypes != null && argumentTypes.length > 0) {
+									Type argumentType0 = argumentTypes[0];
+									Class<?> argumentClass = (Class<?>) argumentType0;
+									if (String.class.isAssignableFrom(argumentClass)) {
+										pc.format = "string";
+										pc.type = "string";
+										pc.isArgumentTypePrimitive = true;
+									} else if (Number.class.isAssignableFrom(argumentClass)) {
+										pc.format = "Number";
+										pc.type = argumentClass.getSimpleName();
+										pc.isArgumentTypePrimitive = true;
+									} else if (Boolean.class.isAssignableFrom(argumentClass)) {
+										pc.format = "Boolean";
+										pc.type = argumentClass.getSimpleName();
+										pc.isArgumentTypePrimitive = true;
+									} else {
+										pc.format = "Object";
+										pc.type = argumentClass.getSimpleName();
+										pc.isArgumentTypePrimitive = false;
 									}
-								} else {
 								}
 							}
 						} else {
-							Class<?> argumentClass = (Class<?>) parameterType;
-							if (String.class.isAssignableFrom(argumentClass)) {
-								pc.format = "string";
-								pc.type = "string";
-								pc.isArgumentTypePrimitive = true;
-							} else if (Number.class.isAssignableFrom(argumentClass)) {
-								pc.type = "number";
-								pc.format = argumentClass.getSimpleName().toLowerCase();
-								pc.isArgumentTypePrimitive = true;
-							} else if (Boolean.class.isAssignableFrom(argumentClass)) {
-								pc.type = "boolean";
-								pc.format = argumentClass.getSimpleName().toLowerCase();
-								pc.isArgumentTypePrimitive = true;
+						}
+					}
+				} else {
+					Class<?> argumentClass = (Class<?>) parameterType;
+					if (String.class.isAssignableFrom(argumentClass)) {
+						pc.format = "string";
+						pc.type = "string";
+						pc.isArgumentTypePrimitive = true;
+					} else if (Number.class.isAssignableFrom(argumentClass)) {
+						pc.type = "number";
+						pc.format = argumentClass.getSimpleName().toLowerCase();
+						pc.isArgumentTypePrimitive = true;
+					} else if (Boolean.class.isAssignableFrom(argumentClass)) {
+						pc.type = "boolean";
+						pc.format = argumentClass.getSimpleName().toLowerCase();
+						pc.isArgumentTypePrimitive = true;
+					} else {
+						pc.type = "object";
+						pc.format = argumentClass.getSimpleName();
+						pc.isArgumentTypePrimitive = false;
+					}
+				}
+				resolveType(parameterType, mSwagger);
+				if (interfaceInfo.requestType.equals(RequestMethod.GET.name())) {
+					if (rpi.paramType.equals(HttpRequestParamType.REQUEST)) {
+						if (pc.ref != null) {
+							BodyParameter bp = new BodyParameter();
+							bp.setDescription(pc.comment);
+							bp.setIn("query");
+							bp.setName(rpi.name);
+							bp.setRequired(rpi.required);
+							Model schema = null;
+							if (pc.isCollection) {
+								ArrayModel am = new ArrayModel();
+								am.setType("array");
+								AbstractProperty items = new RefProperty();
+								if (pc.isArgumentTypePrimitive) {
+									items = new ArrayProperty();
+									items.setFormat(pc.format);
+								} else {
+									((RefProperty) items).set$ref("#/definitions/" + pc.type);
+									// am.setReference("#/definitions/"+pc.type);
+								}
+								items.setType(pc.type);
+								am.setItems(items);
+								schema = am;
 							} else {
-								pc.type = "object";
-								pc.format = argumentClass.getSimpleName();
-								pc.isArgumentTypePrimitive = false;
+								schema = new RefModel("#/definitions/" + pc.ref);
 							}
-						}
-						resolveType(parameterType, mSwagger);
-						if (interfaceInfo.requestType.equals(RequestMethod.GET.name())) {
-							if (rpi.paramType.equals(ParamType.REQUEST)) {
-								if (pc.ref != null) {
-									BodyParameter bp = new BodyParameter();
-									bp.setDescription(pc.comment);
-									bp.setIn("query");
-									bp.setName(rpi.name);
-									bp.setRequired(rpi.required);
-									Model schema = null;
-									if (pc.isCollection) {
-										ArrayModel am = new ArrayModel();
-										am.setType("array");
-										AbstractProperty items = new RefProperty();
-										if (pc.isArgumentTypePrimitive) {
-											items = new ArrayProperty();
-											items.setFormat(pc.format);
-										} else {
-											((RefProperty) items).set$ref("#/definitions/" + pc.type);
-											// am.setReference("#/definitions/"+pc.type);
-										}
-										items.setType(pc.type);
-										am.setItems(items);
-										schema = am;
-									} else {
-										schema = new RefModel("#/definitions/" + pc.ref);
-									}
-									bp.setSchema(schema);
-									parameters.add(bp);
-								} else {
-									QueryParameter param = new QueryParameter();
-									param.setIn("query");
-									param.setName(rpi.name);
-									param.setRequired(rpi.required);
-									param.setType(pc.type);
-									param.setFormat(pc.format);
-									param.setDescription(pc.comment);
-									parameters.add(param);
-								}
-							} else if (rpi.paramType.equals(ParamType.PATH)) {
-								PathParameter pathParameter = new PathParameter();
-								pathParameter.setIn("path");
-								pathParameter.setName(rpi.name);
-								pathParameter.setRequired(rpi.required);
-								pathParameter.setType(pc.type);
-								pathParameter.setFormat(pc.format);
-								pathParameter.setDescription(pc.comment);
-								parameters.add(pathParameter);
-							}
+							bp.setSchema(schema);
+							parameters.add(bp);
 						} else {
-							if (rpi.paramType.equals(ParamType.REQUEST)) {
-								if (pc.ref != null) {
-									BodyParameter bp = new BodyParameter();
-									bp.setDescription(pc.comment);
-									bp.setIn("body");
-									bp.setName(rpi.name);
-									bp.setRequired(rpi.required);
-									Model schema = null;
-									if (pc.isCollection) {
-										ArrayModel am = new ArrayModel();
-										am.setType("array");
-										AbstractProperty items = new RefProperty();
-										if (pc.isArgumentTypePrimitive) {
-											items = new ArrayProperty();
-											items.setFormat(pc.format);
-										} else {
-											((RefProperty) items).set$ref("#/definitions/" + pc.type);
-											// am.setReference("#/definitions/"+pc.type);
-										}
-										items.setType(pc.type);
-										items.setFormat(pc.format);
-										am.setItems(items);
-										schema = am;
-									} else {
-										schema = new RefModel("#/definitions/" + pc.ref);
-									}
-									bp.setSchema(schema);
-									parameters.add(bp);
-								} else {
-									FormParameter param = new FormParameter();
-									param.setIn("body");
-									param.setName(rpi.name);
-									param.setRequired(rpi.required);
-									param.setType(pc.type);
-									param.setDescription(pc.comment);
-									param.setFormat(pc.format);
-									parameters.add(param);
-								}
-							} else if (rpi.paramType.equals(ParamType.PATH)) {
-								PathParameter pathParameter = new PathParameter();
-								pathParameter.setIn("path");
-								pathParameter.setName(rpi.name);
-								pathParameter.setRequired(rpi.required);
-								pathParameter.setType(pc.type);
-								pathParameter.setDescription(pc.comment);
-								pathParameter.setFormat(pc.format);
-								parameters.add(pathParameter);
-							}
+							QueryParameter param = new QueryParameter();
+							param.setIn("query");
+							param.setName(rpi.name);
+							param.setRequired(rpi.required);
+							param.setType(pc.type);
+							param.setFormat(pc.format);
+							param.setDescription(pc.comment);
+							parameters.add(param);
 						}
+					} else if (rpi.paramType.equals(HttpRequestParamType.PATH)) {
+						PathParameter pathParameter = new PathParameter();
+						pathParameter.setIn("path");
+						pathParameter.setName(rpi.name);
+						pathParameter.setRequired(rpi.required);
+						pathParameter.setType(pc.type);
+						pathParameter.setFormat(pc.format);
+						pathParameter.setDescription(pc.comment);
+						parameters.add(pathParameter);
 					}
-					op.setParameters(parameters);
-					Map<String, Response> responses = new HashMap<String, Response>();
-					Response resp = new Response();
-					if (methodComment != null) {
-						resp.setDescription(methodComment.retComment);
+				} else {
+					if (rpi.paramType.equals(HttpRequestParamType.REQUEST)) {
+						if (pc.ref != null) {
+							BodyParameter bp = new BodyParameter();
+							bp.setDescription(pc.comment);
+							bp.setIn("body");
+							bp.setName(rpi.name);
+							bp.setRequired(rpi.required);
+							Model schema = null;
+							if (pc.isCollection) {
+								ArrayModel am = new ArrayModel();
+								am.setType("array");
+								AbstractProperty items = new RefProperty();
+								if (pc.isArgumentTypePrimitive) {
+									items = new ArrayProperty();
+									items.setFormat(pc.format);
+								} else {
+									((RefProperty) items).set$ref("#/definitions/" + pc.type);
+									// am.setReference("#/definitions/"+pc.type);
+								}
+								items.setType(pc.type);
+								items.setFormat(pc.format);
+								am.setItems(items);
+								schema = am;
+							} else {
+								schema = new RefModel("#/definitions/" + pc.ref);
+							}
+							bp.setSchema(schema);
+							parameters.add(bp);
+						} else {
+							FormParameter param = new FormParameter();
+							param.setIn("body");
+							param.setName(rpi.name);
+							param.setRequired(rpi.required);
+							param.setType(pc.type);
+							param.setDescription(pc.comment);
+							param.setFormat(pc.format);
+							parameters.add(param);
+						}
+					} else if (rpi.paramType.equals(HttpRequestParamType.PATH)) {
+						PathParameter pathParameter = new PathParameter();
+						pathParameter.setIn("path");
+						pathParameter.setName(rpi.name);
+						pathParameter.setRequired(rpi.required);
+						pathParameter.setType(pc.type);
+						pathParameter.setDescription(pc.comment);
+						pathParameter.setFormat(pc.format);
+						parameters.add(pathParameter);
 					}
-					String firstKey = resolveType(interfaceInfo.retureType, mSwagger);
-					RefProperty schema = new RefProperty();
-					schema.set$ref("#/definitions/" + firstKey);
-					resp.setSchema(schema);
-					resp.setDescription("test");
-					responses.put("200", resp);
-					op.setResponses(responses);
-					path.set(interfaceInfo.requestType.toLowerCase(), op);
-					paths.put(pathStr, path);
 				}
 			}
-		}
+			op.setParameters(parameters);
+			Map<String, Response> responses = new HashMap<String, Response>();
+			Response resp = new Response();
+			if (methodComment != null) {
+				resp.setDescription(methodComment.retComment);
+			}
+			String firstKey = resolveType(interfaceInfo.retureType, mSwagger);
+			RefProperty schema = new RefProperty();
+			schema.set$ref("#/definitions/" + firstKey);
+			resp.setSchema(schema);
+			resp.setDescription("test");
+			responses.put("200", resp);
+			op.setResponses(responses);
+			path.set(interfaceInfo.requestType.toLowerCase(), op);
+			paths.put(pathStr, path);
+		
+	    }
 	}
-    public static final List<Class<? extends Annotation>> httpInterfaceAnnotationClazzs=Arrays.asList(
-    		RequestMapping.class,
-    		PostMapping.class,
-    		GetMapping.class,
-    		DeleteMapping.class,
-    		PatchMapping.class,
-    		PutMapping.class
-    		
-    		);
+
     		
 	public static ModuleInfo processClass(Class<?> cls) {
 		ModuleInfo mi = new ModuleInfo();
@@ -399,7 +346,7 @@ public class SwaggerDocGenerator {
 			mi.moduleUrl = "/" + mi.moduleUrl;
 		}
 		mi.moduleName = mi.moduleUrl.substring(1);
-		mi.className = cls.getSimpleName();
+		mi.simpleClassName = cls.getSimpleName();
 		RequestMethod[] requestMethods = requestMapping.method();
 		RequestMethod requestMethod = null;
 		if (requestMethods.length > 0) {
@@ -409,7 +356,7 @@ public class SwaggerDocGenerator {
 		Method[] methods = cls.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
-			if(isHttpInterface(method)){
+			if(RestClassUtils.isHttpInterface(method)){
 				InterfaceInfo info=null;
 				try {
 					info = processMethod(method);
@@ -429,28 +376,12 @@ public class SwaggerDocGenerator {
 		return mi;
 	}
     
-    private static Optional<? extends Annotation>  getHttpRequestInfo(Method method) {
-		
-		return httpInterfaceAnnotationClazzs.stream()
-		.filter(clazz->method.getAnnotation(clazz)!=null)
-		.map(clazz->method.getAnnotation(clazz))
-		 .findAny();
-		  
-		 
 
-	}
-	
-	private static boolean isHttpInterface(Method method) {
-		
-	return getHttpRequestInfo(method).isPresent();
-		 
-
-	}
 
 	private static InterfaceInfo processMethod(Method method) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		InterfaceInfo info = new InterfaceInfo();
 		
-		Optional<? extends Annotation> annotation = getHttpRequestInfo(method);
+		Optional<? extends Annotation> annotation = RestClassUtils.getHttpRequestInfo(method);
 		Annotation a=annotation.get();
         Method consumesMethod=a.getClass().getDeclaredMethod("consumes");
 		String[] consumes = (String[]) consumesMethod.invoke(a);
@@ -501,7 +432,7 @@ public class SwaggerDocGenerator {
 						RequestParam requestParam = (RequestParam) a1;
 						RequestParameterInfo rpi = new RequestParameterInfo();
 						rpi.name = requestParam.value();
-						rpi.paramType = ParamType.REQUEST;
+						rpi.paramType = HttpRequestParamType.REQUEST;
 						rpi.required = requestParam.required();
 						info.parameterInfos.add(rpi);
 						info.parameterTypes.add(parameter.getParameterizedType());
@@ -513,7 +444,7 @@ public class SwaggerDocGenerator {
 						PathVariable pa = (PathVariable) a1;
 						RequestParameterInfo rpi = new RequestParameterInfo();
 						rpi.name = pa.value();
-						rpi.paramType = ParamType.PATH;
+						rpi.paramType = HttpRequestParamType.PATH;
 						rpi.required = true;
 						info.parameterInfos.add(rpi);
 						if (!info.isMultipart) {
@@ -574,270 +505,5 @@ public class SwaggerDocGenerator {
 		return firstKey;
 	}
 
-	private static boolean isPrimitiveType(Type parameterType) {
-		if (!(parameterType instanceof Class<?>)) {
-			return false;
-		}
-		if (String.class.equals(parameterType)) {
-			return true;
-		}
-		Class<?> cls = (Class<?>) parameterType;
-		if (Number.class.isAssignableFrom(cls)) {
-			return true;
-		}
-		if (Boolean.class.isAssignableFrom(cls)) {
-			return true;
-		}
-		return false;
-	}
 
-	public void parse(File root) {
-		
-		List<Tag> tags = new ArrayList<Tag>();
-		Map<String, Path> paths = new HashMap<String, Path>();
-		mSwagger.setPaths(paths);
-		mSwagger.setTags(tags);
-		
-		
-		File files[] = root.listFiles();
-		List<ModuleInfo> modules=Arrays.asList(files).stream()
-		    .filter(f -> f.getName().endsWith(".java"))
-		    .map(ModuleParser::parse)
-		    .flatMap(ms->ms.stream())
-		    .collect(Collectors.toList());
-
-		
-		
-		for (ModuleInfo moduleInfo : modules) {
-			moduleToDoc(moduleInfo);
-		}
-	}
-	
-	public void moduleToDoc(ModuleInfo moduleInfo){
- 
-			String classComment = ControllerClassCommentParser.classComments.get(moduleInfo.className);
-			Tag classCommentTag = null;
-			if (classComment != null) {
-				classCommentTag = new Tag();
-				classCommentTag.setName(classComment);
-				mSwagger.getTags().add(classCommentTag);
-			} else {
-				logger.warn("the comment for class:{} is empty",moduleInfo.className);
-			}
-			
-			for (InterfaceInfo interfaceInfo : moduleInfo.interfaceInfos) {
-				String methodKey = moduleInfo.getClassName() + "#" + interfaceInfo.methodName;
-				logger.debug("start to generate method:{}",methodKey);
-				MethodInfo methodComment = ControllerClassCommentParser.methodComments.get(methodKey);
-				if (methodComment == null || methodComment.parameters == null) {
-					logger.error("the method comment for method[" + methodKey + "] is empty");
-					continue;
-				}
-				String pathStr = moduleInfo.moduleUrl + interfaceInfo.methodUrl;
-				Path path = new Path();
-				Operation op = new Operation();
-				List<String> operationTags = new ArrayList<>();
-				if (methodComment.createTimeStr != null) {
-					operationTags.add(methodComment.createTimeStr);
-				}
-				if (classCommentTag != null) {
-					operationTags.add(classCommentTag.getName());
-				}
-				op.setTags(operationTags);
-				op.setConsumes(CollectionUtils.isEmpty(interfaceInfo.consumes) ? application_url_encode : interfaceInfo.consumes);
-				op.setProduces(CollectionUtils.isEmpty(interfaceInfo.produces) ? application_json : interfaceInfo.produces);
-				op.setOperationId(interfaceInfo.methodName);
-				if (methodComment != null) {
-					op.setDescription(methodComment.comment);
-				}
-				if (interfaceInfo.parameterInfos.size() > methodComment.parameters.size()) {
-					continue;
-				}
-				List<io.swagger.models.parameters.Parameter> parameters = new ArrayList<io.swagger.models.parameters.Parameter>();
-				for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
-					RequestParameterInfo rpi = interfaceInfo.parameterInfos.get(i);
-					//Type pt = interfaceInfo.parameterTypes.get(i);
-					if (i >= methodComment.parameters.size()) {
-						logger.error(moduleInfo.moduleName + "." + interfaceInfo.methodName + "." + rpi);
-					}
-					ParameterInfo pc = methodComment.parameters.get(i);
-					//Type parameterType = rpi.ge//interfaceInfo.parameterTypes.get(i);
-					if (!rpi.isPrimitive) {
-						pc.ref = rpi.typeName;//TypeNameUtils.getTypeName(parameterType);
-						if (pc.ref.contains("<")) {
-							pc.ref = pc.ref.replace("<", "").replace(">", "");
-						}
-						rpi.
-						if (parameterType instanceof ParameterizedType) {
-							ParameterizedType ppt = (ParameterizedType) parameterType;
-							Type rawType = ppt.getRawType();
-							if (rawType instanceof Class<?>) {
-								Class<?> rawClass = (Class<?>) rawType;
-								if (Collection.class.isAssignableFrom(rawClass)) {
-									pc.isCollection = true;
-									Type[] argumentTypes = ppt.getActualTypeArguments();
-									if (argumentTypes != null && argumentTypes.length > 0) {
-										Type argumentType0 = argumentTypes[0];
-										Class<?> argumentClass = (Class<?>) argumentType0;
-										if (String.class.isAssignableFrom(argumentClass)) {
-											pc.format = "string";
-											pc.type = "string";
-											pc.isArgumentTypePrimitive = true;
-										} else if (Number.class.isAssignableFrom(argumentClass)) {
-											pc.format = "Number";
-											pc.type = argumentClass.getSimpleName();
-											pc.isArgumentTypePrimitive = true;
-										} else if (Boolean.class.isAssignableFrom(argumentClass)) {
-											pc.format = "Boolean";
-											pc.type = argumentClass.getSimpleName();
-											pc.isArgumentTypePrimitive = true;
-										} else {
-											pc.format = "Object";
-											pc.type = argumentClass.getSimpleName();
-											pc.isArgumentTypePrimitive = false;
-										}
-									}
-								}
-							} else {
-							}
-						}
-					} else {
-						Class<?> argumentClass = (Class<?>) parameterType;
-						if (String.class.isAssignableFrom(argumentClass)) {
-							pc.format = "string";
-							pc.type = "string";
-							pc.isArgumentTypePrimitive = true;
-						} else if (Number.class.isAssignableFrom(argumentClass)) {
-							pc.type = "number";
-							pc.format = argumentClass.getSimpleName().toLowerCase();
-							pc.isArgumentTypePrimitive = true;
-						} else if (Boolean.class.isAssignableFrom(argumentClass)) {
-							pc.type = "boolean";
-							pc.format = argumentClass.getSimpleName().toLowerCase();
-							pc.isArgumentTypePrimitive = true;
-						} else {
-							pc.type = "object";
-							pc.format = argumentClass.getSimpleName();
-							pc.isArgumentTypePrimitive = false;
-						}
-					}
-					resolveType(parameterType, mSwagger);
-					if (interfaceInfo.requestType.equals(RequestMethod.GET.name())) {
-						if (rpi.paramType.equals(ParamType.REQUEST)) {
-							if (pc.ref != null) {
-								BodyParameter bp = new BodyParameter();
-								bp.setDescription(pc.comment);
-								bp.setIn("query");
-								bp.setName(rpi.name);
-								bp.setRequired(rpi.required);
-								Model schema = null;
-								if (pc.isCollection) {
-									ArrayModel am = new ArrayModel();
-									am.setType("array");
-									AbstractProperty items = new RefProperty();
-									if (pc.isArgumentTypePrimitive) {
-										items = new ArrayProperty();
-										items.setFormat(pc.format);
-									} else {
-										((RefProperty) items).set$ref("#/definitions/" + pc.type);
-										// am.setReference("#/definitions/"+pc.type);
-									}
-									items.setType(pc.type);
-									am.setItems(items);
-									schema = am;
-								} else {
-									schema = new RefModel("#/definitions/" + pc.ref);
-								}
-								bp.setSchema(schema);
-								parameters.add(bp);
-							} else {
-								QueryParameter param = new QueryParameter();
-								param.setIn("query");
-								param.setName(rpi.name);
-								param.setRequired(rpi.required);
-								param.setType(pc.type);
-								param.setFormat(pc.format);
-								param.setDescription(pc.comment);
-								parameters.add(param);
-							}
-						} else if (rpi.paramType.equals(ParamType.PATH)) {
-							PathParameter pathParameter = new PathParameter();
-							pathParameter.setIn("path");
-							pathParameter.setName(rpi.name);
-							pathParameter.setRequired(rpi.required);
-							pathParameter.setType(pc.type);
-							pathParameter.setFormat(pc.format);
-							pathParameter.setDescription(pc.comment);
-							parameters.add(pathParameter);
-						}
-					} else {
-						if (rpi.paramType.equals(ParamType.REQUEST)) {
-							if (pc.ref != null) {
-								BodyParameter bp = new BodyParameter();
-								bp.setDescription(pc.comment);
-								bp.setIn("body");
-								bp.setName(rpi.name);
-								bp.setRequired(rpi.required);
-								Model schema = null;
-								if (pc.isCollection) {
-									ArrayModel am = new ArrayModel();
-									am.setType("array");
-									AbstractProperty items = new RefProperty();
-									if (pc.isArgumentTypePrimitive) {
-										items = new ArrayProperty();
-										items.setFormat(pc.format);
-									} else {
-										((RefProperty) items).set$ref("#/definitions/" + pc.type);
-										// am.setReference("#/definitions/"+pc.type);
-									}
-									items.setType(pc.type);
-									items.setFormat(pc.format);
-									am.setItems(items);
-									schema = am;
-								} else {
-									schema = new RefModel("#/definitions/" + pc.ref);
-								}
-								bp.setSchema(schema);
-								parameters.add(bp);
-							} else {
-								FormParameter param = new FormParameter();
-								param.setIn("body");
-								param.setName(rpi.name);
-								param.setRequired(rpi.required);
-								param.setType(pc.type);
-								param.setDescription(pc.comment);
-								param.setFormat(pc.format);
-								parameters.add(param);
-							}
-						} else if (rpi.paramType.equals(ParamType.PATH)) {
-							PathParameter pathParameter = new PathParameter();
-							pathParameter.setIn("path");
-							pathParameter.setName(rpi.name);
-							pathParameter.setRequired(rpi.required);
-							pathParameter.setType(pc.type);
-							pathParameter.setDescription(pc.comment);
-							pathParameter.setFormat(pc.format);
-							parameters.add(pathParameter);
-						}
-					}
-				}
-				op.setParameters(parameters);
-				Map<String, Response> responses = new HashMap<String, Response>();
-				Response resp = new Response();
-				if (methodComment != null) {
-					resp.setDescription(methodComment.retComment);
-				}
-				String firstKey = resolveType(interfaceInfo.retureType, mSwagger);
-				RefProperty schema = new RefProperty();
-				schema.set$ref("#/definitions/" + firstKey);
-				resp.setSchema(schema);
-				resp.setDescription("test");
-				responses.put("200", resp);
-				op.setResponses(responses);
-				path.set(interfaceInfo.requestType.toLowerCase(), op);
-				mSwagger.getPaths().put(pathStr, path);
-			}
-		 
-	
-	}
 }
