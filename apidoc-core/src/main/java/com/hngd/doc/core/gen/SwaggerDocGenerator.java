@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.hngd.doc.core.FieldInfo;
 import com.hngd.doc.core.InterfaceInfo;
@@ -50,23 +51,28 @@ import com.hngd.doc.core.util.RestClassUtils;
 import com.hngd.doc.core.util.TypeNameUtils;
 import com.hngd.doc.core.util.TypeUtils;
 
-import io.swagger.converter.ModelConverters;
-import io.swagger.models.ArrayModel;
-import io.swagger.models.Model;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.RefModel;
-import io.swagger.models.Response;
-import io.swagger.models.Swagger;
-import io.swagger.models.Tag;
-import io.swagger.models.parameters.BodyParameter;
-import io.swagger.models.parameters.FormParameter;
-import io.swagger.models.parameters.PathParameter;
-import io.swagger.models.parameters.QueryParameter;
-import io.swagger.models.properties.AbstractProperty;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.jackson.SwaggerModule;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.media.BooleanSchema;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.FileSchema;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.NumberSchema;
+import io.swagger.v3.oas.models.media.ObjectSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.PathParameter;
+import io.swagger.v3.oas.models.parameters.QueryParameter;
+import io.swagger.v3.oas.models.parameters.RequestBody;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.tags.Tag;
+
+ 
 
 /**
  * @author tqd
@@ -75,24 +81,24 @@ public class SwaggerDocGenerator {
 	static List<String> application_json = Arrays.asList("application/json", "*");
 	static List<String> application_url_encode = Arrays.asList("application/json");
 	private static final Logger logger = LoggerFactory.getLogger(SwaggerDocGenerator.class);
-	Swagger mSwagger;
+	public OpenAPI openAPI;
 
-	public SwaggerDocGenerator(Swagger mSwagger) {
-		this.mSwagger = mSwagger;
+	public SwaggerDocGenerator(OpenAPI openAPI) {
+		this.openAPI = openAPI;
 	}
 
 	
    
-	public void parse(String packageName) {
+	public  void parse(String packageName) {
 		List<Class<?>> clses = ClassUtils.getClassBelowPacakge(packageName);
 		parse(clses);
 	}
 
 	public void parse(List<Class<?>> clses) {
 		List<Tag> tags = new ArrayList<Tag>();
-		Map<String, Path> paths = new HashMap<String, Path>();
-		mSwagger.setPaths(paths);
-		mSwagger.setTags(tags);
+		Paths paths=new Paths();
+		openAPI.setPaths(paths);
+		openAPI.setTags(tags);
 		clses.stream()
 		  .map(clazz->processClass(clazz))
 		  .filter(mi->mi!=null)
@@ -101,7 +107,7 @@ public class SwaggerDocGenerator {
 		  });
 	}
 	
-	private void module2doc(ModuleInfo moduleInfo,Map<String, Path> paths,List<Tag> tags) {
+	private void module2doc(ModuleInfo moduleInfo,Paths paths,List<Tag> tags) {
 		
 		String classComment = ControllerClassCommentParser.classComments.get(moduleInfo.simpleClassName);
 		Tag classCommentTag = null;
@@ -120,27 +126,30 @@ public class SwaggerDocGenerator {
 				continue;
 			}
 			String pathStr = moduleInfo.moduleUrl + interfaceInfo.methodUrl;
-			Path path = new Path();
+			PathItem path = new PathItem();
 			Operation op = new Operation();
 			List<String> operationTags = new ArrayList<>();
-			if (methodComment.createTimeStr != null) {
+			if (methodComment!=null && methodComment.createTimeStr != null) {
 				operationTags.add(methodComment.createTimeStr);
 			}
 			if (classCommentTag != null) {
 				operationTags.add(classCommentTag.getName());
 			}
 			op.setTags(operationTags);
-			op.setConsumes(CollectionUtils.isEmpty(interfaceInfo.consumes) ? application_url_encode : interfaceInfo.consumes);
-			op.setProduces(CollectionUtils.isEmpty(interfaceInfo.produces) ? application_json : interfaceInfo.produces);
+			//op.set
+			//op.setConsumes(CollectionUtils.isEmpty(interfaceInfo.consumes) ? application_url_encode : interfaceInfo.consumes);
+			//op.setProduces(CollectionUtils.isEmpty(interfaceInfo.produces) ? application_json : interfaceInfo.produces);
+			
 			op.setOperationId(interfaceInfo.methodName);
 			if (methodComment != null) {
 				op.setDescription(methodComment.comment);
 			}
-			if (interfaceInfo.parameterInfos.size() > methodComment.parameters.size()) {
+			if (methodComment!=null && interfaceInfo.parameterInfos.size() > methodComment.parameters.size()) {
 				logger.warn("the interface[{}]  parameter size is not equal to related method parameter size",methodKey);
-				continue;
+				//continue;
 			}
-			List<io.swagger.models.parameters.Parameter> parameters = new ArrayList<>();
+			List<io.swagger.v3.oas.models.parameters.Parameter> parameters = new ArrayList<>();
+			Content content=new Content();
 			for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
 				RequestParameterInfo rpi = interfaceInfo.parameterInfos.get(i);
 				Type pt = interfaceInfo.parameterTypes.get(i);
@@ -149,11 +158,10 @@ public class SwaggerDocGenerator {
 				}
 				ParameterInfo pc = methodComment.parameters.get(i);
 				Type parameterType = interfaceInfo.parameterTypes.get(i);
-				if (!TypeUtils.isPrimitiveType(parameterType)) {
-					pc.ref = TypeNameUtils.getTypeName(parameterType);
-					if (pc.ref.contains("<")) {
-						pc.ref = pc.ref.replace("<", "").replace(">", "");
-					}
+		        pc.ref = TypeNameUtils.getTypeName(parameterType);
+				if (pc.ref.contains("<")) {
+				    pc.ref = pc.ref.replace("<", "").replace(">", "");
+				}
 					if (parameterType instanceof ParameterizedType) {
 						ParameterizedType ppt = (ParameterizedType) parameterType;
 						Type rawType = ppt.getRawType();
@@ -169,80 +177,83 @@ public class SwaggerDocGenerator {
 										pc.format = "string";
 										pc.type = "string";
 										pc.isArgumentTypePrimitive = true;
+										pc.schema=new StringSchema();
 									} else if (Number.class.isAssignableFrom(argumentClass)) {
 										pc.format = "Number";
 										pc.type = argumentClass.getSimpleName();
 										pc.isArgumentTypePrimitive = true;
+										pc.schema=new NumberSchema();
 									} else if (Boolean.class.isAssignableFrom(argumentClass)) {
 										pc.format = "Boolean";
 										pc.type = argumentClass.getSimpleName();
 										pc.isArgumentTypePrimitive = true;
-									} else {
+										pc.schema=new BooleanSchema();
+									}else if(MultipartFile.class.isAssignableFrom(argumentClass)) {
+										pc.format = "File";
+										pc.type = argumentClass.getSimpleName();
+										pc.isArgumentTypePrimitive = true;
+										pc.schema=new FileSchema();
+									}
+									else {
 										pc.format = "Object";
 										pc.type = argumentClass.getSimpleName();
 										pc.isArgumentTypePrimitive = false;
+										pc.schema=new ObjectSchema();
+										//pc.schema.setType(pc.type);
 									}
 								}
 							}
 						} else {
+							logger.error("aha");
 						}
-					}
+					 
 				} else {
 					Class<?> argumentClass = (Class<?>) parameterType;
 					if (String.class.isAssignableFrom(argumentClass)) {
 						pc.format = "string";
 						pc.type = "string";
 						pc.isArgumentTypePrimitive = true;
+						pc.schema=new StringSchema();
 					} else if (Number.class.isAssignableFrom(argumentClass)) {
 						pc.type = "number";
 						pc.format = argumentClass.getSimpleName().toLowerCase();
 						pc.isArgumentTypePrimitive = true;
+						pc.schema=new NumberSchema();
 					} else if (Boolean.class.isAssignableFrom(argumentClass)) {
 						pc.type = "boolean";
 						pc.format = argumentClass.getSimpleName().toLowerCase();
 						pc.isArgumentTypePrimitive = true;
-					} else {
+						pc.schema=new BooleanSchema();
+					} else if(MultipartFile.class.isAssignableFrom(argumentClass)) {
+						pc.format = "File";
+						pc.type = argumentClass.getSimpleName();
+						pc.isArgumentTypePrimitive = true;
+						pc.schema=new FileSchema();
+					}else {
 						pc.type = "object";
 						pc.format = argumentClass.getSimpleName();
 						pc.isArgumentTypePrimitive = false;
+						pc.schema=new ObjectSchema();
 					}
 				}
-				resolveType(parameterType, mSwagger);
+				resolveType(parameterType, openAPI);
 				if (interfaceInfo.requestType.equals(RequestMethod.GET.name())) {
 					if (rpi.paramType.equals(HttpRequestParamType.REQUEST)) {
 						if (pc.ref != null) {
-							BodyParameter bp = new BodyParameter();
+							QueryParameter bp = new QueryParameter();
 							bp.setDescription(pc.comment);
-							bp.setIn("query");
 							bp.setName(rpi.name);
 							bp.setRequired(rpi.required);
-							Model schema = null;
-							if (pc.isCollection) {
-								ArrayModel am = new ArrayModel();
-								am.setType("array");
-								AbstractProperty items = new RefProperty();
-								if (pc.isArgumentTypePrimitive) {
-									items = new ArrayProperty();
-									items.setFormat(pc.format);
-								} else {
-									((RefProperty) items).set$ref("#/definitions/" + pc.type);
-									// am.setReference("#/definitions/"+pc.type);
-								}
-								items.setType(pc.type);
-								am.setItems(items);
-								schema = am;
-							} else {
-								schema = new RefModel("#/definitions/" + pc.ref);
-							}
-							bp.setSchema(schema);
+					        bp.set$ref("#/components/schemas/" + pc.ref);
 							parameters.add(bp);
 						} else {
 							QueryParameter param = new QueryParameter();
 							param.setIn("query");
 							param.setName(rpi.name);
 							param.setRequired(rpi.required);
-							param.setType(pc.type);
-							param.setFormat(pc.format);
+							param.setSchema(pc.schema);
+							//param.setType(pc.type);
+							//param.setFormat(pc.format);
 							param.setDescription(pc.comment);
 							parameters.add(param);
 						}
@@ -251,78 +262,70 @@ public class SwaggerDocGenerator {
 						pathParameter.setIn("path");
 						pathParameter.setName(rpi.name);
 						pathParameter.setRequired(rpi.required);
-						pathParameter.setType(pc.type);
-						pathParameter.setFormat(pc.format);
+						pathParameter.setSchema(pc.schema);
+						//pathParameter.setType(pc.type);
+						//pathParameter.setFormat(pc.format);
 						pathParameter.setDescription(pc.comment);
 						parameters.add(pathParameter);
 					}
 				} else {
+					//POST
+					
+					MediaType item=new MediaType();
 					if (rpi.paramType.equals(HttpRequestParamType.REQUEST)) {
 						if (pc.ref != null) {
-							BodyParameter bp = new BodyParameter();
-							bp.setDescription(pc.comment);
-							bp.setIn("body");
-							bp.setName(rpi.name);
-							bp.setRequired(rpi.required);
-							Model schema = null;
-							if (pc.isCollection) {
-								ArrayModel am = new ArrayModel();
-								am.setType("array");
-								AbstractProperty items = new RefProperty();
-								if (pc.isArgumentTypePrimitive) {
-									items = new ArrayProperty();
-									items.setFormat(pc.format);
-								} else {
-									((RefProperty) items).set$ref("#/definitions/" + pc.type);
-									// am.setReference("#/definitions/"+pc.type);
-								}
-								items.setType(pc.type);
-								items.setFormat(pc.format);
-								am.setItems(items);
-								schema = am;
-							} else {
-								schema = new RefModel("#/definitions/" + pc.ref);
-							}
-							bp.setSchema(schema);
-							parameters.add(bp);
+							item.setSchema(pc.schema);
+							pc.schema.$ref("#/components/schemas/" + pc.ref);
 						} else {
-							FormParameter param = new FormParameter();
-							param.setIn("body");
-							param.setName(rpi.name);
-							param.setRequired(rpi.required);
-							param.setType(pc.type);
-							param.setDescription(pc.comment);
-							param.setFormat(pc.format);
-							parameters.add(param);
+							item.setSchema(pc.schema);
 						}
 					} else if (rpi.paramType.equals(HttpRequestParamType.PATH)) {
 						PathParameter pathParameter = new PathParameter();
 						pathParameter.setIn("path");
 						pathParameter.setName(rpi.name);
 						pathParameter.setRequired(rpi.required);
-						pathParameter.setType(pc.type);
+						//pathParameter.setType(pc.type);
 						pathParameter.setDescription(pc.comment);
-						pathParameter.setFormat(pc.format);
+						pathParameter.setSchema(pc.schema);
+						//pathParameter.setFormat(pc.format);
 						parameters.add(pathParameter);
 					}
+					
+					
+					content.addMediaType(rpi.name, item);
 				}
 			}
+			RequestBody requestBody=new RequestBody();
+			requestBody.setContent(content);
+ 
+			op.setRequestBody(requestBody);
 			op.setParameters(parameters);
-			Map<String, Response> responses = new HashMap<String, Response>();
-			Response resp = new Response();
+			ApiResponses responses = new ApiResponses();
+			ApiResponse resp = new ApiResponse();
 			if (methodComment != null) {
 				resp.setDescription(methodComment.retComment);
 			}
-			String firstKey = resolveType(interfaceInfo.retureType, mSwagger);
-			RefProperty schema = new RefProperty();
-			schema.set$ref("#/definitions/" + firstKey);
-			resp.setSchema(schema);
+			String firstKey = resolveType(interfaceInfo.retureType, openAPI);
+		    Schema schema=new ObjectSchema();
+			schema.set$ref("#/components/schemas/" + firstKey);
+			//resp.set$ref("#/components/schemas/" + firstKey);
+			Content respContent=new Content();
+			MediaType mt=new MediaType();
+			mt.setSchema(schema);
+			
+			respContent.put("text/plain", mt);
+			resp.setContent(respContent);
+			 
 			resp.setDescription("test");
+			
 			responses.put("200", resp);
 			op.setResponses(responses);
-			path.set(interfaceInfo.requestType.toLowerCase(), op);
+			if(interfaceInfo.requestType.equals(RequestMethod.GET.name())) {
+				path.setGet(op);
+			}else {
+				path.setPost(op);
+			}
 			paths.put(pathStr, path);
-		
 	    }
 	}
 
@@ -459,8 +462,9 @@ public class SwaggerDocGenerator {
 		return info;
 	}
 
-	public static String resolveType(Type type, Swagger swagger) {
-		Map<String, Model> models = ModelConverters.getInstance().read(type);
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static String resolveType(Type type, OpenAPI swagger) {
+		Map<String, Schema> models = ModelConverters.getInstance().read(type);
 		if (type instanceof ParameterizedType) {
 			ParameterizedType pt = (ParameterizedType) type;
 			Type[] subTypes = pt.getActualTypeArguments();
@@ -471,38 +475,55 @@ public class SwaggerDocGenerator {
 		String firstKey = null;
 		for (String key : models.keySet()) {
 			firstKey = key;
-			Model model = models.get(key);
-			Map<String, Property> properties = new HashMap<String, Property>();
-			Map<String, Property> cps = model.getProperties();
-			if (cps != null) {
-				model.getProperties().values().forEach(property -> {
-					String name = property.getName();
-					if (name.startsWith("get")) {
-						name = name.replace("get", "");
-					}
-					String fcKey = null;
-					if (type instanceof Class<?>) {
-						String typeName = ((Class<?>) type).getSimpleName();
-						fcKey = typeName + "#" + name;
-					} else if (type instanceof ParameterizedType) {
-						ParameterizedType pt = (ParameterizedType) type;
-						// fcKey=name;
-						String typeName = ((Class<?>) pt.getRawType()).getSimpleName();
-						fcKey = typeName + "#" + name;
-					}
-					FieldInfo fi = EntityClassCommentParser.fieldComments.get(fcKey);
-					if (fi != null) {
-						property.setDescription(fi.comment);
-					}
-					property.setName(name);
-					properties.put(name, property);
-				});
-				model.getProperties().clear();
-				model.setProperties(properties);
-				swagger.addDefinition(key, model);
+			Schema model = models.get(key);
+			Map<String, Schema> properties = new HashMap<>();
+			@SuppressWarnings("unchecked")
+			Map<String, Schema> cps = model.getProperties();
+			if (cps == null) {
+				continue;
 			}
+
+			model.getProperties().values().forEach(property -> {
+
+				Schema ss = (Schema) property;
+
+				String name = ss.getName();
+				if (name.startsWith("get")) {
+					name = name.replace("get", "");
+				}
+                String propertyComment=getPropertyComment(type,name);
+				if (propertyComment != null) {
+					ss.setDescription(propertyComment);
+				}
+				ss.setName(name);
+				properties.put(name, ss);
+			});
+			model.getProperties().clear();
+			model.setProperties(properties);
+			swagger.schema(key, model);
 		}
+
 		return firstKey;
+	}
+	
+	private static String getPropertyComment(Type type,String propertyName) {
+		
+		String fcKey = null;
+		if (type instanceof Class<?>) {
+			String typeName = ((Class<?>) type).getSimpleName();
+			fcKey = typeName + "#" + propertyName;
+		} else if (type instanceof ParameterizedType) {
+			ParameterizedType pt = (ParameterizedType) type;
+			// fcKey=name;
+			String typeName = ((Class<?>) pt.getRawType()).getSimpleName();
+			fcKey = typeName + "#" + propertyName;
+		}
+		FieldInfo fi = EntityClassCommentParser.fieldComments.get(fcKey);
+		if(fi!=null) {
+			return fi.comment;
+		}else {
+			return null;
+		}
 	}
 
 

@@ -3,6 +3,8 @@ package com.hngd.doc.core;
 import java.util.Date;
 import java.util.List;
 
+import io.swagger.v3.oas.models.media.Schema;
+
 public class MethodInfo {
 
 	public String methodName;
@@ -20,6 +22,7 @@ public class MethodInfo {
 		public String type;
 		public String format;
 		public boolean isArgumentTypePrimitive;
+		public Schema schema;
 		
 	}
 }

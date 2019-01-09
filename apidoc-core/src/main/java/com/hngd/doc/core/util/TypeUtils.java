@@ -14,7 +14,6 @@ package com.hngd.doc.core.util;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import javax.mail.Multipart;
 
 import org.springframework.web.multipart.MultipartFile;
 
