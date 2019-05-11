@@ -102,5 +102,11 @@
 			<version>1.7.25</version>
 			<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
+		
+		<dependency>
+		<groupId>com.hngd.vmns</groupId>
+	<artifactId>inspection-system</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

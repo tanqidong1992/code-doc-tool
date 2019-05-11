@@ -16,7 +16,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<swagger.version>2.0.6</swagger.version>
+		<swagger.version>2.0.8</swagger.version>
 		<javaparser.version>3.9.1</javaparser.version>
 		<jackson.version>2.9.5</jackson.version>
 	</properties>

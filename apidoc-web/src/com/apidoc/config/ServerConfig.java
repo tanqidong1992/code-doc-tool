@@ -18,9 +18,9 @@ import java.nio.file.Path;
 
 import com.google.gson.Gson;
 
-import io.swagger.models.Contact;
-import io.swagger.models.Info;
-import io.swagger.models.License;
+import io.swagger.v3.oas.models.info.Info;
+ 
+ 
 
 /**
  * @author

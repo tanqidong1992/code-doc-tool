@@ -27,7 +27,7 @@ function ${module.moduleName}(){
                 url: url,
                 changeOrigin: true, //是否跨域
                 withCredentials: true,
-                data:parameters
+                data:Qs.stringify(parameters)
             })
                 .then(onSuccess)
                 .catch(common.hngdApiRespError);
