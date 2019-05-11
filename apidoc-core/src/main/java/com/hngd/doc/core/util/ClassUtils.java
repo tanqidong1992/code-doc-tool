@@ -10,7 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hngd.doc.core.gen.SwaggerDocGenerator;
+import com.hngd.doc.core.gen.OpenAPITool;
 
 public class ClassUtils {
 
@@ -19,7 +19,7 @@ public class ClassUtils {
 		String packagePath = packageName.replaceAll("\\.", "/");
 		Enumeration<URL> dirs = null;
 		try {
-			dirs = SwaggerDocGenerator.class.getClassLoader().getResources(packagePath);
+			dirs = OpenAPITool.class.getClassLoader().getResources(packagePath);
 		} catch (IOException e) {
 			logger.error("", e);
 		}

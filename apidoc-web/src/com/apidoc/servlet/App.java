@@ -1,19 +1,12 @@
 
 package com.apidoc.servlet;
-
-import io.swagger.core.filter.SpecFilter;
-import io.swagger.core.filter.SwaggerSpecFilter;
-import io.swagger.model.ApiDescription;
-import io.swagger.models.Contact;
-import io.swagger.models.Info;
-import io.swagger.models.License;
-import io.swagger.models.Model;
-
-import io.swagger.models.Operation;
-import io.swagger.models.Swagger;
-import io.swagger.models.Tag;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.properties.Property;
+ 
+import io.swagger.models.apideclaration.Model;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.servers.Server;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.hngd.doc.core.gen.SwaggerDocGenerator;
+import com.hngd.doc.core.gen.OpenAPITool;
 import com.hngd.doc.core.parse.ControllerClassCommentParser;
 import com.hngd.doc.core.parse.EntityClassCommentParser;
 
@@ -55,7 +48,7 @@ public class App
     static List<String>         application_json       = Arrays.asList("application/json", "*");
     static List<String>         application_url_encode = Arrays.asList("application/x-www-form-urlencoded");
 
-    public static void resolvePacakge(String packageName, Swagger swagger)
+    public static void resolvePacakge(String packageName, OpenAPI swagger)
     {
         String packagePath = packageName.replaceAll("\\.", "/");
         Enumeration<URL> dirs = null;
@@ -92,7 +85,7 @@ public class App
                 {
                     e.printStackTrace();
                 }
-                SwaggerDocGenerator.resolveType(cls, swagger);
+                OpenAPITool.resolveType(cls, swagger);
             }
         }
     }
@@ -123,7 +116,7 @@ public class App
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         return sdf.format(date);
     }
-    public static Swagger        mSwagger;
+    public static OpenAPI        mSwagger;
     /**
      * entity类源代码所在位置
      */
@@ -164,19 +157,22 @@ public class App
         }
         
     	Info info =createInfo();
-        Swagger swagger = new Swagger();
-        swagger.setInfo(info);
-        swagger.setBasePath("/web/api");
-        swagger.setHost("192.168.0.156:8080");
+    	OpenAPI openApi = new OpenAPI();
+        openApi.setInfo(info);
+ 
+        Server serversItem=new Server();
+        serversItem.setUrl("http://192.168.0.156:8080/web/api");
+		openApi.addServersItem(serversItem);
+		
         Map<String, Model> definitions = new HashMap<String, Model>();
-        swagger.setDefinitions(definitions);
-        resolvePacakge("com.hngd.model", swagger);
+        openApi.
+        resolvePacakge("com.hngd.model", openApi);
         // resolvePacakge("com.hngd.entity", swagger);
        // SwaggerDocGenerator.resolveType(PageEntity.class, swagger);
-        SwaggerDocGenerator sdg = new SwaggerDocGenerator(swagger);
+        OpenAPITool sdg = new OpenAPITool(openApi);
         //sdg.parse(Arrays.asList(UserController.class));
         sdg.parse("com.hngd.web.controller");
-        mSwagger=swagger;
+        mSwagger=openApi;
         String s=toJson("");
         
         System.out.println(s);
@@ -217,7 +213,7 @@ public class App
         resolvePacakge("com.hngd.model", swagger);
         // resolvePacakge("com.hngd.entity", swagger);
        // SwaggerDocGenerator.resolveType(PageEntity.class, swagger);
-        SwaggerDocGenerator sdg = new SwaggerDocGenerator(swagger);
+        OpenAPITool sdg = new OpenAPITool(swagger);
         sdg.parse("com.hngd.web.controller");
         
 /*        for (String dir : CONTROLLER_CLASS_SRC_DIC)

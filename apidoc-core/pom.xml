@@ -36,11 +36,8 @@
 			<version>${swagger.version}</version>
 		</dependency>
 
-<!-- 		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-annotations</artifactId>
-			<version>${swagger.version}</version>
-		</dependency> -->
+		<!-- <dependency> <groupId>io.swagger.core.v3</groupId> <artifactId>swagger-annotations</artifactId> 
+			<version>${swagger.version}</version> </dependency> -->
 
 
 		<dependency>
@@ -111,9 +108,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.hngd</groupId>
-			<artifactId>web</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<groupId>com.hngd.common</groupId>
+			<version>0.0.2-SNAPSHOT</version>
+			<artifactId>common-web</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

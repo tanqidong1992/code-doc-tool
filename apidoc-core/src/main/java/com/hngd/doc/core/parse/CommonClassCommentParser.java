@@ -36,7 +36,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.hngd.doc.core.MethodInfo;
-import com.hngd.doc.core.MethodInfo.ParameterInfo;
+import com.hngd.doc.core.ParameterInfo;
 import com.hngd.doc.core.parse.CommentElement.DescElement;
 import com.hngd.doc.core.parse.CommentElement.ParamElement;
 import com.hngd.doc.core.parse.CommentElement.ReturnElement;

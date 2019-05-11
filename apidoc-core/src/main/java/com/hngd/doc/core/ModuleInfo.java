@@ -3,6 +3,8 @@ package com.hngd.doc.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hngd.api.http.HttpInterfaceInfo;
+
 /**
  * @author hnoe-dev-tqd
  *
@@ -10,12 +12,12 @@ import java.util.List;
 public class ModuleInfo {
 
 	public ModuleInfo() {
-		interfaceInfos = new ArrayList<InterfaceInfo>();
+		interfaceInfos = new ArrayList<HttpInterfaceInfo>();
 	}
 
 	public String moduleName;
 	public String moduleUrl;
-	public List<InterfaceInfo> interfaceInfos;
+	public List<HttpInterfaceInfo> interfaceInfos;
 	public String simpleClassName;
 	public String canonicalClassName;
 	/**
@@ -45,13 +47,13 @@ public class ModuleInfo {
 	/**
 	 * @return the interfaceInfos
 	 */
-	public final List<InterfaceInfo> getInterfaceInfos() {
+	public final List<HttpInterfaceInfo> getInterfaceInfos() {
 		return interfaceInfos;
 	}
 	/**
 	 * @param interfaceInfos the interfaceInfos to set
 	 */
-	public final void setInterfaceInfos(List<InterfaceInfo> interfaceInfos) {
+	public final void setInterfaceInfos(List<HttpInterfaceInfo> interfaceInfos) {
 		this.interfaceInfos = interfaceInfos;
 	}
 	public String getSimpleClassName() {

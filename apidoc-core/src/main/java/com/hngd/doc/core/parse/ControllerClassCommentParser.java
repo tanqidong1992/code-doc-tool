@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hngd.doc.core.MethodInfo;
-import com.hngd.doc.core.MethodInfo.ParameterInfo;
+import com.hngd.doc.core.ParameterInfo;
 import com.hngd.doc.core.parse.CommentElement.ParamElement;
 import com.hngd.doc.core.parse.extension.AuthorElement;
 import com.hngd.doc.core.parse.extension.ExtensionManager;

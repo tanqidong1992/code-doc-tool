@@ -12,7 +12,7 @@ public class JSCodeGeneratorTest {
 	        //filePath="E:\\Code\\STSCode\\hnvmns-base-data\\src\\main\\java\\com\\hngd\\web\\controller\\PersonnelController.java";
 	    	filePath="E:\\Code\\spring-code\\hnvmns-event-processor\\src\\main\\java\\com\\hngd\\web\\controller\\LinkageController.java";
 			//useBeetl();
-	    	String str=JSCodeGenerator.generate(filePath,serviceUrl);
+	    	String str=JSCodeGenerator.generate(filePath,serviceUrl,"ajax");
 	    	System.out.println(str);
 	    }
 }

@@ -16,8 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
-import com.hngd.doc.core.InterfaceInfo;
-import com.hngd.doc.core.InterfaceInfo.RequestParameterInfo;
+import com.hngd.api.http.HttpInterfaceInfo;
+import com.hngd.api.http.HttpParameterInfo;
 import com.hngd.doc.core.ModuleInfo;
 
 import com.github.javaparser.JavaParser;
@@ -101,17 +101,16 @@ public class ModuleParser {
     	    .map(requestMappingAnnotationName->getAnnotationByName(annotationExprs,requestMappingAnnotationName))
     	    .filter(Optional::isPresent)
     		.findAny()
-    		.isPresent();
-    			
+    		.isPresent();	
     }
-    private static InterfaceInfo parseInterface(MethodDeclaration method){
+    private static HttpInterfaceInfo parseInterface(MethodDeclaration method){
     	logger.info("start to parse interface: {}",method.getName());
-    	InterfaceInfo info=new InterfaceInfo();
+    	HttpInterfaceInfo info=new HttpInterfaceInfo();
     	info.methodName=method.getName().asString();
     	Optional<HttpRequestInfo> requestInfo=parseHttpRequestInfo(method);
     	if(requestInfo.isPresent()){
     		info.methodUrl=requestInfo.get().path;
-    		info.requestType=requestInfo.get().method;
+    		info.httpMethod=requestInfo.get().method;
     	}
     	info.retureTypeName=method.getType().toString();
     	List<Parameter> parameters=method.getParameters();
@@ -130,15 +129,10 @@ public class ModuleParser {
             	    .map(ModuleParser::parseHttpParameterInfo)
             	    .collect(Collectors.toList());
     	}
-    	
-    	
     	resolvePathVariable(info);
-    	
-
     	return info;
-    	
     }
-    private static void resolvePathVariable(InterfaceInfo info) {
+    private static void resolvePathVariable(HttpInterfaceInfo info) {
     	System.out.println(info.getMethodName());
     	Map<String,Boolean> parameters=info.parameterInfos.stream()
     	.collect(Collectors.toMap(p->p.getName(), p->p.isPrimitive));
@@ -166,8 +160,8 @@ public class ModuleParser {
 		}
 		return newUrl;
 	}
-	private static RequestParameterInfo parseHttpParameterInfo(Parameter parameter){
-    	RequestParameterInfo parameterInfo=new RequestParameterInfo();
+	private static HttpParameterInfo parseHttpParameterInfo(Parameter parameter){
+    	HttpParameterInfo parameterInfo=new HttpParameterInfo();
     	parameterInfo.typeName=parameter.getType().getParentNode().toString();//.toString();
     	Optional<AnnotationExpr> pathVariableAnnotation=getAnnotationByName(parameter.getAnnotations(),"PathVariable");
     	parameterInfo.isPathVariable=pathVariableAnnotation.isPresent();

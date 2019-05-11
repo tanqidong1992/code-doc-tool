@@ -1,5 +1,5 @@
 
-package com.hngd.doc.core;
+package com.hngd.api.http;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -7,27 +7,28 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestParam;
 
-public class InterfaceInfo
-{
-    public InterfaceInfo()
-    {
-        parameterInfos = new ArrayList<>();
-        parameterTypes = new ArrayList<>();
-    }
-    public String                     methodName;
-    public String                     methodUrl;
-    public String                     requestType;
-    public String                     retureTypeName;
-    public Type                       retureType;
-    public List<RequestParameterInfo> parameterInfos;
-    public boolean                    isMultipart;
-    public List<Type>                 parameterTypes;
-    public List<String>               consumes;
-    public List<String>               produces;
-    
-    public String comment;
+import io.swagger.v3.oas.models.media.Schema;
 
-    public String getComment() {
+public class HttpInterfaceInfo{
+	public HttpInterfaceInfo() {
+		parameterInfos = new ArrayList<>();
+		parameterTypes = new ArrayList<>();
+	}
+
+	public String methodName;
+	public String methodUrl;
+	public String httpMethod;
+	public String retureTypeName;
+	public Type retureType;
+	public List<HttpParameterInfo> parameterInfos;
+	public boolean isMultipart;
+	public List<Type> parameterTypes;
+	public List<String> consumes;
+	public List<String> produces;
+
+	public String comment;
+
+	public String getComment() {
 		return comment;
 	}
 
@@ -35,78 +36,15 @@ public class InterfaceInfo
 		this.comment = comment;
 	}
 
-	public static class RequestParameterInfo
-    {
-		public String typeName;
-        public String    name;
-        public boolean   required;
-        public HttpRequestParamType paramType;
-		public boolean isPathVariable;
-		public boolean isPrimitive;
-		public String comment;
-
-	    public String getTypeName() {
-			return typeName;
-		}
-
-		public void setTypeName(String typeName) {
-			this.typeName = typeName;
-		}
-
-		public String getComment() {
-			return comment;
-		}
-
-		public void setComment(String comment) {
-			this.comment = comment;
-		}
-		public String getName() {
-			return name;
-		}
-		public void setName(String name) {
-			this.name = name;
-		}
-		public boolean isRequired() {
-			return required;
-		}
-		public void setRequired(boolean required) {
-			this.required = required;
-		}
-		public HttpRequestParamType getParamType() {
-			return paramType;
-		}
-		public void setParamType(HttpRequestParamType paramType) {
-			this.paramType = paramType;
-		}
-		public boolean isPathVariable() {
-			return isPathVariable;
-		}
-		public void setPathVariable(boolean isPathVariable) {
-			this.isPathVariable = isPathVariable;
-		}
-		public boolean isPrimitive() {
-			return isPrimitive;
-		}
-		public void setPrimitive(boolean isPrimitive) {
-			this.isPrimitive = isPrimitive;
-		}
- 
-		
-		
-    }
-
-    public List<RequestParameterInfo> getParameterInfos() {
+	public List<HttpParameterInfo> getParameterInfos() {
 		return parameterInfos;
 	}
 
-	public void setParameterInfos(List<RequestParameterInfo> parameterInfos) {
+	public void setParameterInfos(List<HttpParameterInfo> parameterInfos) {
 		this.parameterInfos = parameterInfos;
 	}
 
-	public enum HttpRequestParamType
-    {
-        REQUEST, PATH,
-    }
+
 
 	/**
 	 * @return the methodName
@@ -140,14 +78,14 @@ public class InterfaceInfo
 	 * @return the requestType
 	 */
 	public final String getRequestType() {
-		return requestType;
+		return httpMethod;
 	}
 
 	/**
 	 * @param requestType the requestType to set
 	 */
 	public final void setRequestType(String requestType) {
-		this.requestType = requestType;
+		this.httpMethod = requestType;
 	}
 
 	/**
@@ -181,14 +119,14 @@ public class InterfaceInfo
 	/**
 	 * @return the parameterNames
 	 */
-	public final List<RequestParameterInfo> getParameterNames() {
+	public final List<HttpParameterInfo> getParameterNames() {
 		return parameterInfos;
 	}
 
 	/**
 	 * @param parameterNames the parameterNames to set
 	 */
-	public final void setParameterNames(List<RequestParameterInfo> parameterNames) {
+	public final void setParameterNames(List<HttpParameterInfo> parameterNames) {
 		this.parameterInfos = parameterNames;
 	}
 
@@ -247,6 +185,5 @@ public class InterfaceInfo
 	public final void setProduces(List<String> produces) {
 		this.produces = produces;
 	}
-    
-    
+
 }

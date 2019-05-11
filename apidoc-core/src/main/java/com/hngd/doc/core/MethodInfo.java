@@ -13,18 +13,7 @@ public class MethodInfo {
 	public List<ParameterInfo> parameters;
 	public String createTimeStr;
 	public Date createTime;
-	public static class ParameterInfo{
-		
-		public String parameterName;
-		public String comment;
-		public String ref;
-		public boolean isCollection;
-		public String type;
-		public String format;
-		public boolean isArgumentTypePrimitive;
-		public Schema schema;
-		
-	}
+ 
 }
 
 

@@ -49,7 +49,12 @@ public class JSCodeGenerator
     
  
     
-    public static String generate(String javaFilePath,String serviceUrl) throws IOException{
+    public static String generate(String javaFilePath,String serviceUrl,String type) throws IOException{
+    	
+    	if(!"ajax".equals(type) && !"axios".equals(type)) {
+    		
+    		return null;
+    	}
     	
     	File f=new File(javaFilePath);
     	
@@ -64,7 +69,7 @@ public class JSCodeGenerator
     	ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader("/beetl", "utf-8");
 		Configuration cfg = Configuration.defaultConfiguration();
 		GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
-		Template t = gt.getTemplate("jscode.txt");
+		Template t = gt.getTemplate("js-api-"+type+".txt");
 		t.binding(map);
 		String str = t.render();
 		return str;
