@@ -1,10 +1,7 @@
 
 package com.apidoc.servlet;
 
-import io.swagger.models.Swagger;
 import io.swagger.models.apideclaration.Model;
-import io.swagger.v3.core.filter.OpenAPISpecFilter;
-import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -20,17 +17,14 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,10 +146,10 @@ public class App {
 		openApi.setInfo(info);
 
 		Server serversItem = new Server();
-		serversItem.setUrl("http://192.168.0.144:8080/enspection/api");
+		serversItem.setUrl("http://192.168.0.144:8080/ispection/api");
 		openApi.addServersItem(serversItem);
 
-		Map<String, Model> definitions = new HashMap<String, Model>();
+		//Map<String, Model> definitions = new HashMap<String, Model>();
 
 		resolvePacakge("com.hngd.model", openApi);
 		OpenAPITool openAPITool = new OpenAPITool(openApi);

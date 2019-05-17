@@ -27,7 +27,11 @@ function ${module.moduleName}(){
                 url: url,
                 changeOrigin: true, //是否跨域
                 withCredentials: true,
+                <%if(interf.requestType=="Post"){%>
                 data:Qs.stringify(parameters)
+                <%}else{%>
+                params:parameters
+                <%}%>
             })
                 .then(onSuccess)
                 .catch(common.hngdApiRespError);

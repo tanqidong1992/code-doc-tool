@@ -41,14 +41,14 @@ import rx.Observable;
 /**
  * Hello world!
  */
-public class HttpTestCodeGenerator {
+public class JavaAPICodeGenerator {
 	
-	private static final Logger logger=LoggerFactory.getLogger(HttpTestCodeGenerator.class);
+	private static final Logger logger=LoggerFactory.getLogger(JavaAPICodeGenerator.class);
 	public static void main(String[] args) throws URISyntaxException, ClassNotFoundException {
 		File out = new File("..\\webapi-test\\src\\main\\java");
 		String outPackageName = "com.hngd.web.api";
 		String packageName = "com.hngd.web.controller";
-		URL url = HttpTestCodeGenerator.class.getResource("/com/hngd/web/controller");
+		URL url = JavaAPICodeGenerator.class.getResource("/com/hngd/web/controller");
 		Path path = Paths.get(url.toURI());
 		File[] files = path.toFile().listFiles();
 		Arrays.asList(files).stream().map(file -> file.getName()).filter(name -> name.endsWith(".class"))
@@ -76,7 +76,7 @@ public class HttpTestCodeGenerator {
     	 
     	File out = new File(outputDir);
     	String packagePath="/"+packageName.replaceAll("\\.", "/");
-    	URL url = HttpTestCodeGenerator.class.getResource("/com/hngd/web/controller");
+    	URL url = JavaAPICodeGenerator.class.getResource("/com/hngd/web/controller");
  		Path path=null;
 		try {
 			path = Paths.get(url.toURI());
@@ -116,20 +116,25 @@ public class HttpTestCodeGenerator {
 	 * @time 2017年3月16日 上午9:41:12
 	 */
 	private static TypeSpec toJavaFile(ModuleInfo moduleInfo) {
-		String name = moduleInfo.simpleClassName;
+		String name=null;
+		if(moduleInfo.simpleClassName.endsWith("Controller")) {
+			name = moduleInfo.simpleClassName.replace("Controller", "Client");
+		}else {
+			name = moduleInfo.simpleClassName+"Client";
+		}
 		TypeSpec.Builder builder = TypeSpec.interfaceBuilder(name).addModifiers(Modifier.PUBLIC);
 		for (InterfaceInfo ii : moduleInfo.interfaceInfos) {
 			MethodSpec.Builder mb = MethodSpec.methodBuilder(ii.methodName).addModifiers(Modifier.PUBLIC,
 					Modifier.ABSTRACT);
 			Class<?> aclazz = null;
-			if (ii.requestType.equals("POST")) {
+			if (ii.requestType.equalsIgnoreCase("POST")) {
 				aclazz = POST.class;
 				if (ii.isMultipart) {
 					mb.addAnnotation(Multipart.class);
 				} else {
 					mb.addAnnotation(FormUrlEncoded.class);
 				}
-			} else if (ii.requestType.equals("GET")) {
+			} else if (ii.requestType.equalsIgnoreCase("GET")) {
 				aclazz = GET.class;
 			}
 			AnnotationSpec annotationSpec = AnnotationSpec.builder(aclazz)
@@ -145,7 +150,7 @@ public class HttpTestCodeGenerator {
 							.addMember("value", "\"" + rpi.name + "\"").build();
 					pb.addAnnotation(mbA);
 				} else {
-					if (ii.requestType.equals("POST")) {
+					if (ii.requestType.equalsIgnoreCase("POST")) {
 						if (MultipartFile.class == type) {
 							AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Part.class)
 									.addMember("value", "\"" + rpi.name + "\"").build();
@@ -159,7 +164,7 @@ public class HttpTestCodeGenerator {
 									.addMember("value", "\"" + rpi.name + "\"").build();
 							pb.addAnnotation(mbA);
 						}
-					} else if (ii.requestType.equals("GET")) {
+					} else if (ii.requestType.equalsIgnoreCase("GET")) {
 						AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Query.class)
 								.addMember("value", "\"" + rpi.name + "\"").build();
 						pb.addAnnotation(mbA);
@@ -201,4 +206,19 @@ public class HttpTestCodeGenerator {
 		}
 		return builder.build();
 	}
+	
+	 public static void generateJavaAPIFile(Class<?> cls,String outPackageName,String outputDir) {
+         File out = new File(outputDir);
+    	 ModuleInfo moduleInfo = SwaggerDocGenerator.processClass(cls);
+    	 if(moduleInfo==null) {
+    		 return;
+    	 }
+		 TypeSpec typeSpec = toJavaFile(moduleInfo);
+		 JavaFile javaFile = JavaFile.builder(outPackageName, typeSpec).build();
+		 try {
+			 javaFile.writeTo(out);
+		 }catch (Exception e) {
+		     logger.error("",e);
+		 }
+     }
 }
