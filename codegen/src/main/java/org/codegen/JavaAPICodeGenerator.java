@@ -140,39 +140,58 @@ public class JavaAPICodeGenerator {
 			AnnotationSpec annotationSpec = AnnotationSpec.builder(aclazz)
 					.addMember("value", "\"" + moduleInfo.moduleUrl.substring(1) + ii.methodUrl + "\"").build();
 			mb.addAnnotation(annotationSpec);
-			for (int i = 0; i < ii.parameterInfos.size(); i++) {
-				RequestParameterInfo rpi = ii.parameterInfos.get(i);
-				Type type = ii.parameterTypes.get(i);
-				ParameterSpec.Builder pb = ParameterSpec
-						.builder(type != MultipartFile.class ? String.class : MultipartBody.Part.class, rpi.name);
-				if (rpi.paramType.equals(HttpRequestParamType.PATH)) {
-					AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Path.class)
-							.addMember("value", "\"" + rpi.name + "\"").build();
-					pb.addAnnotation(mbA);
-				} else {
-					if (ii.requestType.equalsIgnoreCase("POST")) {
+			
+			
+			if(ii.requestType.equalsIgnoreCase("POST")) {
+				
+				if(ii.isMultipart()) {
+					for (int i = 0; i < ii.parameterInfos.size(); i++) {
+						RequestParameterInfo rpi = ii.parameterInfos.get(i);
+						Type type = ii.parameterTypes.get(i);
+						ParameterSpec.Builder pb = ParameterSpec
+								.builder(type != MultipartFile.class ? RequestBody.class : MultipartBody.Part.class, rpi.name);
 						if (MultipartFile.class == type) {
+							AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Part.class)
+									//.addMember("value", "\"" + rpi.name + "\"")
+									.build();
+							pb.addAnnotation(mbA);
+						} else {
 							AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Part.class)
 									.addMember("value", "\"" + rpi.name + "\"").build();
 							pb.addAnnotation(mbA);
-						} else if (ii.isMultipart) {
-							AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Query.class)
-									.addMember("value", "\"" + rpi.name + "\"").build();
-							pb.addAnnotation(mbA);
-						} else {
-							AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Field.class)
-									.addMember("value", "\"" + rpi.name + "\"").build();
-							pb.addAnnotation(mbA);
-						}
-					} else if (ii.requestType.equalsIgnoreCase("GET")) {
-						AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Query.class)
+						}  
+						mb.addParameter(pb.build());
+					}
+				}else {
+					for (int i = 0; i < ii.parameterInfos.size(); i++) {
+						RequestParameterInfo rpi = ii.parameterInfos.get(i);
+						Type type = ii.parameterTypes.get(i);
+						ParameterSpec.Builder pb = ParameterSpec
+								.builder(type != MultipartFile.class ? String.class : MultipartBody.Part.class, rpi.name);
+						AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Field.class)
 								.addMember("value", "\"" + rpi.name + "\"").build();
 						pb.addAnnotation(mbA);
+						mb.addParameter(pb.build());
 					}
+					
 				}
-				ParameterSpec parameterSpec = pb.build();
-				mb.addParameter(parameterSpec);
+				
+			}else if(ii.requestType.equalsIgnoreCase("GET")) {
+				
+				for (int i = 0; i < ii.parameterInfos.size(); i++) {
+					RequestParameterInfo rpi = ii.parameterInfos.get(i);
+					Type type = ii.parameterTypes.get(i);
+					ParameterSpec.Builder pb = ParameterSpec
+							.builder(type != MultipartFile.class ? String.class : MultipartBody.Part.class, rpi.name);
+					
+					AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Query.class)
+							.addMember("value", "\"" + rpi.name + "\"").build();
+					pb.addAnnotation(mbA);
+					mb.addParameter(pb.build());
+				}
+
 			}
+ 
 			if (ii.requestType.equals("POST") && ii.parameterInfos.size() == 0) {
 				ParameterSpec.Builder pb = ParameterSpec.builder(String.class, "emptyStr");
 				AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Field.class)
