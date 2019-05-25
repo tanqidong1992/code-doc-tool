@@ -85,16 +85,16 @@ public class App {
 		Contact contact = new Contact();
 		contact.setEmail("903843602@qq.com");
 		contact.setName("谭奇栋");
-		contact.setUrl("http://192.168.0.156/web");
+		contact.setUrl("http://192.168.0.239/web");
 		License license = new License();
 		license.setName("参考资料");
-		license.setUrl("http://192.168.0.156/hndoc/");
+		license.setUrl("http://192.168.0.239/hndoc/");
 		Info info = new Info();
 		String timeStr = dateFormat(new Date());
 		info.setDescription("更新时间:" + timeStr + "");
 		info.setContact(contact);
 		info.setTermsOfService("api");
-		info.setTitle("HNVMNS6000-web接口文档");
+		info.setTitle("巡检子系统接口文档");
 		info.setVersion("V1.0.1");
 		info.setLicense(license);
 		return info;
@@ -112,7 +112,8 @@ public class App {
 	 */
 	public static final String[] ENTITY_CLASS_SRC_DIC = {
 			"E:\\workspaces\\hnvmns-code-modules\\inspection-system\\src\\main\\java\\com\\hngd\\model",
-			"E:\\workspaces\\hnvmns-code-modules\\inspection-system\\src\\main\\java\\com\\hngd\\web\\dto" };
+			"E:\\workspaces\\hnvmns-code-modules\\inspection-system\\src\\main\\java\\com\\hngd\\web\\dto",
+			"E:\\workspaces\\hnvmns-code-modules\\inspection-system\\src\\main\\java\\com\\hngd\\dto" };
 	/**
 	 * controller类源代码所在位置
 	 */
@@ -146,7 +147,7 @@ public class App {
 		openApi.setInfo(info);
 
 		Server serversItem = new Server();
-		serversItem.setUrl("http://192.168.0.144:8080/ispection/api");
+		serversItem.setUrl("https://192.168.0.144:8080/inspection");
 		openApi.addServersItem(serversItem);
 
 		//Map<String, Model> definitions = new HashMap<String, Model>();

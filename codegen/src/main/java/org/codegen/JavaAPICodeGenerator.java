@@ -12,13 +12,13 @@ import java.util.Arrays;
 
 import javax.lang.model.element.Modifier;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hngd.doc.core.InterfaceInfo;
-import com.hngd.doc.core.InterfaceInfo.HttpRequestParamType;
 import com.hngd.doc.core.InterfaceInfo.RequestParameterInfo;
 import com.hngd.doc.core.ModuleInfo;
 import com.hngd.doc.core.gen.SwaggerDocGenerator;
@@ -26,7 +26,6 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import okhttp3.MultipartBody;
@@ -63,7 +62,7 @@ public class JavaAPICodeGenerator {
 				}).filter(clazz -> clazz != null).filter(clazz -> clazz.getAnnotation(RequestMapping.class) != null)
 				.forEach(cls -> {
 					ModuleInfo moduleInfo = SwaggerDocGenerator.processClass(cls);
-					TypeSpec typeSpec = toJavaFile(moduleInfo);
+					TypeSpec typeSpec = toJavaFile(null,moduleInfo);
 					JavaFile javaFile = JavaFile.builder(outPackageName, typeSpec).build();
 					try {
 						javaFile.writeTo(out);
@@ -72,7 +71,7 @@ public class JavaAPICodeGenerator {
 					}
 				});
 	}
-     public static boolean generateJavaCode(String packageName,String outPackageName,String outputDir) {
+     public static boolean generateJavaCode(String invokeType,String packageName,String outPackageName,String outputDir) {
     	 
     	File out = new File(outputDir);
     	String packagePath="/"+packageName.replaceAll("\\.", "/");
@@ -98,7 +97,7 @@ public class JavaAPICodeGenerator {
  				.filter(clazz -> clazz.getAnnotation(RequestMapping.class) != null)
  				.forEach(cls -> {
  					ModuleInfo moduleInfo = SwaggerDocGenerator.processClass(cls);
- 					TypeSpec typeSpec = toJavaFile(moduleInfo);
+ 					TypeSpec typeSpec = toJavaFile(invokeType,moduleInfo);
  					JavaFile javaFile = JavaFile.builder(outPackageName, typeSpec).build();
  					try {
  						javaFile.writeTo(out);
@@ -115,7 +114,7 @@ public class JavaAPICodeGenerator {
 	 * @since 1.0.0
 	 * @time 2017年3月16日 上午9:41:12
 	 */
-	private static TypeSpec toJavaFile(ModuleInfo moduleInfo) {
+	private static TypeSpec toJavaFile(String invokeType,ModuleInfo moduleInfo) {
 		String name=null;
 		if(moduleInfo.simpleClassName.endsWith("Controller")) {
 			name = moduleInfo.simpleClassName.replace("Controller", "Client");
@@ -167,7 +166,7 @@ public class JavaAPICodeGenerator {
 						RequestParameterInfo rpi = ii.parameterInfos.get(i);
 						Type type = ii.parameterTypes.get(i);
 						ParameterSpec.Builder pb = ParameterSpec
-								.builder(type != MultipartFile.class ? String.class : MultipartBody.Part.class, rpi.name);
+								.builder(String.class, rpi.name);
 						AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Field.class)
 								.addMember("value", "\"" + rpi.name + "\"").build();
 						pb.addAnnotation(mbA);
@@ -182,11 +181,20 @@ public class JavaAPICodeGenerator {
 					RequestParameterInfo rpi = ii.parameterInfos.get(i);
 					Type type = ii.parameterTypes.get(i);
 					ParameterSpec.Builder pb = ParameterSpec
-							.builder(type != MultipartFile.class ? String.class : MultipartBody.Part.class, rpi.name);
+							.builder( String.class , rpi.name);
 					
-					AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Query.class)
-							.addMember("value", "\"" + rpi.name + "\"").build();
-					pb.addAnnotation(mbA);
+					if(rpi.isPathVariable) {
+						AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Path.class)
+								.addMember("value", "\"" + rpi.name + "\"").build();
+						pb.addAnnotation(mbA);
+					}else {
+						AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Query.class)
+								.addMember("value", "\"" + rpi.name + "\"").build();
+						pb.addAnnotation(mbA);
+						
+					}
+					
+					
 					mb.addParameter(pb.build());
 				}
 
@@ -204,7 +212,7 @@ public class JavaAPICodeGenerator {
 				@Override
 				public Type getRawType() {
 					// TODO Auto-generated method stub
-					return Call.class;
+					return JavaCodeTypes.getReturnType(invokeType);
 				}
 
 				@Override
@@ -226,13 +234,25 @@ public class JavaAPICodeGenerator {
 		return builder.build();
 	}
 	
-	 public static void generateJavaAPIFile(Class<?> cls,String outPackageName,String outputDir) {
+	 public static void generateJavaAPIFile(Class<?> cls,String invokeType,String baseUrl,String outPackageName,String outputDir) {
          File out = new File(outputDir);
     	 ModuleInfo moduleInfo = SwaggerDocGenerator.processClass(cls);
     	 if(moduleInfo==null) {
     		 return;
     	 }
-		 TypeSpec typeSpec = toJavaFile(moduleInfo);
+    	 if(!moduleInfo.moduleUrl.startsWith("/")){
+    		 moduleInfo.moduleUrl="/"+moduleInfo.moduleUrl;
+    	 }
+    	 
+    	
+    	 
+    	 if(!StringUtils.isEmpty(baseUrl)) {
+    		 if(!baseUrl.startsWith("/")){
+    			 baseUrl="/"+baseUrl;
+        	 }
+    		 moduleInfo.moduleUrl=baseUrl+moduleInfo.moduleUrl;
+    	 }
+		 TypeSpec typeSpec = toJavaFile(invokeType,moduleInfo);
 		 JavaFile javaFile = JavaFile.builder(outPackageName, typeSpec).build();
 		 try {
 			 javaFile.writeTo(out);

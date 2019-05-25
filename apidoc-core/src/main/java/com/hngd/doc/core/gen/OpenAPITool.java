@@ -205,9 +205,10 @@ public class OpenAPITool {
 					propertiesItem.setDescription(pi.comment);
 					propertiesItem.setType(pc.type);
 					propertiesItem.set$ref(pc.ref);
-					schema.addProperties(pc.name, propertiesItem);
-						 
-						 
+					if(pc.isRequired()) {
+						schema.addRequiredItem(pc.name);
+					}
+					schema.addProperties(pc.name, propertiesItem);	 
 				} else if (pc.paramType.equals(HttpParameterType.path)) {
 						PathParameter pathParameter = new PathParameter();
 						pathParameter.setName(pc.name);
@@ -238,7 +239,7 @@ public class OpenAPITool {
 		MediaType mt=new MediaType();
 		mt.setSchema(schema);
 		
-		respContent.put("text/plain", mt);
+		respContent.put("application/json", mt);
 		resp.setContent(respContent);
 		 
 		resp.setDescription("test");
@@ -320,6 +321,7 @@ public class OpenAPITool {
 		for (String key : models.keySet()) {
 			firstKey = key;
 			Schema model = models.get(key);
+		
 			Map<String, Schema> properties = new HashMap<>();
 			@SuppressWarnings("unchecked")
 			Map<String, Schema> cps = model.getProperties();
@@ -342,10 +344,11 @@ public class OpenAPITool {
 				ss.setName(name);
 				properties.put(name, ss);
 			});
+			/**
 			if(!CollectionUtils.isEmpty(model.getRequired())) {
 				model.getRequired().clear();
 			}
-			
+			*/
 			model.getProperties().clear();
 			model.setProperties(properties);
 			swagger.schema(key, model);
