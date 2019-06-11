@@ -13,7 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hngd.doc.core.FieldInfo;
-
+import com.hngd.doc.core.util.ClassUtils;
+import com.hngd.doc.core.util.JavaFileUtils;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
@@ -36,24 +37,46 @@ public class EntityClassCommentParser {
 			parseFile(file);
 		}
 	}
-
-	private static void parseFile(File file) {
-		if (file.exists() && file.isDirectory()) {
-			File files[] = file.listFiles();
+	public static void initRecursively(File root) {
+		
+		if(root.isDirectory()) {
+			File[] files=root.listFiles();
+			if(files==null) {
+				return ;
+			}
+			for(File file:files) {
+				if(file.isDirectory()) {
+					initRecursively(file);
+				}else if(file.isFile()) {
+					parse(file);
+				}
+			}
+		}
+		
+	}
+    @Deprecated
+	private static void parseDirectory(File directory) {
+		if (directory.exists() && directory.isDirectory()) {
+			File files[] = directory.listFiles();
 			Arrays.asList(files).stream()
-					.filter(f -> f.getName().endsWith(".java") && !f.getName().endsWith("Example.java")).forEach(f -> {
-						try {
-							parse(f);
-						} catch (Exception e) {
-							logger.error("", e);
-						}
-					});
+			    .filter(File::isFile)
+				.filter(f -> f.getName().endsWith(".java") && !f.getName().endsWith("Example.java"))
+				.forEach(f ->parse(f));
 		}
 	}
-
-	private static void parse(File f) throws ParseException, IOException {
+	private static void parseFile(File file) {
+		if(file.exists() && file.isFile() && JavaFileUtils.isJavaFile(file)) {
+			if(file.getName().endsWith("Example.java")) {
+				logger.info("ignore java file:{}",file.getAbsolutePath());
+				return ;
+			}
+			parse(file);
+		}
+	}
+   
+	private static void parse(File f) {
 		logger.info("parsing " + f.getAbsolutePath());
-		CompilationUnit cu = JavaParser.parse(f);
+		CompilationUnit cu = ClassUtils.parseClass(f);
 		List<Node> nodes = cu.getChildNodes();
 		nodes.stream().filter(n -> n instanceof ClassOrInterfaceDeclaration).flatMap(n -> {
 			return n.getChildNodes().stream();

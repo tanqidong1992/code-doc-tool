@@ -1,7 +1,6 @@
 
 package com.apidoc.servlet;
 
-import io.swagger.models.apideclaration.Model;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -25,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +39,14 @@ import com.hngd.doc.core.parse.EntityClassCommentParser;
 
 /**
  * Hello world!
+ * scp api.json root@106.12.205.90:/home/apps/apache-tomcat-8.5.38/webapps/apidoc
  */
 @SuppressWarnings("deprecation")
 public class App {
+	
+	static {
+		PropertyConfigurator.configure("./log4j.properties");
+	}
 	private static final Logger logger = LoggerFactory.getLogger(App.class);
 	static final Charset utf8 = Charset.forName("UTF-8");
 	static List<String> application_json = Arrays.asList("application/json", "*");
@@ -111,14 +116,14 @@ public class App {
 	 * entity类源代码所在位置
 	 */
 	public static final String[] ENTITY_CLASS_SRC_DIC = {
-			"E:\\workspaces\\hnvmns-code-modules\\inspection-system\\src\\main\\java\\com\\hngd\\model",
-			"E:\\workspaces\\hnvmns-code-modules\\inspection-system\\src\\main\\java\\com\\hngd\\web\\dto",
-			"E:\\workspaces\\hnvmns-code-modules\\inspection-system\\src\\main\\java\\com\\hngd\\dto" };
+			"D:\\company\\projects\\inspection-system\\inspection-system\\src\\main\\java\\com\\hngd\\model",
+			"D:\\company\\projects\\inspection-system\\inspection-system\\src\\main\\java\\com\\hngd\\web\\dto",
+			"D:\\company\\projects\\inspection-system\\inspection-system\\src\\main\\java\\com\\hngd\\dto" };
 	/**
 	 * controller类源代码所在位置
 	 */
 	public static final String[] CONTROLLER_CLASS_SRC_DIC = {
-			"E:\\workspaces\\hnvmns-code-modules\\inspection-system\\src\\main\\java\\com\\hngd\\web\\controller"
+			"D:\\company\\projects\\inspection-system\\inspection-system\\src\\main\\java\\com\\hngd\\web\\controller"
 
 	};
 
@@ -158,7 +163,7 @@ public class App {
 		mOpenAPI = openApi;
 		String s = toJson("");
         FileUtils.write(new File("./api.json"), s);
-		System.out.println(s);
+		//System.out.println(s);
 	}
 
 	public static synchronized void init(ServerConfig config)

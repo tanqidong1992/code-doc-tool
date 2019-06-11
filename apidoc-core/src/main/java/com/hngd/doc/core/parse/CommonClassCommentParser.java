@@ -24,17 +24,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
+import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.expr.SimpleName;
+import com.hngd.doc.core.FieldInfo;
 import com.hngd.doc.core.MethodInfo;
 import com.hngd.doc.core.ParameterInfo;
 import com.hngd.doc.core.parse.CommentElement.DescElement;
@@ -44,6 +52,7 @@ import com.hngd.doc.core.parse.extension.AuthorElement;
 import com.hngd.doc.core.parse.extension.ExtensionManager;
 import com.hngd.doc.core.parse.extension.MobileElement;
 import com.hngd.doc.core.parse.extension.TimeElement;
+import com.hngd.doc.core.util.ClassUtils;
 
  
 
@@ -59,7 +68,7 @@ public class CommonClassCommentParser {
 	private static Logger logger = LoggerFactory.getLogger(ControllerClassCommentParser.class);
 	public static Map<String, String> classComments = new HashMap<>();
 	public static Map<String, MethodInfo> methodComments = new HashMap<>();
-
+	public static Map<String, FieldInfo> fieldComments = new HashMap<String, FieldInfo>();
 	public static void init(String root) {
 		File file = new File(root);
 		if(!file.exists()){
@@ -71,10 +80,33 @@ public class CommonClassCommentParser {
 			return ;
 		}
         File files[] = file.listFiles();
+        if(files==null) {
+        	logger.error("direcotry {} is empty",file.getAbsolutePath());
+        	return;
+        }
 		Arrays.asList(files).stream()
 	        .filter(CommonClassCommentParser::isJavaSourceFile)
 			.forEach(CommonClassCommentParser::parse);
 	}
+	
+    public static void initRecursively(File root) {
+		
+		if(root.isDirectory()) {
+			init(root.getAbsolutePath());
+			File[] files=root.listFiles();
+			if(files==null) {
+				return ;
+			}
+			for(File file:files) {
+				if(file.isDirectory()) {
+					init(file.getAbsolutePath());
+					initRecursively(file);
+				}
+			}
+		}
+		
+	}
+	
     public static boolean isJavaSourceFile(File file){
     	return file.getName().endsWith(".java");
     }
@@ -111,20 +143,12 @@ public class CommonClassCommentParser {
     	return false;
     }
 	public static void parse(File f) {
-		CompilationUnit cu=null;
-		try(InputStream in=new FileInputStream(f)) {
-			Reader reader=new BufferedReader(new InputStreamReader(in, "UTF-8"));
-			cu = JavaParser.parse(reader);//.parse(reader, true);
-		} catch (IOException e) {
-			logger.error("", e);
-		}
-		if(cu==null){
-			return ;
-		}
+		CompilationUnit cu=ClassUtils.parseClass(f);
 		List<Node> nodes = cu.getChildNodes();
 		nodes.stream()
 		.filter(CommonClassCommentParser::filterAndParseClassComment)
 		.flatMap(n -> n.getChildNodes().stream())
+		.filter(n->filterAndParseFieldComment(n))
 		.filter(n -> n instanceof MethodDeclaration)
 		.map(MethodDeclaration.class::cast)
 		.forEach(CommonClassCommentParser::parseMethodComment);
@@ -206,5 +230,77 @@ public class CommonClassCommentParser {
 			}
 		}
 		return comment;
+	}
+	private static String extractFieldName(FieldDeclaration field) {
+		NodeList<VariableDeclarator> variables=field.getVariables();
+		if(CollectionUtils.isEmpty(variables)) {
+			logger.error("the veriables for field:{} is empty",field);
+			return null;
+		}
+		VariableDeclarator variable = field.getVariables().get(0);
+        SimpleName variableSimpleName = variable.getName();
+        return variableSimpleName.toString();
+	}
+	private static String extractFieldComment(FieldDeclaration field) {
+		Comment comment = field.getComment().orElse(null);
+		if (!(comment instanceof JavadocComment)) {
+		    return "";
+		}
+		JavadocComment jdoc = (JavadocComment) comment;
+		String content = jdoc.getContent();
+		StringBuilder trimComment = new StringBuilder();
+		String[] lines = content.split("\n");
+		if (lines != null && lines.length > 0) {
+		    for (int i = 0; i < lines.length; i++) {
+				String line = lines[i].trim();
+				line = line.replaceFirst("\\*", "");
+				if (!StringUtils.isEmpty(line)) {
+					trimComment.append(line);
+				}
+			}
+		}
+		return trimComment.toString();
+	}
+	private static boolean filterAndParseFieldComment(Node n) {
+	 
+        if(!(n instanceof FieldDeclaration)) {
+			return true;
+		}
+	    FieldDeclaration field = (FieldDeclaration) n;
+	    String variableName =extractFieldName(field);
+	    if(variableName==null) {
+	    	return true;
+	    }
+        // Type type = f1.getType();
+	    String trimComment=extractFieldComment(field);
+		ClassOrInterfaceDeclaration ownerClass = (ClassOrInterfaceDeclaration) field.getParentNode().orElse(null);
+		if (trimComment.length() > 0) {
+		    String key = ownerClass.getName() + "#" + variableName;
+			fieldComments.put(key, new FieldInfo(trimComment.toString(), variableName, field));
+			if(!ownerClass.getName().toString().endsWith("Info")) {
+			    key = ownerClass.getName() + "Info#" + variableName;
+				 fieldComments.put(key, new FieldInfo(trimComment.toString(), variableName, field));
+			}
+			
+		} else {
+			logger.warn("the java document comment for field:{} is empty",ownerClass.getName() + "#" + variableName);
+		}
+        return true;
+	}
+
+	public static void printResult() {
+		classComments.entrySet()
+		.forEach(e->{
+			System.out.println(e.getKey()+"-->"+e.getValue());
+		});
+		fieldComments.entrySet()
+		.forEach(e->{
+			System.out.println(e.getKey()+"-->"+e.getValue().comment);
+		});
+		methodComments.entrySet()
+		.forEach(e->{
+			System.out.println(e.getKey()+"-->"+e.getValue().comment);
+		});
+		
 	}
 }

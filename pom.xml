@@ -48,8 +48,23 @@
 
 	<distributionManagement>
 		<repository>
-			<id>maven-deploy</id>
+			<id>hn-maven-deploy</id>
 			<url>http://192.168.0.143:8082/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</distributionManagement>
+	
+	<repositories>
+		<repository>
+			<id>hnlocal</id>
+			<name>hnlocal maven</name>
+			<url>http://192.168.143:8082/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+
+		</repository>
+	</repositories>   
 </project>

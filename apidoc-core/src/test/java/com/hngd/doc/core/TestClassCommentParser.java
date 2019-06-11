@@ -37,7 +37,7 @@ public class TestClassCommentParser
     }
     public static void main(String[] args) throws URISyntaxException, IOException
     {
-        URL url = AppTest.class.getResource("classcomment.txtx");
+        URL url = TestClassCommentParser.class.getResource("classcomment.txtx");
         Path path = Paths.get(url.toURI());
         List<String> commentLines = Files.readAllLines(path);
         List<CommentElement>  ces= ClassCommentParser.parseMethodComment(commentLines);

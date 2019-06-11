@@ -1,7 +1,12 @@
 package com.hngd.doc.core.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -10,6 +15,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.ast.CompilationUnit;
 import com.hngd.doc.core.gen.OpenAPITool;
 
 public class ClassUtils {
@@ -52,5 +60,17 @@ public class ClassUtils {
 			}
 		}
 		return clazzs;
+	}
+	
+	public static CompilationUnit parseClass(File f) {
+		
+		ParseResult<CompilationUnit> cu=null;
+		try(InputStream in=new FileInputStream(f)) {
+			Reader reader=new BufferedReader(new InputStreamReader(in, "UTF-8"));
+			cu = new JavaParser().parse(reader);//.parse(reader, true);
+		} catch (IOException e) {
+			logger.error("", e);
+		}
+		return cu.getResult().get();
 	}
 }

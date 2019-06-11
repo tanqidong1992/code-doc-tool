@@ -23,7 +23,8 @@ import com.hngd.doc.core.parse.extension.AuthorElement;
 import com.hngd.doc.core.parse.extension.ExtensionManager;
 import com.hngd.doc.core.parse.extension.MobileElement;
 import com.hngd.doc.core.parse.extension.TimeElement;
-
+import com.hngd.doc.core.util.ClassUtils;
+import com.hngd.doc.core.util.JavaFileUtils;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
@@ -61,9 +62,29 @@ public class ControllerClassCommentParser {
 			logger.error("file[" + root + "] is not found or a directory");
 		}
 	}
+	
+	public static void initRecursively(File root) {
+		
+		if(root.isDirectory()) {
+			File[] files=root.listFiles();
+			if(files==null) {
+				return ;
+			}
+			for(File file:files) {
+				if(file.isDirectory()) {
+					initRecursively(file);
+				}else if(file.isFile()) {
+					if(JavaFileUtils.isJavaFile(file)) {
+					    parse(file);
+					}
+				}
+			}
+		}
+		
+	}
 
-	public static void parse(File f) throws ParseException, IOException {
-		CompilationUnit cu = JavaParser.parse(f);
+	public static void parse(File f) {
+		CompilationUnit cu = ClassUtils.parseClass(f);
 		List<Node> nodes = cu.getChildNodes();
 		nodes.stream().filter(n -> n instanceof ClassOrInterfaceDeclaration).flatMap(n -> {
 			ClassOrInterfaceDeclaration cid = (ClassOrInterfaceDeclaration) n;

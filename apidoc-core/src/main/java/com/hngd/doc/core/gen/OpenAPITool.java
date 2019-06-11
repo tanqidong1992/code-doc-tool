@@ -17,13 +17,13 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
  
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,8 +34,7 @@ import com.hngd.doc.core.FieldInfo;
 import com.hngd.doc.core.MethodInfo;
 import com.hngd.doc.core.ModuleInfo;
 import com.hngd.doc.core.ParameterInfo;
-import com.hngd.doc.core.parse.ControllerClassCommentParser;
-import com.hngd.doc.core.parse.EntityClassCommentParser;
+import com.hngd.doc.core.parse.CommonClassCommentParser;
 import com.hngd.doc.core.util.ClassUtils;
 import com.hngd.doc.core.util.TypeNameUtils;
 
@@ -46,8 +45,7 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.Content;
-import io.swagger.v3.oas.models.media.Encoding;
-import io.swagger.v3.oas.models.media.Encoding.StyleEnum;
+import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.FileSchema;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.NumberSchema;
@@ -97,7 +95,7 @@ public class OpenAPITool {
 	
 	private void module2doc(ModuleInfo moduleInfo,Paths paths,List<Tag> tags) {
 		
-		String classComment = ControllerClassCommentParser.classComments.get(moduleInfo.simpleClassName);
+		String classComment = CommonClassCommentParser.classComments.get(moduleInfo.simpleClassName);
 		String tagName=classComment != null?classComment:moduleInfo.getSimpleClassName();
 		Tag tag =  new Tag();
 		tag.setName(tagName);
@@ -117,9 +115,9 @@ public class OpenAPITool {
 	private PathItem interface2doc(ModuleInfo moduleInfo,HttpInterfaceInfo interfaceInfo,Tag tag) {
 		
 		String methodKey = moduleInfo.simpleClassName + "#" + interfaceInfo.methodName;
-		MethodInfo methodComment = ControllerClassCommentParser.methodComments.get(methodKey);
+		MethodInfo methodComment = CommonClassCommentParser.methodComments.get(methodKey);
 		if (methodComment == null || methodComment.parameters == null) {
-			logger.warn("the method comment for method[{}] is empty",methodKey);
+			logger.warn("the method comment for method:{} is empty",methodKey);
 			return null;
 		}
 		
@@ -133,11 +131,12 @@ public class OpenAPITool {
 		op.setTags(operationTags);
 		op.setOperationId(interfaceInfo.methodName);
 		op.setDescription(methodComment.comment);
-
+/**
 		if (interfaceInfo.parameterInfos.size() > methodComment.parameters.size()) {
 			logger.warn("the interface[{}]  parameter size is not equal to related method parameter size",methodKey);
 			return null;
 		}
+		*/
 		List<Parameter> parameters = new ArrayList<>();
 		
 		
@@ -146,8 +145,13 @@ public class OpenAPITool {
 			
 			for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
 				HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
-				ParameterInfo pi = methodComment.parameters.get(i);
-				Type parameterType = interfaceInfo.parameterTypes.get(i);
+				String parameterComment=null;
+				if(i<methodComment.parameters.size()) {
+					ParameterInfo pi = methodComment.parameters.get(i);
+					parameterComment=pi.comment;
+				}
+			
+				Type parameterType = pc.getParamJavaType();
 		        resolveParameterInfo(pc,parameterType);
 				if(!pc.isArgumentTypePrimitive) {
 					resolveType(parameterType, openAPI);
@@ -159,7 +163,7 @@ public class OpenAPITool {
 						param.setName(pc.name);
 						param.setRequired(pc.required);
 						param.setSchema(pc.schema);
-						param.setDescription(pi.comment);
+						param.setDescription(parameterComment);
 						parameters.add(param);
 						
 					} else if (pc.paramType.equals(HttpParameterType.path)) {
@@ -169,7 +173,7 @@ public class OpenAPITool {
 						pathParameter.setName(pc.name);
 						pathParameter.setRequired(pc.required);
 						pathParameter.setSchema(pc.schema);
-						pathParameter.setDescription(pi.comment);
+						pathParameter.setDescription(parameterComment);
 						parameters.add(pathParameter);
 					}
 				
@@ -192,8 +196,14 @@ public class OpenAPITool {
 			item.setSchema(schema);
 			for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
 				HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
-				ParameterInfo pi = methodComment.parameters.get(i);
-				Type parameterType = interfaceInfo.parameterTypes.get(i);
+				
+				String parameterComment=null;
+				if(i<methodComment.parameters.size()) {
+					ParameterInfo pi = methodComment.parameters.get(i);
+					parameterComment=pi.comment;
+				}
+				
+				Type parameterType = pc.getParamJavaType();
 		        resolveParameterInfo(pc,parameterType);
 				if(!pc.isArgumentTypePrimitive) {
 					resolveType(parameterType, openAPI);
@@ -202,23 +212,23 @@ public class OpenAPITool {
 				if (pc.paramType.equals(HttpParameterType.query)) {
 					    //item.setSchema(pc.schema);
 					Schema propertiesItem=new Schema<>();
-					propertiesItem.setDescription(pi.comment);
+					propertiesItem.setDescription(parameterComment);
 					propertiesItem.setType(pc.type);
 					propertiesItem.set$ref(pc.ref);
 					if(pc.isRequired()) {
 						schema.addRequiredItem(pc.name);
 					}
+					propertiesItem.format(pc.format);
 					schema.addProperties(pc.name, propertiesItem);	 
 				} else if (pc.paramType.equals(HttpParameterType.path)) {
 						PathParameter pathParameter = new PathParameter();
 						pathParameter.setName(pc.name);
 						pathParameter.setRequired(pc.required);
-						pathParameter.setDescription(pi.comment);
+						pathParameter.setDescription(parameterComment);
 						pathParameter.setSchema(pc.schema);
 						parameters.add(pathParameter);
+						
 				}
-					
-			
 			}
 			RequestBody requestBody=new RequestBody();
 			
@@ -291,7 +301,14 @@ public class OpenAPITool {
 				pc.type = argumentClass.getSimpleName();
 				pc.isArgumentTypePrimitive = true;
 				pc.schema=new FileSchema();
-		}else {
+		}else if(Date.class.isAssignableFrom(argumentClass)) {
+			//pc.format = "File";
+			pc.type = "date";
+			pc.isArgumentTypePrimitive = true;
+			DateSchema ds=new DateSchema();
+			ds.setFormat(pc.format);
+			pc.schema=ds;
+	    }else {
 				pc.type = "object";
 				pc.format = argumentClass.getSimpleName();
 				pc.isArgumentTypePrimitive = false;
@@ -369,7 +386,7 @@ public class OpenAPITool {
 			String typeName = ((Class<?>) pt.getRawType()).getSimpleName();
 			fcKey = typeName + "#" + propertyName;
 		}
-		FieldInfo fi = EntityClassCommentParser.fieldComments.get(fcKey);
+		FieldInfo fi = CommonClassCommentParser.fieldComments.get(fcKey);
 		if(fi!=null) {
 			return fi.comment;
 		}else {

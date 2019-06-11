@@ -16,6 +16,7 @@ public class HttpParameterInfo {
 	public String name;
 	public boolean required;
 	public HttpParameterType paramType;
+	public Type paramJavaType;
 	public boolean isPathVariable;
 	public boolean isPrimitive;
 	public String comment;
@@ -82,5 +83,14 @@ public class HttpParameterInfo {
 	public void setPrimitive(boolean isPrimitive) {
 		this.isPrimitive = isPrimitive;
 	}
+
+	public Type getParamJavaType() {
+		return paramJavaType;
+	}
+
+	public void setParamJavaType(Type paramJavaType) {
+		this.paramJavaType = paramJavaType;
+	}
+	
 
 }

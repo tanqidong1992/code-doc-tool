@@ -22,7 +22,7 @@ import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
 import org.beetl.core.resource.ClasspathResourceLoader;
 
-import com.hngd.doc.core.InterfaceInfo.RequestParameterInfo;
+import com.hngd.api.http.HttpParameterInfo;
 import com.hngd.doc.core.MethodInfo;
 import com.hngd.doc.core.ModuleInfo;
 import com.hngd.doc.core.parse.CommonClassCommentParser;
@@ -79,13 +79,12 @@ public class JSCodeGenerator
 	private static void attachCommentInfo(List<ModuleInfo> modules) {
 		for(ModuleInfo mi:modules){
 			mi.interfaceInfos.forEach(ii->{
-				
 				String key=mi.simpleClassName+"#"+ii.methodName;
 				MethodInfo mm=CommonClassCommentParser.methodComments.get(key);
 				if(mm!=null){
 					ii.comment=mm.comment;
 					for(int i=0;i<ii.parameterInfos.size();i++){
-						RequestParameterInfo pi=ii.parameterInfos.get(i);
+						HttpParameterInfo pi=ii.parameterInfos.get(i);
 						if(i<mm.parameters.size()){
 							pi.comment=mm.parameters.get(i).comment;
 						}
@@ -101,18 +100,23 @@ public class JSCodeGenerator
 
 	private static void useBeetl() throws IOException {
 		File f=new File("E:\\Code\\STSCode\\hnvmns-auth\\src\\main\\java\\com\\hngd\\web\\controller\\MenuController.java");
-    	List<ModuleInfo> modules=ModuleParser.parse(f);
+    	f=new File("D:\\company\\projects\\inspection-system\\base-data\\src\\main\\java\\com\\hngd\\web\\controller\\PersonnelController.java");
+		List<ModuleInfo> modules=ModuleParser.parse(f);
     	
 		//System.out.println(GsonUtils.toJsonString(modules));
     	map.put("modules", modules);
+    	map.put("serviceUrl", "/base-data");
     	ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader("/beetl", "utf-8");
 		Configuration cfg = Configuration.defaultConfiguration();
 		GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
-		Template t = gt.getTemplate("jscode.txt");
+		Template t = gt.getTemplate("js-api-axios.txt");
 		//t.binding("name", "beetl");
 		t.binding(map);
 		String str = t.render();
 		System.out.println(str);
 		
+	}
+	public static void main(String[] args) throws IOException {
+		useBeetl();
 	}
 }

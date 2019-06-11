@@ -4,15 +4,10 @@ package com.hngd.api.http;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.web.bind.annotation.RequestParam;
-
-import io.swagger.v3.oas.models.media.Schema;
-
+ 
 public class HttpInterfaceInfo{
 	public HttpInterfaceInfo() {
 		parameterInfos = new ArrayList<>();
-		parameterTypes = new ArrayList<>();
 	}
 
 	public String methodName;
@@ -22,7 +17,6 @@ public class HttpInterfaceInfo{
 	public Type retureType;
 	public List<HttpParameterInfo> parameterInfos;
 	public boolean isMultipart;
-	public List<Type> parameterTypes;
 	public List<String> consumes;
 	public List<String> produces;
 
@@ -142,20 +136,6 @@ public class HttpInterfaceInfo{
 	 */
 	public final void setMultipart(boolean isMultipart) {
 		this.isMultipart = isMultipart;
-	}
-
-	/**
-	 * @return the parameterTypes
-	 */
-	public final List<Type> getParameterTypes() {
-		return parameterTypes;
-	}
-
-	/**
-	 * @param parameterTypes the parameterTypes to set
-	 */
-	public final void setParameterTypes(List<Type> parameterTypes) {
-		this.parameterTypes = parameterTypes;
 	}
 
 	/**

@@ -18,10 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.hngd.doc.core.InterfaceInfo;
-import com.hngd.doc.core.InterfaceInfo.RequestParameterInfo;
+import com.hngd.api.http.HttpInterfaceInfo;
+import com.hngd.api.http.HttpParameterInfo;
 import com.hngd.doc.core.ModuleInfo;
-import com.hngd.doc.core.gen.SwaggerDocGenerator;
+import com.hngd.doc.core.gen.ClassParser;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -30,12 +30,10 @@ import com.squareup.javapoet.TypeSpec;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import retrofit2.Call;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
-import rx.Observable;
 
 /**
  * Hello world!
@@ -43,34 +41,7 @@ import rx.Observable;
 public class JavaAPICodeGenerator {
 	
 	private static final Logger logger=LoggerFactory.getLogger(JavaAPICodeGenerator.class);
-	public static void main(String[] args) throws URISyntaxException, ClassNotFoundException {
-		File out = new File("..\\webapi-test\\src\\main\\java");
-		String outPackageName = "com.hngd.web.api";
-		String packageName = "com.hngd.web.controller";
-		URL url = JavaAPICodeGenerator.class.getResource("/com/hngd/web/controller");
-		Path path = Paths.get(url.toURI());
-		File[] files = path.toFile().listFiles();
-		Arrays.asList(files).stream().map(file -> file.getName()).filter(name -> name.endsWith(".class"))
-				.map(name -> name.replace(".class", "")).map(name -> packageName + "." + name).map(name -> {
-					Class<?> clazz = null;
-					try {
-						clazz = Class.forName(name);
-					} catch (Exception e) {
-						logger.error("",e);
-					}
-					return clazz;
-				}).filter(clazz -> clazz != null).filter(clazz -> clazz.getAnnotation(RequestMapping.class) != null)
-				.forEach(cls -> {
-					ModuleInfo moduleInfo = SwaggerDocGenerator.processClass(cls);
-					TypeSpec typeSpec = toJavaFile(null,moduleInfo);
-					JavaFile javaFile = JavaFile.builder(outPackageName, typeSpec).build();
-					try {
-						javaFile.writeTo(out);
-					} catch (Exception e) {
-						logger.error("",e);
-					}
-				});
-	}
+
      public static boolean generateJavaCode(String invokeType,String packageName,String outPackageName,String outputDir) {
     	 
     	File out = new File(outputDir);
@@ -96,7 +67,7 @@ public class JavaAPICodeGenerator {
  				.filter(clazz -> clazz != null)
  				.filter(clazz -> clazz.getAnnotation(RequestMapping.class) != null)
  				.forEach(cls -> {
- 					ModuleInfo moduleInfo = SwaggerDocGenerator.processClass(cls);
+ 					ModuleInfo moduleInfo = ClassParser.processClass(cls);
  					TypeSpec typeSpec = toJavaFile(invokeType,moduleInfo);
  					JavaFile javaFile = JavaFile.builder(outPackageName, typeSpec).build();
  					try {
@@ -114,7 +85,7 @@ public class JavaAPICodeGenerator {
 	 * @since 1.0.0
 	 * @time 2017年3月16日 上午9:41:12
 	 */
-	private static TypeSpec toJavaFile(String invokeType,ModuleInfo moduleInfo) {
+	static TypeSpec toJavaFile(String invokeType,ModuleInfo moduleInfo) {
 		String name=null;
 		if(moduleInfo.simpleClassName.endsWith("Controller")) {
 			name = moduleInfo.simpleClassName.replace("Controller", "Client");
@@ -122,18 +93,18 @@ public class JavaAPICodeGenerator {
 			name = moduleInfo.simpleClassName+"Client";
 		}
 		TypeSpec.Builder builder = TypeSpec.interfaceBuilder(name).addModifiers(Modifier.PUBLIC);
-		for (InterfaceInfo ii : moduleInfo.interfaceInfos) {
+		for (HttpInterfaceInfo ii : moduleInfo.interfaceInfos) {
 			MethodSpec.Builder mb = MethodSpec.methodBuilder(ii.methodName).addModifiers(Modifier.PUBLIC,
 					Modifier.ABSTRACT);
 			Class<?> aclazz = null;
-			if (ii.requestType.equalsIgnoreCase("POST")) {
+			if (ii.httpMethod.equalsIgnoreCase("POST")) {
 				aclazz = POST.class;
 				if (ii.isMultipart) {
 					mb.addAnnotation(Multipart.class);
 				} else {
 					mb.addAnnotation(FormUrlEncoded.class);
 				}
-			} else if (ii.requestType.equalsIgnoreCase("GET")) {
+			} else if (ii.httpMethod.equalsIgnoreCase("GET")) {
 				aclazz = GET.class;
 			}
 			AnnotationSpec annotationSpec = AnnotationSpec.builder(aclazz)
@@ -141,12 +112,12 @@ public class JavaAPICodeGenerator {
 			mb.addAnnotation(annotationSpec);
 			
 			
-			if(ii.requestType.equalsIgnoreCase("POST")) {
+			if(ii.httpMethod.equalsIgnoreCase("POST")) {
 				
 				if(ii.isMultipart()) {
 					for (int i = 0; i < ii.parameterInfos.size(); i++) {
-						RequestParameterInfo rpi = ii.parameterInfos.get(i);
-						Type type = ii.parameterTypes.get(i);
+						HttpParameterInfo rpi = ii.parameterInfos.get(i);
+						Type type =rpi.getParamJavaType();
 						ParameterSpec.Builder pb = ParameterSpec
 								.builder(type != MultipartFile.class ? RequestBody.class : MultipartBody.Part.class, rpi.name);
 						if (MultipartFile.class == type) {
@@ -163,8 +134,8 @@ public class JavaAPICodeGenerator {
 					}
 				}else {
 					for (int i = 0; i < ii.parameterInfos.size(); i++) {
-						RequestParameterInfo rpi = ii.parameterInfos.get(i);
-						Type type = ii.parameterTypes.get(i);
+						HttpParameterInfo rpi = ii.parameterInfos.get(i);
+						Type type =rpi.getParamJavaType();
 						ParameterSpec.Builder pb = ParameterSpec
 								.builder(String.class, rpi.name);
 						AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Field.class)
@@ -175,11 +146,11 @@ public class JavaAPICodeGenerator {
 					
 				}
 				
-			}else if(ii.requestType.equalsIgnoreCase("GET")) {
+			}else if(ii.httpMethod.equalsIgnoreCase("GET")) {
 				
 				for (int i = 0; i < ii.parameterInfos.size(); i++) {
-					RequestParameterInfo rpi = ii.parameterInfos.get(i);
-					Type type = ii.parameterTypes.get(i);
+					HttpParameterInfo rpi = ii.parameterInfos.get(i);
+					Type type =rpi.getParamJavaType();
 					ParameterSpec.Builder pb = ParameterSpec
 							.builder( String.class , rpi.name);
 					
@@ -200,7 +171,7 @@ public class JavaAPICodeGenerator {
 
 			}
  
-			if (ii.requestType.equals("POST") && ii.parameterInfos.size() == 0) {
+			if (ii.httpMethod.equals("POST") && ii.parameterInfos.size() == 0) {
 				ParameterSpec.Builder pb = ParameterSpec.builder(String.class, "emptyStr");
 				AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Field.class)
 						.addMember("value", "\"emptyStr\"").build();
@@ -236,15 +207,10 @@ public class JavaAPICodeGenerator {
 	
 	 public static void generateJavaAPIFile(Class<?> cls,String invokeType,String baseUrl,String outPackageName,String outputDir) {
          File out = new File(outputDir);
-    	 ModuleInfo moduleInfo = SwaggerDocGenerator.processClass(cls);
+    	 ModuleInfo moduleInfo = ClassParser.processClass(cls);
     	 if(moduleInfo==null) {
     		 return;
     	 }
-    	 if(!moduleInfo.moduleUrl.startsWith("/")){
-    		 moduleInfo.moduleUrl="/"+moduleInfo.moduleUrl;
-    	 }
-    	 
-    	
     	 
     	 if(!StringUtils.isEmpty(baseUrl)) {
     		 if(!baseUrl.startsWith("/")){

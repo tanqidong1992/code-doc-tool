@@ -18,6 +18,7 @@ import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
+import com.hngd.doc.core.util.ClassUtils;
 
 public class TypeSymbolResolver {
 
@@ -27,7 +28,7 @@ public class TypeSymbolResolver {
 		File srcDir=new File("E:\\Code\\spring-code\\hnvmns-event-processor\\src\\main\\java");
 		 
 		 
-		CompilationUnit	cu = JavaParser.parse(new File(filePath));
+		CompilationUnit	cu = ClassUtils.parseClass(new File(filePath));
 		 
 		List<Node>  nodes=getChild(cu);
 		nodes.stream()

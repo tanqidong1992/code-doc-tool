@@ -17,7 +17,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<swagger.version>2.0.8</swagger.version>
-		<javaparser.version>3.9.1</javaparser.version>
+		<javaparser.version>3.14.3</javaparser.version>
 		<jackson.version>2.9.5</jackson.version>
 	</properties>
 
@@ -35,9 +35,18 @@
 			<artifactId>swagger-core</artifactId>
 			<version>${swagger.version}</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-models -->
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-models</artifactId>
+			<version>${swagger.version}</version>
+		</dependency>
 
-		<!-- <dependency> <groupId>io.swagger.core.v3</groupId> <artifactId>swagger-annotations</artifactId> 
-			<version>${swagger.version}</version> </dependency> -->
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>${swagger.version}</version>
+		</dependency>
 
 
 		<dependency>
@@ -78,6 +87,13 @@
 			<artifactId>javaparser-symbol-solver-core</artifactId>
 			<version>${javaparser.version}</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.github.javaparser/javaparser-core -->
+<dependency>
+    <groupId>com.github.javaparser</groupId>
+    <artifactId>javaparser-core</artifactId>
+<version>${javaparser.version}</version>
+</dependency>
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
@@ -107,18 +123,11 @@
 			<version>1.7.25</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.hngd.common</groupId>
-			<version>0.0.2-SNAPSHOT</version>
-			<artifactId>common-web</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-<!-- 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>2.9.2</version>
-		</dependency> -->
+	 <dependency> <groupId>com.hngd.common</groupId> <version>0.0.2-SNAPSHOT</version> 
+			<artifactId>common-web</artifactId> <scope>test</scope>  
+</dependency>
+		<!-- <dependency> <groupId>io.springfox</groupId> <artifactId>springfox-swagger2</artifactId> 
+			<version>2.9.2</version> </dependency> -->
 
 	</dependencies>
 	<build>
@@ -152,10 +161,4 @@
 		</plugins>
 
 	</build>
-	<distributionManagement>
-		<repository>
-			<id>maven-deploy</id>
-			<url>http://192.168.0.143:8082/nexus/content/repositories/snapshots/</url>
-		</repository>
-	</distributionManagement>
 </project>

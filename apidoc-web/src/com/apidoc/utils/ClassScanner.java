@@ -22,7 +22,6 @@ import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.slf4j.ext.MDCStrLookup;
 import org.springframework.stereotype.Controller;
 
 /**

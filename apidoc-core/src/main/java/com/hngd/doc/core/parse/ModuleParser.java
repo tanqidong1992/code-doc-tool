@@ -19,7 +19,7 @@ import org.springframework.util.CollectionUtils;
 import com.hngd.api.http.HttpInterfaceInfo;
 import com.hngd.api.http.HttpParameterInfo;
 import com.hngd.doc.core.ModuleInfo;
-
+import com.hngd.doc.core.util.ClassUtils;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
@@ -41,12 +41,7 @@ public class ModuleParser {
  
 
 	public static List<ModuleInfo> parse(File f) {
-		CompilationUnit compilationUnit = null;
-		try {
-			compilationUnit = JavaParser.parse(f);
-		} catch (IOException e) {
-			logger.error("parse file["+f.getAbsolutePath()+"] fail",e);
-		}
+		 CompilationUnit compilationUnit = ClassUtils.parseClass(f);
 		if(compilationUnit==null){
 			return null;
 		}
@@ -253,7 +248,7 @@ public class ModuleParser {
     	Optional<MemberValuePair> methodValuePair=nodes.stream()
 		    .filter(MemberValuePair.class::isInstance)
 		    .map(MemberValuePair.class::cast)
-		    .filter(mvp->mvp.getName().equals("method"))
+		    .filter(mvp->mvp.getName().asString().equals("method"))
 		    .findFirst();
 		if(methodValuePair.isPresent()){
 			Expression expression=methodValuePair.get().getValue();
