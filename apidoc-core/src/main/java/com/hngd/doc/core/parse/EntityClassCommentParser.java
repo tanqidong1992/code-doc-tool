@@ -26,7 +26,12 @@ import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.Type;
-
+/**
+ * @deprecated replaced by {@link CommonClassCommentParser}
+ * @author wanazi
+ *
+ */
+@Deprecated
 public class EntityClassCommentParser {
 	private static Logger logger = LoggerFactory.getLogger(EntityClassCommentParser.class);
 	public static Map<String, FieldInfo> fieldComments = new HashMap<String, FieldInfo>();

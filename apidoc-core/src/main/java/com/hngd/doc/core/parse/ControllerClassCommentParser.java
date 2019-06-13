@@ -34,7 +34,12 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.expr.AnnotationExpr;
-
+/**
+ * @deprecated replaced by {@link CommonClassCommentParser}
+ * @author wanazi
+ *
+ */
+@Deprecated
 public class ControllerClassCommentParser {
 	static {
 		ExtensionManager.enableExtension(TimeElement.class);
