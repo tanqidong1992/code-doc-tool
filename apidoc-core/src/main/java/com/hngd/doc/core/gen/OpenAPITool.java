@@ -12,6 +12,7 @@
 package com.hngd.doc.core.gen;
 
  
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -19,11 +20,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
- 
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -322,7 +326,22 @@ public class OpenAPITool {
 		
 	}
 
-
+   static Set<Class<?>> resolvedClass=new HashSet<>();
+   public static void resolveClassFields(Class<?> clazz, OpenAPI swagger) {
+	   if(resolvedClass.contains(clazz)) {
+		   return ;
+	   }
+	   resolvedClass.add(clazz);
+		if(!BeanUtils.isSimpleProperty(clazz)){
+			Field[] fields =clazz.getDeclaredFields();
+			if(fields!=null) {
+				for(Field f:fields) {
+					Type type=f.getGenericType();
+					resolveType(type,swagger);
+				}
+			}
+		}
+   }
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static String resolveType(Type type, OpenAPI swagger) {
@@ -334,6 +353,11 @@ public class OpenAPITool {
 				resolveType(subType, swagger);
 			}
 		}
+		if(type instanceof Class<?>) {
+			Class<?> clazz=(Class<?>)type;
+			resolveClassFields(clazz,swagger);
+		}
+		
 		String firstKey = null;
 		for (String key : models.keySet()) {
 			firstKey = key;

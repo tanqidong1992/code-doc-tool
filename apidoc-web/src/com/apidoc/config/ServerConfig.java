@@ -15,10 +15,12 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import com.google.gson.Gson;
 
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
  
  
 
@@ -27,13 +29,10 @@ import io.swagger.v3.oas.models.info.Info;
  */
 public class ServerConfig {
 
-	public Server server;
+	public List<Server> servers;
+ 
 
-	public static class Server {
-		public Integer port;
-	}
-
-	public Info apiDocInfo;
+	public Info info;
 
 	public static ServerConfig load(String filePath) {
 

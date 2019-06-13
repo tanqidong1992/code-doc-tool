@@ -48,8 +48,12 @@ public class TestInitAllComment {
 		openApi.addServersItem(serversItem);
 
 		//Map<String, Model> definitions = new HashMap<String, Model>();
-
+		/**
+		App.resolvePacakge("com.hngd.dto", openApi);
+		App.resolvePacakge("com.hngd.dto.app", openApi);
+		App.resolvePacakge("com.hngd.web.dto", openApi);
 		App.resolvePacakge("com.hngd.model", openApi);
+		*/
 		OpenAPITool openAPITool = new OpenAPITool(openApi);
 		openAPITool.parse("com.hngd.web.controller");
 		String s = toJson("",openApi);

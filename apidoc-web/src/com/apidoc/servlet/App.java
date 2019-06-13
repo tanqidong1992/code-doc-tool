@@ -68,7 +68,15 @@ public class App {
 			String[] classes = file.list();
 			// 循环此数组，并把.class去掉
 			for (String className : classes) {
+				if(!className.endsWith(".class")) {
+					logger.warn("file:{} is not a class file", className);
+					continue;
+				}
+				try {
 				className = className.substring(0, className.length() - 6);
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
 				// 拼接上包名，变成全限定名
 				String qName = packageName + "." + className;
 				if (qName.endsWith("Example")) {
@@ -185,7 +193,7 @@ public class App {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		Info info = config.apiDocInfo != null ? config.apiDocInfo : createInfo();
+		Info info = config.info != null ? config.info : createInfo();
 		OpenAPI swagger = new OpenAPI();
 		swagger.setInfo(info);
 
