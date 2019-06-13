@@ -226,11 +226,7 @@ public class App {
 		logger.info("init using time:" + (System.currentTimeMillis() - startTime) + "ms");
 	}
 
-	public static String toJson() throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_EMPTY);
-		return mapper.writeValueAsString(mOpenAPI);
-	}
+
 
 	/**
 	 * @param key

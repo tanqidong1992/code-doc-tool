@@ -1,0 +1,64 @@
+package com.api.doc;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.apidoc.config.ServerConfig;
+import com.apidoc.servlet.TestInitAllComment;
+import com.apidoc.utils.JsonUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hngd.doc.core.gen.OpenAPITool;
+import com.hngd.doc.core.parse.CommonClassCommentParser;
+
+import io.squark.nestedjarclassloader.NestedJarClassLoader;
+import io.swagger.v3.oas.models.OpenAPI;
+
+public class ProjectAnalysis {
+
+	private static final Logger logger=LoggerFactory.getLogger(ProjectAnalysis.class);
+	public static String process(List<File> sourceRoots,File jarFilePath,String packageFilter,ServerConfig config) {
+        for(File sourceRoot:sourceRoots) {
+        	CommonClassCommentParser.initRecursively(sourceRoot);
+        }
+	    NestedJarClassLoader loader=new NestedJarClassLoader(ProjectAnalysis.class.getClassLoader(),logger);
+		try {
+			loader.addURLs(jarFilePath.toURI().toURL());
+		} catch (IOException e) {
+			logger.error("",e);
+		}
+		OpenAPI openApi = new OpenAPI();
+		openApi.setInfo(config.info);
+        if(config.servers!=null) {
+            config.servers.forEach(s->openApi.addServersItem(s));
+        }
+		OpenAPITool openAPITool = new OpenAPITool(openApi);
+		List<String> allClass=loader.listAllClass("default");
+		List<Class<?>> clazzes=allClass.stream()
+			.filter(name->name.startsWith(packageFilter))
+	        .map(name->loadClassFromNestedJar(loader,name))
+	        .filter(clazz -> clazz != null)
+			.collect(Collectors.toList());
+		openAPITool.parse(clazzes);
+		String s=null;
+		try {
+			s = JsonUtils.toJson(openApi);
+		} catch (JsonProcessingException e) {
+			logger.error("",e);
+		}
+        return s;
+	}
+	
+	public static Class<?> loadClassFromNestedJar(NestedJarClassLoader loader,String className){
+	    try {
+			return loader.loadClass(className,true);
+		} catch (ClassNotFoundException e) {
+		    logger.error("",e);
+		}
+     	return null;
+	}
+}
