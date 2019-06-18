@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 
 import com.hngd.api.http.HttpInterfaceInfo;
@@ -35,9 +36,9 @@ import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.type.Type;
 
-public class ModuleParser {
+public class SourceParser {
 
-	private static final Logger logger=LoggerFactory.getLogger(ModuleParser.class);
+	private static final Logger logger=LoggerFactory.getLogger(SourceParser.class);
  
 
 	public static List<ModuleInfo> parse(File f) {
@@ -49,8 +50,8 @@ public class ModuleParser {
 		return nodes.stream()
 		    .filter(ClassOrInterfaceDeclaration.class::isInstance)
 		    .map(ClassOrInterfaceDeclaration.class::cast)
-		    .filter(ModuleParser::isController)
-		    .map(ModuleParser::parseModule)
+		    .filter(SourceParser::isController)
+		    .map(SourceParser::parseModule)
 		    .collect(Collectors.toList());
 	}
 	private static boolean isController(ClassOrInterfaceDeclaration clazz){
@@ -59,7 +60,7 @@ public class ModuleParser {
 			return false;
 		}
 		return annotaionExprs.stream()
-		    .filter(ModuleParser::isControllerAnnotation)
+		    .filter(SourceParser::isControllerAnnotation)
 		    .findAny()
 		    .isPresent();
 	}
@@ -81,8 +82,8 @@ public class ModuleParser {
     	moduleInfo.interfaceInfos=clazz.getChildNodes().stream()
     	    .filter(MethodDeclaration.class::isInstance)
 		    .map(MethodDeclaration.class::cast)
-		    .filter(ModuleParser::isInterface)
-		    .map(ModuleParser::parseInterface)
+		    .filter(SourceParser::isInterface)
+		    .map(SourceParser::parseInterface)
 		    .collect(Collectors.toList());
     	return moduleInfo;	
 	}
@@ -109,23 +110,44 @@ public class ModuleParser {
     	}
     	info.retureTypeName=method.getType().toString();
     	List<Parameter> parameters=method.getParameters();
-    	
     	if(parameters==null || parameters.size()==0){
     		info.isMultipart=false;
     		info.parameterInfos=Collections.EMPTY_LIST;
     	}else{
         	List<Parameter> httpRequestParameters=parameters.stream()
-            	    .filter(ModuleParser::isHttpRequestParam)
+            	    .filter(SourceParser::isHttpRequestParam)
               	    .collect(Collectors.toList());
-            	info.isMultipart=httpRequestParameters.stream()
-            	    .filter(p->p.getType().toString().equals("MultipartFile"))
-            	    .findAny().isPresent();
-            	info.parameterInfos=httpRequestParameters.stream()
-            	    .map(ModuleParser::parseHttpParameterInfo)
-            	    .collect(Collectors.toList());
+        	if(CollectionUtils.isEmpty(httpRequestParameters)) {
+        		List<Parameter> requestBodies=parameters.stream()
+        		 .filter(SourceParser::isHttpRequestBody)
+        		 .collect(Collectors.toList());
+        		  info.hasRequestBody=true;
+        		  info.setConsumes(Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
+        		  info.parameterInfos=requestBodies.stream()
+        	            	.map(SourceParser::parseHttpParameterInfo)
+        	            	.collect(Collectors.toList());
+        		  
+        	}else {
+        		//info.setConsumes(Arrays.asList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
+        		 info.parameterInfos=httpRequestParameters.stream()
+        	            	.map(SourceParser::parseHttpParameterInfo)
+        	            	.collect(Collectors.toList());
+        	}
+            info.isMultipart=httpRequestParameters.stream()
+            	.filter(p->isMultipart(p))
+            	.findAny().isPresent();
+           
     	}
     	resolvePathVariable(info);
     	return info;
+    }
+    private static boolean isMultipart(Parameter p) {
+    	if(p.getType().toString().equals("MultipartFile")) {
+    		return true;
+    	}
+    	
+    	return false;
+    	
     }
     private static void resolvePathVariable(HttpInterfaceInfo info) {
     	System.out.println(info.getMethodName());
@@ -193,6 +215,12 @@ public class ModuleParser {
     	    		    	     
     	    		    	}
     	    		}
+    	    }else {
+    	    	
+    	    	Optional<AnnotationExpr> requestBodyAnnotation=getAnnotationByName(parameter.getAnnotations(),"RequestBody");
+        	    if(requestBodyAnnotation.isPresent()) {
+        	    	parameterName="body";
+        	    }
     	    }
     	}
     	parameterInfo.name=parameterName;   
@@ -213,7 +241,18 @@ public class ModuleParser {
 		
 		return PRIMARY_TYPES.contains(typeName);
 	}
-	private static boolean isHttpRequestParam(Parameter parameter){
+    private static boolean isHttpRequestBody(Parameter parameter){
+    	//logger.info("parse parameter:{}",parameter.toString());
+    	List<AnnotationExpr> annotationExprs=parameter.getAnnotations();
+    	if(annotationExprs==null || annotationExprs.size()==0){
+    		logger.warn("there is no RequestBody annotation for parameter {}",parameter.toString());
+    		return false;
+    	}
+    	return getAnnotationByName(annotationExprs, "RequestBody").isPresent();
+    	    
+    	 
+    }
+    private static boolean isHttpRequestParam(Parameter parameter){
     	//logger.info("parse parameter:{}",parameter.toString());
     	List<AnnotationExpr> annotationExprs=parameter.getAnnotations();
     	if(annotationExprs==null || annotationExprs.size()==0){
@@ -314,7 +353,7 @@ public class ModuleParser {
 
     private static Optional<AnnotationExpr> getAnnotationByName(List<AnnotationExpr> annotationExprs,String name){
         return annotationExprs.stream()
-		    .filter(annotationExpr->ModuleParser.isAnnotationNameEqual(annotationExpr,name))
+		    .filter(annotationExpr->SourceParser.isAnnotationNameEqual(annotationExpr,name))
 		    .findAny();
     }
 	

@@ -2,6 +2,8 @@ package com.api.doc;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,8 @@ public class ProjectAnalysis {
 			logger.error("",e);
 		}
 		OpenAPI openApi = new OpenAPI();
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		config.info.setDescription("最后更新时间:"+sdf.format(new Date()));
 		openApi.setInfo(config.info);
         if(config.servers!=null) {
             config.servers.forEach(s->openApi.addServersItem(s));

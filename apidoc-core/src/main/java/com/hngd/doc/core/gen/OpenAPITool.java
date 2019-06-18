@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hngd.api.http.HttpInterfaceInfo;
 import com.hngd.api.http.HttpParameterInfo;
 import com.hngd.api.http.HttpParameterInfo.HttpParameterType;
+import com.hngd.constant.Constants;
 import com.hngd.doc.core.FieldInfo;
 import com.hngd.doc.core.MethodInfo;
 import com.hngd.doc.core.ModuleInfo;
@@ -71,7 +72,7 @@ import io.swagger.v3.oas.models.tags.Tag;
  */
 public class OpenAPITool {
 	static List<String> application_json = Arrays.asList("application/json", "*");
-	static List<String> application_url_encode = Arrays.asList("application/json");
+	//static List<String> application_url_encode = Arrays.asList("application/json");
 	private static final Logger logger = LoggerFactory.getLogger(OpenAPITool.class);
 	public OpenAPI openAPI;
 
@@ -116,6 +117,27 @@ public class OpenAPITool {
 	    }
 	}
 
+	
+	public static Parameter createParameter(HttpParameterInfo pc,String comment) {
+		if(pc.paramType.isParameter()) {
+			
+			Parameter param=null;
+			try {
+				param = (Parameter) pc.paramType.getParamClass().newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				logger.error("",e);
+			}
+			param.setName(pc.name);
+			param.setRequired(pc.required);
+			param.setSchema(pc.schema);
+			param.setDescription(comment);
+			return param;
+			
+		}else {
+			return null;
+		}
+	}
+	
 	private PathItem interface2doc(ModuleInfo moduleInfo,HttpInterfaceInfo interfaceInfo,Tag tag) {
 		
 		String methodKey = moduleInfo.simpleClassName + "#" + interfaceInfo.methodName;
@@ -135,15 +157,9 @@ public class OpenAPITool {
 		op.setTags(operationTags);
 		op.setOperationId(interfaceInfo.methodName);
 		op.setDescription(methodComment.comment);
-/**
-		if (interfaceInfo.parameterInfos.size() > methodComment.parameters.size()) {
-			logger.warn("the interface[{}]  parameter size is not equal to related method parameter size",methodKey);
-			return null;
-		}
-		*/
+ 
 		List<Parameter> parameters = new ArrayList<>();
-		
-		
+ 
 		if(interfaceInfo.httpMethod.equalsIgnoreCase(RequestMethod.GET.name())) {
 			
 			
@@ -154,112 +170,75 @@ public class OpenAPITool {
 					ParameterInfo pi = methodComment.parameters.get(i);
 					parameterComment=pi.comment;
 				}
-			
 				Type parameterType = pc.getParamJavaType();
 		        resolveParameterInfo(pc,parameterType);
 				if(!pc.isArgumentTypePrimitive) {
 					resolveType(parameterType, openAPI);
 				}
-				
-					if (pc.paramType.equals(HttpParameterType.query)) {
-		                
-						QueryParameter param = new QueryParameter();
-						param.setName(pc.name);
-						param.setRequired(pc.required);
-						param.setSchema(pc.schema);
-						param.setDescription(parameterComment);
-						parameters.add(param);
-						
-					} else if (pc.paramType.equals(HttpParameterType.path)) {
-						
-						PathParameter pathParameter = new PathParameter();
-						pathParameter.setIn("path");
-						pathParameter.setName(pc.name);
-						pathParameter.setRequired(pc.required);
-						pathParameter.setSchema(pc.schema);
-						pathParameter.setDescription(parameterComment);
-						parameters.add(pathParameter);
-					}
-				
+				Parameter param=createParameter(pc, parameterComment);
+				parameters.add(param);
 			}
 			
 		}else if(interfaceInfo.httpMethod.equalsIgnoreCase(RequestMethod.POST.name())) {
 			
 			MediaType item=new MediaType();
 			Content content=new Content();
-			
-			if(interfaceInfo.isMultipart()) {
-				content.addMediaType("multipart/form-data", item);
-			}else {
-				content.addMediaType("application/x-www-form-urlencoded", item);
-			}
-			
-			
-			Schema schema=new Schema<>();
-			schema.setType("object");
-			item.setSchema(schema);
-			for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
-				HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
-				
-				String parameterComment=null;
-				if(i<methodComment.parameters.size()) {
-					ParameterInfo pi = methodComment.parameters.get(i);
-					parameterComment=pi.comment;
-				}
-				
+			if(interfaceInfo.hasRequestBody) {
+				content.addMediaType(Constants.APPLICATION_JSON_VALUE, item);
+				HttpParameterInfo pc=interfaceInfo.getParameterInfos().get(0);
 				Type parameterType = pc.getParamJavaType();
 		        resolveParameterInfo(pc,parameterType);
-				if(!pc.isArgumentTypePrimitive) {
-					resolveType(parameterType, openAPI);
-				}
+				String key=resolveType(parameterType, openAPI);
+				Schema<?> schema=openAPI.getComponents().getSchemas().get(key);
+				item.setSchema(schema);
 				
-				if (pc.paramType.equals(HttpParameterType.query)) {
-					    //item.setSchema(pc.schema);
-					Schema propertiesItem=new Schema<>();
-					propertiesItem.setDescription(parameterComment);
-					propertiesItem.setType(pc.type);
-					propertiesItem.set$ref(pc.ref);
-					if(pc.isRequired()) {
-						schema.addRequiredItem(pc.name);
+			}else if(interfaceInfo.isMultipart()) {
+				content.addMediaType(Constants.MULTIPART_FORM_DATA, item);
+				
+				 
+			}else {
+				content.addMediaType(Constants.APPLICATION_FORM_URLENCODED_VALUE, item);
+				Schema<?> schema=new Schema<>();
+				schema.setType("object");
+				item.setSchema(schema);
+				for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
+					HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
+					String parameterComment=null;
+					if(i<methodComment.parameters.size()) {
+						ParameterInfo pi = methodComment.parameters.get(i);
+						parameterComment=pi.comment;
 					}
-					propertiesItem.format(pc.format);
-					schema.addProperties(pc.name, propertiesItem);	 
-				} else if (pc.paramType.equals(HttpParameterType.path)) {
-						PathParameter pathParameter = new PathParameter();
-						pathParameter.setName(pc.name);
-						pathParameter.setRequired(pc.required);
-						pathParameter.setDescription(parameterComment);
-						pathParameter.setSchema(pc.schema);
-						parameters.add(pathParameter);
-						
+					Type parameterType = pc.getParamJavaType();
+			        resolveParameterInfo(pc,parameterType);
+					if(!pc.isArgumentTypePrimitive) {
+						resolveType(parameterType, openAPI);
+					}
+					
+					if (pc.paramType.equals(HttpParameterType.query)) {
+						//item.setSchema(pc.schema);
+						Schema<?>propertiesItem=new Schema<>();
+						propertiesItem.setDescription(parameterComment);
+						propertiesItem.setType(pc.type);
+						propertiesItem.set$ref(pc.ref);
+						if(pc.isRequired()) {
+							schema.addRequiredItem(pc.name);
+						}
+						propertiesItem.format(pc.format);
+						schema.addProperties(pc.name, propertiesItem);	 
+					} else if (pc.paramType.equals(HttpParameterType.path)) {
+					    Parameter pathParameter=createParameter(pc, parameterComment);
+					    parameters.add(pathParameter);
+					}
 				}
 			}
-			RequestBody requestBody=new RequestBody();
 			
+			RequestBody requestBody=new RequestBody();
 			requestBody.setContent(content);
 			op.setRequestBody(requestBody);
 		}
  
 		op.setParameters(parameters);
-		ApiResponses responses = new ApiResponses();
-		ApiResponse resp = new ApiResponse();
-		if (methodComment != null) {
-			resp.setDescription(methodComment.retComment);
-		}
-		String firstKey = resolveType(interfaceInfo.retureType, openAPI);
-	    Schema schema=new ObjectSchema();
-		schema.set$ref("#/components/schemas/" + firstKey);
-		Content respContent=new Content();
-		MediaType mt=new MediaType();
-		mt.setSchema(schema);
-		
-		respContent.put("application/json", mt);
-		resp.setContent(respContent);
-		 
-		resp.setDescription("test");
-		
-		responses.put("200", resp);
-		op.setResponses(responses);
+		resolveResponse(op, interfaceInfo, methodComment!=null?methodComment.retComment:null);
 		if(interfaceInfo.httpMethod.equalsIgnoreCase(RequestMethod.GET.name())) {
 			path.setGet(op);
 		}else {
@@ -269,7 +248,21 @@ public class OpenAPITool {
 		
 		
 	}
- 
+    private void resolveResponse(Operation op,HttpInterfaceInfo interfaceInfo,String respComment) {
+    	ApiResponses responses = new ApiResponses();
+		ApiResponse resp = new ApiResponse();
+		String firstKey = resolveType(interfaceInfo.retureType, openAPI);
+	    Schema<?> schema=new ObjectSchema();
+		schema.set$ref("#/components/schemas/" + firstKey);
+		Content respContent=new Content();
+		MediaType mt=new MediaType();
+		mt.setSchema(schema);
+		respContent.put(Constants.APPLICATION_JSON_VALUE, mt);
+		resp.setContent(respContent);
+		resp.setDescription("test");
+		responses.put("200", resp);
+		op.setResponses(responses);
+    }
 	private void resolveParameterInfo(HttpParameterInfo pc, Type parameterType) {
 		Class<?> argumentClass = null;
 		if(parameterType instanceof ParameterizedType) {
@@ -362,18 +355,14 @@ public class OpenAPITool {
 		for (String key : models.keySet()) {
 			firstKey = key;
 			Schema model = models.get(key);
-		
 			Map<String, Schema> properties = new HashMap<>();
 			@SuppressWarnings("unchecked")
 			Map<String, Schema> cps = model.getProperties();
 			if (cps == null) {
 				continue;
 			}
-
 			model.getProperties().values().forEach(property -> {
-
 				Schema ss = (Schema) property;
-
 				String name = ss.getName();
 				if (name.startsWith("get")) {
 					name = name.replace("get", "");
@@ -394,7 +383,6 @@ public class OpenAPITool {
 			model.setProperties(properties);
 			swagger.schema(key, model);
 		}
-
 		return firstKey;
 	}
 	

@@ -20,6 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,13 +59,7 @@ public class ClassParser {
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
 			if(RestClassUtils.isHttpInterface(method)){
-				HttpInterfaceInfo info=null;
-				try {
-					info = processMethod(method);
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException e) {
-					logger.error("", e);
-				}
+				HttpInterfaceInfo info = processMethod(method);
 				if (info != null) {
 					mi.interfaceInfos.add(info);
 				}
@@ -75,21 +70,21 @@ public class ClassParser {
 		return mi;
 	}
 	
-	private static HttpInterfaceInfo processMethod(Method method) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	private static HttpInterfaceInfo processMethod(Method method) {
 		HttpInterfaceInfo info = new HttpInterfaceInfo();
 		Optional<? extends Annotation> optionalAnnotation = RestClassUtils.getHttpRequestInfo(method);
 		Annotation mappingAnnotation=optionalAnnotation.get();
 		//extract consumes
-        Method consumesMethod=mappingAnnotation.getClass().getDeclaredMethod("consumes");
-		String[] consumes = (String[]) consumesMethod.invoke(mappingAnnotation);
-		if (consumes != null && consumes.length > 0) {
-			info.consumes = new ArrayList<>(Arrays.asList(consumes));
+        List<String> consumes=RestClassUtils.extractCosumes(mappingAnnotation);
+		if (consumes != null) {
+			info.consumes = consumes;
 		}
 		//extract produces
-		Method producesMethod=mappingAnnotation.getClass().getDeclaredMethod("produces");
-		String[] produces = (String[]) producesMethod.invoke(mappingAnnotation);
-		if (produces != null && produces.length > 0) {
-			info.produces = new ArrayList<>(Arrays.asList(produces));
+		 List<String> produces=RestClassUtils.extractProduces(mappingAnnotation);
+		if (produces != null) {
+			info.produces = produces;
+		}else {
+			
 		}
         info.methodUrl =RestClassUtils.extractUrl(mappingAnnotation);
 		if(mappingAnnotation instanceof RequestMapping){
@@ -110,6 +105,7 @@ public class ClassParser {
 				if (!info.isMultipart) {
 					info.isMultipart = TypeUtils.isMultipartType(hpi.get(0).getParamJavaType());
 				}
+				info.hasRequestBody=!hpi.get(0).getParamType().isParameter();
 			}
 			
 		}
@@ -149,6 +145,19 @@ public class ClassParser {
 			}
 			rpi.isArgumentTypePrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 			return Arrays.asList(rpi);
+		}else if(isRequestBody(annotations).isPresent()) {
+			RequestBody rb= isRequestBody(annotations).get();
+		    rpi = new HttpParameterInfo();
+		    rpi.name = parameter.getName();
+		    rpi.paramType = HttpParameterType.body;
+		    rpi.required = true;
+		    rpi.paramJavaType=parameter.getParameterizedType();
+		    Optional<String> dateFormat=extractDataFormat(annotations);
+		    if(dateFormat.isPresent()) {
+			    rpi.format=dateFormat.get();
+		    }
+		    rpi.isArgumentTypePrimitive=BeanUtils.isSimpleProperty(parameter.getType());
+		    return Arrays.asList(rpi);
 		}else {
 			//TODO support all spring web parameters 
 			//WebRequest req;
@@ -218,26 +227,26 @@ public class ClassParser {
 		return field.getAnnotation(NotNull.class)!=null;
 	}
 	private static Optional<RequestParam> isRequestParam(Annotation [] annotations) {
+		return extractAnnotaions(annotations, RequestParam.class);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <T extends Annotation> Optional<T> extractAnnotaions(Annotation [] annotations,Class<T> t){
 		if(annotations.length<=0) {
 			return Optional.empty();
 		}
 		for (Annotation a : annotations) {
-			if(a instanceof RequestParam) {
-				return Optional.of((RequestParam)a);
+			if(t.isInstance(a)) {
+				return Optional.of((T)a);
 			}
 		}
 		return Optional.empty();
 	}
 	
+	private static Optional<RequestBody> isRequestBody(Annotation [] annotations) {
+		return extractAnnotaions(annotations, RequestBody.class);
+	}
 	private static Optional<PathVariable> isPathVariable(Annotation [] annotations) {
-		if(annotations.length<=0) {
-			return Optional.empty();
-		}
-		for (Annotation a : annotations) {
-			if(a instanceof PathVariable) {
-				return Optional.of((PathVariable)a);
-			}
-		}
-		return Optional.empty();
+		return extractAnnotaions(annotations, PathVariable.class);
 	}
 }

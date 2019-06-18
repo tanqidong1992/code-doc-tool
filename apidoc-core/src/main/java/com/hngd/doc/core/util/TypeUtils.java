@@ -59,9 +59,15 @@ public class TypeUtils
         {
             return false;
         }
+     
         if (MultipartFile.class.equals(parameterType))
         {
             return true;
+        }
+        Class<?> type=(Class<?>) parameterType;
+        //MultipartFile[]
+        if(type.isArray() && MultipartFile.class.equals(type.getComponentType())){
+        	return true;
         }
         return false;
     }

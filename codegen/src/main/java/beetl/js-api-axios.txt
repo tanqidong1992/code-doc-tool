@@ -27,7 +27,7 @@ function ${module.moduleName}(){
                 url: url,
                 changeOrigin: true, //是否跨域
                 withCredentials: true,
-                <%if(interf.requestType=="Post"){%>
+                <%if(interf.requestType=="Post" && !interf.hasRequestBody){%>
                 data:Qs.stringify(parameters)
                 <%}else{%>
                 params:parameters

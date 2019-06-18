@@ -26,7 +26,7 @@ import com.hngd.api.http.HttpParameterInfo;
 import com.hngd.doc.core.MethodInfo;
 import com.hngd.doc.core.ModuleInfo;
 import com.hngd.doc.core.parse.CommonClassCommentParser;
-import com.hngd.doc.core.parse.ModuleParser;
+import com.hngd.doc.core.parse.SourceParser;
 
  
  
@@ -58,7 +58,7 @@ public class JSCodeGenerator
     	
     	File f=new File(javaFilePath);
     	
-    	List<ModuleInfo> modules=ModuleParser.parse(f);
+    	List<ModuleInfo> modules=SourceParser.parse(f);
     	if(modules==null){
     		return null;
     	}
@@ -101,7 +101,7 @@ public class JSCodeGenerator
 	private static void useBeetl() throws IOException {
 		File f=new File("E:\\Code\\STSCode\\hnvmns-auth\\src\\main\\java\\com\\hngd\\web\\controller\\MenuController.java");
     	f=new File("D:\\company\\projects\\inspection-system\\base-data\\src\\main\\java\\com\\hngd\\web\\controller\\PersonnelController.java");
-		List<ModuleInfo> modules=ModuleParser.parse(f);
+		List<ModuleInfo> modules=SourceParser.parse(f);
     	
 		//System.out.println(GsonUtils.toJsonString(modules));
     	map.put("modules", modules);

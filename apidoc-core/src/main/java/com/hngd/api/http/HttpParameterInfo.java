@@ -1,15 +1,31 @@
 package com.hngd.api.http;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
 
 import io.swagger.v3.oas.models.media.Schema;
-
+import io.swagger.v3.oas.models.parameters.QueryParameter;
+import io.swagger.v3.oas.models.parameters.CookieParameter;
+import io.swagger.v3.oas.models.parameters.HeaderParameter;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.PathParameter;
+import io.swagger.v3.oas.models.parameters.RequestBody;
 public class HttpParameterInfo {
 	
 	public enum HttpParameterType {
-		query, path, cookie, header
+		query(QueryParameter.class), path(PathParameter.class),
+		cookie(CookieParameter.class), header(HeaderParameter.class),body(RequestBody.class);
+		private HttpParameterType(Class<?> paramClass){
+			this.paramClass=paramClass;
+		}
+		private Class<?> paramClass;
+		public Class<?> getParamClass(){
+			return paramClass;
+		}
+		public boolean isParameter() {
+			return Parameter.class.isAssignableFrom(paramClass);
+		}
+		
 	}
 	
 	public String typeName;

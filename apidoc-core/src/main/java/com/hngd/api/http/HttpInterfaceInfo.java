@@ -21,6 +21,7 @@ public class HttpInterfaceInfo{
 	public List<String> produces;
 
 	public String comment;
+	public boolean hasRequestBody=false;
 
 	public String getComment() {
 		return comment;
@@ -164,6 +165,14 @@ public class HttpInterfaceInfo{
 	 */
 	public final void setProduces(List<String> produces) {
 		this.produces = produces;
+	}
+
+	public boolean isHasRequestBody() {
+		return hasRequestBody;
+	}
+
+	public void setHasRequestBody(boolean hasRequestBody) {
+		this.hasRequestBody = hasRequestBody;
 	}
 
 }

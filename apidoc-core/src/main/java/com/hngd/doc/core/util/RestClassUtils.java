@@ -3,6 +3,7 @@ package com.hngd.doc.core.util;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -84,5 +85,46 @@ public class RestClassUtils {
 			return url;
 		}
 		
+	}
+	
+	public static List<String> extractCosumes(Annotation req){
+		String[] consumes=null;
+		Method method=getAnnotationMethod(req, "consumes");
+		try {
+			consumes = (String[]) method.invoke(req);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			logger.error("",e);
+		}
+		if (consumes != null && consumes.length > 0) {
+		    return new ArrayList<>(Arrays.asList(consumes));
+		}else {
+			return null;
+		}
+	}
+	
+	public static List<String> extractProduces(Annotation req){
+		String[] produces=null;
+		Method method=getAnnotationMethod(req, "produces");
+		try {
+			produces = (String[]) method.invoke(req);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			logger.error("",e);
+		}
+		if (produces != null && produces.length > 0) {
+		    return new ArrayList<>(Arrays.asList(produces));
+		}else {
+			return null;
+		}
+	}
+	
+	private static Method getAnnotationMethod(Annotation a,String name) {
+		
+		  Method m=null;
+			try {
+				m = a.getClass().getDeclaredMethod(name);
+			} catch (NoSuchMethodException | SecurityException e) {
+				logger.error("",e);
+			}
+			return m; 
 	}
 }

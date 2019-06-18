@@ -35,7 +35,7 @@ public class TestInitAllComment {
 	}
 	static Logger logger=LoggerFactory.getLogger(TestInitAllComment.class);
 	public static void main(String[] args) throws IOException {
-		String src="D:\\company\\projects\\inspection-system\\inspection-system\\src\\main\\java";
+		String src="D:\\company\\projects\\inspection-system\\education-training-system\\src\\main\\java";
 		File root=new File(src);
 		long startTime = System.currentTimeMillis();
 		Thread t1 = new Thread(() -> {
@@ -49,7 +49,7 @@ public class TestInitAllComment {
 		}
 		
 		NestedJarClassLoader loader=new NestedJarClassLoader(TestInitAllComment.class.getClassLoader(),logger);
-		String jarFilePath="D:\\company\\projects\\inspection-system\\inspection-system\\target\\inspection-system-0.0.1-SNAPSHOT.jar";
+		String jarFilePath="D:\\company\\projects\\inspection-system\\education-training-system\\target\\education-training-system-0.0.1-SNAPSHOT.jar";
 		File file=new File(jarFilePath);
 		loader.addURLs(file.toURL());
 		
