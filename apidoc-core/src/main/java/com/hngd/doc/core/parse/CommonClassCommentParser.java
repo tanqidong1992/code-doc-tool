@@ -114,7 +114,6 @@ public class CommonClassCommentParser {
 				if (commentLines == null || commentLines.length < 2) {
 					logger.warn("javadoc comment for classOrInterface {} is not found",classOrInterfaceName);
 				}else{
-					
 					List<CommentElement> commentElements = ClassCommentParser.parseMethodComment(Arrays.asList(commentLines));
 					Optional<DescElement> optionalDescComment=commentElements.stream()
 					    .filter(commentElement->commentElement instanceof  DescElement)

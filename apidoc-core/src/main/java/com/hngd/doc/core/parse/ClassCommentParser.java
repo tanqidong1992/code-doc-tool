@@ -64,7 +64,7 @@ public class ClassCommentParser {
 				pr.endIndex = i;
 				break;
 			}
-			desc.append(line).append(" ");
+			desc.append(line);
 		}
 		CommentElement ce = new CommentElement.DescElement();
 		ce.comment = desc.toString();
@@ -100,7 +100,7 @@ public class ClassCommentParser {
 					isFoundAt = true;
 				}
 			}
-			desc.append(line).append(" ");
+			desc.append(line);
 		}
 		if (pr.endIndex == -1) {
 			pr.endIndex = lines.size();

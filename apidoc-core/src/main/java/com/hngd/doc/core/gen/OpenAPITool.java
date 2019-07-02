@@ -11,7 +11,6 @@
 
 package com.hngd.doc.core.gen;
 
- 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -65,14 +64,11 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.tags.Tag;
 
- 
-
 /**
  * @author tqd
  */
 public class OpenAPITool {
 	static List<String> application_json = Arrays.asList("application/json", "*");
-	//static List<String> application_url_encode = Arrays.asList("application/json");
 	private static final Logger logger = LoggerFactory.getLogger(OpenAPITool.class);
 	public OpenAPI openAPI;
 
@@ -80,73 +76,66 @@ public class OpenAPITool {
 		this.openAPI = openAPI;
 	}
 
-	
-   
-	public  void parse(String packageName) {
+	public void parse(String packageName) {
 		List<Class<?>> clses = ClassUtils.getClassBelowPacakge(packageName);
 		parse(clses);
 	}
 
 	public void parse(List<Class<?>> clses) {
 		List<Tag> tags = new ArrayList<Tag>();
-		Paths paths=new Paths();
+		Paths paths = new Paths();
 		openAPI.setPaths(paths);
 		openAPI.setTags(tags);
-		clses.stream()
-		  .map(clazz->ClassParser.processClass(clazz))
-		  .filter(mi->mi!=null)
-		  .forEach(mi->module2doc(mi,paths,tags));
+		clses.stream().map(clazz -> ClassParser.processClass(clazz))
+		    .filter(mi -> mi != null)
+			.forEach(mi -> module2doc(mi, paths, tags));
 	}
-	
-	private void module2doc(ModuleInfo moduleInfo,Paths paths,List<Tag> tags) {
-		
+
+	private void module2doc(ModuleInfo moduleInfo, Paths paths, List<Tag> tags) {
 		String classComment = CommonClassCommentParser.classComments.get(moduleInfo.simpleClassName);
-		String tagName=classComment != null?classComment:moduleInfo.getSimpleClassName();
-		Tag tag =  new Tag();
+		String tagName = classComment != null ? classComment : moduleInfo.getSimpleClassName();
+		Tag tag = new Tag();
 		tag.setName(tagName);
-		if (classComment== null) {
-			logger.warn("the comment for class:{} is empty",moduleInfo.canonicalClassName);
+		if (classComment == null) {
+			logger.warn("the comment for class:{} is empty", moduleInfo.canonicalClassName);
 		}
 		tags.add(tag);
 		for (HttpInterfaceInfo interfaceInfo : moduleInfo.interfaceInfos) {
-			PathItem pathItem=interface2doc(moduleInfo,interfaceInfo,tag);
-			if(pathItem!=null) {
+			PathItem pathItem = interface2doc(moduleInfo, interfaceInfo, tag);
+			if (pathItem != null) {
 				String pathKey = moduleInfo.moduleUrl + interfaceInfo.methodUrl;
 				paths.put(pathKey, pathItem);
 			}
-	    }
+		}
 	}
 
-	
-	public static Parameter createParameter(HttpParameterInfo pc,String comment) {
-		if(pc.paramType.isParameter()) {
-			
-			Parameter param=null;
+	public static Parameter createParameter(HttpParameterInfo pc, String comment) {
+		if (pc.paramType.isParameter()) {
+			Parameter param = null;
 			try {
 				param = (Parameter) pc.paramType.getParamClass().newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
-				logger.error("",e);
+				logger.error("", e);
 			}
 			param.setName(pc.name);
 			param.setRequired(pc.required);
 			param.setSchema(pc.schema);
 			param.setDescription(comment);
 			return param;
-			
-		}else {
+		} else {
 			return null;
 		}
 	}
-	
-	private PathItem interface2doc(ModuleInfo moduleInfo,HttpInterfaceInfo interfaceInfo,Tag tag) {
-		
+
+	private PathItem interface2doc(ModuleInfo moduleInfo, HttpInterfaceInfo interfaceInfo, Tag tag) {
+
 		String methodKey = moduleInfo.simpleClassName + "#" + interfaceInfo.methodName;
 		MethodInfo methodComment = CommonClassCommentParser.methodComments.get(methodKey);
 		if (methodComment == null || methodComment.parameters == null) {
-			logger.warn("the method comment for method:{} is empty",methodKey);
+			logger.warn("the method comment for method:{} is empty", methodKey);
 			return null;
 		}
-		
+
 		PathItem path = new PathItem();
 		Operation op = new Operation();
 		List<String> operationTags = new ArrayList<>();
@@ -157,237 +146,232 @@ public class OpenAPITool {
 		op.setTags(operationTags);
 		op.setOperationId(interfaceInfo.methodName);
 		op.setDescription(methodComment.comment);
- 
+
 		List<Parameter> parameters = new ArrayList<>();
- 
-		if(interfaceInfo.httpMethod.equalsIgnoreCase(RequestMethod.GET.name())) {
-			
-			
+
+		if (!mayRequestBody(interfaceInfo.httpMethod)) {
 			for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
 				HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
-				String parameterComment=null;
-				if(i<methodComment.parameters.size()) {
+				String parameterComment = null;
+				if (i < methodComment.parameters.size()) {
 					ParameterInfo pi = methodComment.parameters.get(i);
-					parameterComment=pi.comment;
+					parameterComment = pi.comment;
 				}
 				Type parameterType = pc.getParamJavaType();
-		        resolveParameterInfo(pc,parameterType);
-				if(!pc.isArgumentTypePrimitive) {
+				resolveParameterInfo(pc, parameterType);
+				if (!pc.isArgumentTypePrimitive) {
 					resolveType(parameterType, openAPI);
 				}
-				Parameter param=createParameter(pc, parameterComment);
+				Parameter param = createParameter(pc, parameterComment);
 				parameters.add(param);
 			}
-			
-		}else if(interfaceInfo.httpMethod.equalsIgnoreCase(RequestMethod.POST.name())) {
-			
-			MediaType item=new MediaType();
-			Content content=new Content();
-			if(interfaceInfo.hasRequestBody) {
-				content.addMediaType(Constants.APPLICATION_JSON_VALUE, item);
-				HttpParameterInfo pc=interfaceInfo.getParameterInfos().get(0);
-				Type parameterType = pc.getParamJavaType();
-		        resolveParameterInfo(pc,parameterType);
-				String key=resolveType(parameterType, openAPI);
-				Schema<?> schema=openAPI.getComponents().getSchemas().get(key);
-				item.setSchema(schema);
-				
-			}else {
-				
-				if(interfaceInfo.isMultipart()) {
-					content.addMediaType(Constants.MULTIPART_FORM_DATA, item);
 
-				}else {
+		} else{
+			MediaType item = new MediaType();
+			Content content = new Content();
+			if (interfaceInfo.hasRequestBody) {
+				content.addMediaType(Constants.APPLICATION_JSON_VALUE, item);
+				HttpParameterInfo pc = interfaceInfo.getParameterInfos().get(0);
+				Type parameterType = pc.getParamJavaType();
+				resolveParameterInfo(pc, parameterType);
+				String key = resolveType(parameterType, openAPI);
+				Schema<?> schema = openAPI.getComponents().getSchemas().get(key);
+				item.setSchema(schema);
+			} else {
+				if (interfaceInfo.isMultipart()) {
+					content.addMediaType(Constants.MULTIPART_FORM_DATA, item);
+				} else {
 					content.addMediaType(Constants.APPLICATION_FORM_URLENCODED_VALUE, item);
 				}
-				ObjectSchema schema=new ObjectSchema();
+				ObjectSchema schema = new ObjectSchema();
 				item.setSchema(schema);
-				Map<String, Encoding> encodings=new HashMap<>();
-					item.setEncoding(encodings);
-					for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
-						HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
-						String parameterComment=null;
-						if(i<methodComment.parameters.size()) {
-							ParameterInfo pi = methodComment.parameters.get(i);
-							parameterComment=pi.comment;
-						}
-						Type parameterType = pc.getParamJavaType();
-				        resolveParameterInfo(pc,parameterType);
-						if(!pc.isArgumentTypePrimitive) {
-							resolveType(parameterType, openAPI);
-						}
-						Encoding encoding=new Encoding();
-						
-						if(parameterType instanceof Class) {
-							
-							if(BeanUtils.isSimpleProperty((Class<?>)parameterType)){
-								
-								if(parameterType.equals(String.class)) {
-									encoding.setContentType("string");
-								}else {
-									encoding.setContentType("text/plain");
-								}
-								//encoding.setStyle(StyleEnum.FORM);
-							}else {
-								if(TypeUtils.isMultipartType(parameterType)) {
-									encoding.setContentType("pplication/octet-stream");
-								}else {
-								    encoding.setContentType("application/json");
-								     
-								}
+				Map<String, Encoding> encodings = new HashMap<>();
+				item.setEncoding(encodings);
+				for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
+					HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
+					String parameterComment = null;
+					if (i < methodComment.parameters.size()) {
+						ParameterInfo pi = methodComment.parameters.get(i);
+						parameterComment = pi.comment;
+					}
+					Type parameterType = pc.getParamJavaType();
+					resolveParameterInfo(pc, parameterType);
+					if (!pc.isArgumentTypePrimitive) {
+						resolveType(parameterType, openAPI);
+					}
+					Encoding encoding = new Encoding();
+					if (parameterType instanceof Class) {
+						if (BeanUtils.isSimpleProperty((Class<?>) parameterType)) {
+							if (parameterType.equals(String.class)) {
+								encoding.setContentType("string");
+							} else {
+								encoding.setContentType("text/plain");
 							}
-							
-						}else {
-							
-							if(TypeUtils.isMultipartType(parameterType)) {
+						} else {
+							if (TypeUtils.isMultipartType(parameterType)) {
 								encoding.setContentType("pplication/octet-stream");
-							}else {
+							} else {
 								encoding.setContentType("application/json");
 							}
 						}
-						
-						encodings.put(pc.name, encoding);
-						if (pc.paramType.equals(HttpParameterType.query)) {
-							//item.setSchema(pc.schema);
-							Schema<?>propertiesItem=new Schema<>();
-							propertiesItem.setDescription(parameterComment);
-							propertiesItem.setType(pc.type);
-							propertiesItem.set$ref(pc.ref);
-							if(pc.ref!=null && pc.schema instanceof ObjectSchema) { 
-							    @SuppressWarnings("rawtypes")
-								Map<String, Schema> properties=new HashMap<>();
-							    properties.put(pc.ref, pc.schema);
-							    propertiesItem.setProperties(properties);
-							}
-						/*
-						 * if(pc.schema instanceof ObjectSchema) { propertiesItem=pc.schema; }
-						 */
-							if(pc.isRequired()) {
-								schema.addRequiredItem(pc.name);
-							}
-							if(TypeUtils.isMultipartType(parameterType)) {
-								propertiesItem.format("binary");
-							}else {
-								propertiesItem.format(pc.format);
-							    
-							}
-							schema.addProperties(pc.name, propertiesItem);	 
-						} else if (pc.paramType.equals(HttpParameterType.path)) {
-						    Parameter pathParameter=createParameter(pc, parameterComment);
-						    parameters.add(pathParameter);
+					} else {
+						if (TypeUtils.isMultipartType(parameterType)) {
+							encoding.setContentType("application/octet-stream");
+						} else {
+							encoding.setContentType("application/json");
 						}
 					}
-				
-				
-				RequestBody requestBody=new RequestBody();
+					encodings.put(pc.name, encoding);
+					if (pc.paramType.equals(HttpParameterType.query)) {
+						// item.setSchema(pc.schema);
+						Schema<?> propertiesItem = new Schema<>();
+						propertiesItem.setDescription(parameterComment);
+						propertiesItem.setType(pc.type);
+						propertiesItem.set$ref(pc.ref);
+						if (pc.ref != null && pc.schema instanceof ObjectSchema) {
+							@SuppressWarnings("rawtypes")
+							Map<String, Schema> properties = new HashMap<>();
+							properties.put(pc.ref, pc.schema);
+							propertiesItem.setProperties(properties);
+						}
+						if (pc.isRequired()) {
+							schema.addRequiredItem(pc.name);
+						}
+						if (TypeUtils.isMultipartType(parameterType)) {
+							propertiesItem.format("binary");
+						} else {
+							propertiesItem.format(pc.format);
+						}
+						schema.addProperties(pc.name, propertiesItem);
+					} else if (pc.paramType.equals(HttpParameterType.path)) {
+						Parameter pathParameter = createParameter(pc, parameterComment);
+						parameters.add(pathParameter);
+					}
+				}
+				RequestBody requestBody = new RequestBody();
 				requestBody.setContent(content);
 				op.setRequestBody(requestBody);
 			}
-				
-				
-			} 
-				
-				
-			
- 
-		op.setParameters(parameters);
-		resolveResponse(op, interfaceInfo, methodComment!=null?methodComment.retComment:null);
-		if(interfaceInfo.httpMethod.equalsIgnoreCase(RequestMethod.GET.name())) {
-			path.setGet(op);
-		}else {
-			path.setPost(op);
 		}
+		op.setParameters(parameters);
+		resolveResponse(op, interfaceInfo, methodComment != null ? methodComment.retComment : null);
+		String httpMethod=interfaceInfo.httpMethod;
+		addOpToPath(op,path,httpMethod);
 		return path;
-		
-		
+
 	}
-    private void resolveResponse(Operation op,HttpInterfaceInfo interfaceInfo,String respComment) {
-    	ApiResponses responses = new ApiResponses();
+
+	public static void addOpToPath(Operation op, PathItem path, String httpMethod) {
+		// GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
+		if (httpMethod.equalsIgnoreCase(RequestMethod.GET.name())) {
+			path.setGet(op);
+		} else if (httpMethod.equalsIgnoreCase(RequestMethod.HEAD.name())) {
+			path.setHead(op);
+		} else if (httpMethod.equalsIgnoreCase(RequestMethod.POST.name())) {
+			path.setPost(op);
+		} else if (httpMethod.equalsIgnoreCase(RequestMethod.PUT.name())) {
+			path.setPut(op);
+		} else if (httpMethod.equalsIgnoreCase(RequestMethod.PATCH.name())) {
+			path.setPatch(op);
+		} else if (httpMethod.equalsIgnoreCase(RequestMethod.DELETE.name())) {
+			path.setDelete(op);
+		} else if (httpMethod.equalsIgnoreCase(RequestMethod.OPTIONS.name())) {
+			path.setOptions(op);
+		} else if (httpMethod.equalsIgnoreCase(RequestMethod.TRACE.name())) {
+			path.setTrace(op);
+		}
+
+	}
+
+	private void resolveResponse(Operation op, HttpInterfaceInfo interfaceInfo, String respComment) {
+		ApiResponses responses = new ApiResponses();
 		ApiResponse resp = new ApiResponse();
 		String firstKey = resolveType(interfaceInfo.retureType, openAPI);
-	    Schema<?> schema=new ObjectSchema();
+		Schema<?> schema = new ObjectSchema();
 		schema.set$ref("#/components/schemas/" + firstKey);
-		Content respContent=new Content();
-		MediaType mt=new MediaType();
+		Content respContent = new Content();
+		MediaType mt = new MediaType();
 		mt.setSchema(schema);
 		respContent.put(Constants.APPLICATION_JSON_VALUE, mt);
 		resp.setContent(respContent);
 		resp.setDescription("test");
 		responses.put("200", resp);
 		op.setResponses(responses);
-    }
+	}
+
 	private void resolveParameterInfo(HttpParameterInfo pc, Type parameterType) {
 		Class<?> argumentClass = null;
-		if(parameterType instanceof ParameterizedType) {
+		if (parameterType instanceof ParameterizedType) {
 			ParameterizedType ppt = (ParameterizedType) parameterType;
 			Type rawType = ppt.getRawType();
-			if(rawType instanceof Class<?>) {
+			if (rawType instanceof Class<?>) {
 				Class<?> rawClass = (Class<?>) rawType;
 				if (Collection.class.isAssignableFrom(rawClass)) {
 					pc.isCollection = true;
 				}
 			}
-			argumentClass=(Class<?>) ppt.getActualTypeArguments()[0];
-		}else {
+			argumentClass = (Class<?>) ppt.getActualTypeArguments()[0];
+		} else {
 			argumentClass = (Class<?>) parameterType;
 		}
 		if (String.class.isAssignableFrom(argumentClass)) {
-				pc.format = "string";
-				pc.type = "string";
-				pc.isArgumentTypePrimitive = true;
-				pc.schema=new StringSchema();
+			pc.format = "string";
+			pc.type = "string";
+			pc.isArgumentTypePrimitive = true;
+			pc.schema = new StringSchema();
 		} else if (Number.class.isAssignableFrom(argumentClass)) {
-				pc.type = "number";
-				pc.format = argumentClass.getSimpleName().toLowerCase();
-				pc.isArgumentTypePrimitive = true;
-				pc.schema=new NumberSchema();
+			pc.type = "number";
+			pc.format = argumentClass.getSimpleName().toLowerCase();
+			pc.isArgumentTypePrimitive = true;
+			pc.schema = new NumberSchema();
 		} else if (Boolean.class.isAssignableFrom(argumentClass)) {
-				pc.type = "boolean";
-				pc.format = argumentClass.getSimpleName().toLowerCase();
-				pc.isArgumentTypePrimitive = true;
-				pc.schema=new BooleanSchema();
-		} else if(MultipartFile.class.isAssignableFrom(argumentClass)) {
-				pc.format = "File";
-				pc.type = argumentClass.getSimpleName();
-				pc.isArgumentTypePrimitive = true;
-				pc.schema=new FileSchema();
-		}else if(Date.class.isAssignableFrom(argumentClass)) {
-			//pc.format = "File";
+			pc.type = "boolean";
+			pc.format = argumentClass.getSimpleName().toLowerCase();
+			pc.isArgumentTypePrimitive = true;
+			pc.schema = new BooleanSchema();
+		} else if (MultipartFile.class.isAssignableFrom(argumentClass)) {
+			pc.format = "File";
+			pc.type = argumentClass.getSimpleName();
+			pc.isArgumentTypePrimitive = true;
+			pc.schema = new FileSchema();
+		} else if (Date.class.isAssignableFrom(argumentClass)) {
+			// pc.format = "File";
 			pc.type = "date";
 			pc.isArgumentTypePrimitive = true;
-			DateSchema ds=new DateSchema();
+			DateSchema ds = new DateSchema();
 			ds.setFormat(pc.format);
-			pc.schema=ds;
-	    }else {
-				pc.type = "object";
-				pc.format = argumentClass.getSimpleName();
-				pc.isArgumentTypePrimitive = false;
-				pc.schema=new ObjectSchema();
-				pc.ref = TypeNameUtils.getTypeName(parameterType);
-				if (pc.ref.contains("<")) {
-			        pc.ref = pc.ref.replace("<", "").replace(">", "");
-				}
-				pc.schema.set$ref("#/components/schemas/" + pc.ref);
+			pc.schema = ds;
+		} else {
+			pc.type = "object";
+			pc.format = argumentClass.getSimpleName();
+			pc.isArgumentTypePrimitive = false;
+			pc.schema = new ObjectSchema();
+			pc.ref = TypeNameUtils.getTypeName(parameterType);
+			if (pc.ref.contains("<")) {
+				pc.ref = pc.ref.replace("<", "").replace(">", "");
+			}
+			pc.schema.set$ref("#/components/schemas/" + pc.ref);
 		}
-		
+
 	}
 
-   static Set<Class<?>> resolvedClass=new HashSet<>();
-   public static void resolveClassFields(Class<?> clazz, OpenAPI swagger) {
-	   if(resolvedClass.contains(clazz)) {
-		   return ;
-	   }
-	   resolvedClass.add(clazz);
-		if(!BeanUtils.isSimpleProperty(clazz)){
-			Field[] fields =clazz.getDeclaredFields();
-			if(fields!=null) {
-				for(Field f:fields) {
-					Type type=f.getGenericType();
-					resolveType(type,swagger);
+	static Set<Class<?>> resolvedClass = new HashSet<>();
+
+	public static void resolveClassFields(Class<?> clazz, OpenAPI swagger) {
+		if (resolvedClass.contains(clazz)) {
+			return;
+		}
+		resolvedClass.add(clazz);
+		if (!BeanUtils.isSimpleProperty(clazz)) {
+			Field[] fields = clazz.getDeclaredFields();
+			if (fields != null) {
+				for (Field f : fields) {
+					Type type = f.getGenericType();
+					resolveType(type, swagger);
 				}
 			}
 		}
-   }
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static String resolveType(Type type, OpenAPI swagger) {
@@ -399,11 +383,11 @@ public class OpenAPITool {
 				resolveType(subType, swagger);
 			}
 		}
-		if(type instanceof Class<?>) {
-			Class<?> clazz=(Class<?>)type;
-			resolveClassFields(clazz,swagger);
+		if (type instanceof Class<?>) {
+			Class<?> clazz = (Class<?>) type;
+			resolveClassFields(clazz, swagger);
 		}
-		
+
 		String firstKey = null;
 		for (String key : models.keySet()) {
 			firstKey = key;
@@ -419,7 +403,7 @@ public class OpenAPITool {
 				if (name.startsWith("get")) {
 					name = name.replace("get", "");
 				}
-                String propertyComment=getPropertyComment(type,name);
+				String propertyComment = getPropertyComment(type, name);
 				if (propertyComment != null) {
 					ss.setDescription(propertyComment);
 				}
@@ -427,19 +411,18 @@ public class OpenAPITool {
 				properties.put(name, ss);
 			});
 			/**
-			if(!CollectionUtils.isEmpty(model.getRequired())) {
-				model.getRequired().clear();
-			}
-			*/
+			 * if(!CollectionUtils.isEmpty(model.getRequired())) {
+			 * model.getRequired().clear(); }
+			 */
 			model.getProperties().clear();
 			model.setProperties(properties);
 			swagger.schema(key, model);
 		}
 		return firstKey;
 	}
-	
-	private static String getPropertyComment(Type type,String propertyName) {
-		
+
+	private static String getPropertyComment(Type type, String propertyName) {
+
 		String fcKey = null;
 		if (type instanceof Class<?>) {
 			String typeName = ((Class<?>) type).getSimpleName();
@@ -451,12 +434,23 @@ public class OpenAPITool {
 			fcKey = typeName + "#" + propertyName;
 		}
 		FieldInfo fi = CommonClassCommentParser.fieldComments.get(fcKey);
-		if(fi!=null) {
+		if (fi != null) {
 			return fi.comment;
-		}else {
+		} else {
 			return null;
 		}
 	}
-
+	
+	
+	public static boolean mayRequestBody(String httpMethod) {
+		//CONNECT
+		boolean mustNotHasBody=httpMethod.equalsIgnoreCase(RequestMethod.GET.name()) ||
+				httpMethod.equalsIgnoreCase(RequestMethod.HEAD.name()) ||
+				httpMethod.equalsIgnoreCase(RequestMethod.DELETE.name()) || 
+				 false;
+				//httpMethod.equalsIgnoreCase(RequestMethod.CONNECT.name()) ||
+				//httpMethod.equalsIgnoreCase(RequestMethod.GET.name());
+		return !mustNotHasBody;
+	}
 
 }
