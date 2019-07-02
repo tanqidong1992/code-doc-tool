@@ -11,8 +11,6 @@
 
 package com.hngd.doc.core.parse;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +26,7 @@ public class ClassCommentParser {
 	/**
 	 * java doc comment must has 2 lines
 	 */
-	public static final int MIN_JAVADOC_COMMENT_LINE_SIZE=2;
+	public static final int JAVADOC_COMMENT_MIN_LINE_SIZE=2;
 	private static final Logger logger = LoggerFactory.getLogger(ClassCommentParser.class);
 
 	static class ParseResult {
@@ -38,12 +36,12 @@ public class ClassCommentParser {
 	}
 
 	public static List<CommentElement> parseMethodComment(List<String> commentLines) {
-		if (commentLines.size() <= MIN_JAVADOC_COMMENT_LINE_SIZE) {
+		if (commentLines.size() <= JAVADOC_COMMENT_MIN_LINE_SIZE) {
 			return null;
 		}
 		List<String> lines = commentLines.subList(1, commentLines.size() - 1);
 		List<CommentElement> pce = new ArrayList<>();
-		ParseResult pr = parseDesc(lines);
+		ParseResult pr = parseDescription(lines);
 		pce.add(pr.elemnet);
 		while (pr.endIndex < lines.size()) {
 			if (pr.endIndex == -1) {
@@ -55,7 +53,7 @@ public class ClassCommentParser {
 		return pce;
 	}
     
-	private static ParseResult parseDesc(List<String> lines) {
+	private static ParseResult parseDescription(List<String> lines) {
 		ParseResult pr = new ParseResult();
 		pr.startIndex = 0;
 		StringBuilder desc = new StringBuilder();
@@ -82,39 +80,24 @@ public class ClassCommentParser {
 		ParseResult pr = new ParseResult();
 		pr.startIndex = startIndex;
 		StringBuilder desc = new StringBuilder();
-		boolean isFountAt = false;
+		boolean isFoundAt = false;
 		for (int i = startIndex; i < lines.size(); i++) {
 			if (StringUtils.isEmpty(lines.get(i))) {
 				continue;
 			}
 			String line = lines.get(i).replaceFirst("\\*", "").trim();
 			if (line.startsWith("@")) {
-				if (isFountAt) {
+				if (isFoundAt) {
 					pr.endIndex = i;
 					break;
 				} else {
-					Set<String> keys = CommentElement.commentElements.keySet();
-					for (String key : keys) {
-						if (line.startsWith(key)) {
-							CommentElement ceType = CommentElement.commentElements.get(key);
-							try {
-								ce = ceType.getClass().newInstance();
-							} catch (InstantiationException | IllegalAccessException e) {
-								logger.error("", e);
-							}
-
-							if (ce != null) {
-								line = ce.parse(line);
-							} else {
-								logger.error("could not parse line[" + line + "]");
-							}
-							break;
-						}
+					ce=findElementParser(line);
+					if (ce != null) {
+						line = ce.parse(line);
+					} else {
+						logger.error("could not parse line:{}",line);
 					}
-					if (ce == null) {
-						logger.error("could not parse line[" + line + "]");
-					}
-					isFountAt = true;
+					isFoundAt = true;
 				}
 			}
 			desc.append(line).append(" ");
@@ -127,5 +110,24 @@ public class ClassCommentParser {
 			ce.comment = desc.toString();
 		}
 		return pr;
+	}
+	
+	public static CommentElement findElementParser(String line) {
+		Set<String> keys = CommentElement.commentElements.keySet();
+		for (String key : keys) {
+			if (line.startsWith(key)) {
+				CommentElement ceType = CommentElement.commentElements.get(key);
+				CommentElement ce=null;
+				try {
+					ce = ceType.getClass().newInstance();
+				} catch (InstantiationException | IllegalAccessException e) {
+					logger.error("", e);
+				}
+				if(ce!=null) {
+					return ce;
+				}
+			}
+		}
+		return null;
 	}
 }

@@ -42,7 +42,7 @@ public class HttpParameterInfo {
 	public boolean isCollection;
 	public String format;
 	public boolean isArgumentTypePrimitive;
-	public Schema schema;
+	public Schema<?> schema;
 
 	public String getTypeName() {
 		return typeName;

@@ -42,6 +42,7 @@ import com.hngd.doc.core.ParameterInfo;
 import com.hngd.doc.core.parse.CommonClassCommentParser;
 import com.hngd.doc.core.util.ClassUtils;
 import com.hngd.doc.core.util.TypeNameUtils;
+import com.hngd.doc.core.util.TypeUtils;
 
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -51,6 +52,7 @@ import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.FileSchema;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.NumberSchema;
@@ -58,8 +60,6 @@ import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
-import io.swagger.v3.oas.models.parameters.PathParameter;
-import io.swagger.v3.oas.models.parameters.QueryParameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
@@ -192,50 +192,103 @@ public class OpenAPITool {
 				Schema<?> schema=openAPI.getComponents().getSchemas().get(key);
 				item.setSchema(schema);
 				
-			}else if(interfaceInfo.isMultipart()) {
-				content.addMediaType(Constants.MULTIPART_FORM_DATA, item);
-				
-				 
 			}else {
-				content.addMediaType(Constants.APPLICATION_FORM_URLENCODED_VALUE, item);
-				Schema<?> schema=new Schema<>();
-				schema.setType("object");
-				item.setSchema(schema);
-				for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
-					HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
-					String parameterComment=null;
-					if(i<methodComment.parameters.size()) {
-						ParameterInfo pi = methodComment.parameters.get(i);
-						parameterComment=pi.comment;
-					}
-					Type parameterType = pc.getParamJavaType();
-			        resolveParameterInfo(pc,parameterType);
-					if(!pc.isArgumentTypePrimitive) {
-						resolveType(parameterType, openAPI);
-					}
-					
-					if (pc.paramType.equals(HttpParameterType.query)) {
-						//item.setSchema(pc.schema);
-						Schema<?>propertiesItem=new Schema<>();
-						propertiesItem.setDescription(parameterComment);
-						propertiesItem.setType(pc.type);
-						propertiesItem.set$ref(pc.ref);
-						if(pc.isRequired()) {
-							schema.addRequiredItem(pc.name);
-						}
-						propertiesItem.format(pc.format);
-						schema.addProperties(pc.name, propertiesItem);	 
-					} else if (pc.paramType.equals(HttpParameterType.path)) {
-					    Parameter pathParameter=createParameter(pc, parameterComment);
-					    parameters.add(pathParameter);
-					}
+				
+				if(interfaceInfo.isMultipart()) {
+					content.addMediaType(Constants.MULTIPART_FORM_DATA, item);
+
+				}else {
+					content.addMediaType(Constants.APPLICATION_FORM_URLENCODED_VALUE, item);
 				}
+				ObjectSchema schema=new ObjectSchema();
+				item.setSchema(schema);
+				Map<String, Encoding> encodings=new HashMap<>();
+					item.setEncoding(encodings);
+					for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
+						HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
+						String parameterComment=null;
+						if(i<methodComment.parameters.size()) {
+							ParameterInfo pi = methodComment.parameters.get(i);
+							parameterComment=pi.comment;
+						}
+						Type parameterType = pc.getParamJavaType();
+				        resolveParameterInfo(pc,parameterType);
+						if(!pc.isArgumentTypePrimitive) {
+							resolveType(parameterType, openAPI);
+						}
+						Encoding encoding=new Encoding();
+						
+						if(parameterType instanceof Class) {
+							
+							if(BeanUtils.isSimpleProperty((Class<?>)parameterType)){
+								
+								if(parameterType.equals(String.class)) {
+									encoding.setContentType("string");
+								}else {
+									encoding.setContentType("text/plain");
+								}
+								//encoding.setStyle(StyleEnum.FORM);
+							}else {
+								if(TypeUtils.isMultipartType(parameterType)) {
+									encoding.setContentType("pplication/octet-stream");
+								}else {
+								    encoding.setContentType("application/json");
+								     
+								}
+							}
+							
+						}else {
+							
+							if(TypeUtils.isMultipartType(parameterType)) {
+								encoding.setContentType("pplication/octet-stream");
+							}else {
+								encoding.setContentType("application/json");
+							}
+						}
+						
+						encodings.put(pc.name, encoding);
+						if (pc.paramType.equals(HttpParameterType.query)) {
+							//item.setSchema(pc.schema);
+							Schema<?>propertiesItem=new Schema<>();
+							propertiesItem.setDescription(parameterComment);
+							propertiesItem.setType(pc.type);
+							propertiesItem.set$ref(pc.ref);
+							if(pc.ref!=null && pc.schema instanceof ObjectSchema) { 
+							    @SuppressWarnings("rawtypes")
+								Map<String, Schema> properties=new HashMap<>();
+							    properties.put(pc.ref, pc.schema);
+							    propertiesItem.setProperties(properties);
+							}
+						/*
+						 * if(pc.schema instanceof ObjectSchema) { propertiesItem=pc.schema; }
+						 */
+							if(pc.isRequired()) {
+								schema.addRequiredItem(pc.name);
+							}
+							if(TypeUtils.isMultipartType(parameterType)) {
+								propertiesItem.format("binary");
+							}else {
+								propertiesItem.format(pc.format);
+							    
+							}
+							schema.addProperties(pc.name, propertiesItem);	 
+						} else if (pc.paramType.equals(HttpParameterType.path)) {
+						    Parameter pathParameter=createParameter(pc, parameterComment);
+						    parameters.add(pathParameter);
+						}
+					}
+				
+				
+				RequestBody requestBody=new RequestBody();
+				requestBody.setContent(content);
+				op.setRequestBody(requestBody);
 			}
+				
+				
+			} 
+				
+				
 			
-			RequestBody requestBody=new RequestBody();
-			requestBody.setContent(content);
-			op.setRequestBody(requestBody);
-		}
  
 		op.setParameters(parameters);
 		resolveResponse(op, interfaceInfo, methodComment!=null?methodComment.retComment:null);
@@ -356,7 +409,6 @@ public class OpenAPITool {
 			firstKey = key;
 			Schema model = models.get(key);
 			Map<String, Schema> properties = new HashMap<>();
-			@SuppressWarnings("unchecked")
 			Map<String, Schema> cps = model.getProperties();
 			if (cps == null) {
 				continue;

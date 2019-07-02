@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.doc.ProjectAnalysis;
+import com.api.doc.constant.Constant;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +38,7 @@ public class TestInitAllComment {
 	static Logger logger=LoggerFactory.getLogger(TestInitAllComment.class);
 	public static void main(String[] args) throws IOException {
 		String src="D:\\company\\projects\\inspection-system\\education-training-system\\src\\main\\java";
+		src="D:\\company\\projects\\inspection-system\\inspection-system\\src\\main\\java";
 		File root=new File(src);
 		long startTime = System.currentTimeMillis();
 		Thread t1 = new Thread(() -> {
@@ -50,8 +53,9 @@ public class TestInitAllComment {
 		
 		NestedJarClassLoader loader=new NestedJarClassLoader(TestInitAllComment.class.getClassLoader(),logger);
 		String jarFilePath="D:\\company\\projects\\inspection-system\\education-training-system\\target\\education-training-system-0.0.1-SNAPSHOT.jar";
+		jarFilePath="D:\\company\\projects\\inspection-system\\inspection-system\\target\\inspection-system-0.0.1-SNAPSHOT.jar";
 		File file=new File(jarFilePath);
-		loader.addURLs(file.toURL());
+		loader.addURLs(file.toURI().toURL());
 		
 		Info info = App.createInfo();
 		OpenAPI openApi = new OpenAPI();
@@ -67,21 +71,13 @@ public class TestInitAllComment {
 		String packageFilter="com.hngd.web.controller";
 		List<Class<?>> clazzes=allClass.stream()
 		.filter(name->name.startsWith(packageFilter))
-         .map(name->{
-        	 try {
-				return loader.loadClass(name,true);
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        	 return null;
-         })
+         .map(name->ProjectAnalysis.loadClassFromNestedJar(loader, name))
          .filter(clazz -> clazz != null)
 		 .collect(Collectors.toList());
 		openAPITool.parse(clazzes);
 		//openAPITool.parse("com.hngd.web.controller");
 		String s = toJson("",openApi);
-        FileUtils.write(new File("./api.json"), s);
+        FileUtils.write(new File("./api.json"), s,Constant.DEFAULT_CHARSET_NAME);
 	}
 
 	public static String toJson(final String key, OpenAPI mOpenAPI) throws JsonProcessingException {

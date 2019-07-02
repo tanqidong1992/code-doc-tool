@@ -10,13 +10,7 @@
  */
 package com.hngd.doc.core.parse;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,9 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
-import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
@@ -54,8 +45,6 @@ import com.hngd.doc.core.parse.extension.MobileElement;
 import com.hngd.doc.core.parse.extension.TimeElement;
 import com.hngd.doc.core.util.ClassUtils;
 
- 
-
 /**
  * @author tqd
  */
@@ -65,12 +54,12 @@ public class CommonClassCommentParser {
 		ExtensionManager.enableExtension(MobileElement.class);
 		ExtensionManager.enableExtension(AuthorElement.class);
 	}
-	private static Logger logger = LoggerFactory.getLogger(ControllerClassCommentParser.class);
+	private static Logger logger = LoggerFactory.getLogger(CommonClassCommentParser.class);
 	public static Map<String, String> classComments = new HashMap<>();
 	public static Map<String, MethodInfo> methodComments = new HashMap<>();
 	public static Map<String, FieldInfo> fieldComments = new HashMap<String, FieldInfo>();
-	public static void init(String root) {
-		File file = new File(root);
+	public static void parseFiles(String directoryPath) {
+		File file = new File(directoryPath);
 		if(!file.exists()){
 			logger.error("file {} is not found",file.getAbsolutePath());
 		    return;
@@ -89,22 +78,23 @@ public class CommonClassCommentParser {
 			.forEach(CommonClassCommentParser::parse);
 	}
 	
-    public static void initRecursively(File root) {
-		
-		if(root.isDirectory()) {
-			init(root.getAbsolutePath());
-			File[] files=root.listFiles();
-			if(files==null) {
-				return ;
-			}
-			for(File file:files) {
-				if(file.isDirectory()) {
-					init(file.getAbsolutePath());
-					initRecursively(file);
-				}
-			}
+    public static void initRecursively(File directory) {
+    	if(directory.isFile()) {
+    		logger.warn("the file:{} is not a directory",directory.getAbsolutePath());
+    		return;
+    	}
+		parseFiles(directory.getAbsolutePath());
+		File[] files=directory.listFiles();
+		if(files==null) {
+			return ;
 		}
-		
+		for(File file:files) {
+			if(!file.isDirectory()) {
+				continue;
+			}
+			parseFiles(file.getAbsolutePath());
+			initRecursively(file);
+		} 
 	}
 	
     public static boolean isJavaSourceFile(File file){
@@ -134,9 +124,9 @@ public class CommonClassCommentParser {
 						classComments.put(classOrInterfaceName, descComment.comment);
 					});
 					 
-				} 
+				}
 			}else{
-				logger.warn("javadoc comment for classOrInterface {}",classOrInterfaceName);
+				logger.warn("javadoc comment for classOrInterface {} is not found",classOrInterfaceName);
 			}
     		return true;
     	}

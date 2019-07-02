@@ -17,25 +17,24 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.api.doc.constant.Constant;
 import com.google.gson.Gson;
 
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
- 
- 
 
 /**
+ * swagger配置
  * @author
  */
 public class ServerConfig {
-
 	public List<Server> servers;
- 
-
 	public Info info;
-
+	private static final Logger logger=LoggerFactory.getLogger(ServerConfig.class);
 	public static ServerConfig load(String filePath) {
-
 		Gson gson = new Gson();
 		File file = new File(filePath);
 		Path path = file.toPath();
@@ -43,14 +42,12 @@ public class ServerConfig {
 		try {
 			data = Files.readAllBytes(path);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("",e);
 		}
 		if (data == null) {
 			return null;
 		}
-		String src = new String(data, Charset.forName("UTF-8"));
-
+		String src = new String(data, Charset.forName(Constant.DEFAULT_CHARSET_NAME));
 		return gson.fromJson(src, ServerConfig.class);
 	}
 

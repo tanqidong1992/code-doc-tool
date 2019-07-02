@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.apidoc.config.ServerConfig;
-import com.apidoc.servlet.TestInitAllComment;
 import com.apidoc.utils.JsonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hngd.doc.core.gen.OpenAPITool;

@@ -3,7 +3,6 @@ package com.hngd.doc.core;
 import java.util.Date;
 import java.util.List;
 
-import io.swagger.v3.oas.models.media.Schema;
 
 public class MethodInfo {
 
