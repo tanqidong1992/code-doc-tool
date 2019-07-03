@@ -145,7 +145,7 @@ public class OpenAPITool {
 			operationTags.add(methodComment.createTimeStr);
 		}
 		operationTags.add(tag.getName());
-		op.setDeprecated(moduleInfo.deprecated);
+		op.setDeprecated(moduleInfo.deprecated || interfaceInfo.deprecated);
 		op.setTags(operationTags);
 		op.setOperationId(interfaceInfo.methodName);
 		op.setDescription(methodComment.comment);
@@ -268,7 +268,6 @@ public class OpenAPITool {
 				op.setRequestBody(requestBody);
 			}
 		}
-		op.deprecated(interfaceInfo.deprecated);
 		op.setParameters(parameters);
 		resolveResponse(op, interfaceInfo, methodComment != null ? methodComment.retComment : null);
 		String httpMethod=interfaceInfo.httpMethod;

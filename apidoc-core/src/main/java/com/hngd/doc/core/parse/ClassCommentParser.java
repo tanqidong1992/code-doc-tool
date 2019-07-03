@@ -12,6 +12,7 @@
 package com.hngd.doc.core.parse;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -32,23 +33,20 @@ public class ClassCommentParser {
 	static class ParseResult {
 		int startIndex;
 		int endIndex = -1;
-		CommentElement elemnet;
+		CommentElement element;
 	}
 
 	public static List<CommentElement> parseMethodComment(List<String> commentLines) {
 		if (commentLines.size() <= JAVADOC_COMMENT_MIN_LINE_SIZE) {
-			return null;
+			return Collections.emptyList();
 		}
 		List<String> lines = commentLines.subList(1, commentLines.size() - 1);
 		List<CommentElement> pce = new ArrayList<>();
 		ParseResult pr = parseDescription(lines);
-		pce.add(pr.elemnet);
+		pce.add(pr.element);
 		while (pr.endIndex < lines.size()) {
-			if (pr.endIndex == -1) {
-				System.out.println("test");
-			}
 			pr = parseElement(lines, pr.endIndex);
-			pce.add(pr.elemnet);
+			pce.add(pr.element);
 		}
 		return pce;
 	}
@@ -68,7 +66,7 @@ public class ClassCommentParser {
 		}
 		CommentElement ce = new CommentElement.DescElement();
 		ce.comment = desc.toString();
-		pr.elemnet = ce;
+		pr.element = ce;
 		if (pr.endIndex == -1) {
 			pr.endIndex = lines.size();
 		}
@@ -105,7 +103,7 @@ public class ClassCommentParser {
 		if (pr.endIndex == -1) {
 			pr.endIndex = lines.size();
 		}
-		pr.elemnet = ce;
+		pr.element = ce;
 		if (ce != null) {
 			ce.comment = desc.toString();
 		}
