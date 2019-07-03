@@ -6,20 +6,40 @@ import java.util.List;
 import com.hngd.api.http.HttpInterfaceInfo;
 
 /**
+ * 模块信息
  * @author hnoe-dev-tqd
  *
  */
 public class ModuleInfo {
 
+
+    /**
+     * 模块名称
+     */
+	public String moduleName;
+	/**
+	 * 模块基础路径
+	 */
+	public String moduleUrl;
+	/**
+	 * 模块接口列表
+	 */
+	public List<HttpInterfaceInfo> interfaceInfos;
+	/**
+	 * 模块类名称
+	 */
+	public String simpleClassName;
+	/**
+	 * 模块所在类全路径
+	 */
+	public String canonicalClassName;
+	/**
+	 * 模块是否被弃用
+	 */
+	public Boolean deprecated;
 	public ModuleInfo() {
 		interfaceInfos = new ArrayList<HttpInterfaceInfo>();
 	}
-
-	public String moduleName;
-	public String moduleUrl;
-	public List<HttpInterfaceInfo> interfaceInfos;
-	public String simpleClassName;
-	public String canonicalClassName;
 	/**
 	 * @return the moduleName
 	 */

@@ -32,7 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.hngd.api.http.HttpInterfaceInfo;
 import com.hngd.api.http.HttpParameterInfo;
-import com.hngd.api.http.HttpParameterInfo.HttpParameterType;
+import com.hngd.constant.HttpParameterType;
 import com.hngd.constant.Constants;
 import com.hngd.doc.core.FieldInfo;
 import com.hngd.doc.core.MethodInfo;
@@ -87,7 +87,8 @@ public class OpenAPITool {
 		Paths paths = new Paths();
 		openAPI.setPaths(paths);
 		openAPI.setTags(tags);
-		clses.stream().map(clazz -> ClassParser.processClass(clazz))
+		clses.stream()
+		    .map(clazz -> ClassParser.processClass(clazz))
 		    .filter(mi -> mi != null)
 			.forEach(mi -> module2doc(mi, paths, tags));
 	}
@@ -144,6 +145,7 @@ public class OpenAPITool {
 			operationTags.add(methodComment.createTimeStr);
 		}
 		operationTags.add(tag.getName());
+		op.setDeprecated(moduleInfo.deprecated);
 		op.setTags(operationTags);
 		op.setOperationId(interfaceInfo.methodName);
 		op.setDescription(methodComment.comment);
@@ -160,7 +162,7 @@ public class OpenAPITool {
 				}
 				Type parameterType = pc.getParamJavaType();
 				resolveParameterInfo(pc, parameterType);
-				if (!pc.isArgumentTypePrimitive) {
+				if (!pc.isPrimitive) {
 					resolveType(parameterType, openAPI);
 				}
 				Parameter param = createParameter(pc, parameterComment);
@@ -197,7 +199,7 @@ public class OpenAPITool {
 					}
 					Type parameterType = pc.getParamJavaType();
 					resolveParameterInfo(pc, parameterType);
-					if (!pc.isArgumentTypePrimitive) {
+					if (!pc.isPrimitive) {
 						resolveType(parameterType, openAPI);
 					}
 					Encoding encoding = new Encoding();
@@ -331,34 +333,34 @@ public class OpenAPITool {
 		if (String.class.isAssignableFrom(argumentClass)) {
 			pc.format = "string";
 			pc.type = "string";
-			pc.isArgumentTypePrimitive = true;
+			pc.isPrimitive = true;
 			pc.schema = new StringSchema();
 		} else if (Number.class.isAssignableFrom(argumentClass)) {
 			pc.type = "number";
 			pc.format = argumentClass.getSimpleName().toLowerCase();
-			pc.isArgumentTypePrimitive = true;
+			pc.isPrimitive = true;
 			pc.schema = new NumberSchema();
 		} else if (Boolean.class.isAssignableFrom(argumentClass)) {
 			pc.type = "boolean";
 			pc.format = argumentClass.getSimpleName().toLowerCase();
-			pc.isArgumentTypePrimitive = true;
+			pc.isPrimitive = true;
 			pc.schema = new BooleanSchema();
 		} else if (MultipartFile.class.isAssignableFrom(argumentClass)) {
 			pc.format = "File";
 			pc.type = argumentClass.getSimpleName();
-			pc.isArgumentTypePrimitive = true;
+			pc.isPrimitive = true;
 			pc.schema = new FileSchema();
 		} else if (Date.class.isAssignableFrom(argumentClass)) {
 			// pc.format = "File";
 			pc.type = "date";
-			pc.isArgumentTypePrimitive = true;
+			pc.isPrimitive = true;
 			DateSchema ds = new DateSchema();
 			ds.setFormat(pc.format);
 			pc.schema = ds;
 		} else {
 			pc.type = "object";
 			pc.format = argumentClass.getSimpleName();
-			pc.isArgumentTypePrimitive = false;
+			pc.isPrimitive = false;
 			pc.schema = new ObjectSchema();
 			pc.ref = TypeNameUtils.getTypeName(parameterType);
 			if (pc.ref.contains("<")) {

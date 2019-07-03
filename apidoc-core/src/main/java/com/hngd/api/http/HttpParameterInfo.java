@@ -2,46 +2,67 @@ package com.hngd.api.http;
 
 import java.lang.reflect.Type;
 
+import com.hngd.constant.HttpParameterType;
 
 import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.parameters.QueryParameter;
-import io.swagger.v3.oas.models.parameters.CookieParameter;
-import io.swagger.v3.oas.models.parameters.HeaderParameter;
-import io.swagger.v3.oas.models.parameters.Parameter;
-import io.swagger.v3.oas.models.parameters.PathParameter;
-import io.swagger.v3.oas.models.parameters.RequestBody;
+/**
+ * http接口参数信息
+ * @author tqd
+ *
+ */
 public class HttpParameterInfo {
-	
-	public enum HttpParameterType {
-		query(QueryParameter.class), path(PathParameter.class),
-		cookie(CookieParameter.class), header(HeaderParameter.class),body(RequestBody.class);
-		private HttpParameterType(Class<?> paramClass){
-			this.paramClass=paramClass;
-		}
-		private Class<?> paramClass;
-		public Class<?> getParamClass(){
-			return paramClass;
-		}
-		public boolean isParameter() {
-			return Parameter.class.isAssignableFrom(paramClass);
-		}
-		
-	}
-	
+	/**
+	 * Java类型名称
+	 */
 	public String typeName;
+	/**
+	 * 参数名称
+	 */
 	public String name;
+	/**
+	 * 是否必须
+	 */
 	public boolean required;
+	/**
+	 * 参数位置类型
+	 */
 	public HttpParameterType paramType;
+	/**
+	 * 参数Java类型
+	 */
 	public Type paramJavaType;
+	/**
+	 * 是否路径参数,目前只有生成js代码用到，后期考虑去掉
+	 */
+	@Deprecated
 	public boolean isPathVariable;
+	/**
+	 * 是否基础类型，
+	 */
 	public boolean isPrimitive;
+	/**
+	 * 说明，对应Java注释
+	 */
 	public String comment;
-
+    /**
+     * Swagger 参数类型
+     */
 	public String type;
+	/**
+	 * Swagger 引用路径
+	 */
 	public String ref;
+	/**
+	 * 是否集合
+	 */
 	public boolean isCollection;
+	/**
+	 * Swagger format
+	 */
 	public String format;
-	public boolean isArgumentTypePrimitive;
+	/**
+	 * Swagger schema
+	 */
 	public Schema<?> schema;
 
 	public String getTypeName() {

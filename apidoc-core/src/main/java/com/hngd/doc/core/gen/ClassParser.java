@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hngd.api.http.HttpInterfaceInfo;
 import com.hngd.api.http.HttpParameterInfo;
-import com.hngd.api.http.HttpParameterInfo.HttpParameterType;
+import com.hngd.constant.HttpParameterType;
 import com.hngd.doc.core.ModuleInfo;
 import com.hngd.doc.core.util.RestClassUtils;
 import com.hngd.doc.core.util.SpringAnnotationUtils;
@@ -41,13 +41,14 @@ public class ClassParser {
 		Controller controller = cls.getAnnotation(Controller.class);
 		RestController restController = cls.getAnnotation(RestController.class);
 		if (controller == null && restController == null) {
-			logger.warn("class:{} has no annotation {},{}",cls.getName(),Controller.class.getName(),RestController.class.getName());
+			logger.warn("There is no annotation Controller RestController for class:{}",cls.getName());
 			return null;
 		}
 		RequestMapping requestMapping = cls.getAnnotation(RequestMapping.class);
 		mi.moduleUrl=SpringAnnotationUtils.extractUrl(requestMapping);
 		mi.moduleName = cls.getSimpleName();
 		mi.simpleClassName = cls.getSimpleName();
+		mi.deprecated=isModuleDeprecated(cls);
 		Method[] methods = cls.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
@@ -63,6 +64,10 @@ public class ClassParser {
 		return mi;
 	}
 	
+	private static Boolean isModuleDeprecated(Class<?> cls) {
+		return cls.getAnnotation(Deprecated.class)!=null;
+	}
+
 	private static HttpInterfaceInfo processMethod(Method method) {
 		HttpInterfaceInfo info = new HttpInterfaceInfo();
 		Optional<? extends Annotation> optionalAnnotation = RestClassUtils.getHttpRequestInfo(method);
@@ -128,7 +133,7 @@ public class ClassParser {
 			if(dateFormat.isPresent()) {
 				rpi.format=dateFormat.get();
 			}
-			rpi.isArgumentTypePrimitive=BeanUtils.isSimpleProperty(parameter.getType());
+			rpi.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 			return Arrays.asList(rpi);
 		}else if(isPathVariable(annotations).isPresent()) {
 			PathVariable pa =isPathVariable(annotations).get();
@@ -141,7 +146,7 @@ public class ClassParser {
 			if(dateFormat.isPresent()) {
 				rpi.format=dateFormat.get();
 			}
-			rpi.isArgumentTypePrimitive=BeanUtils.isSimpleProperty(parameter.getType());
+			rpi.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 			return Arrays.asList(rpi);
 		}else if(isRequestBody(annotations).isPresent()) {
 			//RequestBody rb= isRequestBody(annotations).get();
@@ -154,7 +159,7 @@ public class ClassParser {
 		    if(dateFormat.isPresent()) {
 			    rpi.format=dateFormat.get();
 		    }
-		    rpi.isArgumentTypePrimitive=BeanUtils.isSimpleProperty(parameter.getType());
+		    rpi.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 		    return Arrays.asList(rpi);
 		}else {
 			//TODO support all spring web parameters 
@@ -179,7 +184,7 @@ public class ClassParser {
 					if(dateFormat.isPresent()) {
 						rpi.format=dateFormat.get();
 					}
-					rpi.isArgumentTypePrimitive=BeanUtils.isSimpleProperty(parameter.getType());
+					rpi.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 			        return Arrays.asList(rpi);
 				}else {
 					//model
@@ -197,7 +202,7 @@ public class ClassParser {
 						if(dateFormat.isPresent()) {
 							rpi.format=dateFormat.get();
 						}
-						rpi.isArgumentTypePrimitive=BeanUtils.isSimpleProperty(parameter.getType());
+						rpi.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 						rpis.add(rpi);
 					}
 					return  rpis;
