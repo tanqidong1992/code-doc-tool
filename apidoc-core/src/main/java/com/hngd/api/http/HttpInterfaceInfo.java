@@ -22,6 +22,7 @@ public class HttpInterfaceInfo{
 
 	public String comment;
 	public boolean hasRequestBody=false;
+	public Boolean deprecated;
 
 	public String getComment() {
 		return comment;
@@ -173,6 +174,14 @@ public class HttpInterfaceInfo{
 
 	public void setHasRequestBody(boolean hasRequestBody) {
 		this.hasRequestBody = hasRequestBody;
+	}
+
+	public Boolean getDeprecated() {
+		return deprecated;
+	}
+
+	public void setDeprecated(Boolean deprecated) {
+		this.deprecated = deprecated;
 	}
 
 }

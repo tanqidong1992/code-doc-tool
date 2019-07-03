@@ -48,7 +48,6 @@ public class ClassParser {
 		mi.moduleUrl=SpringAnnotationUtils.extractUrl(requestMapping);
 		mi.moduleName = cls.getSimpleName();
 		mi.simpleClassName = cls.getSimpleName();
-
 		Method[] methods = cls.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
@@ -68,6 +67,7 @@ public class ClassParser {
 		HttpInterfaceInfo info = new HttpInterfaceInfo();
 		Optional<? extends Annotation> optionalAnnotation = RestClassUtils.getHttpRequestInfo(method);
 		Annotation mappingAnnotation=optionalAnnotation.get();
+		info.deprecated=isMethodDeprecated(method);
 		//extract consumes
         List<String> consumes=RestClassUtils.extractCosumes(mappingAnnotation);
 		if (consumes != null) {
@@ -105,6 +105,10 @@ public class ClassParser {
 		}
 		return info;
 	}
+	private static boolean isMethodDeprecated(Method method) {
+		return method.getAnnotation(Deprecated.class)!=null;
+	}
+
 	/**
 	 * @see <a href="https://docs.spring.io/spring/docs/5.1.7.RELEASE/spring-framework-reference/web.html#mvc-ann-arguments">Spring MVC Method Arguments</a> 
 	 * @param parameter

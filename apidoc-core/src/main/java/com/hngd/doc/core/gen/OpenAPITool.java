@@ -48,6 +48,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.DateSchema;
@@ -209,7 +210,7 @@ public class OpenAPITool {
 							}
 						} else {
 							if (TypeUtils.isMultipartType(parameterType)) {
-								encoding.setContentType("pplication/octet-stream");
+								encoding.setContentType("application/octet-stream");
 							} else {
 								encoding.setContentType("application/json");
 							}
@@ -239,6 +240,18 @@ public class OpenAPITool {
 						}
 						if (TypeUtils.isMultipartType(parameterType)) {
 							propertiesItem.format("binary");
+							propertiesItem.setType("string");
+							 Class<?> type=(Class<?>) parameterType;
+							 if(type.isArray()) {
+								 ArraySchema as=new ArraySchema();
+								 as.setDescription(parameterComment);
+								 as.setType("array");
+								 Schema<?> items=new Schema<>();
+								 items.setType("string");
+								 items.setFormat("binary");
+								 as.setItems(items);
+								 propertiesItem=as;
+							 }
 						} else {
 							propertiesItem.format(pc.format);
 						}
@@ -253,6 +266,7 @@ public class OpenAPITool {
 				op.setRequestBody(requestBody);
 			}
 		}
+		op.deprecated(interfaceInfo.deprecated);
 		op.setParameters(parameters);
 		resolveResponse(op, interfaceInfo, methodComment != null ? methodComment.retComment : null);
 		String httpMethod=interfaceInfo.httpMethod;
