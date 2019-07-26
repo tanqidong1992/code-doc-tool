@@ -263,10 +263,10 @@ public class OpenAPITool {
 						parameters.add(pathParameter);
 					}
 				}
-				RequestBody requestBody = new RequestBody();
-				requestBody.setContent(content);
-				op.setRequestBody(requestBody);
 			}
+			RequestBody requestBody = new RequestBody();
+			requestBody.setContent(content);
+			op.setRequestBody(requestBody);
 		}
 		op.setParameters(parameters);
 		resolveResponse(op, interfaceInfo, methodComment != null ? methodComment.retComment : null);
