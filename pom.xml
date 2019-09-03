@@ -57,7 +57,7 @@
 		<repository>
 			<id>hn-local-143</id>
 			<name>hnlocal maven</name>
-			<url>http://192.168.143:8082/nexus/content/groups/public/</url>
+			<url>http://192.168.0.143:8082/nexus/content/groups/public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>

@@ -47,6 +47,7 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.PathItem.HttpMethod;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
@@ -105,8 +106,17 @@ public class OpenAPITool {
 		for (HttpInterfaceInfo interfaceInfo : moduleInfo.interfaceInfos) {
 			PathItem pathItem = interface2doc(moduleInfo, interfaceInfo, tag);
 			if (pathItem != null) {
-				String pathKey = moduleInfo.moduleUrl + interfaceInfo.methodUrl;
-				paths.put(pathKey, pathItem);
+				String pathKey = moduleInfo.moduleUrl + interfaceInfo.methodUrl;//+interfaceInfo.httpMethod;
+				if(paths.containsKey(pathKey)) {
+					PathItem oldPath=paths.get(pathKey);
+					Map<HttpMethod, Operation> operations=pathItem.readOperationsMap();
+					operations.forEach((m,operation)->{
+						oldPath.operation(m, operation);
+					});
+					
+				}else {
+					paths.put(pathKey, pathItem);
+				}
 			}
 		}
 	}
