@@ -96,31 +96,30 @@ public class OpenAPITool {
 
 	private void module2doc(ModuleInfo moduleInfo, Paths paths, List<Tag> tags) {
 		String classComment = CommonClassCommentParser.classComments.get(moduleInfo.simpleClassName);
-		String tagName = classComment != null ? classComment : moduleInfo.getSimpleClassName();
-		Tag tag = new Tag();
-		tag.setName(tagName);
+		String moduleTagName = classComment != null ? classComment : moduleInfo.getSimpleClassName();
+		Tag moduleTag = new Tag().name(moduleTagName);
 		if (classComment == null) {
 			logger.warn("the comment for class:{} is empty", moduleInfo.canonicalClassName);
 		}
-		tags.add(tag);
+		tags.add(moduleTag);
 		for (HttpInterfaceInfo interfaceInfo : moduleInfo.interfaceInfos) {
-			PathItem pathItem = interface2doc(moduleInfo, interfaceInfo, tag);
-			if (pathItem != null) {
-				String pathKey = moduleInfo.moduleUrl + interfaceInfo.methodUrl;//+interfaceInfo.httpMethod;
-				if(paths.containsKey(pathKey)) {
-					PathItem oldPath=paths.get(pathKey);
-					Map<HttpMethod, Operation> operations=pathItem.readOperationsMap();
-					operations.forEach((m,operation)->{
-						oldPath.operation(m, operation);
-					});
-					
-				}else {
-					paths.put(pathKey, pathItem);
-				}
+			PathItem pathItem = interface2doc(moduleInfo, interfaceInfo, moduleTag);
+			if (pathItem == null) {
+				continue;
 			}
+			String pathKey = moduleInfo.moduleUrl + interfaceInfo.methodUrl;//+interfaceInfo.httpMethod;
+			addPathItemToPaths(paths,pathKey,pathItem);
 		}
 	}
-
+    public static void addPathItemToPaths(Paths paths,String pathKey,PathItem pathItem) {
+    	if(paths.containsKey(pathKey)) {
+			PathItem oldPath=paths.get(pathKey);
+			Map<HttpMethod, Operation> operations=pathItem.readOperationsMap();
+			operations.forEach((httpMethod,operation)->oldPath.operation(httpMethod, operation));
+		}else {
+			paths.put(pathKey, pathItem);
+		}
+    }
 	public static Parameter createParameter(HttpParameterInfo pc, String comment) {
 		if (pc.paramType.isParameter()) {
 			Parameter param = null;
@@ -162,7 +161,7 @@ public class OpenAPITool {
 
 		List<Parameter> parameters = new ArrayList<>();
 
-		if (!mayRequestBody(interfaceInfo.httpMethod)) {
+		if (!hasRequestBody(interfaceInfo.httpMethod)) {
 			for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
 				HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
 				String parameterComment = null;
@@ -467,7 +466,7 @@ public class OpenAPITool {
 	}
 	
 	
-	public static boolean mayRequestBody(String httpMethod) {
+	public static boolean hasRequestBody(String httpMethod) {
 		//CONNECT
 		boolean mustNotHasBody=httpMethod.equalsIgnoreCase(RequestMethod.GET.name()) ||
 				httpMethod.equalsIgnoreCase(RequestMethod.HEAD.name()) ||

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -55,9 +56,9 @@ public class CommonClassCommentParser {
 		ExtensionManager.enableExtension(AuthorElement.class);
 	}
 	private static Logger logger = LoggerFactory.getLogger(CommonClassCommentParser.class);
-	public static Map<String, String> classComments = new HashMap<>();
-	public static Map<String, MethodInfo> methodComments = new HashMap<>();
-	public static Map<String, FieldInfo> fieldComments = new HashMap<String, FieldInfo>();
+	public static Map<String, String> classComments = new ConcurrentHashMap<>();
+	public static Map<String, MethodInfo> methodComments = new ConcurrentHashMap<>();
+	public static Map<String, FieldInfo> fieldComments = new ConcurrentHashMap<>();
 	public static void parseFiles(String directoryPath) {
 		File file = new File(directoryPath);
 		if(!file.exists()){
@@ -74,6 +75,7 @@ public class CommonClassCommentParser {
         	return;
         }
 		Arrays.asList(files).stream()
+		    .parallel()
 	        .filter(CommonClassCommentParser::isJavaSourceFile)
 			.forEach(CommonClassCommentParser::parse);
 	}
@@ -135,8 +137,9 @@ public class CommonClassCommentParser {
 		CompilationUnit cu=ClassUtils.parseClass(f);
 		List<Node> nodes = cu.getChildNodes();
 		nodes.stream()
+		.parallel()
 		.filter(CommonClassCommentParser::filterAndParseClassComment)
-		.flatMap(n -> n.getChildNodes().stream())
+		.flatMap(n -> n.getChildNodes().stream().parallel())
 		.filter(n->filterAndParseFieldComment(n))
 		.filter(n -> n instanceof MethodDeclaration)
 		.map(MethodDeclaration.class::cast)
