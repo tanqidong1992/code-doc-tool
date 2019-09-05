@@ -8,7 +8,7 @@
  * @备注：
  * @版本:
  */
-package com.apidoc.config;
+package com.api.doc.config;
 
 import java.io.File;
 import java.io.IOException;
