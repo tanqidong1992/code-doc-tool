@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -87,7 +88,14 @@ public class ClassParser {
 		}
         info.methodUrl =RestClassUtils.extractUrl(mappingAnnotation);
 		if(mappingAnnotation instanceof RequestMapping){
-			info.httpMethod = ((RequestMapping)mappingAnnotation).method()[0].name();
+			RequestMethod[] methods=((RequestMapping)mappingAnnotation).method();
+			if(methods==null || methods.length==0) {
+				String methodKey=method.getDeclaringClass().getName()+"."+method.getName();
+				logger.error("The RequestMapping annotation for method:{} has a empty method value",methodKey);
+			    throw new RuntimeException("方法"+methodKey+"的RequestMethod注解缺少method值");
+			}else {
+				info.httpMethod = methods[0].name();
+			}
 		}else{
 			info.httpMethod = mappingAnnotation.annotationType().getSimpleName().replace("Mapping", "");
 		}

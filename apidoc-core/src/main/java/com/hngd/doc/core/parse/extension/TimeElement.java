@@ -23,70 +23,57 @@ import com.hngd.doc.core.parse.CommentElement;
 /**
  * @author
  */
-public class TimeElement extends CommentElement
-{
-    private static final Logger logger = LoggerFactory.getLogger(TimeElement.class);
-    public Date                 createTime;
-    public String               createTimeStr;
+public class TimeElement extends CommentElement {
+	private static final Logger logger = LoggerFactory.getLogger(TimeElement.class);
+	public Date createTime;
+	public String createTimeStr;
 
-    /**
-     * @author
-     * @since 0.0.1
-     */
-    public TimeElement()
-    {
-        super("@time");
-    }
+	/**
+	 * @author
+	 * @since 0.0.1
+	 */
+	public TimeElement() {
+		super("@time");
+	}
 
-    @Override
-    public String parse(String line)
-    {
-        line = super.parse(line);
-        createTime = parseTime(line);
-        if(createTime!=null){
-            createTimeStr = sdf.format(createTime).split(" ")[0];
-        }else{
-        	createTimeStr=null;
-        }
-        return createTimeStr;
-    }
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+	@Override
+	public String parse(String line) {
+		line = super.parse(line);
+		createTime = parseTime(line);
+		if (createTime != null) {
+			createTimeStr = sdf.format(createTime).split(" ")[0];
+		} else {
+			createTimeStr = null;
+		}
+		return createTimeStr;
+	}
 
-    public static Date parseTime(String timeStr)
-    {
-        String source = timeStr;
-        Date date = null;
-        if (source.contains("下午"))
-        {
-            source = source.replace("下午", "");
-            try
-            {
-                date = sdf.parse(source);
-            } catch (java.text.ParseException e)
-            {
-                logger.error("",e);
-            }
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            calendar.add(Calendar.HOUR_OF_DAY, 12);
-            date = calendar.getTime();
-        } else
-        {
-            source = source.replace("上午", "");
-            try
-            {
-                date = sdf.parse(source);
-            } catch (java.text.ParseException e)
-            {
-                logger.error("",e);
-            }
-        }
-        return date;
-    }
-    public static void main(String[] args)
-    {
-        String timeStr="2017年3月15日 下午16:30:06";
-        Date d=parseTime(timeStr);
-        System.out.println(d);
-    }
+	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+
+	public static Date parseTime(String timeStr) {
+		String source = timeStr;
+		Date date = null;
+		if (source.contains("下午")) {
+			source = source.replace("下午", "");
+			try {
+				date = sdf.parse(source);
+			} catch (java.text.ParseException e) {
+				logger.error("", e);
+			}
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
+			calendar.add(Calendar.HOUR_OF_DAY, 12);
+			date = calendar.getTime();
+		} else if(source.contains("上午")){
+			source = source.replace("上午", "");
+			try {
+				date = sdf.parse(source);
+			} catch (java.text.ParseException e) {
+				logger.error("", e);
+			}
+		}
+		return date;
+	}
+
+	
 }
