@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,7 @@ import com.hngd.api.http.HttpInterfaceInfo;
 import com.hngd.api.http.HttpParameterInfo;
 import com.hngd.constant.HttpParameterType;
 import com.hngd.doc.core.ModuleInfo;
+import com.hngd.doc.core.util.ClassUtils;
 import com.hngd.doc.core.util.RestClassUtils;
 import com.hngd.doc.core.util.SpringAnnotationUtils;
 import com.hngd.doc.core.util.TypeUtils;
@@ -90,9 +92,9 @@ public class ClassParser {
 		if(mappingAnnotation instanceof RequestMapping){
 			RequestMethod[] methods=((RequestMapping)mappingAnnotation).method();
 			if(methods==null || methods.length==0) {
-				String methodKey=method.getDeclaringClass().getName()+"."+method.getName();
+				String methodKey=ClassUtils.getMethodIdentifier(method);
 				logger.error("The RequestMapping annotation for method:{} has a empty method value",methodKey);
-			    throw new RuntimeException("方法"+methodKey+"的RequestMethod注解缺少method值");
+			    throw new RuntimeException("方法"+methodKey+"的RequestMapping注解缺少method值");
 			}else {
 				info.httpMethod = methods[0].name();
 			}
@@ -107,12 +109,16 @@ public class ClassParser {
 		for (int i = 0; i < parameters.length; i++) {
 			Parameter parameter = parameters[i];
 			List<HttpParameterInfo> hpi=processParameter(parameter);
-			if(hpi!=null) {
+			if(!CollectionUtils.isEmpty(hpi)) {
 				info.parameterInfos.addAll(hpi);
+				HttpParameterInfo firstParameterInfo=hpi.get(0);
 				if (!info.isMultipart) {
-					info.isMultipart = TypeUtils.isMultipartType(hpi.get(0).getParamJavaType());
+					info.isMultipart = TypeUtils.isMultipartType(firstParameterInfo.getParamJavaType());
 				}
-				info.hasRequestBody=!hpi.get(0).getParamType().isParameter();
+				info.hasRequestBody=!firstParameterInfo.getParamType().isParameter();
+			}else {
+				String parameterKey=ClassUtils.getParameterIdentifier(parameter);
+				logger.error("the http parameters extracted from {} is empty",parameterKey);
 			}
 			
 		}

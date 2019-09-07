@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -72,5 +76,27 @@ public class ClassUtils {
 			logger.error("", e);
 		}
 		return cu.getResult().get();
+	}
+	
+	public static String getMethodIdentifier(Method method) {
+		if(method==null) {
+			return "";
+		}
+		return method.getDeclaringClass().getName()+"."+method.getName();
+	}
+	
+	public static String getParameterIdentifier(Parameter parameter) {
+		if(parameter==null) {
+			return "";
+		}
+		Executable executable=parameter.getDeclaringExecutable();
+		String name=parameter.getName();
+		if(executable instanceof Method) {
+			return getMethodIdentifier((Method)executable)+"."+name;
+		}else if(executable instanceof Constructor) {
+			Constructor<?> c=(Constructor<?>) executable;
+			return c.getDeclaringClass().getName()+"."+c.getName()+"."+name;
+		}
+		return executable.getDeclaringClass().getName()+"."+executable.getName()+"."+name;
 	}
 }
