@@ -41,6 +41,7 @@ public class TimeElement extends CommentElement {
 		line = super.parse(line);
 		createTime = parseTime(line);
 		if (createTime != null) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
 			createTimeStr = sdf.format(createTime).split(" ")[0];
 		} else {
 			createTimeStr = null;
