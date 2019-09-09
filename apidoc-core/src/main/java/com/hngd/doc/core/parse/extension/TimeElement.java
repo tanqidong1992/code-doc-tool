@@ -48,17 +48,17 @@ public class TimeElement extends CommentElement {
 		return createTimeStr;
 	}
 
-	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
 
 	public static Date parseTime(String timeStr) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
 		String source = timeStr;
 		Date date = null;
 		if (source.contains("下午")) {
 			source = source.replace("下午", "");
 			try {
 				date = sdf.parse(source);
-			} catch (java.text.ParseException e) {
-				logger.error("", e);
+			} catch (Exception e) {
+				logger.warn("parsing date str:["+timeStr+"] failed", e);
 			}
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(date);
@@ -68,8 +68,15 @@ public class TimeElement extends CommentElement {
 			source = source.replace("上午", "");
 			try {
 				date = sdf.parse(source);
-			} catch (java.text.ParseException e) {
-				logger.error("", e);
+			} catch (Exception e) {
+				logger.warn("parsing date str:["+timeStr+"] failed", e);
+			}
+		}else {
+			sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			try {
+				date = sdf.parse(source);
+			} catch (Exception e) {
+				logger.warn("parsing date str:["+timeStr+"] failed", e);
 			}
 		}
 		return date;
