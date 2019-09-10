@@ -391,6 +391,9 @@ public class OpenAPITool {
 			if (fields != null) {
 				for (Field f : fields) {
 					Type type = f.getGenericType();
+					if(type instanceof Class && BeanUtils.isSimpleProperty((Class)type)) {
+						continue;
+					}
 					resolveType(type, swagger);
 				}
 			}
@@ -409,7 +412,10 @@ public class OpenAPITool {
 		}
 		if (type instanceof Class<?>) {
 			Class<?> clazz = (Class<?>) type;
-			resolveClassFields(clazz, swagger);
+			if(!BeanUtils.isSimpleProperty(clazz)) {
+				resolveClassFields(clazz, swagger);
+			}
+			
 		}
 
 		String firstKey = null;
@@ -421,18 +427,19 @@ public class OpenAPITool {
 			if (cps == null) {
 				continue;
 			}
-			model.getProperties().values().forEach(property -> {
-				Schema ss = (Schema) property;
-				String name = ss.getName();
+			cps.values().forEach(property -> {
+				Schema schema =   property;
+				String name = schema.getName();
 				if (name.startsWith("get")) {
 					name = name.replace("get", "");
 				}
+				String propertyType=schema.getType();
 				String propertyComment = getPropertyComment(type, name);
 				if (propertyComment != null) {
-					ss.setDescription(propertyComment);
+					schema.setDescription(propertyComment);
 				}
-				ss.setName(name);
-				properties.put(name, ss);
+				schema.setName(name);
+				properties.put(name, schema);
 			});
 			/**
 			 * if(!CollectionUtils.isEmpty(model.getRequired())) {

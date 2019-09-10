@@ -11,6 +11,6 @@ public class JsonUtils {
 	public static String toJson(OpenAPI openAPI) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setSerializationInclusion(Include.NON_EMPTY);
-		return mapper.writeValueAsString(openAPI);
+		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(openAPI);
 	}
 }
