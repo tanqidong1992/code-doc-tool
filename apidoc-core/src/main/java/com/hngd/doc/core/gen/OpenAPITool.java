@@ -181,7 +181,7 @@ public class OpenAPITool {
 		} else{
 			MediaType item = new MediaType();
 			Content content = new Content();
-			if (interfaceInfo.hasRequestBody) {
+			if (interfaceInfo.hasRequestBody && !interfaceInfo.isMultipart()) {
 				content.addMediaType(Constants.APPLICATION_JSON_VALUE, item);
 				HttpParameterInfo pc = interfaceInfo.getParameterInfos().get(0);
 				Type parameterType = pc.getParamJavaType();
@@ -270,6 +270,38 @@ public class OpenAPITool {
 					} else if (pc.paramType.equals(HttpParameterType.path)) {
 						Parameter pathParameter = createParameter(pc, parameterComment);
 						parameters.add(pathParameter);
+					}else if (pc.paramType.equals(HttpParameterType.body)) {
+						Schema<?> propertiesItem = new Schema<>();
+						propertiesItem.setDescription(parameterComment);
+						propertiesItem.setType(pc.type);
+						propertiesItem.set$ref(pc.ref);
+						if (pc.ref != null && pc.schema instanceof ObjectSchema) {
+							@SuppressWarnings("rawtypes")
+							Map<String, Schema> properties = new HashMap<>();
+							properties.put(pc.ref, pc.schema);
+							propertiesItem.setProperties(properties);
+						}
+						if (pc.isRequired()) {
+							schema.addRequiredItem(pc.name);
+						}
+						if (TypeUtils.isMultipartType(parameterType)) {
+							propertiesItem.format("binary");
+							propertiesItem.setType("string");
+							 Class<?> type=(Class<?>) parameterType;
+							 if(type.isArray()) {
+								 ArraySchema as=new ArraySchema();
+								 as.setDescription(parameterComment);
+								 as.setType("array");
+								 Schema<?> items=new Schema<>();
+								 items.setType("string");
+								 items.setFormat("binary");
+								 as.setItems(items);
+								 propertiesItem=as;
+							 }
+						} else {
+							propertiesItem.format(pc.format);
+						}
+						schema.addProperties(pc.name, propertiesItem);
 					}
 				}
 			}

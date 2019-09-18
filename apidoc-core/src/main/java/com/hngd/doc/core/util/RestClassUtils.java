@@ -127,4 +127,37 @@ public class RestClassUtils {
 			}
 			return m; 
 	}
+	
+    public static String extractParameterName(Annotation req) {
+		
+		if(req==null) {
+			return "";
+		}
+		String name=null;
+		Method valueMethod=null;
+		Object valueObject=null;
+		try {
+			valueMethod = req.getClass().getDeclaredMethod("value");
+			valueObject=valueMethod.invoke(req);
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			logger.error("",e);
+		}
+		if(valueObject!=null){
+			name =(String)valueObject;
+		}else{
+			Method nameMethod = null;
+			try {
+				nameMethod = req.getClass().getDeclaredMethod("name");
+				name = (String) nameMethod.invoke(req);
+			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				logger.error("",e);
+			}
+		}
+		if(name==null) {
+		    return "";
+		}else {
+			return name;
+		}
+		
+	}
 }

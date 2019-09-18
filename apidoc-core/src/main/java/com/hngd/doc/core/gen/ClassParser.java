@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hngd.api.http.HttpInterfaceInfo;
@@ -82,7 +83,7 @@ public class ClassParser {
 			info.consumes = consumes;
 		}
 		//extract produces
-		 List<String> produces=RestClassUtils.extractProduces(mappingAnnotation);
+		List<String> produces=RestClassUtils.extractProduces(mappingAnnotation);
 		if (produces != null) {
 			info.produces = produces;
 		}else {
@@ -139,7 +140,7 @@ public class ClassParser {
 		if (isRequestParam(annotations).isPresent()) {
 			RequestParam requestParam =isRequestParam(annotations).get();
 			rpi = new HttpParameterInfo();
-			rpi.name = requestParam.value();
+			rpi.name = RestClassUtils.extractParameterName(requestParam);
 			rpi.paramType = HttpParameterType.query;
 			rpi.required = requestParam.required();
 			rpi.paramJavaType=parameter.getParameterizedType();
@@ -152,7 +153,7 @@ public class ClassParser {
 		}else if(isPathVariable(annotations).isPresent()) {
 			PathVariable pa =isPathVariable(annotations).get();
 			rpi = new HttpParameterInfo();
-			rpi.name = pa.value();
+			rpi.name =RestClassUtils.extractParameterName(pa);
 			rpi.paramType = HttpParameterType.path;
 			rpi.required = true;
 			rpi.paramJavaType=parameter.getParameterizedType();
@@ -175,6 +176,19 @@ public class ClassParser {
 		    }
 		    rpi.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 		    return Arrays.asList(rpi);
+		}else if(isRequestPart(annotations).isPresent()) {
+			 RequestPart requestPart =isRequestPart(annotations).get();
+			 rpi = new HttpParameterInfo();
+			 rpi.name = RestClassUtils.extractParameterName(requestPart);
+			 rpi.paramType = HttpParameterType.body;
+			 rpi.required = requestPart.required();
+			 rpi.paramJavaType=parameter.getParameterizedType();
+			 Optional<String> dateFormat=extractDataFormat(annotations);
+			 if(dateFormat.isPresent()) {
+			     rpi.format=dateFormat.get();
+			 }
+			 rpi.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
+			 return Arrays.asList(rpi);
 		}else {
 			//TODO support all spring web parameters 
 			//WebRequest req;
@@ -228,6 +242,18 @@ public class ClassParser {
 		}
 		
 	}
+	private static Optional<RequestPart> isRequestPart(Annotation[] annotations) {
+		if(annotations.length<=0) {
+			return Optional.empty();
+		}
+		for (Annotation a : annotations) {
+			if(a instanceof RequestPart) {
+				return Optional.of(((RequestPart)a));
+			}
+		}
+		return Optional.empty();
+	}
+
 	private static Optional<String> extractDataFormat(Annotation[] annotations) {
 		if(annotations.length<=0) {
 			return Optional.empty();
