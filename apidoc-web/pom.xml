@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.hngd.tool</groupId>
 		<artifactId>code-doc-generator</artifactId>
-		<version>2.1.1-SNAPSHOT</version>
+		<version>2.1.2-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>com.hngd.tool</groupId>
 			<artifactId>apidoc-core</artifactId>
-			<version>2.1.1-SNAPSHOT</version>
+			<version>${code.tool.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty.aggregate</groupId>

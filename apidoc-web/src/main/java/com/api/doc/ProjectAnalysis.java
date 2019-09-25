@@ -45,6 +45,7 @@ public class ProjectAnalysis {
 			.filter(name->name.startsWith(packageFilter))
 	        .map(name->loadClassFromNestedJar(loader,name))
 	        .filter(clazz -> clazz != null)
+	        .filter(clazz->!clazz.isInterface())
 			.collect(Collectors.toList());
 		openAPITool.parse(clazzes);
 		String s=null;

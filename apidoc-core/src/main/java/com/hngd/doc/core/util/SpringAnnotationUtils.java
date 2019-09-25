@@ -1,10 +1,15 @@
 package com.hngd.doc.core.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 public class SpringAnnotationUtils {
 
+	private static final Logger logger=LoggerFactory.getLogger(SpringAnnotationUtils.class);
 	public static String HTTP_PATH_DELIMITER="/";
 	/**
 	 * 从RequestMapping中提取出请求url，req为null则返回"/"
@@ -32,6 +37,27 @@ public class SpringAnnotationUtils {
 			}
 			return url;
 		}
+		
+	}
+	
+	public static boolean isControllerClass(Class<?> cls) {
+		//test class can initialized
+		
+		try {
+			Class.forName(cls.getName(), true, cls.getClassLoader());
+		} catch (ClassNotFoundException e) {
+			logger.warn("",e);
+			//e.printStackTrace();
+			return false;
+		}
+		
+		Controller controller = cls.getAnnotation(Controller.class);
+		RestController restController = cls.getAnnotation(RestController.class);
+		if (controller == null && restController == null) {
+			logger.warn("There is no annotation Controller RestController for class:{}",cls.getName());
+			return false;
+		}
+		return true;
 		
 	}
 }

@@ -1,5 +1,6 @@
 package com.hngd.doc.core.gen;
 
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -17,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,13 +43,11 @@ public class ClassParser {
 	
 	public static ModuleInfo processClass(Class<?> cls) {
 		logger.info("start to process class:{}",cls.getName());
-		ModuleInfo mi = new ModuleInfo();
-		Controller controller = cls.getAnnotation(Controller.class);
-		RestController restController = cls.getAnnotation(RestController.class);
-		if (controller == null && restController == null) {
+		if (!SpringAnnotationUtils.isControllerClass(cls)) {
 			logger.warn("There is no annotation Controller RestController for class:{}",cls.getName());
 			return null;
 		}
+		ModuleInfo mi = new ModuleInfo();
 		RequestMapping requestMapping = cls.getAnnotation(RequestMapping.class);
 		mi.moduleUrl=SpringAnnotationUtils.extractUrl(requestMapping);
 		mi.moduleName = cls.getSimpleName();
@@ -216,24 +216,8 @@ public class ClassParser {
 			        return Arrays.asList(rpi);
 				}else {
 					//model
-					Class<?> clazz=parameter.getType();
-					Field[] fields=clazz.getDeclaredFields();
-					List<HttpParameterInfo> rpis=new LinkedList<>();
-					for(Field field:fields) {
-						rpi = new HttpParameterInfo();
-						rpi.name = field.getName();
-						//TODO need to analysis method mapping url
-						rpi.paramType = HttpParameterType.query;
-						rpi.required = isFieldRequired(field);
-						rpi.paramJavaType=field.getType();
-						Optional<String> dateFormat=extractDataFormat(field.getAnnotations());
-						if(dateFormat.isPresent()) {
-							rpi.format=dateFormat.get();
-						}
-						rpi.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
-						rpis.add(rpi);
-					}
-					return  rpis;
+					return extractParametersFormModel(parameter);
+					
 				}
 				
 				
@@ -241,6 +225,63 @@ public class ClassParser {
 			
 		}
 		
+	}
+	private static Optional<String> extractPropertyDataFormat(Class<?> clazz,PropertyDescriptor pd) {
+		String propertyName=pd.getName();
+		Field field=ReflectionUtils.findField(clazz, propertyName);
+		if(field==null) {
+			logger.error("field for property:{} is not found",propertyName);
+			return Optional.empty();
+		}
+		DateTimeFormat a=field.getAnnotation(DateTimeFormat.class);
+		if(a!=null) {
+			return Optional.ofNullable(a.pattern());
+		}
+		return Optional.empty();
+	}
+	private static boolean isPropertyRequired(Class<?> clazz,PropertyDescriptor pd) {
+		Method readMethod=pd.getReadMethod();
+		if(readMethod!=null) {
+			NotNull notNullConstraint=pd.getReadMethod().getAnnotation(NotNull.class);
+			if(notNullConstraint!=null) {
+				return true;
+			}
+		}
+		String propertyName=pd.getName();
+		Field field=ReflectionUtils.findField(clazz, propertyName);
+		if(field!=null) {
+			NotNull notNullConstraint=field.getAnnotation(NotNull.class);
+			if(notNullConstraint!=null) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public static List<HttpParameterInfo> extractParametersFormModel(Parameter parameter){
+		Class<?> clazz=parameter.getType();
+		PropertyDescriptor[] pds=BeanUtils.getPropertyDescriptors(clazz);
+		Field[] fields=clazz.getDeclaredFields();
+		List<HttpParameterInfo> rpis=new LinkedList<>();
+		for(PropertyDescriptor property:pds) {
+			HttpParameterInfo rpi = new HttpParameterInfo();
+			rpi.name = property.getName();
+			Field field=ReflectionUtils.findField(clazz,rpi.name);
+			if(field==null) {
+				logger.warn("the property{} is read only",rpi.name);
+				continue;
+			}
+			//TODO need to analysis method mapping url
+			rpi.paramType = HttpParameterType.query;
+			rpi.required = isPropertyRequired(clazz,property);
+			rpi.paramJavaType=property.getPropertyType();
+			Optional<String> dateFormat=extractPropertyDataFormat(clazz,property);
+			if(dateFormat.isPresent()) {
+				rpi.format=dateFormat.get();
+			}
+			rpi.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
+			rpis.add(rpi);
+		}
+		return  rpis;
 	}
 	private static Optional<RequestPart> isRequestPart(Annotation[] annotations) {
 		if(annotations.length<=0) {

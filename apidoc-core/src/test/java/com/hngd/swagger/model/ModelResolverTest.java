@@ -13,6 +13,7 @@ import com.hngd.doc.core.parse.EntityClassCommentParser;
  
 
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
@@ -25,7 +26,7 @@ public class ModelResolverTest {
 		OpenAPI openapi = new OpenAPI();
 		Class<?> clz = Camera.class;
 		OpenAPITool.resolveType(type, openapi);
-		System.out.println(openapi);
+		Json.prettyPrint(openapi);
 	}
 
 	 

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hngd.common.util.GsonUtils;
 import com.hngd.doc.core.gen.OpenAPITool;
 
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 
 public class ResolveModelTest {
@@ -55,12 +56,26 @@ public class ResolveModelTest {
 		}
     	
     }
+    
+    static class C extends B{
+    	 private String age;
+
+		public String getAge() {
+			return age;
+		}
+
+		public void setAge(String age) {
+			this.age = age;
+		}
+    	 
+    	 
+    }
 	public static void main(String[] args) throws JsonProcessingException {
-		Type type=A.class;
+		Type type=C.class;
 		OpenAPI swagger=new OpenAPI();
 		OpenAPITool.resolveType(type, swagger);
-		String s=toJson(swagger);
-        System.out.println(s);
+	 
+        Json.prettyPrint(swagger);
 	}
 	public static String toJson(OpenAPI openAPI) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
