@@ -11,6 +11,10 @@
 package com.hngd.doc.core.parse;
 
 import java.io.File;
+import java.lang.reflect.Executable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -165,8 +169,7 @@ public class CommonClassCommentParser {
 		String commentLines[] = content.split("\n");
 		if (commentLines != null && commentLines.length > 2) {
 			List<CommentElement> commentElements = ClassCommentParser.parseMethodComment(Arrays.asList(commentLines));
-		 
-			
+ 
 			for (CommentElement commentElement : commentElements) {
 				if (commentElement instanceof DescElement) {
 					mi.comment = commentElement.comment;
@@ -195,14 +198,30 @@ public class CommonClassCommentParser {
 		MethodInfo mi = methodComments.get(key);
 		return mi != null ? mi.comment : null;
 	}
-
+	
+	public static String getMethodComment(Executable method) {
+		String key = methodKey(method);
+		MethodInfo mi = methodComments.get(key);
+		return mi != null ? mi.comment : null;
+	}
+	public static String getFieldComment(Field field) {
+		String key = fieldKey(field);
+		FieldInfo mi = fieldComments.get(key);
+		return mi != null ? mi.comment : null;
+	}
+	public static String getFieldComment(String className, String fieldName) {
+		String key = className + "#" + fieldName;
+		FieldInfo mi = fieldComments.get(key);
+		return mi != null ? mi.comment : null;
+	}
+	
 	public static String getParameterComment(String className, String methodName, String parameterName) {
 		String key = className + "#" + methodName;
 		MethodInfo mi = methodComments.get(key);
 		String comment = null;
 		if (mi != null) {
-
-			Optional<ParameterInfo> op = mi.parameters.stream().filter(p -> p.parameterName.equals(parameterName))
+			Optional<ParameterInfo> op = mi.parameters.stream()
+					.filter(p -> p.parameterName.equals(parameterName))
 					.findFirst();
 			if (op.isPresent()) {
 				comment = op.get().comment;
@@ -259,23 +278,24 @@ public class CommonClassCommentParser {
 			return true;
 		}
 	    FieldDeclaration field = (FieldDeclaration) n;
-	    String variableName =extractFieldName(field);
-	    if(variableName==null) {
+	    String fieldName =extractFieldName(field);
+	    if(fieldName==null) {
 	    	return true;
 	    }
         // Type type = f1.getType();
 	    String trimComment=extractFieldComment(field);
 		ClassOrInterfaceDeclaration ownerClass = (ClassOrInterfaceDeclaration) field.getParentNode().orElse(null);
 		if (trimComment.length() > 0) {
-		    String key = ownerClass.getName() + "#" + variableName;
-			fieldComments.put(key, new FieldInfo(trimComment.toString(), variableName, field));
+		    String key = ownerClass.getName() + "#" + fieldName;
+			fieldComments.put(key, new FieldInfo(trimComment.toString(), fieldName, field));
+			//TODO fix it
 			if(!ownerClass.getName().toString().endsWith("Info")) {
-			    key = ownerClass.getName() + "Info#" + variableName;
-				 fieldComments.put(key, new FieldInfo(trimComment.toString(), variableName, field));
+			    key = ownerClass.getName() + "Info#" + fieldName;
+				fieldComments.put(key, new FieldInfo(trimComment.toString(), fieldName, field));
 			}
 			
 		} else {
-			logger.warn("the java document comment for field:{} is empty",ownerClass.getName() + "#" + variableName);
+			logger.warn("the java document comment for field:{} is empty",ownerClass.getName() + "#" + fieldName);
 		}
         return true;
 	}
@@ -294,5 +314,21 @@ public class CommonClassCommentParser {
 			System.out.println(e.getKey()+"-->"+e.getValue().comment);
 		});
 		
+	}
+	
+	public static String classKey(Class<?> clazz) {
+		return clazz.getName();
+	}
+	public static String methodKey(Executable method) {
+		Class<?> clazz=method.getDeclaringClass();
+		return classKey(clazz)+"#"+method.getName();
+	}
+	public static String fieldKey(Field field) {
+		Class<?> clazz=field.getDeclaringClass();
+		return classKey(clazz)+"#"+field.getName();
+	}
+	public static String parameterKey(Parameter parameter) {
+		Executable method=parameter.getDeclaringExecutable();
+		return methodKey(method)+"#"+parameter.getName();
 	}
 }

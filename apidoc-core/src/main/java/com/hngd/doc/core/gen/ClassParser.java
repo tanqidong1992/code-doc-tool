@@ -31,6 +31,8 @@ import com.hngd.api.http.HttpInterfaceInfo;
 import com.hngd.api.http.HttpParameterInfo;
 import com.hngd.constant.HttpParameterType;
 import com.hngd.doc.core.ModuleInfo;
+import com.hngd.doc.core.parse.ClassCommentParser;
+import com.hngd.doc.core.parse.CommonClassCommentParser;
 import com.hngd.doc.core.util.ClassUtils;
 import com.hngd.doc.core.util.RestClassUtils;
 import com.hngd.doc.core.util.SpringAnnotationUtils;
@@ -44,7 +46,7 @@ public class ClassParser {
 	public static ModuleInfo processClass(Class<?> cls) {
 		logger.info("start to process class:{}",cls.getName());
 		if (!SpringAnnotationUtils.isControllerClass(cls)) {
-			logger.warn("There is no annotation Controller RestController for class:{}",cls.getName());
+			logger.info("There is no annotation Controller RestController for class:{}",cls.getName());
 			return null;
 		}
 		ModuleInfo mi = new ModuleInfo();
@@ -62,7 +64,7 @@ public class ClassParser {
 					mi.interfaceInfos.add(info);
 				}
 			}else{
-				logger.warn("method:{} has no http request annotation",cls.getName()+"."+method.getName());
+				logger.debug("method:{} has no http request annotation",cls.getName()+"."+method.getName());
 			}
 		}
 		return mi;
@@ -274,6 +276,7 @@ public class ClassParser {
 			rpi.paramType = HttpParameterType.query;
 			rpi.required = isPropertyRequired(clazz,property);
 			rpi.paramJavaType=property.getPropertyType();
+			rpi.comment=CommonClassCommentParser.getFieldComment(field);
 			Optional<String> dateFormat=extractPropertyDataFormat(clazz,property);
 			if(dateFormat.isPresent()) {
 				rpi.format=dateFormat.get();

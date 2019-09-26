@@ -120,7 +120,7 @@ public class OpenAPITool {
 			paths.put(pathKey, pathItem);
 		}
     }
-	public static Parameter createParameter(HttpParameterInfo pc, String comment) {
+	public static Parameter createParameter(HttpParameterInfo pc) {
 		if (pc.paramType.isParameter()) {
 			Parameter param = null;
 			try {
@@ -131,7 +131,7 @@ public class OpenAPITool {
 			param.setName(pc.name);
 			param.setRequired(pc.required);
 			param.setSchema(pc.schema);
-			param.setDescription(comment);
+			param.setDescription(pc.comment);
 			return param;
 		} else {
 			return null;
@@ -146,7 +146,7 @@ public class OpenAPITool {
 			logger.warn("the method comment for method:{} is empty", methodKey);
 			return null;
 		}
-
+		interfaceInfo.comment=methodComment.comment;
 		PathItem path = new PathItem();
 		Operation op = new Operation();
 		List<String> operationTags = new ArrayList<>();
@@ -157,7 +157,7 @@ public class OpenAPITool {
 		op.setDeprecated(moduleInfo.deprecated || interfaceInfo.deprecated);
 		op.setTags(operationTags);
 		op.setOperationId(interfaceInfo.methodName);
-		op.setDescription(methodComment.comment);
+		op.setDescription(interfaceInfo.comment);
 
 		List<Parameter> parameters = new ArrayList<>();
 
@@ -169,12 +169,13 @@ public class OpenAPITool {
 					ParameterInfo pi = methodComment.parameters.get(i);
 					parameterComment = pi.comment;
 				}
+				pc.comment=parameterComment;
 				Type parameterType = pc.getParamJavaType();
 				resolveParameterInfo(pc, parameterType);
 				if (!pc.isPrimitive) {
 					resolveType(parameterType, openAPI);
 				}
-				Parameter param = createParameter(pc, parameterComment);
+				Parameter param = createParameter(pc);
 				parameters.add(param);
 			}
 
@@ -201,10 +202,9 @@ public class OpenAPITool {
 				item.setEncoding(encodings);
 				for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
 					HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
-					String parameterComment = null;
 					if (i < methodComment.parameters.size()) {
 						ParameterInfo pi = methodComment.parameters.get(i);
-						parameterComment = pi.comment;
+						pc.comment = pi.comment;
 					}
 					Type parameterType = pc.getParamJavaType();
 					resolveParameterInfo(pc, parameterType);
@@ -237,7 +237,7 @@ public class OpenAPITool {
 					if (pc.paramType.equals(HttpParameterType.query)) {
 						// item.setSchema(pc.schema);
 						Schema<?> propertiesItem = new Schema<>();
-						propertiesItem.setDescription(parameterComment);
+						propertiesItem.setDescription(pc.comment);
 						propertiesItem.setType(pc.type);
 						propertiesItem.set$ref(pc.ref);
 						if (pc.ref != null && pc.schema instanceof ObjectSchema) {
@@ -255,7 +255,7 @@ public class OpenAPITool {
 							 Class<?> type=(Class<?>) parameterType;
 							 if(type.isArray()) {
 								 ArraySchema as=new ArraySchema();
-								 as.setDescription(parameterComment);
+								 as.setDescription(pc.comment);
 								 as.setType("array");
 								 Schema<?> items=new Schema<>();
 								 items.setType("string");
@@ -268,11 +268,11 @@ public class OpenAPITool {
 						}
 						schema.addProperties(pc.name, propertiesItem);
 					} else if (pc.paramType.equals(HttpParameterType.path)) {
-						Parameter pathParameter = createParameter(pc, parameterComment);
+						Parameter pathParameter = createParameter(pc);
 						parameters.add(pathParameter);
 					}else if (pc.paramType.equals(HttpParameterType.body)) {
 						Schema<?> propertiesItem = new Schema<>();
-						propertiesItem.setDescription(parameterComment);
+						propertiesItem.setDescription(pc.comment);
 						propertiesItem.setType(pc.type);
 						propertiesItem.set$ref(pc.ref);
 						if (pc.ref != null && pc.schema instanceof ObjectSchema) {
@@ -290,7 +290,7 @@ public class OpenAPITool {
 							 Class<?> type=(Class<?>) parameterType;
 							 if(type.isArray()) {
 								 ArraySchema as=new ArraySchema();
-								 as.setDescription(parameterComment);
+								 as.setDescription(pc.comment);
 								 as.setType("array");
 								 Schema<?> items=new Schema<>();
 								 items.setType("string");
