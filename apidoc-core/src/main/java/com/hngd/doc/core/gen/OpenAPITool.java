@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -158,7 +159,7 @@ public class OpenAPITool {
 		op.setTags(operationTags);
 		op.setOperationId(interfaceInfo.methodName);
 		op.setDescription(interfaceInfo.comment);
-
+        op.setSummary(interfaceInfo.comment);
 		List<Parameter> parameters = new ArrayList<>();
 
 		if (!hasRequestBody(interfaceInfo.httpMethod)) {
@@ -188,8 +189,14 @@ public class OpenAPITool {
 				Type parameterType = pc.getParamJavaType();
 				resolveParameterInfo(pc, parameterType);
 				String key = resolveType(parameterType, openAPI);
-				Schema<?> schema = openAPI.getComponents().getSchemas().get(key);
-				item.setSchema(schema);
+				//如果是简单类型就会返回null
+				if(!StringUtils.isEmpty(key)) {
+					Schema<?> schema = openAPI.getComponents().getSchemas().get(key);
+					item.setSchema(schema);
+				}else {
+					item.setSchema(pc.schema);
+				}
+				
 			} else {
 				if (interfaceInfo.isMultipart()) {
 					content.addMediaType(Constants.MULTIPART_FORM_DATA, item);

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,12 @@ import com.hngd.doc.core.parse.CommonClassCommentParser;
 
 import io.squark.nestedjarclassloader.NestedJarClassLoader;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.security.OAuthFlow;
+import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.security.SecurityScheme.In;
+import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 
 public class ProjectAnalysis {
 
@@ -36,6 +43,7 @@ public class ProjectAnalysis {
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		config.info.setDescription("最后更新时间:"+sdf.format(new Date()));
 		openApi.setInfo(config.info);
+
         if(config.servers!=null) {
             config.servers.forEach(s->openApi.addServersItem(s));
         }
