@@ -24,6 +24,6 @@ public class MobileElement extends CommentElement
      */
     public MobileElement()
     {
-        super("@作者");
+        super("@MobieAPI");
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import com.hngd.api.http.HttpInterfaceInfo;
 
 /**
- * 模块信息
+ * 类信息
  * @author hnoe-dev-tqd
  *
  */

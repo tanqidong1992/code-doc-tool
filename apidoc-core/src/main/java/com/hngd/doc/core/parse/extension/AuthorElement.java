@@ -13,17 +13,17 @@ package com.hngd.doc.core.parse.extension;
 import com.hngd.doc.core.parse.CommentElement;
 
 /**
- * @author 
+ * @author tqd
  */
 public class AuthorElement extends CommentElement
 {
     /**
      * 
-     * @author 
+     * @author tqd
      * @since 0.0.1 
      */
     public AuthorElement()
     {
-        super("@MobieAPI");
+    	super("@author");
     }
 }
