@@ -46,13 +46,8 @@
 			<artifactId>jetty-all-server</artifactId>
 			<version>8.1.16.v20140903</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<version>1.7.25</version>
-			<artifactId>slf4j-log4j12</artifactId>
-		</dependency>
-				<!-- https://mvnrepository.com/artifact/io.squark/nested-jar-classloader -->
+ 
+		<!-- https://mvnrepository.com/artifact/io.squark/nested-jar-classloader -->
 		<dependency>
 			<groupId>com.hngd</groupId>
 			<artifactId>nested-jar-classloader</artifactId>

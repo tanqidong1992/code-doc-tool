@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,9 +31,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
 
 public class TestInitAllComment {
-	static {
-		PropertyConfigurator.configure("./log4j.properties");
-	}
+ 
 	static Logger logger=LoggerFactory.getLogger(TestInitAllComment.class);
 	public static void main(String[] args) throws IOException {
 		String src="D:\\company\\projects\\inspection-system\\education-training-system\\src\\main\\java";

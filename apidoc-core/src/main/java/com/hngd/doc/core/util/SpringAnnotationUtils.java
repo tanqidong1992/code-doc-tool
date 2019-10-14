@@ -44,9 +44,10 @@ public class SpringAnnotationUtils {
 		//test class can initialized
 		
 		try {
-			Class.forName(cls.getName(), true, cls.getClassLoader());
-		} catch (ClassNotFoundException e) {
-			logger.warn("",e);
+			ClassLoader loader=cls.getClassLoader();
+			Class.forName(cls.getName(), false,loader);
+		} catch (Throwable e) {
+			logger.warn("load class failed",e);
 			//e.printStackTrace();
 			return false;
 		}

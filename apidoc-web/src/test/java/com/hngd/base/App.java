@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,10 +42,7 @@ import com.hngd.doc.core.parse.EntityClassCommentParser;
  */
 @SuppressWarnings("deprecation")
 public class App {
-	
-	static {
-		PropertyConfigurator.configure("./log4j.properties");
-	}
+ 
 	private static final Logger logger = LoggerFactory.getLogger(App.class);
 	static final Charset utf8 = Charset.forName("UTF-8");
 	static List<String> application_json = Arrays.asList("application/json", "*");
