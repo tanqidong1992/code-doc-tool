@@ -12,23 +12,20 @@
 package com.api.doc.utils;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Enumeration;
-import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 
 /**
- * @author
+ * @author tqd
  */
+@Deprecated
 public class ClassScanner {
-
+    private static final Logger logger=LoggerFactory.getLogger(ClassScanner.class);
 	/**
 	 * @param jfile
 	 * @author
@@ -90,8 +87,7 @@ public class ClassScanner {
 
 			clazz = Class.forName(className, false, ClassScanner.class.getClassLoader());
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("",e);
 		}
 
 		if (clazz != null) {

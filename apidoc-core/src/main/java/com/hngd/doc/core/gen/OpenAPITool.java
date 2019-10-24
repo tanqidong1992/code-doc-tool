@@ -28,12 +28,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hngd.api.http.HttpInterfaceInfo;
 import com.hngd.api.http.HttpParameterInfo;
 import com.hngd.constant.HttpParameterType;
+import com.hngd.constant.Comments;
 import com.hngd.constant.Constants;
 import com.hngd.doc.core.FieldInfo;
 import com.hngd.doc.core.MethodInfo;
@@ -357,8 +359,11 @@ public class OpenAPITool {
 		mt.setSchema(schema);
 		respContent.put(Constants.APPLICATION_JSON_VALUE, mt);
 		resp.setContent(respContent);
-		resp.setDescription("test");
-		responses.put("200", resp);
+		if(StringUtils.isEmpty(respComment)) {
+			respComment=Comments.DEFAULT_RESPONSE_DESCRIPTION;
+		}
+		resp.setDescription(respComment);
+		responses.put(HttpStatus.OK.value()+"", resp);
 		op.setResponses(responses);
 	}
 

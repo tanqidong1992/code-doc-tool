@@ -37,6 +37,11 @@ public class SecurityTest {
 		String tokenUrl="http://192.168.0.140:9255/oauth/token";
 		implicit.setTokenUrl(tokenUrl);
 		flows.setImplicit(implicit);
+		OAuthFlow passwordAuthFlow=new OAuthFlow();
+		passwordAuthFlow.setTokenUrl(tokenUrl);
+		passwordAuthFlow.setScopes(scopes);
+		passwordAuthFlow.setAuthorizationUrl(authorizationUrl);
+		flows.setPassword(passwordAuthFlow);
 		ss.setFlows(flows);
 		ss.setName("oauth2");
 		e.addList("oauth2");

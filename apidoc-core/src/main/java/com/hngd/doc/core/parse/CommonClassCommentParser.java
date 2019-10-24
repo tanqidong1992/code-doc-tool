@@ -157,12 +157,12 @@ public class CommonClassCommentParser {
 		if (comment instanceof JavadocComment) {
 			JavadocComment javadocComment = (JavadocComment) comment;
 			String content = javadocComment.getContent();
-			parse(method, methodName, content); 
+			doParseMethodJavadocComment(method, methodName, content); 
 		} else {
 			logger.warn("method {} has no javadoc comment",className + "." + method.getName() );
 		}
     }
-	private static void parse(MethodDeclaration m, String methodName, String content) {
+	private static void doParseMethodJavadocComment(MethodDeclaration m, String methodName, String content) {
 		MethodInfo mi = new MethodInfo();
 		mi.methodName = methodName;
 		mi.parameters = new ArrayList<ParameterInfo>();
