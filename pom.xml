@@ -12,7 +12,7 @@
 	<description>tools for code and document generation</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<code.tool.version>2.1.2-SNAPSHOT</code.tool.version>
+		<code.tool.version>2.2.0-SNAPSHOT</code.tool.version>
 	</properties>
 
 	<dependencies>
@@ -36,7 +36,6 @@
 						<source>1.8</source>
 					</configuration>
 				</plugin>
-				<!--  
 				<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -51,10 +50,8 @@
 					</execution>
 				</executions>
 				<configuration>
-
 				</configuration>
 			</plugin>
-			-->
 			</plugins>
 		</pluginManagement>
 

@@ -12,7 +12,6 @@ import com.google.gson.reflect.TypeToken;
 import com.hngd.common.web.result.RestResponse;
 import com.hngd.doc.core.FieldInfo;
 import com.hngd.doc.core.gen.OpenAPITool;
-import com.hngd.doc.core.parse.EntityClassCommentParser;
  
 
 import io.swagger.v3.core.converter.ModelConverters;
