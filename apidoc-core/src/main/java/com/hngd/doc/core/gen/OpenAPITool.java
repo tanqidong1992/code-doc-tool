@@ -172,7 +172,9 @@ public class OpenAPITool {
 					ParameterInfo pi = methodComment.parameters.get(i);
 					parameterComment = pi.comment;
 				}
-				pc.comment=parameterComment;
+				if(StringUtils.isNotEmpty(parameterComment) && StringUtils.isEmpty(pc.comment)) {
+				    pc.comment =parameterComment;
+				}
 				Type parameterType = pc.getParamJavaType();
 				resolveParameterInfo(pc, parameterType);
 				if (!pc.isPrimitive) {
@@ -213,7 +215,10 @@ public class OpenAPITool {
 					HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
 					if (i < methodComment.parameters.size()) {
 						ParameterInfo pi = methodComment.parameters.get(i);
-						pc.comment = pi.comment;
+						if(StringUtils.isNotEmpty(pi.comment) && StringUtils.isEmpty( pc.comment)) {
+						    pc.comment = pi.comment;
+						}
+						
 					}
 					Type parameterType = pc.getParamJavaType();
 					resolveParameterInfo(pc, parameterType);

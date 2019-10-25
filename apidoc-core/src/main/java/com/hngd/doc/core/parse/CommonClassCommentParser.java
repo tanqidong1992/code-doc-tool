@@ -317,7 +317,7 @@ public class CommonClassCommentParser {
 	}
 	
 	public static String classKey(Class<?> clazz) {
-		return clazz.getName();
+		return clazz.getSimpleName();
 	}
 	public static String methodKey(Executable method) {
 		Class<?> clazz=method.getDeclaringClass();
