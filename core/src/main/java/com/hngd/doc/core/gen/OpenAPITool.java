@@ -196,10 +196,10 @@ public class OpenAPITool {
 			}
 
 		} else{
-			MediaType item = new MediaType();
+			MediaType mediaTypeContent = new MediaType();
 			Content content = new Content();
 			if (interfaceInfo.hasRequestBody && !interfaceInfo.isMultipart()) {
-				content.addMediaType(Constants.APPLICATION_JSON_VALUE, item);
+				content.addMediaType(Constants.APPLICATION_JSON_VALUE, mediaTypeContent);
 				HttpParameterInfo pc = interfaceInfo.getParameterInfos().get(0);
 				Type parameterType = pc.getParamJavaType();
 				resolveParameterInfo(pc, parameterType);
@@ -207,21 +207,21 @@ public class OpenAPITool {
 				//如果是简单类型就会返回null
 				if(!StringUtils.isEmpty(key)) {
 					Schema<?> schema = openAPI.getComponents().getSchemas().get(key);
-					item.setSchema(schema);
+					mediaTypeContent.setSchema(schema);
 				}else {
-					item.setSchema(pc.schema);
+					mediaTypeContent.setSchema(pc.schema);
 				}
 				
 			} else {
 				if (interfaceInfo.isMultipart()) {
-					content.addMediaType(Constants.MULTIPART_FORM_DATA, item);
+					content.addMediaType(Constants.MULTIPART_FORM_DATA, mediaTypeContent);
 				} else {
-					content.addMediaType(Constants.APPLICATION_FORM_URLENCODED_VALUE, item);
+					content.addMediaType(Constants.APPLICATION_FORM_URLENCODED_VALUE, mediaTypeContent);
 				}
-				ObjectSchema schema = new ObjectSchema();
-				item.setSchema(schema);
-				Map<String, Encoding> encodings = new HashMap<>();
-				item.setEncoding(encodings);
+				ObjectSchema contentSchema = new ObjectSchema();
+				mediaTypeContent.setSchema(contentSchema);
+				Map<String, Encoding> contentEncodings = new HashMap<>();
+				mediaTypeContent.setEncoding(contentEncodings);
 				for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
 					HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
 					if (i < methodComment.parameters.size()) {
@@ -258,23 +258,16 @@ public class OpenAPITool {
 							encoding.setContentType("application/json");
 						}
 					}
-					encodings.put(pc.name, encoding);
+					contentEncodings.put(pc.name, encoding);
+					
 					if (pc.paramType.equals(HttpParameterType.query)) {
 						// item.setSchema(pc.schema);
-						Schema<?> propertiesItem = new Schema<>();
-						propertiesItem.setDescription(pc.comment);
-						propertiesItem.setType(pc.type);
-						propertiesItem.set$ref(pc.ref);
-						if (pc.ref != null && pc.schema instanceof ObjectSchema) {
-							@SuppressWarnings("rawtypes")
-							Map<String, Schema> properties = new HashMap<>();
-							properties.put(pc.ref, pc.schema);
-							propertiesItem.setProperties(properties);
-						}
+			 
 						if (pc.isRequired()) {
-							schema.addRequiredItem(pc.name);
+							contentSchema.addRequiredItem(pc.name);
 						}
 						if (TypeUtils.isMultipartType(parameterType)) {
+							Schema<?> propertiesItem = new Schema<>();
 							propertiesItem.format("binary");
 							propertiesItem.setType("string");
 							 Class<?> type=(Class<?>) parameterType;
@@ -288,10 +281,11 @@ public class OpenAPITool {
 								 as.setItems(items);
 								 propertiesItem=as;
 							 }
+							 contentSchema.addProperties(pc.name, propertiesItem);
 						} else {
-							propertiesItem.format(pc.format);
+							contentSchema.addProperties(pc.name, pc.schema);
 						}
-						schema.addProperties(pc.name, propertiesItem);
+						
 					} else if (pc.paramType.equals(HttpParameterType.path)) {
 						Parameter pathParameter = createParameter(pc);
 						parameters.add(pathParameter);
@@ -307,7 +301,7 @@ public class OpenAPITool {
 							propertiesItem.setProperties(properties);
 						}
 						if (pc.isRequired()) {
-							schema.addRequiredItem(pc.name);
+							contentSchema.addRequiredItem(pc.name);
 						}
 						if (TypeUtils.isMultipartType(parameterType)) {
 							propertiesItem.format("binary");
@@ -326,7 +320,7 @@ public class OpenAPITool {
 						} else {
 							propertiesItem.format(pc.format);
 						}
-						schema.addProperties(pc.name, propertiesItem);
+						contentSchema.addProperties(pc.name, propertiesItem);
 					}
 				}
 			}
