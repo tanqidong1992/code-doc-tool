@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -170,7 +171,8 @@ public class OpenAPITool {
 		operationTags.add(tag.getName());
 		op.setDeprecated(moduleInfo.deprecated || interfaceInfo.deprecated);
 		op.setTags(operationTags);
-		op.setOperationId(interfaceInfo.methodName);
+		String operationId=buildOperationId(moduleInfo,interfaceInfo);
+		op.setOperationId(operationId);
 		op.setDescription(interfaceInfo.comment);
         op.setSummary(interfaceInfo.comment);
 		List<Parameter> parameters = new ArrayList<>();
@@ -336,6 +338,11 @@ public class OpenAPITool {
 
 	}
 
+	private String buildOperationId(ModuleInfo moduleInfo, HttpInterfaceInfo interfaceInfo) {
+		String s=moduleInfo.canonicalClassName+"#"+interfaceInfo.getMethodName();
+		return s.replaceAll("\\.", "#");
+	}
+
 	public static void addOpToPath(Operation op, PathItem path, String httpMethod) {
 		// GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
 		if (httpMethod.equalsIgnoreCase(RequestMethod.GET.name())) {
@@ -361,14 +368,28 @@ public class OpenAPITool {
 	private void resolveResponse(Operation op, HttpInterfaceInfo interfaceInfo, String respComment) {
 		ApiResponses responses = new ApiResponses();
 		ApiResponse resp = new ApiResponse();
-		String firstKey = resolveType(interfaceInfo.retureType, openAPI);
-		Schema<?> schema = new ObjectSchema();
-		schema.set$ref("#/components/schemas/" + firstKey);
-		Content respContent = new Content();
 		MediaType mt = new MediaType();
-		mt.setSchema(schema);
-		respContent.put(Constants.APPLICATION_JSON_VALUE, mt);
+		if(!Void.class.equals(interfaceInfo.retureType)) {
+			String firstKey = resolveType(interfaceInfo.retureType, openAPI);
+			if(firstKey!=null) {
+				Schema<?> schema = new ObjectSchema();
+				schema.set$ref("#/components/schemas/" + firstKey);
+				mt.setSchema(schema);
+			}
+			
+		}
+		Content respContent = new Content();
+		List<String> ps=interfaceInfo.produces;
+		if(!CollectionUtils.isEmpty(ps)) {
+			for(String p:ps) {
+				respContent.put(p, mt);
+			}
+		}else {
+			respContent.put(Constants.APPLICATION_JSON_VALUE, mt);
+		}
+ 
 		resp.setContent(respContent);
+		
 		if(StringUtils.isEmpty(respComment)) {
 			respComment=Comments.DEFAULT_RESPONSE_DESCRIPTION;
 		}

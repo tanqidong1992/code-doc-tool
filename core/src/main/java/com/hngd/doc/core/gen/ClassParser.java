@@ -51,6 +51,7 @@ public class ClassParser {
 		mi.moduleUrl=SpringAnnotationUtils.extractUrl(requestMapping);
 		mi.moduleName = cls.getSimpleName();
 		mi.simpleClassName = cls.getSimpleName();
+		mi.canonicalClassName=cls.getName();
 		mi.deprecated=isModuleDeprecated(cls);
 		Method[] methods = cls.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
