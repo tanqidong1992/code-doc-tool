@@ -2,7 +2,6 @@ package com.hngd.doc.core.parse;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -21,8 +20,6 @@ import com.hngd.api.http.HttpInterfaceInfo;
 import com.hngd.api.http.HttpParameterInfo;
 import com.hngd.doc.core.ModuleInfo;
 import com.hngd.doc.core.util.ClassUtils;
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;

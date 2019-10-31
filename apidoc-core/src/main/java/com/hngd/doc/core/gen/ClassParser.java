@@ -43,7 +43,7 @@ public class ClassParser {
 	public static ModuleInfo processClass(Class<?> cls) {
 		logger.info("start to process class:{}",cls.getName());
 		if (!SpringAnnotationUtils.isControllerClass(cls)) {
-			logger.info("There is no annotation Controller RestController for class:{}",cls.getName());
+			logger.info("There is no annotation Controller or RestController for class:{}",cls.getName());
 			return null;
 		}
 		ModuleInfo mi = new ModuleInfo();
@@ -143,7 +143,7 @@ public class ClassParser {
 			rpi.paramType = HttpParameterType.query;
 			rpi.required = requestParam.required();
 			rpi.paramJavaType=parameter.getParameterizedType();
-			Optional<String> dateFormat=extractDataFormat(annotations);
+			Optional<String> dateFormat=extractDateFormat(annotations);
 			if(dateFormat.isPresent()) {
 				rpi.format=dateFormat.get();
 			}
@@ -156,7 +156,7 @@ public class ClassParser {
 			rpi.paramType = HttpParameterType.path;
 			rpi.required = true;
 			rpi.paramJavaType=parameter.getParameterizedType();
-			Optional<String> dateFormat=extractDataFormat(annotations);
+			Optional<String> dateFormat=extractDateFormat(annotations);
 			if(dateFormat.isPresent()) {
 				rpi.format=dateFormat.get();
 			}
@@ -169,7 +169,7 @@ public class ClassParser {
 		    rpi.paramType = HttpParameterType.body;
 		    rpi.required = true;
 		    rpi.paramJavaType=parameter.getParameterizedType();
-		    Optional<String> dateFormat=extractDataFormat(annotations);
+		    Optional<String> dateFormat=extractDateFormat(annotations);
 		    if(dateFormat.isPresent()) {
 			    rpi.format=dateFormat.get();
 		    }
@@ -182,7 +182,7 @@ public class ClassParser {
 			 rpi.paramType = HttpParameterType.body;
 			 rpi.required = requestPart.required();
 			 rpi.paramJavaType=parameter.getParameterizedType();
-			 Optional<String> dateFormat=extractDataFormat(annotations);
+			 Optional<String> dateFormat=extractDateFormat(annotations);
 			 if(dateFormat.isPresent()) {
 			     rpi.format=dateFormat.get();
 			 }
@@ -207,7 +207,7 @@ public class ClassParser {
 					rpi.paramType = HttpParameterType.query;
 					rpi.required = false;
 					rpi.paramJavaType=parameter.getType();
-					Optional<String> dateFormat=extractDataFormat(annotations);
+					Optional<String> dateFormat=extractDateFormat(annotations);
 					if(dateFormat.isPresent()) {
 						rpi.format=dateFormat.get();
 					}
@@ -215,17 +215,15 @@ public class ClassParser {
 			        return Arrays.asList(rpi);
 				}else {
 					//model
-					return extractParametersFormModel(parameter);
+					return extractParametersFromModel(parameter);
 					
 				}
-				
-				
 			}
 			
 		}
 		
 	}
-	private static Optional<String> extractPropertyDataFormat(Class<?> clazz,PropertyDescriptor pd) {
+	private static Optional<String> extractPropertyDateFormat(Class<?> clazz,PropertyDescriptor pd) {
 		String propertyName=pd.getName();
 		Field field=ReflectionUtils.findField(clazz, propertyName);
 		if(field==null) {
@@ -241,7 +239,7 @@ public class ClassParser {
 	private static boolean isPropertyRequired(Class<?> clazz,PropertyDescriptor pd) {
 		Method readMethod=pd.getReadMethod();
 		if(readMethod!=null) {
-			NotNull notNullConstraint=pd.getReadMethod().getAnnotation(NotNull.class);
+			NotNull notNullConstraint=readMethod.getAnnotation(NotNull.class);
 			if(notNullConstraint!=null) {
 				return true;
 			}
@@ -256,53 +254,44 @@ public class ClassParser {
 		}
 		return false;
 	}
-	public static List<HttpParameterInfo> extractParametersFormModel(Parameter parameter){
+	public static List<HttpParameterInfo> extractParametersFromModel(Parameter parameter){
 		Class<?> clazz=parameter.getType();
-		PropertyDescriptor[] pds=BeanUtils.getPropertyDescriptors(clazz);
-		Field[] fields=clazz.getDeclaredFields();
-		List<HttpParameterInfo> rpis=new LinkedList<>();
-		for(PropertyDescriptor property:pds) {
-			HttpParameterInfo rpi = new HttpParameterInfo();
-			rpi.name = property.getName();
-			Field field=ReflectionUtils.findField(clazz,rpi.name);
+		PropertyDescriptor[] propertyDescriptors=BeanUtils.getPropertyDescriptors(clazz);
+		List<HttpParameterInfo> httpParams=new LinkedList<>();
+		for(PropertyDescriptor property:propertyDescriptors) {
+			HttpParameterInfo httpParam = new HttpParameterInfo();
+			httpParam.name = property.getName();
+			Field field=ReflectionUtils.findField(clazz,httpParam.name);
 			if(field==null) {
-				logger.warn("the property{} is read only",rpi.name);
+				logger.warn("the property {} is read only",httpParam.name);
 				continue;
 			}
 			//TODO need to analysis method mapping url
-			rpi.paramType = HttpParameterType.query;
-			rpi.required = isPropertyRequired(clazz,property);
-			rpi.paramJavaType=property.getPropertyType();
-			rpi.comment=CommonClassCommentParser.getFieldComment(field);
-			Optional<String> dateFormat=extractPropertyDataFormat(clazz,property);
+			httpParam.paramType = HttpParameterType.query;
+			httpParam.required = isPropertyRequired(clazz,property);
+			httpParam.paramJavaType=property.getPropertyType();
+			httpParam.comment=CommonClassCommentParser.getFieldComment(field);
+			Optional<String> dateFormat=extractPropertyDateFormat(clazz,property);
 			if(dateFormat.isPresent()) {
-				rpi.format=dateFormat.get();
+				httpParam.format=dateFormat.get();
 			}
-			rpi.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
-			rpis.add(rpi);
+			httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
+			httpParams.add(httpParam);
 		}
-		return  rpis;
+		return  httpParams;
 	}
 	private static Optional<RequestPart> isRequestPart(Annotation[] annotations) {
-		if(annotations.length<=0) {
-			return Optional.empty();
-		}
-		for (Annotation a : annotations) {
-			if(a instanceof RequestPart) {
-				return Optional.of(((RequestPart)a));
-			}
-		}
-		return Optional.empty();
+		return extractAnnotaion(annotations, RequestPart.class);
 	}
-
-	private static Optional<String> extractDataFormat(Annotation[] annotations) {
-		if(annotations.length<=0) {
-			return Optional.empty();
-		}
-		for (Annotation a : annotations) {
-			if(a instanceof DateTimeFormat) {
-				return Optional.of(((DateTimeFormat)a).pattern());
-			}
+    /**
+     * 提取DataFormatPattern
+     * @param annotations
+     * @return
+     */
+	private static Optional<String> extractDateFormat(Annotation[] annotations) {
+		Optional<DateTimeFormat> optionalDateTimeFormat=extractAnnotaion(annotations, DateTimeFormat.class);
+		if(optionalDateTimeFormat.isPresent()) {
+		    return Optional.of(optionalDateTimeFormat.get().pattern());
 		}
 		return Optional.empty();
 	}
@@ -311,16 +300,22 @@ public class ClassParser {
 		return field.getAnnotation(NotNull.class)!=null;
 	}
 	private static Optional<RequestParam> isRequestParam(Annotation [] annotations) {
-		return extractAnnotaions(annotations, RequestParam.class);
+		return extractAnnotaion(annotations, RequestParam.class);
 	}
-	
+	/**
+	 * 从注解数组中找到指定类型的注解
+	 * @param <T> 指定注解
+	 * @param annotations 注解数组
+	 * @param type 指定注解的类型
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
-	private static <T extends Annotation> Optional<T> extractAnnotaions(Annotation [] annotations,Class<T> t){
+	private static <T extends Annotation> Optional<T> extractAnnotaion(Annotation [] annotations,Class<T> type){
 		if(annotations.length<=0) {
 			return Optional.empty();
 		}
 		for (Annotation a : annotations) {
-			if(t.isInstance(a)) {
+			if(type.isInstance(a)) {
 				return Optional.of((T)a);
 			}
 		}
@@ -328,9 +323,9 @@ public class ClassParser {
 	}
 	
 	private static Optional<RequestBody> isRequestBody(Annotation [] annotations) {
-		return extractAnnotaions(annotations, RequestBody.class);
+		return extractAnnotaion(annotations, RequestBody.class);
 	}
 	private static Optional<PathVariable> isPathVariable(Annotation [] annotations) {
-		return extractAnnotaions(annotations, PathVariable.class);
+		return extractAnnotaion(annotations, PathVariable.class);
 	}
 }

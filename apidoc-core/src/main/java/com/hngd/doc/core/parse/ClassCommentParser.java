@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ClassCommentParser {
 	/**
-	 * java doc comment must has 2 lines
+	 * java doc comment must has two lines
 	 */
 	public static final int JAVADOC_COMMENT_MIN_LINE_SIZE=2;
 	private static final Logger logger = LoggerFactory.getLogger(ClassCommentParser.class);

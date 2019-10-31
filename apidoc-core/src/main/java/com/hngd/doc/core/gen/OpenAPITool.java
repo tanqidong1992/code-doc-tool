@@ -133,7 +133,17 @@ public class OpenAPITool {
 			}
 			param.setName(pc.name);
 			param.setRequired(pc.required);
-			param.setSchema(pc.schema);
+			
+			if(pc.isPrimitive()) {
+				param.setSchema(pc.schema);
+			}else {
+				Content content=new Content();
+				MediaType value=new MediaType();
+				value.setSchema(pc.schema);
+				content.put("application/json", value);
+				param.setContent(content);
+			}
+			 
 			param.setDescription(pc.comment);
 			return param;
 		} else {
@@ -377,13 +387,15 @@ public class OpenAPITool {
 		if (parameterType instanceof ParameterizedType) {
 			ParameterizedType ppt = (ParameterizedType) parameterType;
 			Type rawType = ppt.getRawType();
+			argumentClass = (Class<?>) ppt.getActualTypeArguments()[0];
 			if (rawType instanceof Class<?>) {
 				Class<?> rawClass = (Class<?>) rawType;
 				if (Collection.class.isAssignableFrom(rawClass)) {
 					pc.isCollection = true;
+					pc.ref=pc.ref = TypeNameUtils.getTypeName(argumentClass);
 				}
 			}
-			argumentClass = (Class<?>) ppt.getActualTypeArguments()[0];
+			
 		} else {
 			argumentClass = (Class<?>) parameterType;
 		}
@@ -414,7 +426,18 @@ public class OpenAPITool {
 			DateSchema ds = new DateSchema();
 			ds.setFormat(pc.format);
 			pc.schema = ds;
-		} else {
+		} else if(pc.isCollection){
+			pc.type="array";
+			ArraySchema as=new ArraySchema();
+			pc.schema=as;
+			ObjectSchema items=new ObjectSchema();
+			as.setItems(items);
+			if (pc.ref.contains("<")) {
+				pc.ref = pc.ref.replace("<", "").replace(">", "");
+			}
+			items.set$ref("#/components/schemas/" + pc.ref);
+			
+		}else{
 			pc.type = "object";
 			pc.format = argumentClass.getSimpleName();
 			pc.isPrimitive = false;
@@ -451,13 +474,22 @@ public class OpenAPITool {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static String resolveType(Type type, OpenAPI swagger) {
-		Map<String, Schema> models = ModelConverters.getInstance().read(type);
+		Map<String, Schema> schemas = ModelConverters.getInstance().read(type);
 		if (type instanceof ParameterizedType) {
 			ParameterizedType pt = (ParameterizedType) type;
 			Type[] subTypes = pt.getActualTypeArguments();
 			for (Type subType : subTypes) {
-				resolveType(subType, swagger);
+				String tempKey=resolveType(subType, swagger);
 			}
+			Type rawType=pt.getRawType();
+			if(rawType instanceof Class<?>) {
+				Class<?> rawClass=(Class<?>) rawType;
+				if(rawClass.isArray() || Collection.class.isAssignableFrom(rawClass)) {
+					
+				}
+			}
+			 
+			
 		}
 		if (type instanceof Class<?>) {
 			Class<?> clazz = (Class<?>) type;
@@ -468,9 +500,10 @@ public class OpenAPITool {
 		}
 
 		String firstKey = null;
-		for (String key : models.keySet()) {
+		for (String key : schemas.keySet()) {
 			firstKey = key;
-			Schema model = models.get(key);
+			Schema model = schemas.get(key);
+			swagger.schema(key, model);
 			Map<String, Schema> properties = new HashMap<>();
 			Map<String, Schema> cps = model.getProperties();
 			if (cps == null) {
@@ -490,14 +523,11 @@ public class OpenAPITool {
 				schema.setName(name);
 				properties.put(name, schema);
 			});
-			/**
-			 * if(!CollectionUtils.isEmpty(model.getRequired())) {
-			 * model.getRequired().clear(); }
-			 */
 			model.getProperties().clear();
 			model.setProperties(properties);
-			swagger.schema(key, model);
+			
 		}
+		
 		return firstKey;
 	}
 
