@@ -60,9 +60,9 @@
 	</build>
 	<modules>
 		<module>core</module>
-		<module>swagger-doc</module>
+		<module>openapi-doc</module>
 		<module>codegen</module>
-		<module>swagger-markdown</module>
+		<module>openapi-markdown</module>
 		<module>swagger-ui</module>
 	</modules>
 
