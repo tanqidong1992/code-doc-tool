@@ -57,6 +57,10 @@ public class HttpParameterInfo {
 	 */
 	public boolean isCollection;
 	/**
+	 * 类型参数
+	 */
+	public Class<?> parameterizedType;
+	/**
 	 * Swagger format
 	 */
 	public String format;

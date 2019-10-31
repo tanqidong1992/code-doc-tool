@@ -41,6 +41,7 @@ import com.hngd.doc.core.FieldInfo;
 import com.hngd.doc.core.MethodInfo;
 import com.hngd.doc.core.ModuleInfo;
 import com.hngd.doc.core.ParameterInfo;
+import com.hngd.doc.core.SimpleTypeFormat;
 import com.hngd.doc.core.parse.CommonClassCommentParser;
 import com.hngd.doc.core.util.ClassUtils;
 import com.hngd.doc.core.util.TypeNameUtils;
@@ -387,19 +388,41 @@ public class OpenAPITool {
 		if (parameterType instanceof ParameterizedType) {
 			ParameterizedType ppt = (ParameterizedType) parameterType;
 			Type rawType = ppt.getRawType();
-			argumentClass = (Class<?>) ppt.getActualTypeArguments()[0];
+			Class<?> argumentType = (Class<?>) ppt.getActualTypeArguments()[0];
 			if (rawType instanceof Class<?>) {
 				Class<?> rawClass = (Class<?>) rawType;
 				if (Collection.class.isAssignableFrom(rawClass)) {
 					pc.isCollection = true;
-					pc.ref = TypeNameUtils.getTypeName(argumentClass);
+					pc.parameterizedType=argumentType;
+					if(!BeanUtils.isSimpleProperty(argumentType)) {
+					    pc.ref = TypeNameUtils.getTypeName(argumentType);
+					} 
 				}
 			}
 			
 		} else {
 			argumentClass = (Class<?>) parameterType;
 		}
-		if (String.class.isAssignableFrom(argumentClass)) {
+		
+		if(pc.isCollection){
+			pc.type="array";
+			ArraySchema as=new ArraySchema();
+			pc.schema=as;
+			ObjectSchema items=new ObjectSchema();
+			as.setItems(items);
+			
+			if(pc.ref!=null) {
+				if (pc.ref.contains("<")) {
+					pc.ref = pc.ref.replace("<", "").replace(">", "");
+				}
+			    items.set$ref("#/components/schemas/" + pc.ref);
+			}else {
+				SimpleTypeFormat tf=SimpleTypeFormat.convert(pc.parameterizedType);
+				items.setType(tf.getType());
+				items.setFormat(tf.getFormat());
+			}
+			
+		}else if (String.class.isAssignableFrom(argumentClass)) {
 			pc.format = "string";
 			pc.type = "string";
 			pc.isPrimitive = true;
@@ -426,18 +449,7 @@ public class OpenAPITool {
 			DateSchema ds = new DateSchema();
 			ds.setFormat(pc.format);
 			pc.schema = ds;
-		} else if(pc.isCollection){
-			pc.type="array";
-			ArraySchema as=new ArraySchema();
-			pc.schema=as;
-			ObjectSchema items=new ObjectSchema();
-			as.setItems(items);
-			if (pc.ref.contains("<")) {
-				pc.ref = pc.ref.replace("<", "").replace(">", "");
-			}
-			items.set$ref("#/components/schemas/" + pc.ref);
-			
-		}else{
+		} else{
 			pc.type = "object";
 			pc.format = argumentClass.getSimpleName();
 			pc.isPrimitive = false;
