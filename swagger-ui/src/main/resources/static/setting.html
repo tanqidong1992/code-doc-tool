@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<header>
+        <meta charset="UTF-8">
+        <title>API文档配置</title>
+        <script src="libs/qs.min.js"></script>
+        <script src="libs/axios/axios.js"></script>
+        <script src="libs/vue/vue.js"></script>
+        <script src="js/common/common.js"></script>
+        <script src="js/api/DocumentController.js"></script>
+        <!-- ZUI 标准版压缩后的 CSS 文件 -->
+<link rel="stylesheet" href="libs/zui/css/zui.min.css">
+
+<!-- ZUI Javascript 依赖 jQuery -->
+<script src="libs/zui/lib/jquery/jquery.js"></script>
+<!-- ZUI 标准版压缩后的 JavaScript 文件 -->
+<script src="libs/zui/js/zui.js"></script>
+
+<link href="libs/zui/lib/uploader/zui.uploader.css" rel="stylesheet">
+<script src="libs/zui/lib/uploader/zui.uploader.js"></script>
+
+</header>
+<body>
+<div id="app">
+
+  <ul class="list-group" >
+ 
+    <li class="list-group-item" v-for="(doc,index) in data.data">
+      <a href="#">{{doc.title}}-{{doc.filename}}</a>
+      <input type="button" v-bind:id="doc.filename"v-on:click="onDelete" value="删除">
+    </li>
+   
+  </ul>
+  
+</div>
+<div id="uploaderExample" class="uploader">
+    <div class="file-list" data-drag-placeholder="请拖拽接口文档文件到此处"></div>
+    <button type="button" class="btn btn-primary uploader-btn-browse"><i class="icon icon-cloud-upload"></i> 选择接口文档文件</button>
+  </div>
+<script>
+  var docApi=new DocumentController();
+  docApi.getAllOriginDocument(function(resp){
+      var data=resp.data;
+      console.log(data);
+      initView(data);
+  });
+  function initView(data){
+    
+    var appData = {
+            data: function() {
+                return {
+                    visible: false,
+                    data:data,
+                    uploadUrl:host+"/doc/api"+"/document"+"/upload"
+               };
+           },
+           methods:{
+               onDelete:function(event){
+                var filename=event.target.id;
+                console.log("click delete:"+event);   
+                deleteOriginFileByName(filename);
+               }
+               
+           }
+        };
+        var Ctor = Vue.extend(appData);
+        new Ctor().$mount("#app");
+  }
+  function deleteOriginFileByName(filename){
+    docApi.deleteOriginFile(filename,function(resp){
+      var data=resp.data;
+       if(data.errorCode==0){
+        alert("删除成功");
+       }else{
+         alert("删除失败:"+data.description);
+       }
+  });
+  }
+  var options = {
+    // 初始化选项
+};
+$(function(){
+  $('#uploaderExample').uploader({
+    autoUpload: true,            // 当选择文件后立即自动进行上传操作
+    url: host+"/doc/api"+"/document"+"/upload",  // 文件上传提交地址
+    responseHandler: function(responseObject, file) {
+        // 当服务器返回的文本内容包含 `'error'` 文本时视为上传失败
+        var data=JSON.parse(responseObject.response);
+        if(data.errorCode==0){
+          //responseObject.response="上传成功";
+          //file.remoteData="";
+          //file.status=200;
+          //alert "上传成功";
+        }else{
+          return "上传失败:"+data.description;
+        }
+        /**
+        if(responseObject.response.indexOf('error')) {
+            return '上传失败。服务器返回了一个错误：' + responseObject.response;
+        }
+        */
+    }
+});
+})
+</script>
+</body>
+
+</html>

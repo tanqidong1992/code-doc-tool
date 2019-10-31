@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.hngd.tool</groupId>
-	<artifactId>code-doc-generator</artifactId>
-	<version>${code.tool.version}</version>
+	<artifactId>code-doc-tool</artifactId>
+	<version>2.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>hn-code-tool</name>
@@ -37,31 +39,32 @@
 					</configuration>
 				</plugin>
 				<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-				</configuration>
-			</plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>3.0.1</version>
+					<executions>
+						<execution>
+							<id>attach-sources</id>
+							<phase>package</phase>
+							<goals>
+								<goal>jar-no-fork</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
 	</build>
 	<modules>
-		<module>apidoc-core</module>
-		<module>apidoc-web</module>
+		<module>core</module>
+		<module>swagger-doc</module>
 		<module>codegen</module>
-    <module>swagger2markdown</module>
-  </modules>
+		<module>swagger-markdown</module>
+		<module>swagger-ui</module>
+	</modules>
 
 	<distributionManagement>
 		<repository>
@@ -69,7 +72,7 @@
 			<url>http://192.168.0.143:8082/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</distributionManagement>
-	
+
 	<repositories>
 		<repository>
 			<id>hn-local-143</id>
@@ -83,5 +86,5 @@
 			</snapshots>
 
 		</repository>
-	</repositories>   
+	</repositories>
 </project>

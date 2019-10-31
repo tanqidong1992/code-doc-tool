@@ -1,0 +1,79 @@
+<!-- HTML for static distribution bundle build -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Swagger UI</title>
+    <link rel="stylesheet" type="text/css" href="libs/swagger/swagger-ui.css" >
+    <link rel="icon" type="image/png" href="libs/swagger/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="libs/swagger/favicon-16x16.png" sizes="16x16" />
+    <style>
+      html
+      {
+        box-sizing: border-box;
+        overflow: -moz-scrollbars-vertical;
+        overflow-y: scroll;
+      }
+
+      *,
+      *:before,
+      *:after
+      {
+        box-sizing: inherit;
+      }
+
+      body
+      {
+        margin:0;
+        background: #fafafa;
+      }
+      .topbar{
+        display: none;
+      }
+      .wrapper{
+        padding-left: 5px!important;
+        padding-right: 5px!important;
+        
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="swagger-ui"></div>
+
+    <script src="libs/swagger/swagger-ui-bundle.js"> </script>
+    <script src="libs/swagger/swagger-ui-standalone-preset.js"> </script>
+    <script>
+
+var search = location.search; //获取url中"?“符后的字串
+var url;
+if (search.indexOf("?") != -1) {
+    var str = search.substr(1);
+    strs = str.split("&");
+    url = decodeURIComponent(strs[0].replace('url=',""));//获取url中的id
+    url=strs[0].replace('url=',"");
+   // name= decodeURIComponent(strs[1].replace(“name=”,""));//获取url中的name
+}
+
+    window.onload = function() {
+      // Begin Swagger UI call region
+      const ui = SwaggerUIBundle({
+        url: url,
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        plugins: [
+          SwaggerUIBundle.plugins.DownloadUrl
+        ],
+        layout: "StandaloneLayout"
+      })
+      // End Swagger UI call region
+
+      window.ui = ui
+    }
+  </script>
+  </body>
+</html>

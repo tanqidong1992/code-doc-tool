@@ -1,0 +1,27 @@
+{
+  "servers": [
+    {
+      "url": "https://192.168.0.144:8080/doc/api",
+      "description": "144网关"
+    },
+    {
+      "url": "https://localhost:8080/doc/api",
+      "description": "本地测试"
+    }
+  ],
+  "info": {
+    "title": "接口文档服务接口",
+    "description": "更新时间:2019/06/13 09:48:45",
+    "termsOfService": "api",
+    "contact": {
+      "name": "谭奇栋",
+      "url": "http://192.168.0.239/web",
+      "email": "903843602@qq.com"
+    },
+    "license": {
+      "name": "参考资料",
+      "url": "http://192.168.0.239/hndoc/"
+    },
+    "version": "V1.0.1"
+  }
+}

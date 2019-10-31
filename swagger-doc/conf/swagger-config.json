@@ -1,0 +1,29 @@
+{
+  "servers": [
+    {
+      "url": "https://192.168.0.144:8080",
+      "description": "144网关",
+      "variables": {
+        "测试": {
+          "_default": "默认",
+          "description": "默认测试"
+        }
+      }
+    }
+  ],
+  "info": {
+    "title": "巡检子系统接口文档",
+    "description": "更新时间:2019/06/13 09:48:45",
+    "termsOfService": "api",
+    "contact": {
+      "name": "谭奇栋",
+      "url": "http://192.168.0.239/web",
+      "email": "903843602@qq.com"
+    },
+    "license": {
+      "name": "参考资料",
+      "url": "http://192.168.0.239/hndoc/"
+    },
+    "version": "V1.0.1"
+  }
+}
