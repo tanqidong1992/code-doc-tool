@@ -1,8 +1,10 @@
 package com.hngd.openapi.validator;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,7 +32,11 @@ public class OpenAPIValidator {
 	public static final String SCHEMA_PATH = "/com/hngd/openapi/schemas/";
 	public static final String SCHEMA_V2 = "schema-v2.json";
 	public static final String SCHEMA_V3 = "schema-v3.json";
-
+	public ValidationResponse validate(File file) throws IOException  {
+		String s=FileUtils.readFileToString(file, Constant.DEFAULT_CHARSET);
+		return debugByContent(s);
+		 
+	}
 	public ValidationResponse validate(String s)  {
 		return debugByContent(s);
 		 
