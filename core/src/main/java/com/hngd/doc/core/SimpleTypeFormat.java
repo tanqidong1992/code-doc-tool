@@ -27,7 +27,13 @@ public class SimpleTypeFormat {
     public static SimpleTypeFormat newTypeFormat(String type,String format) {
     	return new SimpleTypeFormat(type,format);
     }
+    /**
+     * signed 32 bits
+     */
 	public static final SimpleTypeFormat INT32=newTypeFormat("integer", "int32");
+	/**
+	 * signed 64 bits
+	 */
 	public static final SimpleTypeFormat INT64=newTypeFormat("integer", "int64");
 	
 	public static final SimpleTypeFormat FLOAT=newTypeFormat("number", "float");
@@ -36,11 +42,25 @@ public class SimpleTypeFormat {
 	public static final SimpleTypeFormat BOOLEAN=newTypeFormat("boolean", null);
 	
 	public static final SimpleTypeFormat SIMPLE_STRING=newTypeFormat("string", null);
-	
+	/**
+	 * base64 encoded characters
+	 */
 	public static final SimpleTypeFormat BYTE_STRING=newTypeFormat("string", "byte");
+	/**
+	 * any sequence of octets
+	 */
 	public static final SimpleTypeFormat BINARY_STRING=newTypeFormat("string", "binary");
+	/**
+	 * As defined by full-date - RFC3339
+	 */
 	public static final SimpleTypeFormat DATE_STRING=newTypeFormat("string", "date");
+	/**
+	 * As defined by date-time - RFC3339
+	 */
 	public static final SimpleTypeFormat DATE_TIME_STRING=newTypeFormat("string", "date-time");
+	/**
+	 * A hint to UIs to obscure input.
+	 */
 	public static final SimpleTypeFormat PASSWORD_STRING=newTypeFormat("string", "password");
 	
 	/**

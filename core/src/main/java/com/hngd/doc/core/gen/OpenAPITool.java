@@ -33,8 +33,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.hngd.api.http.HttpInterfaceInfo;
-import com.hngd.api.http.HttpParameterInfo;
+import com.hngd.api.http.HttpInterface;
+import com.hngd.api.http.HttpParameter;
 import com.hngd.constant.HttpParameterType;
 import com.hngd.constant.Comments;
 import com.hngd.constant.Constants;
@@ -107,7 +107,7 @@ public class OpenAPITool {
 			logger.warn("the comment for class:{} is empty", moduleInfo.canonicalClassName);
 		}
 		tags.add(moduleTag);
-		for (HttpInterfaceInfo interfaceInfo : moduleInfo.interfaceInfos) {
+		for (HttpInterface interfaceInfo : moduleInfo.interfaceInfos) {
 			PathItem pathItem = interface2doc(moduleInfo, interfaceInfo, moduleTag);
 			if (pathItem == null) {
 				continue;
@@ -125,7 +125,7 @@ public class OpenAPITool {
 			paths.put(pathKey, pathItem);
 		}
     }
-	public static Parameter createParameter(HttpParameterInfo pc) {
+	public static Parameter createParameter(HttpParameter pc) {
 		if (pc.paramType.isParameter()) {
 			Parameter param = null;
 			try {
@@ -153,7 +153,7 @@ public class OpenAPITool {
 		}
 	}
 
-	private PathItem interface2doc(ModuleInfo moduleInfo, HttpInterfaceInfo interfaceInfo, Tag tag) {
+	private PathItem interface2doc(ModuleInfo moduleInfo, HttpInterface interfaceInfo, Tag tag) {
 
 		String methodKey = moduleInfo.simpleClassName + "#" + interfaceInfo.methodName;
 		MethodInfo methodComment = CommonClassCommentParser.methodComments.get(methodKey);
@@ -179,7 +179,7 @@ public class OpenAPITool {
 
 		if (!hasRequestBody(interfaceInfo.httpMethod)) {
 			for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
-				HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
+				HttpParameter pc = interfaceInfo.parameterInfos.get(i);
 				String parameterComment = null;
 				if (i < methodComment.parameters.size()) {
 					ParameterInfo pi = methodComment.parameters.get(i);
@@ -202,7 +202,7 @@ public class OpenAPITool {
 			Content content = new Content();
 			if (interfaceInfo.hasRequestBody && !interfaceInfo.isMultipart()) {
 				content.addMediaType(Constants.APPLICATION_JSON_VALUE, mediaTypeContent);
-				HttpParameterInfo pc = interfaceInfo.getParameterInfos().get(0);
+				HttpParameter pc = interfaceInfo.getParameterInfos().get(0);
 				Type parameterType = pc.getParamJavaType();
 				resolveParameterInfo(pc, parameterType);
 				String key = resolveType(parameterType, openAPI);
@@ -225,7 +225,7 @@ public class OpenAPITool {
 				Map<String, Encoding> contentEncodings = new HashMap<>();
 				mediaTypeContent.setEncoding(contentEncodings);
 				for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
-					HttpParameterInfo pc = interfaceInfo.parameterInfos.get(i);
+					HttpParameter pc = interfaceInfo.parameterInfos.get(i);
 					if (i < methodComment.parameters.size()) {
 						ParameterInfo pi = methodComment.parameters.get(i);
 						if(StringUtils.isNotEmpty(pi.comment) && StringUtils.isEmpty( pc.comment)) {
@@ -338,7 +338,7 @@ public class OpenAPITool {
 
 	}
 
-	private String buildOperationId(ModuleInfo moduleInfo, HttpInterfaceInfo interfaceInfo) {
+	private String buildOperationId(ModuleInfo moduleInfo, HttpInterface interfaceInfo) {
 		String s=moduleInfo.canonicalClassName+"#"+interfaceInfo.getMethodName();
 		return s.replaceAll("\\.", "#");
 	}
@@ -365,7 +365,7 @@ public class OpenAPITool {
 
 	}
 
-	private void resolveResponse(Operation op, HttpInterfaceInfo interfaceInfo, String respComment) {
+	private void resolveResponse(Operation op, HttpInterface interfaceInfo, String respComment) {
 		ApiResponses responses = new ApiResponses();
 		ApiResponse resp = new ApiResponse();
 		MediaType mt = new MediaType();
@@ -398,7 +398,7 @@ public class OpenAPITool {
 		op.setResponses(responses);
 	}
 
-	private void resolveParameterInfo(HttpParameterInfo pc, Type parameterType) {
+	private void resolveParameterInfo(HttpParameter pc, Type parameterType) {
 		Class<?> argumentClass = null;
 		if (parameterType instanceof ParameterizedType) {
 			ParameterizedType ppt = (ParameterizedType) parameterType;

@@ -3,7 +3,7 @@ package com.hngd.doc.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hngd.api.http.HttpInterfaceInfo;
+import com.hngd.api.http.HttpInterface;
 
 /**
  * 类信息
@@ -24,7 +24,7 @@ public class ModuleInfo {
 	/**
 	 * 模块接口列表
 	 */
-	public List<HttpInterfaceInfo> interfaceInfos;
+	public List<HttpInterface> interfaceInfos;
 	/**
 	 * 模块类名称
 	 */
@@ -38,7 +38,7 @@ public class ModuleInfo {
 	 */
 	public Boolean deprecated;
 	public ModuleInfo() {
-		interfaceInfos = new ArrayList<HttpInterfaceInfo>();
+		interfaceInfos = new ArrayList<HttpInterface>();
 	}
 	/**
 	 * @return the moduleName
@@ -67,13 +67,13 @@ public class ModuleInfo {
 	/**
 	 * @return the interfaceInfos
 	 */
-	public final List<HttpInterfaceInfo> getInterfaceInfos() {
+	public final List<HttpInterface> getInterfaceInfos() {
 		return interfaceInfos;
 	}
 	/**
 	 * @param interfaceInfos the interfaceInfos to set
 	 */
-	public final void setInterfaceInfos(List<HttpInterfaceInfo> interfaceInfos) {
+	public final void setInterfaceInfos(List<HttpInterface> interfaceInfos) {
 		this.interfaceInfos = interfaceInfos;
 	}
 	public String getSimpleClassName() {

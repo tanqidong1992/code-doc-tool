@@ -22,7 +22,7 @@ import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
 import org.beetl.core.resource.ClasspathResourceLoader;
 
-import com.hngd.api.http.HttpParameterInfo;
+import com.hngd.api.http.HttpParameter;
 import com.hngd.doc.core.MethodInfo;
 import com.hngd.doc.core.ModuleInfo;
 import com.hngd.doc.core.parse.CommonClassCommentParser;
@@ -84,7 +84,7 @@ public class JSCodeGenerator
 				if(mm!=null){
 					ii.comment=mm.comment;
 					for(int i=0;i<ii.parameterInfos.size();i++){
-						HttpParameterInfo pi=ii.parameterInfos.get(i);
+						HttpParameter pi=ii.parameterInfos.get(i);
 						if(i<mm.parameters.size()){
 							pi.comment=mm.parameters.get(i).comment;
 						}

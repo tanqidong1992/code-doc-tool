@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.hngd.api.http.HttpInterfaceInfo;
-import com.hngd.api.http.HttpParameterInfo;
+import com.hngd.api.http.HttpInterface;
+import com.hngd.api.http.HttpParameter;
 import com.hngd.doc.core.ModuleInfo;
 import com.hngd.doc.core.gen.ClassParser;
 import com.squareup.javapoet.AnnotationSpec;
@@ -93,7 +93,7 @@ public class JavaAPICodeGenerator {
 			name = moduleInfo.simpleClassName+"Client";
 		}
 		TypeSpec.Builder builder = TypeSpec.interfaceBuilder(name).addModifiers(Modifier.PUBLIC);
-		for (HttpInterfaceInfo ii : moduleInfo.interfaceInfos) {
+		for (HttpInterface ii : moduleInfo.interfaceInfos) {
 			MethodSpec.Builder mb = MethodSpec.methodBuilder(ii.methodName).addModifiers(Modifier.PUBLIC,
 					Modifier.ABSTRACT);
 			Class<?> aclazz = null;
@@ -116,7 +116,7 @@ public class JavaAPICodeGenerator {
 				
 				if(ii.isMultipart()) {
 					for (int i = 0; i < ii.parameterInfos.size(); i++) {
-						HttpParameterInfo rpi = ii.parameterInfos.get(i);
+						HttpParameter rpi = ii.parameterInfos.get(i);
 						Type type =rpi.getParamJavaType();
 						ParameterSpec.Builder pb = ParameterSpec
 								.builder(type != MultipartFile.class ? RequestBody.class : MultipartBody.Part.class, rpi.name);
@@ -134,7 +134,7 @@ public class JavaAPICodeGenerator {
 					}
 				}else {
 					for (int i = 0; i < ii.parameterInfos.size(); i++) {
-						HttpParameterInfo rpi = ii.parameterInfos.get(i);
+						HttpParameter rpi = ii.parameterInfos.get(i);
 						Type type =rpi.getParamJavaType();
 						ParameterSpec.Builder pb = ParameterSpec
 								.builder(String.class, rpi.name);
@@ -149,7 +149,7 @@ public class JavaAPICodeGenerator {
 			}else if(ii.httpMethod.equalsIgnoreCase("GET")) {
 				
 				for (int i = 0; i < ii.parameterInfos.size(); i++) {
-					HttpParameterInfo rpi = ii.parameterInfos.get(i);
+					HttpParameter rpi = ii.parameterInfos.get(i);
 					Type type =rpi.getParamJavaType();
 					ParameterSpec.Builder pb = ParameterSpec
 							.builder( String.class , rpi.name);

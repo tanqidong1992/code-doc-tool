@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 
-import com.hngd.api.http.HttpInterfaceInfo;
-import com.hngd.api.http.HttpParameterInfo;
+import com.hngd.api.http.HttpInterface;
+import com.hngd.api.http.HttpParameter;
 import com.hngd.constant.HttpParameterType;
 import com.hngd.doc.core.ModuleInfo;
 import com.hngd.doc.core.parse.CommonClassCommentParser;
@@ -57,7 +57,7 @@ public class ClassParser {
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
 			if(RestClassUtils.isHttpInterface(method)){
-				HttpInterfaceInfo info = processMethod(method);
+				HttpInterface info = processMethod(method);
 				if (info != null) {
 					mi.interfaceInfos.add(info);
 				}
@@ -72,8 +72,8 @@ public class ClassParser {
 		return cls.getAnnotation(Deprecated.class)!=null;
 	}
 
-	private static HttpInterfaceInfo processMethod(Method method) {
-		HttpInterfaceInfo info = new HttpInterfaceInfo();
+	private static HttpInterface processMethod(Method method) {
+		HttpInterface info = new HttpInterface();
 		Optional<? extends Annotation> optionalAnnotation = RestClassUtils.getHttpRequestInfo(method);
 		Annotation mappingAnnotation=optionalAnnotation.get();
 		info.deprecated=isMethodDeprecated(method);
@@ -109,10 +109,10 @@ public class ClassParser {
 		Parameter[] parameters = method.getParameters();
 		for (int i = 0; i < parameters.length; i++) {
 			Parameter parameter = parameters[i];
-			List<HttpParameterInfo> hpi=processParameter(parameter);
+			List<HttpParameter> hpi=processParameter(parameter);
 			if(!CollectionUtils.isEmpty(hpi)) {
 				info.parameterInfos.addAll(hpi);
-				HttpParameterInfo firstParameterInfo=hpi.get(0);
+				HttpParameter firstParameterInfo=hpi.get(0);
 				if (!info.isMultipart) {
 					info.isMultipart = TypeUtils.isMultipartType(firstParameterInfo.getParamJavaType());
 				}
@@ -134,12 +134,12 @@ public class ClassParser {
 	 * @param parameter
 	 * @return
 	 */
-	private static List<HttpParameterInfo> processParameter(Parameter parameter) {
+	private static List<HttpParameter> processParameter(Parameter parameter) {
 		Annotation[] annotations = parameter.getAnnotations();
-		HttpParameterInfo rpi=null;
+		HttpParameter rpi=null;
 		if (isRequestParam(annotations).isPresent()) {
 			RequestParam requestParam =isRequestParam(annotations).get();
-			rpi = new HttpParameterInfo();
+			rpi = new HttpParameter();
 			rpi.name = RestClassUtils.extractParameterName(requestParam);
 			rpi.paramType = HttpParameterType.query;
 			rpi.required = requestParam.required();
@@ -152,7 +152,7 @@ public class ClassParser {
 			return Arrays.asList(rpi);
 		}else if(isPathVariable(annotations).isPresent()) {
 			PathVariable pa =isPathVariable(annotations).get();
-			rpi = new HttpParameterInfo();
+			rpi = new HttpParameter();
 			rpi.name =RestClassUtils.extractParameterName(pa);
 			rpi.paramType = HttpParameterType.path;
 			rpi.required = true;
@@ -165,7 +165,7 @@ public class ClassParser {
 			return Arrays.asList(rpi);
 		}else if(isRequestBody(annotations).isPresent()) {
 			//RequestBody rb= isRequestBody(annotations).get();
-		    rpi = new HttpParameterInfo();
+		    rpi = new HttpParameter();
 		    rpi.name = parameter.getName();
 		    rpi.paramType = HttpParameterType.body;
 		    rpi.required = true;
@@ -178,7 +178,7 @@ public class ClassParser {
 		    return Arrays.asList(rpi);
 		}else if(isRequestPart(annotations).isPresent()) {
 			 RequestPart requestPart =isRequestPart(annotations).get();
-			 rpi = new HttpParameterInfo();
+			 rpi = new HttpParameter();
 			 rpi.name = RestClassUtils.extractParameterName(requestPart);
 			 rpi.paramType = HttpParameterType.body;
 			 rpi.required = requestPart.required();
@@ -203,7 +203,7 @@ public class ClassParser {
 			}else {
 				if(parameter.getType() instanceof Class && BeanUtils.isSimpleProperty((Class<?>)parameter.getType())) {
 					//requestparam
-					rpi = new HttpParameterInfo();
+					rpi = new HttpParameter();
 					rpi.name = parameter.getName();
 					rpi.paramType = HttpParameterType.query;
 					rpi.required = false;
@@ -255,12 +255,12 @@ public class ClassParser {
 		}
 		return false;
 	}
-	public static List<HttpParameterInfo> extractParametersFromModel(Parameter parameter){
+	public static List<HttpParameter> extractParametersFromModel(Parameter parameter){
 		Class<?> clazz=parameter.getType();
 		PropertyDescriptor[] propertyDescriptors=BeanUtils.getPropertyDescriptors(clazz);
-		List<HttpParameterInfo> httpParams=new LinkedList<>();
+		List<HttpParameter> httpParams=new LinkedList<>();
 		for(PropertyDescriptor property:propertyDescriptors) {
-			HttpParameterInfo httpParam = new HttpParameterInfo();
+			HttpParameter httpParam = new HttpParameter();
 			httpParam.name = property.getName();
 			Field field=ReflectionUtils.findField(clazz,httpParam.name);
 			if(field==null) {

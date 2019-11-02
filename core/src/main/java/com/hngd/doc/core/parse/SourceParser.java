@@ -16,8 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 
-import com.hngd.api.http.HttpInterfaceInfo;
-import com.hngd.api.http.HttpParameterInfo;
+import com.hngd.api.http.HttpInterface;
+import com.hngd.api.http.HttpParameter;
 import com.hngd.doc.core.ModuleInfo;
 import com.hngd.doc.core.util.ClassUtils;
 import com.github.javaparser.ast.CompilationUnit;
@@ -96,9 +96,9 @@ public class SourceParser {
     		.findAny()
     		.isPresent();	
     }
-    private static HttpInterfaceInfo parseInterface(MethodDeclaration method){
+    private static HttpInterface parseInterface(MethodDeclaration method){
     	logger.info("start to parse interface: {}",method.getName());
-    	HttpInterfaceInfo info=new HttpInterfaceInfo();
+    	HttpInterface info=new HttpInterface();
     	info.methodName=method.getName().asString();
     	Optional<HttpRequestInfo> requestInfo=parseHttpRequestInfo(method);
     	if(requestInfo.isPresent()){
@@ -146,7 +146,7 @@ public class SourceParser {
     	return false;
     	
     }
-    private static void resolvePathVariable(HttpInterfaceInfo info) {
+    private static void resolvePathVariable(HttpInterface info) {
     	System.out.println(info.getMethodName());
     	Map<String,Boolean> parameters=info.parameterInfos.stream()
     	.collect(Collectors.toMap(p->p.getName(), p->p.isPrimitive));
@@ -174,8 +174,8 @@ public class SourceParser {
 		}
 		return newUrl;
 	}
-	private static HttpParameterInfo parseHttpParameterInfo(Parameter parameter){
-    	HttpParameterInfo parameterInfo=new HttpParameterInfo();
+	private static HttpParameter parseHttpParameterInfo(Parameter parameter){
+    	HttpParameter parameterInfo=new HttpParameter();
     	parameterInfo.typeName=parameter.getType().getParentNode().toString();//.toString();
     	Optional<AnnotationExpr> pathVariableAnnotation=getAnnotationByName(parameter.getAnnotations(),"PathVariable");
     	parameterInfo.isPathVariable=pathVariableAnnotation.isPresent();
