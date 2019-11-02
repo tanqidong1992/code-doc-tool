@@ -2,7 +2,7 @@ package com.hngd.base;
 
 import java.io.IOException;
 
-import com.api.doc.utils.DirectoryWatcher;
+import com.hngd.utils.DirectoryWatcher;
 
 public class DirectoryWatcherTest {
 

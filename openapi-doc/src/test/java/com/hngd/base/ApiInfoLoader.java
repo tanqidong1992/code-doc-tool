@@ -8,9 +8,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.api.doc.config.ServerConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.hngd.openapi.config.ServerConfig;
 
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;

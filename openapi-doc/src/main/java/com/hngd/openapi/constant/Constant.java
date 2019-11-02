@@ -1,4 +1,4 @@
-package com.api.doc.constant;
+package com.hngd.openapi.constant;
 
 import java.nio.charset.Charset;
 

@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.jar.JarFile;
 
-import com.api.doc.utils.ClassScanner;
+import com.hngd.utils.ClassScanner;
 
 public class ClassScannerTest {
 

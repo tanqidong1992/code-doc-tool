@@ -8,7 +8,7 @@
  * @备注：
  * @版本:
  */
-package com.api.doc.config;
+package com.hngd.openapi.config;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +20,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.api.doc.constant.Constant;
 import com.google.gson.Gson;
+import com.hngd.openapi.constant.Constant;
 
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;

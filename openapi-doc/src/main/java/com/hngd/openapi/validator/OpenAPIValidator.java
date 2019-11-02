@@ -4,7 +4,6 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 
-import com.api.doc.constant.Constant;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +15,7 @@ import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.hngd.openapi.constant.Constant;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;

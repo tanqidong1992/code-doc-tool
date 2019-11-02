@@ -9,7 +9,7 @@
  * @版本:
  */
 
-package com.api.doc.utils;
+package com.hngd.utils;
 
 import java.io.File;
 import java.util.Enumeration;

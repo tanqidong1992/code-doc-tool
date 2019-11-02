@@ -1,4 +1,4 @@
-package com.api.doc;
+package com.hngd.openapi;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,13 +10,12 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.api.doc.config.ServerConfig;
-import com.api.doc.utils.JsonUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hngd.doc.core.gen.OpenAPITool;
 import com.hngd.doc.core.parse.CommonClassCommentParser;
+import com.hngd.openapi.config.ServerConfig;
 
 import io.squark.nestedjarclassloader.NestedJarClassLoader;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
@@ -55,12 +54,7 @@ public class ProjectAnalysis {
 	        .filter(clazz->!clazz.isInterface())
 			.collect(Collectors.toList());
 		openAPITool.parse(clazzes);
-		String s=null;
-		try {
-			s = JsonUtils.toJson(openApi);
-		} catch (JsonProcessingException e) {
-			logger.error("",e);
-		}
+		String s = Json.pretty(openApi);
         return s;
 	}
 	
