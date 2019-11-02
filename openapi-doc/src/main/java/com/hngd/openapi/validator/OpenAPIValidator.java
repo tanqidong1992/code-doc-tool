@@ -1,5 +1,6 @@
 package com.hngd.openapi.validator;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
@@ -19,6 +20,8 @@ import com.hngd.openapi.constant.Constant;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.parser.OpenAPIV3Parser;
+import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -77,12 +80,8 @@ public class OpenAPIValidator {
 
 	private ValidationResponse debugByContent(String s){
 		ValidationResponse output=new ValidationResponse();
-		JsonNode spec=null;
-		try {
-			spec = JsonMapper.readTree(s);
-		} catch (JsonProcessingException e) {
-			log.error("",e);
-		}
+		JsonNode spec = readNode(s);
+		 
 		if (spec == null) {
 			ProcessingMessage pm = new ProcessingMessage();
 			pm.setLogLevel(LogLevel.ERROR);
@@ -90,11 +89,32 @@ public class OpenAPIValidator {
 			output.addValidationMessage(new SchemaValidationError(pm.asJson()));
 			return output;
 		}
+		
+		
+		 SwaggerParseResult result = null;
+         try {
+             result = readOpenApi(s);
+         } catch (Exception e) {
+             log.error("can't read OpenAPI contents", e);
+
+             ProcessingMessage pm = new ProcessingMessage();
+             pm.setLogLevel(LogLevel.ERROR);
+             pm.setMessage("unable to parse OpenAPI: " + e.getMessage());
+             output.addValidationMessage(new SchemaValidationError(pm.asJson()));
+             return output;
+         }
+         if (result != null) {
+             for (String message : result.getMessages()) {
+                 output.addMessage(message);
+             }
+         }
+		
 		// do actual JSON schema validation
 		JsonSchema schema = getSchemaV3();
+		
 		ProcessingReport report=null;
 		try {
-			report = schema.validate(spec);
+			report = schema.validate(spec,true);
 		} catch (ProcessingException e) {
 			log.error("",e);
 		}
@@ -112,4 +132,21 @@ public class OpenAPIValidator {
 		return output;
 	}
 
+	 private SwaggerParseResult readOpenApi(String content) throws IllegalArgumentException {
+	        OpenAPIV3Parser parser = new OpenAPIV3Parser();
+	        return parser.readContents(content, null, null);
+
+	    }
+	 
+	    private JsonNode readNode(String text) {
+	        try {
+	            if (text.trim().startsWith("{")) {
+	                return JsonMapper.readTree(text);
+	            } else {
+	                return YamlMapper.readTree(text);
+	            }
+	        } catch (IOException e) {
+	            return null;
+	        }
+	    }
 }
