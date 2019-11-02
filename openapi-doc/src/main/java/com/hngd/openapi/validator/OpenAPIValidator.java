@@ -102,7 +102,6 @@ public class OpenAPIValidator {
              result = readOpenApi(s);
          } catch (Exception e) {
              log.error("can't read OpenAPI contents", e);
-
              ProcessingMessage pm = new ProcessingMessage();
              pm.setLogLevel(LogLevel.ERROR);
              pm.setMessage("unable to parse OpenAPI: " + e.getMessage());
@@ -133,7 +132,11 @@ public class OpenAPIValidator {
 		java.util.Iterator<ProcessingMessage> it = lp.iterator();
 		while (it.hasNext()) {
 			ProcessingMessage pm = it.next();
-			output.addValidationMessage(new SchemaValidationError(pm.asJson()));
+			if(pm.getLogLevel().equals(LogLevel.ERROR)) {
+			    output.addValidationMessage(new SchemaValidationError(pm.asJson()));
+			}else if(pm.getLogLevel().equals(LogLevel.WARNING)){
+				log.warn(Json.pretty(pm.asJson()));
+			}
 		}
 		return output;
 	}
