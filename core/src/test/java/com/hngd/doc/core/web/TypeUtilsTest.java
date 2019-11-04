@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.common.reflect.TypeToken;
-import com.hngd.doc.core.util.TypeUtils;
+import com.hngd.utils.TypeUtils;
 
 public class TypeUtilsTest {
 

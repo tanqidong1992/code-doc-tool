@@ -13,8 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javaparser.ParseException;
 import com.google.gson.reflect.TypeToken;
 import com.hngd.common.web.result.RestResponse;
-import com.hngd.doc.core.gen.OpenAPITool;
- 
+import com.hngd.openapi.OpenAPITool;
 
 import io.swagger.v3.oas.models.OpenAPI;
 

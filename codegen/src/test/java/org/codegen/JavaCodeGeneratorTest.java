@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.hngd.doc.core.ModuleInfo;
-import com.hngd.doc.core.gen.ClassParser;
+import com.hngd.parser.clazz.ClassParser;
+import com.hngd.parser.entity.ModuleInfo;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 

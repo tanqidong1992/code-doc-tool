@@ -5,7 +5,7 @@ import java.util.Date;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.hngd.doc.core.parse.extension.TimeElement;
+import com.hngd.parser.source.extension.TimeElement;
 
 
 public class TimeElementTest {

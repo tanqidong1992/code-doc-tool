@@ -19,11 +19,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import com.hngd.doc.core.parse.ClassCommentParser;
-import com.hngd.doc.core.parse.CommentElement;
-import com.hngd.doc.core.parse.extension.ExtensionManager;
-import com.hngd.doc.core.parse.extension.MobileElement;
-import com.hngd.doc.core.parse.extension.TimeElement;
+import com.hngd.parser.source.ClassCommentParser;
+import com.hngd.parser.source.CommentElement;
+import com.hngd.parser.source.extension.ExtensionManager;
+import com.hngd.parser.source.extension.MobileElement;
+import com.hngd.parser.source.extension.TimeElement;
 
 /**
  * @author

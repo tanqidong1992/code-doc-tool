@@ -2,7 +2,7 @@ package com.hngd.doc.core;
 
 import java.util.List;
 
-import com.hngd.doc.core.gen.OpenAPITool;
+import com.hngd.openapi.OpenAPITool;
 
 import io.swagger.v3.oas.models.OpenAPI;
 

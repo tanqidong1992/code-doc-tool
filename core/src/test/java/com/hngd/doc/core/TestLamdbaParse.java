@@ -4,8 +4,8 @@ import java.io.File;
 
 import org.junit.Test;
 
-import com.hngd.doc.core.parse.CommonClassCommentParser;
-import com.hngd.doc.core.parse.SourceParser;
+import com.hngd.parser.source.CommonClassCommentParser;
+import com.hngd.parser.source.SourceParser;
 
 public class TestLamdbaParse {
 

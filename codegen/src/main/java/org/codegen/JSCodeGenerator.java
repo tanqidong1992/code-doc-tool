@@ -22,11 +22,11 @@ import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
 import org.beetl.core.resource.ClasspathResourceLoader;
 
-import com.hngd.api.http.HttpParameter;
-import com.hngd.doc.core.MethodInfo;
-import com.hngd.doc.core.ModuleInfo;
-import com.hngd.doc.core.parse.CommonClassCommentParser;
-import com.hngd.doc.core.parse.SourceParser;
+import com.hngd.openapi.entity.HttpParameter;
+import com.hngd.parser.entity.MethodInfo;
+import com.hngd.parser.entity.ModuleInfo;
+import com.hngd.parser.source.CommonClassCommentParser;
+import com.hngd.parser.source.SourceParser;
 
  
  

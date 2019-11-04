@@ -10,9 +10,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hngd.doc.core.gen.OpenAPITool;
-import com.hngd.doc.core.parse.CommonClassCommentParser;
 import com.hngd.openapi.config.ServerConfig;
+import com.hngd.parser.source.CommonClassCommentParser;
 
 import io.squark.nestedjarclassloader.NestedJarClassLoader;
 import io.swagger.v3.core.util.Json;

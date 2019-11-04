@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.GsonBuilder;
-import com.hngd.api.http.HttpInterface;
-import com.hngd.doc.core.ModuleInfo;
-import com.hngd.doc.core.parse.SourceParser;
+import com.hngd.openapi.entity.HttpInterface;
+import com.hngd.parser.entity.ModuleInfo;
+import com.hngd.parser.source.SourceParser;
  
 
 public class ModuleParserTest {

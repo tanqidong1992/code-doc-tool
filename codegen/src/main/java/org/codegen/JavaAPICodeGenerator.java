@@ -18,10 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.hngd.api.http.HttpInterface;
-import com.hngd.api.http.HttpParameter;
-import com.hngd.doc.core.ModuleInfo;
-import com.hngd.doc.core.gen.ClassParser;
+import com.hngd.openapi.entity.HttpInterface;
+import com.hngd.openapi.entity.HttpParameter;
+import com.hngd.parser.clazz.ClassParser;
+import com.hngd.parser.entity.ModuleInfo;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;

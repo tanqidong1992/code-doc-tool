@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.junit.Test;
 
-import com.hngd.doc.core.parse.CommonClassCommentParser;
+import com.hngd.parser.source.CommonClassCommentParser;
 
 public class ClassCommentParser {
 
