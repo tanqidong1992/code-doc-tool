@@ -39,7 +39,7 @@ public class JavaCodeGeneratorTest {
 						return clazz;
 					}).filter(clazz -> clazz != null).filter(clazz -> clazz.getAnnotation(RequestMapping.class) != null)
 					.forEach(cls -> {
-						ModuleInfo moduleInfo = ClassParser.parseModule(cls);
+						ModuleInfo moduleInfo = ClassParser.parseModule(cls).get();
 						TypeSpec typeSpec = JavaAPICodeGenerator.toJavaFile(null,moduleInfo);
 						JavaFile javaFile = JavaFile.builder(outPackageName, typeSpec).build();
 						try {

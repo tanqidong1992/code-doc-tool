@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -480,7 +481,12 @@ public class OpenAPITool {
 			DateSchema ds = new DateSchema();
 			ds.setFormat(pc.format);
 			pc.schema = ds;
-		} else{
+		}else if(Map.class.isAssignableFrom(argumentClass) || MultiValueMap.class.isAssignableFrom(argumentClass)) {
+			pc.type = "object";
+			pc.format = argumentClass.getSimpleName();
+			pc.isPrimitive = false;
+			pc.schema = new ObjectSchema();
+		}else{
 			pc.type = "object";
 			pc.format = argumentClass.getSimpleName();
 			pc.isPrimitive = false;

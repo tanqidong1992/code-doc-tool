@@ -67,7 +67,7 @@ public class JavaAPICodeGenerator {
  				.filter(clazz -> clazz != null)
  				.filter(clazz -> clazz.getAnnotation(RequestMapping.class) != null)
  				.forEach(cls -> {
- 					ModuleInfo moduleInfo = ClassParser.parseModule(cls);
+ 					ModuleInfo moduleInfo = ClassParser.parseModule(cls).get();
  					TypeSpec typeSpec = toJavaFile(invokeType,moduleInfo);
  					JavaFile javaFile = JavaFile.builder(outPackageName, typeSpec).build();
  					try {
@@ -207,7 +207,7 @@ public class JavaAPICodeGenerator {
 	
 	 public static void generateJavaAPIFile(Class<?> cls,String invokeType,String baseUrl,String outPackageName,String outputDir) {
          File out = new File(outputDir);
-    	 ModuleInfo moduleInfo = ClassParser.parseModule(cls);
+    	 ModuleInfo moduleInfo = ClassParser.parseModule(cls).get();
     	 if(moduleInfo==null) {
     		 return;
     	 }
