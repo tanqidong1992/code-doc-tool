@@ -96,10 +96,10 @@ public class OpenAPITool {
 		clses.stream()
 		    .map(clazz -> ClassParser.processClass(clazz))
 		    .filter(mi -> mi != null)
-			.forEach(mi -> module2doc(mi, paths, tags));
+			.forEach(mi -> buildPaths(mi, paths, tags));
 	}
 
-	private void module2doc(ModuleInfo moduleInfo, Paths paths, List<Tag> tags) {
+	private void buildPaths(ModuleInfo moduleInfo, Paths paths, List<Tag> tags) {
 		String classComment = CommonClassCommentParser.classComments.get(moduleInfo.simpleClassName);
 		String moduleTagName = classComment != null ? classComment : moduleInfo.getSimpleClassName();
 		Tag moduleTag = new Tag().name(moduleTagName);
@@ -108,7 +108,7 @@ public class OpenAPITool {
 		}
 		tags.add(moduleTag);
 		for (HttpInterface interfaceInfo : moduleInfo.interfaceInfos) {
-			PathItem pathItem = interface2doc(moduleInfo, interfaceInfo, moduleTag);
+			PathItem pathItem = buildPathItem(moduleInfo, interfaceInfo, moduleTag);
 			if (pathItem == null) {
 				continue;
 			}
@@ -153,7 +153,7 @@ public class OpenAPITool {
 		}
 	}
 
-	private PathItem interface2doc(ModuleInfo moduleInfo, HttpInterface interfaceInfo, Tag tag) {
+	private PathItem buildPathItem(ModuleInfo moduleInfo, HttpInterface interfaceInfo, Tag tag) {
 
 		String methodKey = moduleInfo.simpleClassName + "#" + interfaceInfo.methodName;
 		MethodInfo methodComment = CommonClassCommentParser.methodComments.get(methodKey);
@@ -181,8 +181,8 @@ public class OpenAPITool {
 			for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
 				HttpParameter pc = interfaceInfo.parameterInfos.get(i);
 				String parameterComment = null;
-				if (i < methodComment.parameters.size()) {
-					ParameterInfo pi = methodComment.parameters.get(i);
+				if (pc.indexInJavaMethod < methodComment.parameters.size()) {
+					ParameterInfo pi = methodComment.parameters.get(pc.indexInJavaMethod);
 					parameterComment = pi.comment;
 				}
 				if(StringUtils.isNotEmpty(parameterComment) && StringUtils.isEmpty(pc.comment)) {

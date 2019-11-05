@@ -128,17 +128,16 @@ public class RestClassUtils {
 		}
 	}
 	
-	private static Method getAnnotationMethod(Annotation a,String name) {
-		
-		  Method m=null;
-			try {
-				m = a.getClass().getDeclaredMethod(name);
-			} catch (NoSuchMethodException | SecurityException e) {
-				logger.error("",e);
-			}
-			return m; 
+	private static Method getAnnotationMethod(Annotation a, String name) {
+		Method m = null;
+		try {
+			m = a.getClass().getDeclaredMethod(name);
+		} catch (NoSuchMethodException | SecurityException e) {
+			logger.error("", e);
+		}
+		return m;
 	}
-	
+
     public static String extractParameterName(Annotation req) {
 		
 		if(req==null) {

@@ -180,7 +180,7 @@ public class CommonClassCommentParser {
 				} else if (commentElement instanceof ReturnElement) {
 					mi.retComment = commentElement.comment;
 				} else if (commentElement instanceof TimeElement) {
-				 
+				     
 					TimeElement te = (TimeElement) commentElement;
 					mi.createTime = te.createTime;
 					mi.createTimeStr = te.createTimeStr;

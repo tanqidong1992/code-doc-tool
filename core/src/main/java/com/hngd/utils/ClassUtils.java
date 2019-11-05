@@ -65,7 +65,9 @@ public class ClassUtils {
 		}
 		return clazzs;
 	}
-	
+	public static Boolean isClassDeprecated(Class<?> cls) {
+		return cls.getAnnotation(Deprecated.class)!=null;
+	}
 	public static CompilationUnit parseClass(File f) {
 		
 		ParseResult<CompilationUnit> cu=null;

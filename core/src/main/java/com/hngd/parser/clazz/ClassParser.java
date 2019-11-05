@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 
 import com.hngd.constant.HttpParameterType;
+import com.hngd.exception.ClassParseException;
 import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.parser.entity.ModuleInfo;
@@ -39,57 +40,86 @@ import com.hngd.utils.TypeUtils;
 public class ClassParser {
 
 	private static final Logger logger=LoggerFactory.getLogger(ClassParser.class);
-	
 	public static ModuleInfo processClass(Class<?> cls) {
+		ModuleInfo mi=null;
+		try {
+		    mi=doProcessClass(cls);
+		}catch(Exception e) {
+			if(e instanceof ClassParseException) {
+				throw e;
+			}else {
+				throw new ClassParseException(cls,e);
+			}
+		}
+		return mi;
+	}
+	public static ModuleInfo doProcessClass(Class<?> cls) {
 		logger.info("start to process class:{}",cls.getName());
 		if (!SpringAnnotationUtils.isControllerClass(cls)) {
 			logger.info("There is no annotation Controller or RestController for class:{}",cls.getName());
 			return null;
 		}
 		ModuleInfo mi = new ModuleInfo();
+		
+		//parse module base info
 		RequestMapping requestMapping = cls.getAnnotation(RequestMapping.class);
 		mi.moduleUrl=SpringAnnotationUtils.extractUrl(requestMapping);
 		mi.moduleName = cls.getSimpleName();
 		mi.simpleClassName = cls.getSimpleName();
 		mi.canonicalClassName=cls.getName();
-		mi.deprecated=isModuleDeprecated(cls);
+		mi.deprecated=ClassUtils.isClassDeprecated(cls);
+		
+		//parse module interfaces
 		Method[] methods = cls.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
-			if(RestClassUtils.isHttpInterface(method)){
-				HttpInterface info = processMethod(method);
-				if (info != null) {
-					mi.interfaceInfos.add(info);
-				}
-			}else{
-				logger.debug("method:{} has no http request annotation",cls.getName()+"."+method.getName());
+			if(!RestClassUtils.isHttpInterface(method)) {
+				logger.debug("method:{}.{} has no http request annotation",
+						cls.getName(),method.getName());
+				continue;
+			}
+			HttpInterface info = processMethod(method);
+			if (info != null) {
+			    mi.interfaceInfos.add(info);
 			}
 		}
 		return mi;
 	}
 	
-	private static Boolean isModuleDeprecated(Class<?> cls) {
-		return cls.getAnnotation(Deprecated.class)!=null;
-	}
 
 	private static HttpInterface processMethod(Method method) {
-		HttpInterface info = new HttpInterface();
+		HttpInterface hi=null;
+		try {
+		    hi=doProcessMethod(method);
+		}catch(Exception e) {
+			if(e instanceof ClassParseException) {
+				throw e;
+			}else {
+				throw new ClassParseException(method.getDeclaringClass(),method,e);
+			}
+		}
+		return hi;
+	}
+	private static HttpInterface doProcessMethod(Method method) {
+		HttpInterface httpInterface = new HttpInterface();
 		Optional<? extends Annotation> optionalAnnotation = RestClassUtils.getHttpRequestInfo(method);
 		Annotation mappingAnnotation=optionalAnnotation.get();
-		info.deprecated=isMethodDeprecated(method);
+		httpInterface.deprecated=isMethodDeprecated(method);
 		//extract consumes
         List<String> consumes=RestClassUtils.extractCosumes(mappingAnnotation);
 		if (consumes != null) {
-			info.consumes = consumes;
+			httpInterface.consumes = consumes;
 		}
 		//extract produces
 		List<String> produces=RestClassUtils.extractProduces(mappingAnnotation);
 		if (produces != null) {
-			info.produces = produces;
+			httpInterface.produces = produces;
 		}else {
 			
 		}
-        info.methodUrl =RestClassUtils.extractUrl(mappingAnnotation);
+		//extract http url
+        httpInterface.methodUrl =RestClassUtils.extractUrl(mappingAnnotation);
+        //extract http method
 		if(mappingAnnotation instanceof RequestMapping){
 			RequestMethod[] methods=((RequestMapping)mappingAnnotation).method();
 			if(methods==null || methods.length==0) {
@@ -97,33 +127,42 @@ public class ClassParser {
 				logger.error("The RequestMapping annotation for method:{} has a empty method value",methodKey);
 			    throw new RuntimeException("方法"+methodKey+"的RequestMapping注解缺少method值");
 			}else {
-				info.httpMethod = methods[0].name();
+				httpInterface.httpMethod = methods[0].name();
 			}
 		}else{
-			info.httpMethod = mappingAnnotation.annotationType().getSimpleName().replace("Mapping", "");
+			httpInterface.httpMethod = mappingAnnotation.annotationType().getSimpleName().replace("Mapping", "");
 		}
-		info.retureTypeName = method.getReturnType().getSimpleName();
-		info.retureType = method.getReturnType();
-		info.methodName = method.getName();
-		info.retureType = method.getGenericReturnType();
+		httpInterface.retureTypeName = method.getReturnType().getSimpleName();
+		httpInterface.retureType = method.getReturnType();
+		httpInterface.methodName = method.getName();
+		httpInterface.retureType = method.getGenericReturnType();
+		//extract http parameters
+		doProcessParamaters(method,httpInterface);
+		
+		return httpInterface;
+	}
+	private static void doProcessParamaters(Method method, HttpInterface httpInterface) {
 		Parameter[] parameters = method.getParameters();
 		for (int i = 0; i < parameters.length; i++) {
 			Parameter parameter = parameters[i];
-			List<HttpParameter> hpi=processParameter(parameter);
-			if(!CollectionUtils.isEmpty(hpi)) {
-				info.parameterInfos.addAll(hpi);
-				HttpParameter firstParameterInfo=hpi.get(0);
-				if (!info.isMultipart) {
-					info.isMultipart = TypeUtils.isMultipartType(firstParameterInfo.getParamJavaType());
+			List<HttpParameter> httpParams=processParameter(parameter);
+			if(!CollectionUtils.isEmpty(httpParams)) {
+				final int indexInJavaMethod=i;
+				httpParams.stream()
+				    .forEach(httpParam->httpParam.indexInJavaMethod=indexInJavaMethod);
+				httpInterface.parameterInfos.addAll(httpParams);
+				HttpParameter firstParameterInfo=httpParams.get(0);
+				if (!httpInterface.isMultipart) {
+					httpInterface.isMultipart = TypeUtils.isMultipartType(firstParameterInfo.getParamJavaType());
 				}
-				info.hasRequestBody=!firstParameterInfo.getParamType().isParameter();
+				httpInterface.hasRequestBody=!firstParameterInfo.getParamType().isParameter();
 			}else {
 				String parameterKey=ClassUtils.getParameterIdentifier(parameter);
 				logger.error("the http parameters extracted from {} is empty",parameterKey);
 			}
 			
 		}
-		return info;
+		
 	}
 	private static boolean isMethodDeprecated(Method method) {
 		return method.getAnnotation(Deprecated.class)!=null;
@@ -132,6 +171,7 @@ public class ClassParser {
 	/**
 	 * @see <a href="https://docs.spring.io/spring/docs/5.1.7.RELEASE/spring-framework-reference/web.html#mvc-ann-arguments">Spring MVC Method Arguments</a> 
 	 * @param parameter
+	 * @param indexInJavaMethod 
 	 * @return
 	 */
 	private static List<HttpParameter> processParameter(Parameter parameter) {

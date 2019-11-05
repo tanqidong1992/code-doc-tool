@@ -39,10 +39,13 @@ public class SpringAnnotationUtils {
 		}
 		
 	}
-	
+	/**
+	 * 判定指定类是否是接口类
+	 * @param cls 指定类
+	 * @return
+	 */
 	public static boolean isControllerClass(Class<?> cls) {
 		//test class can initialized
-		
 		try {
 			ClassLoader loader=cls.getClassLoader();
 			Class.forName(cls.getName(), false,loader);
@@ -51,11 +54,10 @@ public class SpringAnnotationUtils {
 			//e.printStackTrace();
 			return false;
 		}
-		
 		Controller controller = cls.getAnnotation(Controller.class);
 		RestController restController = cls.getAnnotation(RestController.class);
 		if (controller == null && restController == null) {
-			logger.warn("There is no annotation Controller RestController for class:{}",cls.getName());
+			logger.warn("There is no annotation Controller or RestController for class:{}",cls.getName());
 			return false;
 		}
 		return true;
