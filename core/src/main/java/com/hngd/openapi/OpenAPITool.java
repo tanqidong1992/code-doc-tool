@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -75,7 +76,6 @@ import io.swagger.v3.oas.models.tags.Tag;
  * @author tqd
  */
 public class OpenAPITool {
-	static List<String> application_json = Arrays.asList("application/json", "*");
 	private static final Logger logger = LoggerFactory.getLogger(OpenAPITool.class);
 	public OpenAPI openAPI;
 
@@ -94,18 +94,20 @@ public class OpenAPITool {
 		openAPI.setPaths(paths);
 		openAPI.setTags(tags);
 		clses.stream()
-		    .map(clazz -> ClassParser.processClass(clazz))
-		    .filter(mi -> mi != null)
+		    .map(clazz -> ClassParser.parseModule(clazz))
+		    .filter(Optional::isPresent)
+		    .map(Optional::get)
 			.forEach(mi -> buildPaths(mi, paths, tags));
 	}
 
 	private void buildPaths(ModuleInfo moduleInfo, Paths paths, List<Tag> tags) {
 		String classComment = CommonClassCommentParser.classComments.get(moduleInfo.simpleClassName);
-		String moduleTagName = classComment != null ? classComment : moduleInfo.getSimpleClassName();
-		Tag moduleTag = new Tag().name(moduleTagName);
-		if (classComment == null) {
+		if (StringUtils.isBlank(classComment)) {
 			logger.warn("the comment for class:{} is empty", moduleInfo.canonicalClassName);
 		}
+		String moduleTagName = StringUtils.isNotBlank(classComment) ? 
+				classComment : moduleInfo.getSimpleClassName();
+		Tag moduleTag = new Tag().name(moduleTagName);
 		tags.add(moduleTag);
 		for (HttpInterface interfaceInfo : moduleInfo.interfaceInfos) {
 			PathItem pathItem = buildPathItem(moduleInfo, interfaceInfo, moduleTag);
@@ -142,7 +144,7 @@ public class OpenAPITool {
 				Content content=new Content();
 				MediaType value=new MediaType();
 				value.setSchema(pc.schema);
-				content.put("application/json", value);
+				content.put(Constants.DEFAULT_CONSUME_TYPE, value);
 				param.setContent(content);
 			}
 			 
@@ -153,15 +155,15 @@ public class OpenAPITool {
 		}
 	}
 
-	private PathItem buildPathItem(ModuleInfo moduleInfo, HttpInterface interfaceInfo, Tag tag) {
+	private PathItem buildPathItem(ModuleInfo moduleInfo, HttpInterface httpInterface, Tag tag) {
 
-		String methodKey = moduleInfo.simpleClassName + "#" + interfaceInfo.methodName;
+		String methodKey = moduleInfo.simpleClassName + "#" + httpInterface.methodName;
 		MethodInfo methodComment = CommonClassCommentParser.methodComments.get(methodKey);
 		if (methodComment == null || methodComment.parameters == null) {
 			logger.warn("the method comment for method:{} is empty", methodKey);
 			return null;
 		}
-		interfaceInfo.comment=methodComment.comment;
+		httpInterface.comment=methodComment.comment;
 		PathItem path = new PathItem();
 		Operation op = new Operation();
 		List<String> operationTags = new ArrayList<>();
@@ -169,17 +171,17 @@ public class OpenAPITool {
 			operationTags.add(methodComment.createTimeStr);
 		}
 		operationTags.add(tag.getName());
-		op.setDeprecated(moduleInfo.deprecated || interfaceInfo.deprecated);
+		op.setDeprecated(moduleInfo.deprecated || httpInterface.deprecated);
 		op.setTags(operationTags);
-		String operationId=buildOperationId(moduleInfo,interfaceInfo);
+		String operationId=buildOperationId(moduleInfo,httpInterface);
 		op.setOperationId(operationId);
-		op.setDescription(interfaceInfo.comment);
-        op.setSummary(interfaceInfo.comment);
+		op.setDescription(httpInterface.comment);
+        op.setSummary(httpInterface.comment);
 		List<Parameter> parameters = new ArrayList<>();
 
-		if (!hasRequestBody(interfaceInfo.httpMethod)) {
-			for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
-				HttpParameter pc = interfaceInfo.parameterInfos.get(i);
+		if (!hasRequestBody(httpInterface.httpMethod)) {
+			for (int i = 0; i < httpInterface.parameterInfos.size(); i++) {
+				HttpParameter pc = httpInterface.parameterInfos.get(i);
 				String parameterComment = null;
 				if (pc.indexInJavaMethod < methodComment.parameters.size()) {
 					ParameterInfo pi = methodComment.parameters.get(pc.indexInJavaMethod);
@@ -200,9 +202,18 @@ public class OpenAPITool {
 		} else{
 			MediaType mediaTypeContent = new MediaType();
 			Content content = new Content();
-			if (interfaceInfo.hasRequestBody && !interfaceInfo.isMultipart()) {
-				content.addMediaType(Constants.APPLICATION_JSON_VALUE, mediaTypeContent);
-				HttpParameter pc = interfaceInfo.getParameterInfos().get(0);
+			if (httpInterface.hasRequestBody && !httpInterface.isMultipart()) {
+				
+				List<String> consumes=httpInterface.getConsumes();
+				if(CollectionUtils.isEmpty(consumes)) {
+					content.addMediaType(Constants.DEFAULT_CONSUME_TYPE, mediaTypeContent);
+				}else {
+					for(String consume:consumes) {
+						content.addMediaType(consume, mediaTypeContent);
+					}
+				}
+				
+				HttpParameter pc = httpInterface.getParameterInfos().get(0);
 				Type parameterType = pc.getParamJavaType();
 				resolveParameterInfo(pc, parameterType);
 				String key = resolveType(parameterType, openAPI);
@@ -215,7 +226,7 @@ public class OpenAPITool {
 				}
 				
 			} else {
-				if (interfaceInfo.isMultipart()) {
+				if (httpInterface.isMultipart()) {
 					content.addMediaType(Constants.MULTIPART_FORM_DATA, mediaTypeContent);
 				} else {
 					content.addMediaType(Constants.APPLICATION_FORM_URLENCODED_VALUE, mediaTypeContent);
@@ -224,10 +235,10 @@ public class OpenAPITool {
 				mediaTypeContent.setSchema(contentSchema);
 				Map<String, Encoding> contentEncodings = new HashMap<>();
 				mediaTypeContent.setEncoding(contentEncodings);
-				for (int i = 0; i < interfaceInfo.parameterInfos.size(); i++) {
-					HttpParameter pc = interfaceInfo.parameterInfos.get(i);
-					if (i < methodComment.parameters.size()) {
-						ParameterInfo pi = methodComment.parameters.get(i);
+				for (int i = 0; i < httpInterface.parameterInfos.size(); i++) {
+					HttpParameter pc = httpInterface.parameterInfos.get(i);
+					if (pc.indexInJavaMethod < methodComment.parameters.size()) {
+						ParameterInfo pi = methodComment.parameters.get(pc.indexInJavaMethod);
 						if(StringUtils.isNotEmpty(pi.comment) && StringUtils.isEmpty( pc.comment)) {
 						    pc.comment = pi.comment;
 						}
@@ -248,16 +259,16 @@ public class OpenAPITool {
 							}
 						} else {
 							if (TypeUtils.isMultipartType(parameterType)) {
-								encoding.setContentType("application/octet-stream");
+								encoding.setContentType(Constants.MULTIPART_FILE_TYPE);
 							} else {
-								encoding.setContentType("application/json");
+								encoding.setContentType(Constants.DEFAULT_CONSUME_TYPE);
 							}
 						}
 					} else {
 						if (TypeUtils.isMultipartType(parameterType)) {
-							encoding.setContentType("application/octet-stream");
+							encoding.setContentType(Constants.MULTIPART_FILE_TYPE);
 						} else {
-							encoding.setContentType("application/json");
+							encoding.setContentType(Constants.DEFAULT_CONSUME_TYPE);
 						}
 					}
 					contentEncodings.put(pc.name, encoding);
@@ -331,8 +342,8 @@ public class OpenAPITool {
 			op.setRequestBody(requestBody);
 		}
 		op.setParameters(parameters);
-		resolveResponse(op, interfaceInfo, methodComment != null ? methodComment.retComment : null);
-		String httpMethod=interfaceInfo.httpMethod;
+		resolveResponse(op, httpInterface, methodComment != null ? methodComment.retComment : null);
+		String httpMethod=httpInterface.httpMethod;
 		addOpToPath(op,path,httpMethod);
 		return path;
 
@@ -385,7 +396,7 @@ public class OpenAPITool {
 				respContent.put(p, mt);
 			}
 		}else {
-			respContent.put(Constants.APPLICATION_JSON_VALUE, mt);
+			respContent.put(Constants.DEFAULT_CONSUME_TYPE, mt);
 		}
  
 		resp.setContent(respContent);

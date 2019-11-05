@@ -41,16 +41,14 @@ import com.hngd.utils.ClassUtils;
 import com.hngd.utils.RestClassUtils;
 import com.hngd.utils.TypeUtils;
 
-import io.swagger.v3.oas.models.parameters.HeaderParameter;
-
 
 public class ClassParser {
 
 	private static final Logger logger=LoggerFactory.getLogger(ClassParser.class);
-	public static ModuleInfo processClass(Class<?> cls) {
+	public static Optional<ModuleInfo> parseModule(Class<?> cls) {
 		ModuleInfo mi=null;
 		try {
-		    mi=doProcessClass(cls);
+		    mi=doConvertClassToModule(cls);
 		}catch(Exception e) {
 			if(e instanceof ClassParseException) {
 				throw e;
@@ -58,9 +56,9 @@ public class ClassParser {
 				throw new ClassParseException(cls,e);
 			}
 		}
-		return mi;
+		return Optional.of(mi);
 	}
-	public static ModuleInfo doProcessClass(Class<?> cls) {
+	private static ModuleInfo doConvertClassToModule(Class<?> cls) {
 		logger.info("start to process class:{}",cls.getName());
 		if (!SpringAnnotationUtils.isControllerClass(cls)) {
 			logger.info("There is no annotation Controller or RestController for class:{}",cls.getName());
@@ -85,19 +83,18 @@ public class ClassParser {
 						cls.getName(),method.getName());
 				continue;
 			}
-			HttpInterface info = processMethod(method);
-			if (info != null) {
-			    mi.interfaceInfos.add(info);
+			Optional<HttpInterface> info = parseMethod(method);
+			if (info.isPresent()) {
+			    mi.interfaceInfos.add(info.get());
 			}
 		}
 		return mi;
 	}
-	
-
-	private static HttpInterface processMethod(Method method) {
+	 
+	private static Optional<HttpInterface> parseMethod(Method method) {
 		HttpInterface hi=null;
 		try {
-		    hi=doProcessMethod(method);
+		    hi=doParseMethod(method);
 		}catch(Exception e) {
 			if(e instanceof ClassParseException) {
 				throw e;
@@ -105,9 +102,9 @@ public class ClassParser {
 				throw new ClassParseException(method.getDeclaringClass(),method,e);
 			}
 		}
-		return hi;
+		return Optional.of(hi);
 	}
-	private static HttpInterface doProcessMethod(Method method) {
+	private static HttpInterface doParseMethod(Method method) {
 		HttpInterface httpInterface = new HttpInterface();
 		Optional<? extends Annotation> optionalAnnotation = RestClassUtils.getHttpRequestInfo(method);
 		Annotation mappingAnnotation=optionalAnnotation.get();
@@ -217,7 +214,7 @@ public class ClassParser {
 			RequestBody rb= optionalRequestBody.get();
 		    httpParam.name = parameter.getName();
 		    httpParam.paramType = HttpParameterType.body;
-		    httpParam.required = true;
+		    httpParam.required = rb.required();
 		    httpParam.paramJavaType=parameter.getParameterizedType();
 		    Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
 		    if(dateFormat.isPresent()) {
