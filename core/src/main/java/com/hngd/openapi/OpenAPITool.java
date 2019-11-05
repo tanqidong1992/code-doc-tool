@@ -433,7 +433,7 @@ public class OpenAPITool {
 			
 			if(pc.ref!=null) {
 				if (pc.ref.contains("<")) {
-					pc.ref = pc.ref.replace("<", "").replace(">", "");
+					pc.ref = pc.ref.replace("<", "").replace(">", "").replace(",", "");
 				}
 			    items.set$ref("#/components/schemas/" + pc.ref);
 			}else {
@@ -476,7 +476,7 @@ public class OpenAPITool {
 			pc.schema = new ObjectSchema();
 			pc.ref = TypeNameUtils.getTypeName(parameterType);
 			if (pc.ref.contains("<")) {
-				pc.ref = pc.ref.replace("<", "").replace(">", "");
+				pc.ref = pc.ref.replace("<", "").replace(">", "").replace(",", "");;
 			}
 			pc.schema.set$ref("#/components/schemas/" + pc.ref);
 		}

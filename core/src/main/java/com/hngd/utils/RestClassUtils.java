@@ -139,7 +139,6 @@ public class RestClassUtils {
 	}
 
     public static String extractParameterName(Annotation req) {
-		
 		if(req==null) {
 			return "";
 		}
