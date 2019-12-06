@@ -11,30 +11,17 @@
 
 package com.hngd.parser.source;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 
 import com.hngd.parser.entity.BaseInfo;
 import com.hngd.parser.entity.MethodInfo;
 import com.hngd.parser.entity.ParameterInfo;
-import com.hngd.parser.source.CommentElement.ParamElement;
 
 /**
  * @author
  */
-public class CommentElement {
-	static Map<String, CommentElement> commentElements = new HashMap<>();
-	static {
-		// register parse type
-		new ParamElement();
-		new AuthorElement();
-		new ReturnElement();
-		new SeeElement();
-		new SinceElement();
-		new ThrowsElement();
-	}
+public class CommentElement implements CommentElementParser{
+	
 
 	public String comment;
 	public String prefix;
@@ -46,11 +33,7 @@ public class CommentElement {
 	 */
 	public CommentElement(String prefix) {
 		this.prefix = prefix;
-		synchronized (commentElements) {
-			if (!commentElements.containsKey(prefix)) {
-				commentElements.put(prefix, this);
-			}
-		}
+		CommentElementParserContext.register(prefix, this.getClass());
 	}
     
 	public void onParseEnd(BaseInfo baseInfo) {
@@ -66,7 +49,7 @@ public class CommentElement {
 	public String onParseStart(String line) {
 		return line.replace(prefix, "").trim();
 	}
-	public static class DefaultCommentElement extends CommentElement {
+	public static class DefaultCommentElement extends CommentElement implements CommentElementParser{
 		//TODO delete it
 		public static final String prefix = "@desc";
 		String paramName;
@@ -84,6 +67,11 @@ public class CommentElement {
 		
 	}
 
+	@Override
+	public CommentElement getResult() {
+		return this;
+	}
+	
 	public static class ParamElement extends CommentElement {
 		public static final String prefix = "@param";
 		String paramName;
@@ -153,4 +141,5 @@ public class CommentElement {
 			super(prefix);
 		}
 	}
+
 }

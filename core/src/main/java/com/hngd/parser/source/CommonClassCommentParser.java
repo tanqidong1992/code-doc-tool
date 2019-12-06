@@ -108,34 +108,33 @@ public class CommonClassCommentParser {
     }
     
     public static boolean filterAndParseClassComment(Node node){
-    	if(node instanceof ClassOrInterfaceDeclaration){
-    		
-			ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) node;
-			Comment comment = classOrInterfaceDeclaration.getComment().orElse(null);
-			String classOrInterfaceName = classOrInterfaceDeclaration.getName().asString();
-			if (comment instanceof JavadocComment) {
-				JavadocComment javadocComment = (JavadocComment) comment;
-				String content = javadocComment.getContent();
-				String commentLines[] = content.split("\n");
-				if (commentLines == null || commentLines.length < 2) {
-					logger.warn("javadoc comment for classOrInterface {} is not found",classOrInterfaceName);
-				}else{
-					List<CommentElement> commentElements = ClassCommentParser.parseMethodComment(Arrays.asList(commentLines));
-					Optional<DefaultCommentElement> optionalDescComment=commentElements.stream()
-					    .filter(commentElement->commentElement instanceof  DefaultCommentElement)
-					    .map(CommentElement.DefaultCommentElement.class::cast)
-					    .findFirst();
-					optionalDescComment.ifPresent(descComment->{
-						classComments.put(classOrInterfaceName, descComment.comment);
-					});
-					 
-				}
-			}else{
-				logger.warn("javadoc comment for classOrInterface {} is not found",classOrInterfaceName);
-			}
-    		return true;
+    	if(!(node instanceof ClassOrInterfaceDeclaration)){
+    		return false;
+			
     	}
-    	return false;
+    	ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) node;
+		Comment comment = classOrInterfaceDeclaration.getComment().orElse(null);
+		String classOrInterfaceName = classOrInterfaceDeclaration.getName().asString();
+		if (comment instanceof JavadocComment) {
+			JavadocComment javadocComment = (JavadocComment) comment;
+			String content = javadocComment.getContent();
+			String commentLines[] = content.split("\n");
+			if (commentLines == null || commentLines.length < 2) {
+				logger.warn("javadoc comment for classOrInterface {} is not found",classOrInterfaceName);
+			}else{
+				List<CommentElement> commentElements = ClassCommentParser.parseMethodComment(Arrays.asList(commentLines));
+				Optional<DefaultCommentElement> optionalDescComment=commentElements.stream()
+				    .filter(commentElement->commentElement instanceof  DefaultCommentElement)
+				    .map(CommentElement.DefaultCommentElement.class::cast)
+				    .findFirst();
+				optionalDescComment.ifPresent(descComment->{
+					classComments.put(classOrInterfaceName, descComment.comment);
+				});
+			}
+		}else{
+			logger.warn("javadoc comment for classOrInterface {} is not found",classOrInterfaceName);
+		}
+		return true;
     }
 	public static void parse(File f) {
 		CompilationUnit cu=ClassUtils.parseClass(f);

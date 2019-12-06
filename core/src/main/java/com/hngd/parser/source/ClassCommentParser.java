@@ -14,7 +14,7 @@ package com.hngd.parser.source;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,100 +34,95 @@ public class ClassCommentParser {
 		int startIndex;
 		int endIndex = -1;
 		CommentElement element;
+		public boolean hasElement() {
+			return element!=null;
+		}
 	}
 
 	public static List<CommentElement> parseMethodComment(List<String> commentLines) {
 		if (commentLines.size() <= JAVADOC_COMMENT_MIN_LINE_SIZE) {
 			return Collections.emptyList();
 		}
+		//remove the first line and last line
 		List<String> lines = commentLines.subList(1, commentLines.size() - 1);
-		List<CommentElement> pce = new ArrayList<>();
-		ParseResult pr = parseDescription(lines);
-		pce.add(pr.element);
-		while (pr.endIndex < lines.size()) {
-			pr = parseElement(lines, pr.endIndex);
-			if(pr.element!=null) {
-			    pce.add(pr.element);
+		List<CommentElement> commentElements = new ArrayList<>();
+		ParseResult result = parseDescription(lines);
+		if(result.hasElement()) {
+			commentElements.add(result.element);
+		}
+		while (result.endIndex < lines.size()) {
+			result = parseElement(lines, result.endIndex);
+			if(result.hasElement()) {
+			    commentElements.add(result.element);
 			}
 		}
-		return pce;
+		return commentElements;
 	}
     
 	private static ParseResult parseDescription(List<String> lines) {
-		ParseResult pr = new ParseResult();
-		pr.startIndex = 0;
+		ParseResult result = new ParseResult();
+		result.startIndex = 0;
 		StringBuilder desc = new StringBuilder();
 		for (int i = 0; i < lines.size(); i++) {
 			String line = lines.get(i);
 			line = line.replaceFirst("\\*", "").trim();
 			if (line.startsWith("@")) {
-				pr.endIndex = i;
+				result.endIndex = i;
 				break;
 			}
-			desc.append(line);
+			if(StringUtils.isNoneBlank(line)) {
+				desc.append(line);
+			}
 		}
-		CommentElement ce = new CommentElement.DefaultCommentElement();
-		ce.comment = desc.toString();
-		pr.element = ce;
-		if (pr.endIndex == -1) {
-			pr.endIndex = lines.size();
+		CommentElement commentElement = new CommentElement.DefaultCommentElement();
+		commentElement.comment = desc.toString();
+		result.element = commentElement;
+		if (result.endIndex == -1) {
+			result.endIndex = lines.size();
 		}
-		return pr;
+		return result;
 	}
 
 	private static ParseResult parseElement(List<String> lines, int startIndex) {
-		CommentElement ce = null;
+		CommentElement element = null;
 		ParseResult pr = new ParseResult();
 		pr.startIndex = startIndex;
-		StringBuilder desc = new StringBuilder();
+		StringBuilder elementComment = new StringBuilder();
 		boolean isFoundAt = false;
 		for (int i = startIndex; i < lines.size(); i++) {
 			if (StringUtils.isEmpty(lines.get(i))) {
 				continue;
 			}
 			String line = lines.get(i).replaceFirst("\\*", "").trim();
-			if (line.startsWith("@")) {
-				if (isFoundAt) {
-					pr.endIndex = i;
-					break;
-				} else {
-					ce=findElementParser(line);
-					if (ce != null) {
-						line = ce.onParseStart(line);
-					} else {
-						logger.error("could not parse line:{}",line);
-					}
-					isFoundAt = true;
-				}
+			if(!line.startsWith("@")) {
+				elementComment.append(line);
+				continue;
 			}
-			desc.append(line);
+			if (isFoundAt) {
+				pr.endIndex = i;
+				break;
+			} else {
+				Optional<CommentElementParser> optionalElementParser = CommentElementParserContext.findElementParser(line);
+				if (optionalElementParser.isPresent()) {
+					line = optionalElementParser.get().onParseStart(line);
+					element = optionalElementParser.get().getResult();
+				} else {
+					logger.error("Could not parse line:{}", line);
+				}
+				isFoundAt = true;
+			}
+
 		}
 		if (pr.endIndex == -1) {
 			pr.endIndex = lines.size();
 		}
-		pr.element = ce;
-		if (ce != null) {
-			ce.comment = desc.toString();
+		if(element!=null) {
+		    pr.element = element;
+		}
+		if (pr.element != null) {
+			pr.element.comment = elementComment.toString();
 		}
 		return pr;
 	}
-	
-	public static CommentElement findElementParser(String line) {
-		Set<String> keys = CommentElement.commentElements.keySet();
-		for (String key : keys) {
-			if (line.startsWith(key)) {
-				CommentElement ceType = CommentElement.commentElements.get(key);
-				CommentElement ce=null;
-				try {
-					ce = ceType.getClass().newInstance();
-				} catch (InstantiationException | IllegalAccessException e) {
-					logger.error("", e);
-				}
-				if(ce!=null) {
-					return ce;
-				}
-			}
-		}
-		return null;
-	}
+
 }
