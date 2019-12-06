@@ -11,6 +11,7 @@
 
 package com.hngd.doc.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -39,7 +40,7 @@ public class TestClassCommentParser
     {
         URL url = TestClassCommentParser.class.getResource("classcomment.txtx");
         Path path = Paths.get(url.toURI());
-        List<String> commentLines = Files.readAllLines(path);
+    	List<String> commentLines = Files.readAllLines(path);
         List<CommentElement>  ces= ClassCommentParser.parseMethodComment(commentLines);
         ces.forEach(ce ->
         {

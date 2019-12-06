@@ -46,7 +46,9 @@ public class ClassCommentParser {
 		pce.add(pr.element);
 		while (pr.endIndex < lines.size()) {
 			pr = parseElement(lines, pr.endIndex);
-			pce.add(pr.element);
+			if(pr.element!=null) {
+			    pce.add(pr.element);
+			}
 		}
 		return pce;
 	}

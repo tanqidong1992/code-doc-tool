@@ -36,6 +36,8 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.expr.SimpleName;
+import com.hngd.exception.ParseException;
+import com.hngd.exception.SourceParseException;
 import com.hngd.parser.entity.FieldInfo;
 import com.hngd.parser.entity.MethodInfo;
 import com.hngd.parser.entity.ParameterInfo;
@@ -155,7 +157,14 @@ public class CommonClassCommentParser {
 		if (comment instanceof JavadocComment) {
 			JavadocComment javadocComment = (JavadocComment) comment;
 			String content = javadocComment.getContent();
-			doParseMethodJavadocComment(method, methodName, content); 
+			try {
+			    doParseMethodJavadocComment(method, methodName, content); 
+			}catch(Throwable e) {
+				//String fileNmae=method.getParentNode().get().toString();
+				//String methodName=method.getName().asString();
+				String msg="Parsing Method:"+methodName+" Failed!";
+				throw new SourceParseException(msg,e);
+			}
 		} else {
 			logger.warn("method {} has no javadoc comment",className + "." + method.getName() );
 		}
