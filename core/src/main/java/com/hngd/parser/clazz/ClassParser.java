@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 
-import com.hngd.constant.HttpParameterType;
+import com.hngd.constant.HttpParameterIn;
 import com.hngd.exception.ClassParseException;
 import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
@@ -68,11 +68,11 @@ public class ClassParser {
 		
 		//parse module base info
 		RequestMapping requestMapping = cls.getAnnotation(RequestMapping.class);
-		mi.moduleUrl=SpringAnnotationUtils.extractUrl(requestMapping);
-		mi.moduleName = cls.getSimpleName();
-		mi.simpleClassName = cls.getSimpleName();
-		mi.canonicalClassName=cls.getName();
-		mi.deprecated=ClassUtils.isClassDeprecated(cls);
+		mi.setUrl(SpringAnnotationUtils.extractUrl(requestMapping));
+		mi.setName(cls.getSimpleName());
+		mi.setSimpleClassName(cls.getSimpleName());
+		mi.setCanonicalClassName(cls.getName());
+		mi.setDeprecated(ClassUtils.isClassDeprecated(cls));
 		
 		//parse module interfaces
 		Method[] methods = cls.getDeclaredMethods();
@@ -85,7 +85,7 @@ public class ClassParser {
 			}
 			Optional<HttpInterface> info = parseMethod(method);
 			if (info.isPresent()) {
-			    mi.interfaceInfos.add(info.get());
+			    mi.getInterfaceInfos().add(info.get());
 			}
 		}
 		return mi;
@@ -120,7 +120,7 @@ public class ClassParser {
 			httpInterface.produces = produces;
 		}
 		//extract http url
-        httpInterface.methodUrl =RestClassUtils.extractUrl(mappingAnnotation);
+        httpInterface.url =RestClassUtils.extractUrl(mappingAnnotation);
         //extract http method
 		if(mappingAnnotation instanceof RequestMapping){
 			RequestMethod[] methods=((RequestMapping)mappingAnnotation).method();
@@ -134,10 +134,10 @@ public class ClassParser {
 		}else{
 			httpInterface.httpMethod = mappingAnnotation.annotationType().getSimpleName().replace("Mapping", "");
 		}
-		httpInterface.retureTypeName = method.getReturnType().getSimpleName();
-		httpInterface.retureType = method.getReturnType();
-		httpInterface.methodName = method.getName();
-		httpInterface.retureType = method.getGenericReturnType();
+		httpInterface.javaReturnTypeName = method.getReturnType().getSimpleName();
+		//httpInterface.javaRetureType = method.getReturnType();
+		httpInterface.javaMethodName = method.getName();
+		httpInterface.javaReturnType = method.getGenericReturnType();
 		//extract http parameters
 		doProcessParamaters(method,httpInterface);
 		
@@ -152,12 +152,12 @@ public class ClassParser {
 				final int indexInJavaMethod=i;
 				httpParams.stream()
 				    .forEach(httpParam->httpParam.indexInJavaMethod=indexInJavaMethod);
-				httpInterface.parameterInfos.addAll(httpParams);
+				httpInterface.httpParameters.addAll(httpParams);
 				HttpParameter firstParameterInfo=httpParams.get(0);
 				if (!httpInterface.isMultipart) {
-					httpInterface.isMultipart = TypeUtils.isMultipartType(firstParameterInfo.getParamJavaType());
+					httpInterface.isMultipart = TypeUtils.isMultipartType(firstParameterInfo.getJavaType());
 				}
-				httpInterface.hasRequestBody=!firstParameterInfo.getParamType().isParameter();
+				httpInterface.hasRequestBody=!firstParameterInfo.getHttpParamIn().isParameter();
 			}else {
 				String parameterKey=ClassUtils.getParameterIdentifier(parameter);
 				logger.error("the http parameters extracted from {} is empty",parameterKey);
@@ -183,12 +183,12 @@ public class ClassParser {
 		if (optionalRequestParam.isPresent()) {
 			RequestParam requestParam =optionalRequestParam.get();
 			httpParam.name = RestClassUtils.extractParameterName(requestParam);
-			httpParam.paramType = HttpParameterType.query;
+			httpParam.httpParamIn = HttpParameterIn.query;
 			httpParam.required = requestParam.required();
-			httpParam.paramJavaType=parameter.getParameterizedType();
+			httpParam.javaType=parameter.getParameterizedType();
 			Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
 			if(dateFormat.isPresent()) {
-				httpParam.format=dateFormat.get();
+				httpParam.openapiFormat=dateFormat.get();
 			}
 			httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 			return Arrays.asList(httpParam);
@@ -198,12 +198,12 @@ public class ClassParser {
 		if(optionalPathVariable.isPresent()) {
 			PathVariable pa =optionalPathVariable.get();
 			httpParam.name =RestClassUtils.extractParameterName(pa);
-			httpParam.paramType = HttpParameterType.path;
+			httpParam.httpParamIn = HttpParameterIn.path;
 			httpParam.required = pa.required();
-			httpParam.paramJavaType=parameter.getParameterizedType();
+			httpParam.javaType=parameter.getParameterizedType();
 			Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
 			if(dateFormat.isPresent()) {
-				httpParam.format=dateFormat.get();
+				httpParam.openapiFormat=dateFormat.get();
 			}
 			httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 			return Arrays.asList(httpParam);
@@ -213,12 +213,12 @@ public class ClassParser {
 		if(optionalRequestBody.isPresent()) {
 			RequestBody rb= optionalRequestBody.get();
 		    httpParam.name = parameter.getName();
-		    httpParam.paramType = HttpParameterType.body;
+		    httpParam.httpParamIn = HttpParameterIn.body;
 		    httpParam.required = rb.required();
-		    httpParam.paramJavaType=parameter.getParameterizedType();
+		    httpParam.javaType=parameter.getParameterizedType();
 		    Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
 		    if(dateFormat.isPresent()) {
-			    httpParam.format=dateFormat.get();
+			    httpParam.openapiFormat=dateFormat.get();
 		    }
 		    httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 		    return Arrays.asList(httpParam);
@@ -228,12 +228,12 @@ public class ClassParser {
 		if(optionalRequestPart.isPresent()) {
 			 RequestPart requestPart =optionalRequestPart.get();
 			 httpParam.name = RestClassUtils.extractParameterName(requestPart);
-			 httpParam.paramType = HttpParameterType.body;
+			 httpParam.httpParamIn = HttpParameterIn.body;
 			 httpParam.required = requestPart.required();
-			 httpParam.paramJavaType=parameter.getParameterizedType();
+			 httpParam.javaType=parameter.getParameterizedType();
 			 Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
 			 if(dateFormat.isPresent()) {
-			     httpParam.format=dateFormat.get();
+			     httpParam.openapiFormat=dateFormat.get();
 			 }
 			 httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 			 return Arrays.asList(httpParam);
@@ -247,12 +247,12 @@ public class ClassParser {
 		if(optionalRequestHeader.isPresent()) {
 			RequestHeader requestHeader =optionalRequestHeader.get();
 			httpParam.name = RestClassUtils.extractParameterName(requestHeader);
-			httpParam.paramType = HttpParameterType.header;
+			httpParam.httpParamIn = HttpParameterIn.header;
 			httpParam.required = requestHeader.required();
-			httpParam.paramJavaType=parameter.getParameterizedType();
+			httpParam.javaType=parameter.getParameterizedType();
 			Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
 			if(dateFormat.isPresent()) {
-				httpParam.format=dateFormat.get();
+				httpParam.openapiFormat=dateFormat.get();
 			}
 			httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 			return Arrays.asList(httpParam);
@@ -261,12 +261,12 @@ public class ClassParser {
 		if(optionalCookieValue.isPresent()) {
 			CookieValue cv=optionalCookieValue.get();
 			httpParam.name = RestClassUtils.extractParameterName(cv);
-			httpParam.paramType = HttpParameterType.cookie;
+			httpParam.httpParamIn = HttpParameterIn.cookie;
 			httpParam.required = cv.required();
-			httpParam.paramJavaType=parameter.getParameterizedType();
+			httpParam.javaType=parameter.getParameterizedType();
 			Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
 			if(dateFormat.isPresent()) {
-				httpParam.format=dateFormat.get();
+				httpParam.openapiFormat=dateFormat.get();
 			}
 			httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 			return Arrays.asList(httpParam);
@@ -285,12 +285,12 @@ public class ClassParser {
 			// requestparam
 			httpParam = new HttpParameter();
 			httpParam.name = parameter.getName();
-			httpParam.paramType = HttpParameterType.query;
+			httpParam.httpParamIn = HttpParameterIn.query;
 			httpParam.required = false;
-			httpParam.paramJavaType = parameter.getType();
+			httpParam.javaType = parameter.getType();
 			Optional<String> dateFormat = MethodArgUtils.extractDateFormat(annotations);
 			if (dateFormat.isPresent()) {
-				httpParam.format = dateFormat.get();
+				httpParam.openapiFormat = dateFormat.get();
 			}
 			httpParam.isPrimitive = BeanUtils.isSimpleProperty(parameter.getType());
 			return Arrays.asList(httpParam);
@@ -346,13 +346,13 @@ public class ClassParser {
 				continue;
 			}
 			//TODO need to analysis method mapping url
-			httpParam.paramType = HttpParameterType.query;
+			httpParam.httpParamIn = HttpParameterIn.query;
 			httpParam.required = isPropertyRequired(clazz,property);
-			httpParam.paramJavaType=property.getPropertyType();
+			httpParam.javaType=property.getPropertyType();
 			httpParam.comment=CommonClassCommentParser.getFieldComment(field);
 			Optional<String> dateFormat=extractPropertyDateFormat(clazz,property);
 			if(dateFormat.isPresent()) {
-				httpParam.format=dateFormat.get();
+				httpParam.openapiFormat=dateFormat.get();
 			}
 			httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 			httpParams.add(httpParam);

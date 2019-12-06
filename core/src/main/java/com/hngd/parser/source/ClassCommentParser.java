@@ -64,7 +64,7 @@ public class ClassCommentParser {
 			}
 			desc.append(line);
 		}
-		CommentElement ce = new CommentElement.DescElement();
+		CommentElement ce = new CommentElement.DefaultCommentElement();
 		ce.comment = desc.toString();
 		pr.element = ce;
 		if (pr.endIndex == -1) {
@@ -91,7 +91,7 @@ public class ClassCommentParser {
 				} else {
 					ce=findElementParser(line);
 					if (ce != null) {
-						line = ce.parse(line);
+						line = ce.onParseStart(line);
 					} else {
 						logger.error("could not parse line:{}",line);
 					}

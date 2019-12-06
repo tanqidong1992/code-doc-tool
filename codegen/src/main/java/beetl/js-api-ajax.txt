@@ -1,24 +1,24 @@
 <%for(module in modules){%>
-function ${module.moduleName}(){
+function ${module.name}(){
     var service=new Object();
-    service.url=host+"${serviceUrl}"+"${module.moduleUrl}";
+    service.url=host+"${serviceUrl}"+"${module.url}";
     <%for(interf in module.interfaceInfos){%>
     /**
       *${interf.comment!"no comment for this interface"}
-      <%for(parameter in interf.parameterInfos){%>
+      <%for(parameter in interf.httpParameters){%>
       *@param ${parameter.name} ${parameter.comment!"no comment"}
       <%}%>
       */
-     service.${interf.methodName}=function(<%for(parameter in interf.parameterInfos){%>${parameter.name},<%}%>onSuccess){
-         <%for(parameter in interf.parameterInfos){%>
+     service.${interf.javaMethodName}=function(<%for(parameter in interf.httpParameters){%>${parameter.name},<%}%>onSuccess){
+         <%for(parameter in interf.httpParameters){%>
 	     var ${parameter.name}Str=<%if(parameter.isPrimitive){%>${parameter.name}<%}else{%>JSON.stringify(${parameter.name})<%}%>;
 		 <%}%>
-		 var requestUrl=this.url+"${interf.methodUrl}";
+		 var requestUrl=this.url+"${interf.url}";
          $.ajax({
              url:requestUrl,
-             type:'${interf.requestType}',
+             type:'${interf.httpMethod}',
              data:{
-                   <%for(parameter in interf.parameterInfos){%>
+                   <%for(parameter in interf.httpParameters){%>
                    ${parameter.name}:${parameter.name}Str,
                    <%}%>
              },

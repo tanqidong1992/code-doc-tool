@@ -9,7 +9,7 @@
  * @版本:
  */
 
-package org.codegen;
+package com.hngd.codegen;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,16 +77,16 @@ public class JSCodeGenerator
     }
     
 	private static void attachCommentInfo(List<ModuleInfo> modules) {
-		for(ModuleInfo mi:modules){
-			mi.interfaceInfos.forEach(ii->{
-				String key=mi.simpleClassName+"#"+ii.methodName;
+		for(ModuleInfo module:modules){
+			module.getInterfaceInfos().forEach(interfaceInfo->{
+				String key=module.getSimpleClassName()+"#"+interfaceInfo.getJavaMethodName();
 				MethodInfo mm=CommonClassCommentParser.methodComments.get(key);
 				if(mm!=null){
-					ii.comment=mm.comment;
-					for(int i=0;i<ii.parameterInfos.size();i++){
-						HttpParameter pi=ii.parameterInfos.get(i);
-						if(i<mm.parameters.size()){
-							pi.comment=mm.parameters.get(i).comment;
+					interfaceInfo.comment=mm.getComment();
+					for(int i=0;i<interfaceInfo.getHttpParameters().size();i++){
+						HttpParameter pi=interfaceInfo.getHttpParameters().get(i);
+						if(i<mm.getParameters().size()){
+							pi.comment=mm.getParameters().get(i).getComment();
 						}
 					}
 				}

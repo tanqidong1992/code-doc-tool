@@ -17,7 +17,7 @@ public class ClassCommentParser {
 			System.out.println(k+":"+v);
 		});
 		CommonClassCommentParser.methodComments.forEach((k,v)->{
-			System.out.println(k+":"+v.comment);
+			System.out.println(k+":"+v.getComment());
 		});
 	}
 }

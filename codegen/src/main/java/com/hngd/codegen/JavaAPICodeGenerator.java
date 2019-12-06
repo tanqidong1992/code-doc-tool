@@ -1,5 +1,5 @@
 
-package org.codegen;
+package com.hngd.codegen;
 
 import java.io.File;
 import java.lang.reflect.ParameterizedType;
@@ -87,37 +87,42 @@ public class JavaAPICodeGenerator {
 	 */
 	static TypeSpec toJavaFile(String invokeType,ModuleInfo moduleInfo) {
 		String name=null;
-		if(moduleInfo.simpleClassName.endsWith("Controller")) {
-			name = moduleInfo.simpleClassName.replace("Controller", "Client");
+		if(moduleInfo.getSimpleClassName().endsWith("Controller")) {
+			name = moduleInfo.getSimpleClassName().replace("Controller", "Client");
 		}else {
-			name = moduleInfo.simpleClassName+"Client";
+			name = moduleInfo.getSimpleClassName()+"Client";
 		}
 		TypeSpec.Builder builder = TypeSpec.interfaceBuilder(name).addModifiers(Modifier.PUBLIC);
-		for (HttpInterface ii : moduleInfo.interfaceInfos) {
-			MethodSpec.Builder mb = MethodSpec.methodBuilder(ii.methodName).addModifiers(Modifier.PUBLIC,
+		for (HttpInterface httpInterface : moduleInfo.getInterfaceInfos()) {
+			MethodSpec.Builder mb = MethodSpec.methodBuilder(httpInterface.javaMethodName).addModifiers(Modifier.PUBLIC,
 					Modifier.ABSTRACT);
 			Class<?> aclazz = null;
-			if (ii.httpMethod.equalsIgnoreCase("POST")) {
+			if (httpInterface.httpMethod.equalsIgnoreCase("POST")) {
 				aclazz = POST.class;
-				if (ii.isMultipart) {
+				if (httpInterface.isMultipart) {
 					mb.addAnnotation(Multipart.class);
 				} else {
 					mb.addAnnotation(FormUrlEncoded.class);
 				}
-			} else if (ii.httpMethod.equalsIgnoreCase("GET")) {
-				aclazz = GET.class;
+			} else {
+				String httpMethod=httpInterface.httpMethod.toUpperCase();
+				try {
+					aclazz=Class.forName("retrofit2.http."+httpMethod);
+				} catch (ClassNotFoundException e) {
+					logger.error("",e);
+				}
 			}
 			AnnotationSpec annotationSpec = AnnotationSpec.builder(aclazz)
-					.addMember("value", "\"" + moduleInfo.moduleUrl.substring(1) + ii.methodUrl + "\"").build();
+					.addMember("value", "\"" + moduleInfo.getUrl().substring(1) + httpInterface.url + "\"").build();
 			mb.addAnnotation(annotationSpec);
 			
 			
-			if(ii.httpMethod.equalsIgnoreCase("POST")) {
+			if(httpInterface.httpMethod.equalsIgnoreCase("POST")) {
 				
-				if(ii.isMultipart()) {
-					for (int i = 0; i < ii.parameterInfos.size(); i++) {
-						HttpParameter rpi = ii.parameterInfos.get(i);
-						Type type =rpi.getParamJavaType();
+				if(httpInterface.isMultipart()) {
+					for (int i = 0; i < httpInterface.getHttpParameters().size(); i++) {
+						HttpParameter rpi = httpInterface.getHttpParameters().get(i);
+						Type type =rpi.getJavaType();
 						ParameterSpec.Builder pb = ParameterSpec
 								.builder(type != MultipartFile.class ? RequestBody.class : MultipartBody.Part.class, rpi.name);
 						if (MultipartFile.class == type) {
@@ -133,9 +138,9 @@ public class JavaAPICodeGenerator {
 						mb.addParameter(pb.build());
 					}
 				}else {
-					for (int i = 0; i < ii.parameterInfos.size(); i++) {
-						HttpParameter rpi = ii.parameterInfos.get(i);
-						Type type =rpi.getParamJavaType();
+					for (int i = 0; i < httpInterface.getHttpParameters().size(); i++) {
+						HttpParameter rpi = httpInterface.getHttpParameters().get(i);
+						Type type =rpi.getJavaType();
 						ParameterSpec.Builder pb = ParameterSpec
 								.builder(String.class, rpi.name);
 						AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Field.class)
@@ -146,13 +151,21 @@ public class JavaAPICodeGenerator {
 					
 				}
 				
-			}else if(ii.httpMethod.equalsIgnoreCase("GET")) {
+			}else if(httpInterface.httpMethod.equalsIgnoreCase("GET")) {
 				
-				for (int i = 0; i < ii.parameterInfos.size(); i++) {
-					HttpParameter rpi = ii.parameterInfos.get(i);
-					Type type =rpi.getParamJavaType();
-					ParameterSpec.Builder pb = ParameterSpec
+				for (int i = 0; i < httpInterface.getHttpParameters().size(); i++) {
+					HttpParameter rpi = httpInterface.getHttpParameters().get(i);
+					if(StringUtils.isEmpty(rpi.name)) {
+						continue;
+					}
+					Type type =rpi.getJavaType();
+					ParameterSpec.Builder pb=null;
+					try {
+					    pb = ParameterSpec
 							.builder( String.class , rpi.name);
+					}catch(Throwable e) {
+						e.printStackTrace();
+					}
 					
 					if(rpi.isPathVariable) {
 						AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Path.class)
@@ -171,7 +184,7 @@ public class JavaAPICodeGenerator {
 
 			}
  
-			if (ii.httpMethod.equals("POST") && ii.parameterInfos.size() == 0) {
+			if (httpInterface.httpMethod.equals("POST") && httpInterface.getHttpParameters().size() == 0) {
 				ParameterSpec.Builder pb = ParameterSpec.builder(String.class, "emptyStr");
 				AnnotationSpec mbA = AnnotationSpec.builder(retrofit2.http.Field.class)
 						.addMember("value", "\"emptyStr\"").build();
@@ -179,30 +192,41 @@ public class JavaAPICodeGenerator {
 				ParameterSpec parameterSpec = pb.build();
 				mb.addParameter(parameterSpec);
 			}
-			Type returnType = new ParameterizedType() {
-				@Override
-				public Type getRawType() {
-					// TODO Auto-generated method stub
-					return JavaCodeTypes.getReturnType(invokeType);
-				}
-
-				@Override
-				public Type getOwnerType() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public Type[] getActualTypeArguments() {
-					// TODO Auto-generated method stub
-					return new Type[] { ii.retureType };
-				}
-			};
+			Type returnType=null;
+			if(void.class.equals(httpInterface.getJavaReturnType()) || Void.class.equals(httpInterface.getJavaReturnType())) {
+				returnType=okhttp3.Response.class;
+			}else {
+				returnType=buildReturnType(invokeType,httpInterface.getJavaReturnType());
+			}
+			
+			try {
 			mb.returns(returnType);
-			// mb.addCode("return null;");
+			}catch(Throwable e) {
+				e.printStackTrace();
+			}
 			builder.addMethod(mb.build());
 		}
 		return builder.build();
+	}
+	
+	public static Type buildReturnType(String invokeType,Type javaReturnType) {
+		Type returnType = new ParameterizedType() {
+			@Override
+			public Type getRawType() {
+				return JavaCodeTypes.getReturnType(invokeType);
+			}
+
+			@Override
+			public Type getOwnerType() {
+				return null;
+			}
+
+			@Override
+			public Type[] getActualTypeArguments() {
+				return new Type[] {javaReturnType};
+			}
+		};
+		return returnType;
 	}
 	
 	 public static void generateJavaAPIFile(Class<?> cls,String invokeType,String baseUrl,String outPackageName,String outputDir) {
@@ -216,7 +240,7 @@ public class JavaAPICodeGenerator {
     		 if(!baseUrl.startsWith("/")){
     			 baseUrl="/"+baseUrl;
         	 }
-    		 moduleInfo.moduleUrl=baseUrl+moduleInfo.moduleUrl;
+    		 moduleInfo.setUrl(baseUrl+moduleInfo.getUrl());
     	 }
 		 TypeSpec typeSpec = toJavaFile(invokeType,moduleInfo);
 		 JavaFile javaFile = JavaFile.builder(outPackageName, typeSpec).build();

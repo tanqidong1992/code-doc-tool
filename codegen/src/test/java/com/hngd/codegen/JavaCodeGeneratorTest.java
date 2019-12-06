@@ -1,4 +1,4 @@
-package org.codegen;
+package com.hngd.codegen;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,17 +12,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.hngd.codegen.JavaAPICodeGenerator;
 import com.hngd.parser.clazz.ClassParser;
 import com.hngd.parser.entity.ModuleInfo;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
-
+@Deprecated 
 public class JavaCodeGeneratorTest {
 
 	private static final Logger logger=LoggerFactory.getLogger(JavaCodeGeneratorTest.class);
 	public static void main(String[] args) throws URISyntaxException, ClassNotFoundException {
 		
-			File out = new File("..\\webapi-test\\src\\main\\java");
+			File out = new File(".output/java");
+			if(out.exists() || out.mkdir()) {
+				
+			}
 			String outPackageName = "com.hngd.web.api";
 			String packageName = "com.hngd.web.controller";
 			URL url = JavaAPICodeGenerator.class.getResource("/com/hngd/web/controller");

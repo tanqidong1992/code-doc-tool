@@ -1,4 +1,4 @@
-package org.codegen;
+package com.hngd.codegen;
 
 import java.util.HashMap;
 import java.util.Map;

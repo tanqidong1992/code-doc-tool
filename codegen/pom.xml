@@ -69,12 +69,27 @@
 		<dependency>
 			<groupId>com.hngd</groupId>
 			<artifactId>nested-jar-classloader</artifactId>
-			<version>0.2.0-SNAPSHOT</version>
+			<version>0.2.1-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.25</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
 	<build>
-	    <resources>
+		<resources>
 			<resource>
 				<directory>src/main/java</directory>
 				<includes>

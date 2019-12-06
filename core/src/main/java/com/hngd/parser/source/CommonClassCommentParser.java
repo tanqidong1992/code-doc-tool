@@ -39,7 +39,7 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.hngd.parser.entity.FieldInfo;
 import com.hngd.parser.entity.MethodInfo;
 import com.hngd.parser.entity.ParameterInfo;
-import com.hngd.parser.source.CommentElement.DescElement;
+import com.hngd.parser.source.CommentElement.DefaultCommentElement;
 import com.hngd.parser.source.CommentElement.ParamElement;
 import com.hngd.parser.source.CommentElement.ReturnElement;
 import com.hngd.parser.source.extension.AuthorElement;
@@ -119,9 +119,9 @@ public class CommonClassCommentParser {
 					logger.warn("javadoc comment for classOrInterface {} is not found",classOrInterfaceName);
 				}else{
 					List<CommentElement> commentElements = ClassCommentParser.parseMethodComment(Arrays.asList(commentLines));
-					Optional<DescElement> optionalDescComment=commentElements.stream()
-					    .filter(commentElement->commentElement instanceof  DescElement)
-					    .map(CommentElement.DescElement.class::cast)
+					Optional<DefaultCommentElement> optionalDescComment=commentElements.stream()
+					    .filter(commentElement->commentElement instanceof  DefaultCommentElement)
+					    .map(CommentElement.DefaultCommentElement.class::cast)
 					    .findFirst();
 					optionalDescComment.ifPresent(descComment->{
 						classComments.put(classOrInterfaceName, descComment.comment);
@@ -162,29 +162,13 @@ public class CommonClassCommentParser {
     }
 	private static void doParseMethodJavadocComment(MethodDeclaration m, String methodName, String content) {
 		MethodInfo mi = new MethodInfo();
-		mi.methodName = methodName;
-		mi.parameters = new ArrayList<ParameterInfo>();
+		mi.setName(methodName);
 		String commentLines[] = content.split("\n");
 		if (commentLines != null && commentLines.length > 2) {
 			List<CommentElement> commentElements = ClassCommentParser.parseMethodComment(Arrays.asList(commentLines));
  
 			for (CommentElement commentElement : commentElements) {
-				if (commentElement instanceof DescElement) {
-					mi.comment = commentElement.comment;
-				} else if (commentElement instanceof ParamElement) {
-					ParameterInfo parameterInfo = new ParameterInfo();
-					ParamElement paramElement = (ParamElement) commentElement;
-					parameterInfo.parameterName = paramElement.paramName;
-					parameterInfo.comment = paramElement.comment;
-					mi.parameters.add(parameterInfo);
-				} else if (commentElement instanceof ReturnElement) {
-					mi.retComment = commentElement.comment;
-				} else if (commentElement instanceof TimeElement) {
-				     
-					TimeElement te = (TimeElement) commentElement;
-					mi.createTime = te.createTime;
-					mi.createTimeStr = te.createTimeStr;
-				}
+				commentElement.onParseEnd(mi);
 			}
 		} else {
 		}
@@ -194,23 +178,23 @@ public class CommonClassCommentParser {
 	public static String getMethodComment(String className, String methodName) {
 		String key = className + "#" + methodName;
 		MethodInfo mi = methodComments.get(key);
-		return mi != null ? mi.comment : null;
+		return mi != null ? mi.getComment() : null;
 	}
 	
 	public static String getMethodComment(Executable method) {
 		String key = methodKey(method);
 		MethodInfo mi = methodComments.get(key);
-		return mi != null ? mi.comment : null;
+		return mi != null ? mi.getComment() : null;
 	}
 	public static String getFieldComment(Field field) {
 		String key = fieldKey(field);
 		FieldInfo mi = fieldComments.get(key);
-		return mi != null ? mi.comment : null;
+		return mi != null ? mi.getComment() : null;
 	}
 	public static String getFieldComment(String className, String fieldName) {
 		String key = className + "#" + fieldName;
 		FieldInfo mi = fieldComments.get(key);
-		return mi != null ? mi.comment : null;
+		return mi != null ? mi.getComment() : null;
 	}
 	
 	public static String getParameterComment(String className, String methodName, String parameterName) {
@@ -218,11 +202,11 @@ public class CommonClassCommentParser {
 		MethodInfo mi = methodComments.get(key);
 		String comment = null;
 		if (mi != null) {
-			Optional<ParameterInfo> op = mi.parameters.stream()
-					.filter(p -> p.parameterName.equals(parameterName))
+			Optional<ParameterInfo> op = mi.getParameters().stream()
+					.filter(p -> p.getName().equals(parameterName))
 					.findFirst();
 			if (op.isPresent()) {
-				comment = op.get().comment;
+				comment = op.get().getComment();
 			}
 		}
 		return comment;
@@ -234,8 +218,8 @@ public class CommonClassCommentParser {
 		String comment = null;
 		if (mi != null) {
 
-			if (order >= 0 && order < mi.parameters.size()) {
-				comment = mi.parameters.get(order).comment;
+			if (order >= 0 && order < mi.getParameters().size()) {
+				comment = mi.getParameters().get(order).getComment();
 			}
 		}
 		return comment;
@@ -305,11 +289,11 @@ public class CommonClassCommentParser {
 		});
 		fieldComments.entrySet()
 		.forEach(e->{
-			System.out.println(e.getKey()+"-->"+e.getValue().comment);
+			System.out.println(e.getKey()+"-->"+e.getValue().getComment());
 		});
 		methodComments.entrySet()
 		.forEach(e->{
-			System.out.println(e.getKey()+"-->"+e.getValue().comment);
+			System.out.println(e.getKey()+"-->"+e.getValue().getComment());
 		});
 		
 	}

@@ -19,11 +19,11 @@ public class HttpInterface {
 	/**
 	 * Java方法名称
 	 */
-	public String methodName;
+	public String javaMethodName;
 	/**
 	 * 接口路径
 	 */
-	public String methodUrl;
+	public String url;
 	/**
 	 * 接口http请求方法
 	 */
@@ -31,15 +31,15 @@ public class HttpInterface {
 	/**
 	 * Java方法返回类型名称
 	 */
-	public String retureTypeName;
+	public String javaReturnTypeName;
 	/**
 	 * Java方法返回类型
 	 */
-	public Type retureType;
+	public Type javaReturnType;
 	/**
 	 * 接口参数列表
 	 */
-	public List<HttpParameter> parameterInfos;
+	public List<HttpParameter> httpParameters;
 	/**
 	 * 接口是否包含Multipart类型，true表示是，false表示否
 	 */
@@ -53,7 +53,7 @@ public class HttpInterface {
 	 */
 	public List<String> produces;
 	/**
-	 * 接口说明
+	 * Java方法注释
 	 */
 	public String comment;
 	/**
@@ -66,7 +66,7 @@ public class HttpInterface {
 	public Boolean deprecated;
 
 	public HttpInterface() {
-		parameterInfos = new ArrayList<>();
+		httpParameters = new ArrayList<>();
 	}
 
 }

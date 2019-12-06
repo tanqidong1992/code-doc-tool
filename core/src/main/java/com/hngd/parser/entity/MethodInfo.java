@@ -1,39 +1,41 @@
 package com.hngd.parser.entity;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * 类成员函数信息
  * @author hnoe-dev-tqd
  *
  */
-public class MethodInfo {
-    /**
-     * 方法名称
-     */
-	public String methodName;
-	/**
-	 * 方法注释
-	 */
-	public String comment;
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
+public class MethodInfo extends BaseInfo{
 	/**
 	 * 返回注释
 	 */
-	public String retComment;
+	private String retComment;
 	/**
 	 * 参数信息列表
 	 */
-	public List<ParameterInfo> parameters;
+	private List<ParameterInfo> parameters=new ArrayList<>();
+    /**
+     * 作者
+     */
+	private String author;
 	/**
-	 * 创建时间字符串(已被格式化)
+	 * since
 	 */
-	public String createTimeStr;
-	/**
-	 * 创建时间
-	 */
-	public Date createTime;
- 
+	private String since;
 }
 
 

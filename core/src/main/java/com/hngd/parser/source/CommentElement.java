@@ -14,6 +14,13 @@ package com.hngd.parser.source;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.hngd.parser.entity.BaseInfo;
+import com.hngd.parser.entity.MethodInfo;
+import com.hngd.parser.entity.ParameterInfo;
+import com.hngd.parser.source.CommentElement.ParamElement;
+
 /**
  * @author
  */
@@ -45,23 +52,36 @@ public class CommentElement {
 			}
 		}
 	}
-
-	public String parse(String line) {
+    
+	public void onParseEnd(BaseInfo baseInfo) {
+		String key=prefix;
+		if(key.startsWith("@")) {
+			key=key.replace("@", "");
+		}
+		if(StringUtils.isNotBlank(comment)) {
+			baseInfo.addExtension(key, comment);
+		}
+		
+	}
+	public String onParseStart(String line) {
 		return line.replace(prefix, "").trim();
 	}
-
-	public static class DescElement extends CommentElement {
+	public static class DefaultCommentElement extends CommentElement {
+		//TODO delete it
 		public static final String prefix = "@desc";
 		String paramName;
-
-		public DescElement() {
+		public DefaultCommentElement() {
 			super(prefix);
 		}
-
 		@Override
-		public String parse(String line) {
+		public String onParseStart(String line) {
 			return line;
 		}
+		@Override
+		public void onParseEnd(BaseInfo baseInfo) {
+			baseInfo.setComment(this.comment);
+		}
+		
 	}
 
 	public static class ParamElement extends CommentElement {
@@ -73,11 +93,22 @@ public class CommentElement {
 		}
 
 		@Override
-		public String parse(String line) {
-			line = super.parse(line);
+		public String onParseStart(String line) {
+			line = super.onParseStart(line);
 			int index = line.indexOf(" ");
 			paramName = index > 0 ? line.substring(0, index) : line;
 			return index > 0 ? line.substring(index, line.length()) : line;
+		}
+		@Override
+		public void onParseEnd(BaseInfo baseInfo) {
+			if(baseInfo instanceof MethodInfo) {
+				
+				ParameterInfo parameterInfo = new ParameterInfo();
+				ParamElement paramElement = this;
+				parameterInfo.setName(paramElement.paramName);
+				parameterInfo.setComment(paramElement.comment);
+				((MethodInfo)baseInfo).getParameters().add(parameterInfo);
+			}
 		}
 	}
 
@@ -87,6 +118,11 @@ public class CommentElement {
 		}
 
 		public static final String prefix = "@return";
+		
+		@Override
+		public void onParseEnd(BaseInfo baseInfo) {
+			((MethodInfo)baseInfo).setRetComment(this.comment);
+		}
 	}
 
 	public static class SeeElement extends CommentElement {
@@ -99,7 +135,6 @@ public class CommentElement {
 
 	public static class AuthorElement extends CommentElement {
 		public static final String prefix = "@author";
-
 		public AuthorElement() {
 			super(prefix);
 		}
@@ -107,7 +142,6 @@ public class CommentElement {
 
 	public static class ThrowsElement extends CommentElement {
 		public static final String prefix = "@throws";
-
 		public ThrowsElement() {
 			super(prefix);
 		}
@@ -115,7 +149,6 @@ public class CommentElement {
 
 	public static class SinceElement extends CommentElement {
 		public static final String prefix = "@since";
-
 		public SinceElement() {
 			super(prefix);
 		}

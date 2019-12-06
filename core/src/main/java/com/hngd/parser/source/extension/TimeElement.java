@@ -37,8 +37,8 @@ public class TimeElement extends CommentElement {
 	}
 
 	@Override
-	public String parse(String line) {
-		line = super.parse(line);
+	public String onParseStart(String line) {
+		line = super.onParseStart(line);
 		createTime = parseTime(line);
 		if (createTime != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");

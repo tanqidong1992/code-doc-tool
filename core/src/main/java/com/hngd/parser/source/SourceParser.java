@@ -72,16 +72,17 @@ public class SourceParser {
 	
     private static ModuleInfo parseModule(ClassOrInterfaceDeclaration clazz){
     	ModuleInfo moduleInfo=new ModuleInfo();
-    	moduleInfo.simpleClassName=clazz.getName().asString();
-    	moduleInfo.moduleName=clazz.getName().asString();
+    	moduleInfo.setSimpleClassName(clazz.getName().asString());
+    	moduleInfo.setName(clazz.getName().asString());
     	Optional<AnnotationExpr> requestMappingAnnotation=getAnnotationByName(clazz.getAnnotations(), "RequestMapping");
-    	requestMappingAnnotation.ifPresent(a->moduleInfo.moduleUrl=parseHttpRequestPath(a.getChildNodes()));
-    	moduleInfo.interfaceInfos=clazz.getChildNodes().stream()
+    	requestMappingAnnotation.ifPresent(a->moduleInfo.setUrl(parseHttpRequestPath(a.getChildNodes())));
+    	List<HttpInterface> interfaceInfos=clazz.getChildNodes().stream()
     	    .filter(MethodDeclaration.class::isInstance)
 		    .map(MethodDeclaration.class::cast)
 		    .filter(SourceParser::isInterface)
 		    .map(SourceParser::parseInterface)
 		    .collect(Collectors.toList());
+    	moduleInfo.setInterfaceInfos(interfaceInfos);
     	return moduleInfo;	
 	}
     private static boolean isInterface(MethodDeclaration method){
@@ -99,17 +100,17 @@ public class SourceParser {
     private static HttpInterface parseInterface(MethodDeclaration method){
     	logger.info("start to parse interface: {}",method.getName());
     	HttpInterface info=new HttpInterface();
-    	info.methodName=method.getName().asString();
+    	info.javaMethodName=method.getName().asString();
     	Optional<HttpRequestInfo> requestInfo=parseHttpRequestInfo(method);
     	if(requestInfo.isPresent()){
-    		info.methodUrl=requestInfo.get().path;
+    		info.url=requestInfo.get().path;
     		info.httpMethod=requestInfo.get().method;
     	}
-    	info.retureTypeName=method.getType().toString();
+    	info.javaReturnTypeName=method.getType().toString();
     	List<Parameter> parameters=method.getParameters();
     	if(parameters==null || parameters.size()==0){
     		info.isMultipart=false;
-    		info.parameterInfos=Collections.EMPTY_LIST;
+    		info.httpParameters=Collections.EMPTY_LIST;
     	}else{
         	List<Parameter> httpRequestParameters=parameters.stream()
             	    .filter(SourceParser::isHttpRequestParam)
@@ -120,13 +121,13 @@ public class SourceParser {
         		 .collect(Collectors.toList());
         		  info.hasRequestBody=true;
         		  info.setConsumes(Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
-        		  info.parameterInfos=requestBodies.stream()
+        		  info.httpParameters=requestBodies.stream()
         	            	.map(SourceParser::parseHttpParameterInfo)
         	            	.collect(Collectors.toList());
         		  
         	}else {
         		//info.setConsumes(Arrays.asList(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
-        		 info.parameterInfos=httpRequestParameters.stream()
+        		 info.httpParameters=httpRequestParameters.stream()
         	            	.map(SourceParser::parseHttpParameterInfo)
         	            	.collect(Collectors.toList());
         	}
@@ -147,11 +148,11 @@ public class SourceParser {
     	
     }
     private static void resolvePathVariable(HttpInterface info) {
-    	System.out.println(info.getMethodName());
-    	Map<String,Boolean> parameters=info.parameterInfos.stream()
+    	System.out.println(info.getJavaMethodName());
+    	Map<String,Boolean> parameters=info.httpParameters.stream()
     	.collect(Collectors.toMap(p->p.getName(), p->p.isPrimitive));
-		String url=replacePathVariable(info.methodUrl,parameters);
-		info.methodUrl=url;
+		String url=replacePathVariable(info.url,parameters);
+		info.url=url;
 		
 	}
 	private static String replacePathVariable(String methodUrl, Map<String, Boolean> parameters) {
@@ -176,7 +177,7 @@ public class SourceParser {
 	}
 	private static HttpParameter parseHttpParameterInfo(Parameter parameter){
     	HttpParameter parameterInfo=new HttpParameter();
-    	parameterInfo.typeName=parameter.getType().getParentNode().toString();//.toString();
+    	parameterInfo.javaTypeName=parameter.getType().getParentNode().toString();//.toString();
     	Optional<AnnotationExpr> pathVariableAnnotation=getAnnotationByName(parameter.getAnnotations(),"PathVariable");
     	parameterInfo.isPathVariable=pathVariableAnnotation.isPresent();
     	parameterInfo.isPrimitive=isPrimaryType(parameter.getType()) ;

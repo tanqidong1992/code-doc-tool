@@ -1,4 +1,4 @@
-package org.codegen;
+package com.hngd.codegen;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

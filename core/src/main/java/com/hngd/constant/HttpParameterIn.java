@@ -11,7 +11,7 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
  * @author tqd
  *
  */
-public enum HttpParameterType {
+public enum HttpParameterIn {
     /**
      * 查询参数
      */
@@ -32,7 +32,7 @@ public enum HttpParameterType {
 	 * request body 参数
 	 */
 	body(RequestBody.class);
-	private HttpParameterType(Class<?> paramClass){
+	private HttpParameterIn(Class<?> paramClass){
 		this.paramClass=paramClass;
 	}
 	private Class<?> paramClass;

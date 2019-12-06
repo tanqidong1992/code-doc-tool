@@ -1,23 +1,21 @@
 package com.hngd.parser.entity;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+
 /**
  * 方法参数信息
  * @author hnoe-dev-tqd
  *
  */
-public class ParameterInfo {
-    
-	/**
-	 * 参数名称
-	 */
-	public String parameterName;
-	/**
-	 * 参数注释
-	 */
-	public String comment;
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
+public class ParameterInfo extends BaseInfo{
 	/**
 	 * 参数类型名称
 	 */
-	public String typeName;
+	private String typeName;
 	 
 }
