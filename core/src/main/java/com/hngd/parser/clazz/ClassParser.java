@@ -56,7 +56,7 @@ public class ClassParser {
 				throw new ClassParseException(cls,e);
 			}
 		}
-		return Optional.of(mi);
+		return Optional.ofNullable(mi);
 	}
 	private static ModuleInfo doConvertClassToModule(Class<?> cls) {
 		logger.info("start to process class:{}",cls.getName());
@@ -102,7 +102,7 @@ public class ClassParser {
 				throw new ClassParseException(method.getDeclaringClass(),method,e);
 			}
 		}
-		return Optional.of(hi);
+		return Optional.ofNullable(hi);
 	}
 	private static HttpInterface doParseMethod(Method method) {
 		HttpInterface httpInterface = new HttpInterface();
@@ -153,14 +153,15 @@ public class ClassParser {
 				httpParams.stream()
 				    .forEach(httpParam->httpParam.indexInJavaMethod=indexInJavaMethod);
 				httpInterface.httpParameters.addAll(httpParams);
-				HttpParameter firstParameterInfo=httpParams.get(0);
+				//根据第一个参数判定的原因是,一个MultipartFile类型的java参数只能解析出一个http请求参数
+				HttpParameter firstHttpParameter=httpParams.get(0);
 				if (!httpInterface.isMultipart) {
-					httpInterface.isMultipart = TypeUtils.isMultipartType(firstParameterInfo.getJavaType());
+					httpInterface.isMultipart = TypeUtils.isMultipartType(firstHttpParameter.getJavaType());
 				}
-				httpInterface.hasRequestBody=!firstParameterInfo.getHttpParamIn().isParameter();
+				httpInterface.hasRequestBody=!firstHttpParameter.getHttpParamIn().isParameter();
 			}else {
 				String parameterKey=ClassUtils.getParameterIdentifier(parameter);
-				logger.error("the http parameters extracted from {} is empty",parameterKey);
+				logger.warn("the http parameters extracted from {} is empty",parameterKey);
 			}
 			
 		}
@@ -238,7 +239,7 @@ public class ClassParser {
 			 httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
 			 return Arrays.asList(httpParam);
 		}
-		//TODO MatrixVariable is not suuported
+		//TODO MatrixVariable is not supported
 		Optional<MatrixVariable> optionalMatrixVariable=MethodArgUtils.extractAnnotaion(annotations, MatrixVariable.class);
 		if(optionalMatrixVariable.isPresent()) {
 			ClassParseException.throwParameterParseException(parameter, "Unspported Matrix Variable", null);
