@@ -105,6 +105,7 @@ public class ClassCommentParser {
 				Optional<CommentElementParser> optionalElementParser = CommentElementParserContext.findElementParser(line);
 				if (optionalElementParser.isPresent()) {
 					line = optionalElementParser.get().onParseStart(line);
+					elementComment.append(line);
 					element = optionalElementParser.get().getResult();
 				} else {
 					logger.error("Could not parse line:{}", line);

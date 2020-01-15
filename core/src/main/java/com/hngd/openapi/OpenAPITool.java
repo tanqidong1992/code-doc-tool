@@ -280,12 +280,13 @@ public class OpenAPITool {
 						}
 						if (TypeUtils.isMultipartType(parameterType)) {
 							Schema<?> propertiesItem = new Schema<>();
-							propertiesItem.format("binary");
-							propertiesItem.setType("string");
+							 propertiesItem.format("binary");
+							 propertiesItem.setType("string");
+							 
 							 Class<?> type=(Class<?>) parameterType;
 							 if(type.isArray()) {
 								 ArraySchema as=new ArraySchema();
-								 as.setDescription(pc.comment);
+								 //as.setDescription(pc.comment);
 								 as.setType("array");
 								 Schema<?> items=new Schema<>();
 								 items.setType("string");
@@ -293,8 +294,10 @@ public class OpenAPITool {
 								 as.setItems(items);
 								 propertiesItem=as;
 							 }
+							 propertiesItem.setDescription(pc.comment);
 							 contentSchema.addProperties(pc.name, propertiesItem);
 						} else {
+							pc.schema.setDescription(pc.comment);
 							contentSchema.addProperties(pc.name, pc.schema);
 						}
 						
