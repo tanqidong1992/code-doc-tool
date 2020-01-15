@@ -597,6 +597,10 @@ public class OpenAPITool {
 			//fcKey = typeName + "#" + propertyName;
 			field=ReflectionUtils.findField((Class<?>) pt.getRawType(),propertyName);
 		}
+		if(field==null) {
+			logger.error("Counld not found property:{} At Class:{}",propertyName,type.getTypeName());
+			return null;
+		}
 		String comment = CommonClassCommentParser.getFieldComment(field);
 		if (comment != null) {
 			return comment;
