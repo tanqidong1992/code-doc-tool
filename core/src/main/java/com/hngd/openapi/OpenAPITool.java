@@ -39,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hngd.constant.HttpParameterIn;
 import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hngd.constant.Comments;
 import com.hngd.constant.Constants;
 import com.hngd.parser.clazz.ClassParser;
@@ -585,21 +586,21 @@ public class OpenAPITool {
 	private static String getPropertyComment(Type type, String propertyName) {
 
 		Field field = null;
+		Class<?> targetClass=null;
 		if (type instanceof Class<?>) {
+			targetClass=(Class<?>) type;
 			field=ReflectionUtils.findField((Class<?>) type,propertyName);
-			//String typeName = ((Class<?>) type).getSimpleName();
-			//fcKey = typeName + "#" + propertyName;
-			//CommonClassCommentParser.getFieldComment(field);
 		} else if (type instanceof ParameterizedType) {
 			ParameterizedType pt = (ParameterizedType) type;
-			// fcKey=name;
-			//String typeName = ((Class<?>) pt.getRawType()).getSimpleName();
-			//fcKey = typeName + "#" + propertyName;
-			field=ReflectionUtils.findField((Class<?>) pt.getRawType(),propertyName);
+			targetClass=(Class<?>) pt.getRawType();
 		}
+		field=ReflectionUtils.findField(targetClass,propertyName);
 		if(field==null) {
-			logger.error("Counld not found property:{} At Class:{}",propertyName,type.getTypeName());
-			return null;
+			field=tryToFindJsonProperty(targetClass, propertyName);
+			if(field==null) {
+				logger.error("Counld not found property:{} At Class:{}",propertyName,type.getTypeName());
+				return null;
+			}
 		}
 		String comment = CommonClassCommentParser.getFieldComment(field);
 		if (comment != null) {
@@ -608,7 +609,20 @@ public class OpenAPITool {
 			return null;
 		}
 	}
-	
+	public static Field tryToFindJsonProperty(Class<?> type, String propertyName) {
+		Field[] fields=type.getDeclaredFields();
+		for(Field field:fields) {
+			JsonProperty jp=field.getAnnotation(JsonProperty.class);
+			if(jp!=null && propertyName.equals(jp.value())) {
+				return field;
+			}
+		}
+		Class<?> superClass=type.getSuperclass();
+		if(Object.class==superClass) {
+			return null;
+		}
+		return tryToFindJsonProperty(superClass, propertyName);
+	}
 	
 	public static boolean hasRequestBody(String httpMethod) {
 		//CONNECT
