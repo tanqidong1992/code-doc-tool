@@ -32,6 +32,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -583,19 +584,22 @@ public class OpenAPITool {
 
 	private static String getPropertyComment(Type type, String propertyName) {
 
-		String fcKey = null;
+		Field field = null;
 		if (type instanceof Class<?>) {
-			String typeName = ((Class<?>) type).getSimpleName();
-			fcKey = typeName + "#" + propertyName;
+			field=ReflectionUtils.findField((Class<?>) type,propertyName);
+			//String typeName = ((Class<?>) type).getSimpleName();
+			//fcKey = typeName + "#" + propertyName;
+			//CommonClassCommentParser.getFieldComment(field);
 		} else if (type instanceof ParameterizedType) {
 			ParameterizedType pt = (ParameterizedType) type;
 			// fcKey=name;
-			String typeName = ((Class<?>) pt.getRawType()).getSimpleName();
-			fcKey = typeName + "#" + propertyName;
+			//String typeName = ((Class<?>) pt.getRawType()).getSimpleName();
+			//fcKey = typeName + "#" + propertyName;
+			field=ReflectionUtils.findField((Class<?>) pt.getRawType(),propertyName);
 		}
-		FieldInfo fi = CommonClassCommentParser.fieldComments.get(fcKey);
-		if (fi != null) {
-			return fi.getComment();
+		String comment = CommonClassCommentParser.getFieldComment(field);
+		if (comment != null) {
+			return comment;
 		} else {
 			return null;
 		}
