@@ -85,8 +85,8 @@ public class ClassCommentParser {
 
 	private static ParseResult parseElement(List<String> lines, int startIndex) {
 		CommentElement element = null;
-		ParseResult pr = new ParseResult();
-		pr.startIndex = startIndex;
+		ParseResult parseResult = new ParseResult();
+		parseResult.startIndex = startIndex;
 		StringBuilder elementComment = new StringBuilder();
 		boolean isFoundAt = false;
 		for (int i = startIndex; i < lines.size(); i++) {
@@ -99,7 +99,7 @@ public class ClassCommentParser {
 				continue;
 			}
 			if (isFoundAt) {
-				pr.endIndex = i;
+				parseResult.endIndex = i;
 				break;
 			} else {
 				Optional<CommentElementParser> optionalElementParser = CommentElementParserContext.findElementParser(line);
@@ -114,16 +114,16 @@ public class ClassCommentParser {
 			}
 
 		}
-		if (pr.endIndex == -1) {
-			pr.endIndex = lines.size();
+		if (parseResult.endIndex == -1) {
+			parseResult.endIndex = lines.size();
 		}
 		if(element!=null) {
-		    pr.element = element;
+		    parseResult.element = element;
 		}
-		if (pr.element != null) {
-			pr.element.comment = elementComment.toString();
+		if (parseResult.element != null) {
+			parseResult.element.comment = elementComment.toString();
 		}
-		return pr;
+		return parseResult;
 	}
 
 }

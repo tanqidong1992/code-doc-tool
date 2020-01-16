@@ -37,9 +37,7 @@ public class SwaggerFileLoader {
 	private static final Logger logger=LoggerFactory.getLogger(SwaggerFileLoader.class);
 	public static File root=new File("./data").getAbsoluteFile();
 	public static File history=new File("./history").getAbsoluteFile();
-	public static void main(String[] args) {
-	 
-	}
+ 
 	public static Map<String,DocumentInfo> documents=new ConcurrentHashMap<>();
 	public static String buildKey(DocumentInfo di) {
 		return di.getTitle();

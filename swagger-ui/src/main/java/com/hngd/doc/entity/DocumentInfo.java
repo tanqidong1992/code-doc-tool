@@ -6,7 +6,8 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.tags.Tag;
 import lombok.Data;
 
-public @Data class DocumentInfo {
+@Data
+public class DocumentInfo {
 
 	/**
 	 * 原始文件名称

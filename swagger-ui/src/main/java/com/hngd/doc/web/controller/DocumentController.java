@@ -4,15 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
 
 import com.hngd.common.exception.HNException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,11 +29,9 @@ import com.hngd.doc.entity.DocumentInfo;
 import com.hngd.doc.swagger.TagFilter;
 import com.hngd.doc.utils.FileDigest;
 
-import io.swagger.v3.core.filter.AbstractSpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
-import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.Operation;
+
 
 @RestController
 @RequestMapping("/api/document")
