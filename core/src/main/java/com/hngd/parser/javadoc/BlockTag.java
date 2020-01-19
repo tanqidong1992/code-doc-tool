@@ -62,8 +62,10 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
 		return this;
 	}
 	
+	@Data
+	@EqualsAndHashCode(callSuper = true)
 	public static class ParamBlock extends BlockTag {
-		String paramName;
+		private String paramName;
 		public ParamBlock() {
 			super("@param");
 		}
@@ -71,8 +73,13 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
 		public String onParseStart(String line) {
 			line = super.onParseStart(line);
 			int index = line.indexOf(" ");
-			paramName = index > 0 ? line.substring(0, index) : line;
-			return index > 0 ? line.substring(index, line.length()) : line;
+			if(index>0) {
+				paramName=line.substring(0, index);
+				return line.substring(index, line.length());
+			}else {
+				paramName=line;
+				return "";
+			}
 		}
 		@Override
 		public void onParseEnd(BaseInfo baseInfo) {
