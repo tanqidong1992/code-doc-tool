@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hngd.openapi.config.ServerConfig;
-import com.hngd.parser.source.CommonClassCommentParser;
+import com.hngd.parser.source.ParserContext;
 
 import io.squark.nestedjarclassloader.NestedJarClassLoader;
 import io.swagger.v3.core.util.Json;
@@ -37,8 +37,9 @@ public class ProjectAnalysis {
 	}
 	
 	private static String doProcess(List<File> sourceRoots,NestedJarClassLoader loader,String packageFilter,ServerConfig config) {
+		ParserContext pc=new ParserContext();
 		for(File sourceRoot:sourceRoots) {
-        	CommonClassCommentParser.initRecursively(sourceRoot);
+        	pc.initRecursively(sourceRoot);
         }
 		OpenAPI openApi = new OpenAPI();
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -48,7 +49,7 @@ public class ProjectAnalysis {
         if(config.servers!=null) {
             config.servers.forEach(s->openApi.addServersItem(s));
         }
-		OpenAPITool openAPITool = new OpenAPITool(openApi);
+		OpenAPITool openAPITool = new OpenAPITool(openApi,pc);
 		List<String> allClass=loader.listAllClass("default");
 		List<Class<?>> clazzes=allClass.stream()
 			.filter(name->name.startsWith(packageFilter))

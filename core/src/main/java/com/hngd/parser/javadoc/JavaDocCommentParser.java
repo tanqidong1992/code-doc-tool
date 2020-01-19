@@ -9,7 +9,7 @@
  * @版本:
  */
 
-package com.hngd.parser.source;
+package com.hngd.parser.javadoc;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,38 +21,44 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author
+ * Java文档注释解析类,用于解析javadoc comment
+ * 参考 <a href="https://www.oracle.com/technetwork/java/javase/documentation/index-137868.html">How to Write Doc Comments for the Javadoc Tool</a>
+ * @author tqd
+ * @version 0.0.1
  */
-public class ClassCommentParser {
+public class JavaDocCommentParser {
 	/**
 	 * java doc comment must has two lines
 	 */
-	public static final int JAVADOC_COMMENT_MIN_LINE_SIZE=2;
-	private static final Logger logger = LoggerFactory.getLogger(ClassCommentParser.class);
+	public static final int JAVA_DOC_COMMENT_MIN_LINE_SIZE=2;
+	private static final Logger logger = LoggerFactory.getLogger(JavaDocCommentParser.class);
 
-	static class ParseResult {
-		int startIndex;
-		int endIndex = -1;
-		CommentElement element;
-		public boolean hasElement() {
+	private static class ParseResult {
+		public static int UNSET_INDEX_VALUE=-1;
+		int startIndex = UNSET_INDEX_VALUE;
+		int endIndex = UNSET_INDEX_VALUE;
+		JavaDocCommentElement element;
+		public boolean hasResult() {
 			return element!=null;
 		}
 	}
 
-	public static List<CommentElement> parseMethodComment(List<String> commentLines) {
-		if (commentLines.size() <= JAVADOC_COMMENT_MIN_LINE_SIZE) {
+	public static List<JavaDocCommentElement> parse(List<String> commentLines) {
+		if (commentLines==null || commentLines.size() <= JAVA_DOC_COMMENT_MIN_LINE_SIZE) {
 			return Collections.emptyList();
 		}
 		//remove the first line and last line
 		List<String> lines = commentLines.subList(1, commentLines.size() - 1);
-		List<CommentElement> commentElements = new ArrayList<>();
+		List<JavaDocCommentElement> commentElements = new ArrayList<>();
+		//parse description
 		ParseResult result = parseDescription(lines);
-		if(result.hasElement()) {
+		if(result.hasResult()) {
 			commentElements.add(result.element);
 		}
+		//parse block tags
 		while (result.endIndex < lines.size()) {
 			result = parseElement(lines, result.endIndex);
-			if(result.hasElement()) {
+			if(result.hasResult()) {
 			    commentElements.add(result.element);
 			}
 		}
@@ -74,20 +80,20 @@ public class ClassCommentParser {
 				desc.append(line);
 			}
 		}
-		CommentElement commentElement = new CommentElement.DefaultCommentElement();
-		commentElement.comment = desc.toString();
-		result.element = commentElement;
-		if (result.endIndex == -1) {
+		Description description = new Description();
+		description.setContent(desc.toString());
+		result.element = description;
+		if (result.endIndex == ParseResult.UNSET_INDEX_VALUE) {
 			result.endIndex = lines.size();
 		}
 		return result;
 	}
 
 	private static ParseResult parseElement(List<String> lines, int startIndex) {
-		CommentElement element = null;
+		BlockTag element = null;
 		ParseResult parseResult = new ParseResult();
 		parseResult.startIndex = startIndex;
-		StringBuilder elementComment = new StringBuilder();
+		StringBuilder content = new StringBuilder();
 		boolean isFoundAt = false;
 		for (int i = startIndex; i < lines.size(); i++) {
 			if (StringUtils.isEmpty(lines.get(i))) {
@@ -95,17 +101,17 @@ public class ClassCommentParser {
 			}
 			String line = lines.get(i).replaceFirst("\\*", "").trim();
 			if(!line.startsWith("@")) {
-				elementComment.append(line);
+				content.append(line);
 				continue;
 			}
 			if (isFoundAt) {
 				parseResult.endIndex = i;
 				break;
 			} else {
-				Optional<CommentElementParser> optionalElementParser = CommentElementParserContext.findElementParser(line);
+				Optional<JavaDocCommentBlockTagParser> optionalElementParser = CommentBlockParserContext.findElementParser(line);
 				if (optionalElementParser.isPresent()) {
 					line = optionalElementParser.get().onParseStart(line);
-					elementComment.append(line);
+					content.append(line);
 					element = optionalElementParser.get().getResult();
 				} else {
 					logger.error("Could not parse line:{}", line);
@@ -121,7 +127,7 @@ public class ClassCommentParser {
 		    parseResult.element = element;
 		}
 		if (parseResult.element != null) {
-			parseResult.element.comment = elementComment.toString();
+			parseResult.element.setContent(content.toString());
 		}
 		return parseResult;
 	}

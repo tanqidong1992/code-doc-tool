@@ -22,6 +22,7 @@ import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.parser.clazz.ClassParser;
 import com.hngd.parser.entity.ModuleInfo;
+import com.hngd.parser.source.ParserContext;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -67,7 +68,7 @@ public class JavaAPICodeGenerator {
  				.filter(clazz -> clazz != null)
  				.filter(clazz -> clazz.getAnnotation(RequestMapping.class) != null)
  				.forEach(cls -> {
- 					ModuleInfo moduleInfo = ClassParser.parseModule(cls).get();
+ 					ModuleInfo moduleInfo = new ClassParser(new ParserContext()).parseModule(cls).get();
  					TypeSpec typeSpec = toJavaFile(invokeType,moduleInfo);
  					JavaFile javaFile = JavaFile.builder(outPackageName, typeSpec).build();
  					try {
@@ -231,7 +232,7 @@ public class JavaAPICodeGenerator {
 	
 	 public static void generateJavaAPIFile(Class<?> cls,String invokeType,String baseUrl,String outPackageName,String outputDir) {
          File out = new File(outputDir);
-    	 ModuleInfo moduleInfo = ClassParser.parseModule(cls).get();
+    	 ModuleInfo moduleInfo = new ClassParser(new ParserContext()).parseModule(cls).get();
     	 if(moduleInfo==null) {
     		 return;
     	 }

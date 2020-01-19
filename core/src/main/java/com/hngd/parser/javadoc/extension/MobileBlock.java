@@ -8,22 +8,22 @@
  * @备注：
  * @版本:
  */
-package com.hngd.parser.source.extension;
+package com.hngd.parser.javadoc.extension;
 
-import com.hngd.parser.source.CommentElement;
+import com.hngd.parser.javadoc.BlockTag;
 
 /**
- * @author tqd
+ * @author 
  */
-public class AuthorElement extends CommentElement
+public class MobileBlock extends BlockTag
 {
     /**
      * 
-     * @author tqd
+     * @author 
      * @since 0.0.1 
      */
-    public AuthorElement()
+    public MobileBlock()
     {
-    	super("@author");
+        super("@MobieAPI");
     }
 }

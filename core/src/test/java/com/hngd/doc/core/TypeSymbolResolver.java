@@ -24,8 +24,8 @@ public class TypeSymbolResolver {
 
 	public static void main(String[] args) throws FileNotFoundException {
 		
-		String filePath="E:\\Code\\spring-code\\hnvmns-event-processor\\src\\main\\java\\com\\hngd\\web\\controller\\LinkageController.java";
-		File srcDir=new File("E:\\Code\\spring-code\\hnvmns-event-processor\\src\\main\\java");
+		String filePath="../core-test/src/main/java/com/hngd/web/controller/RoleController.java";
+		File srcDir=new File("../core-test/src/main/java");
 		 
 		 
 		CompilationUnit	cu = ClassUtils.parseClass(new File(filePath));

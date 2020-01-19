@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken;
 import com.hngd.common.web.result.RestResponse;
 import com.hngd.openapi.OpenAPITool;
 import com.hngd.parser.entity.FieldInfo;
+import com.hngd.parser.source.ParserContext;
 
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.util.Json;
@@ -26,7 +27,8 @@ public class ModelResolverTest {
 		Type type=new TypeToken<List<Camera>>() {}.getType();
 		OpenAPI openapi = new OpenAPI();
 		Class<?> clz = Camera.class;
-		OpenAPITool.resolveType(type, openapi);
+		OpenAPITool opt=new OpenAPITool(openapi, new ParserContext());
+		opt.resolveType(type, openapi);
 		Json.prettyPrint(openapi);
 	}
 	
@@ -35,7 +37,8 @@ public class ModelResolverTest {
 		Type type=new TypeToken<RestResponse<Camera>>() {}.getType();
 		OpenAPI openapi = new OpenAPI();
 		Class<?> clz = Camera.class;
-		OpenAPITool.resolveType(type, openapi);
+		OpenAPITool opt=new OpenAPITool(openapi, new ParserContext());
+		opt.resolveType(type, openapi);
 		Json.prettyPrint(openapi);
 	}
 

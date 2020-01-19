@@ -3,6 +3,7 @@ package com.hngd.doc.core.web;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -20,6 +21,7 @@ public class TestAnnotationReflection {
 		Method m=RequestMapping.class.getDeclaredMethod("value");
 		String[] v= (String[]) m.invoke(rm);
 		System.out.println(v[0]);
+		Assert.assertTrue(v[0].equals("/haha"));
 		
 	}
 }

@@ -47,7 +47,7 @@ import com.hngd.parser.entity.FieldInfo;
 import com.hngd.parser.entity.MethodInfo;
 import com.hngd.parser.entity.ModuleInfo;
 import com.hngd.parser.entity.ParameterInfo;
-import com.hngd.parser.source.CommonClassCommentParser;
+import com.hngd.parser.source.ParserContext;
 import com.hngd.utils.ClassUtils;
 import com.hngd.utils.TypeNameUtils;
 import com.hngd.utils.TypeUtils;
@@ -81,9 +81,13 @@ import io.swagger.v3.oas.models.tags.Tag;
 public class OpenAPITool {
 	private static final Logger logger = LoggerFactory.getLogger(OpenAPITool.class);
 	public OpenAPI openAPI;
+	private ParserContext parserContext;
+	private ClassParser classParser;
 
-	public OpenAPITool(OpenAPI openAPI) {
+	public OpenAPITool(OpenAPI openAPI,ParserContext parserContext) {
 		this.openAPI = openAPI;
+		this.parserContext=parserContext;
+		this.classParser=new ClassParser(parserContext);
 	}
 
 	public void parse(String packageName) {
@@ -97,14 +101,14 @@ public class OpenAPITool {
 		openAPI.setPaths(paths);
 		openAPI.setTags(tags);
 		clses.stream()
-		    .map(clazz -> ClassParser.parseModule(clazz))
+		    .map(clazz -> classParser.parseModule(clazz))
 		    .filter(Optional::isPresent)
 		    .map(Optional::get)
 			.forEach(mi -> buildPaths(mi, paths, tags));
 	}
 
 	private void buildPaths(ModuleInfo moduleInfo, Paths paths, List<Tag> tags) {
-		String classComment = CommonClassCommentParser.classComments.get(moduleInfo.getSimpleClassName());
+		String classComment = moduleInfo.getComment();
 		if (StringUtils.isBlank(classComment)) {
 			logger.warn("the comment for class:{} is empty", moduleInfo.getCanonicalClassName());
 		}
@@ -159,14 +163,7 @@ public class OpenAPITool {
 	}
 
 	private PathItem buildPathItem(ModuleInfo moduleInfo, HttpInterface httpInterface, Tag tag) {
-
-		String methodKey = moduleInfo.getSimpleClassName() + "#" + httpInterface.getJavaMethodName();
-		MethodInfo methodComment = CommonClassCommentParser.methodComments.get(methodKey);
-		if (methodComment == null || methodComment.getParameters() == null) {
-			logger.warn("the method comment for method:{} is empty", methodKey);
-			return null;
-		}
-		httpInterface.comment=methodComment.getComment();
+ 
 		PathItem path = new PathItem();
 		Operation op = new Operation();
 		List<String> operationTags = new ArrayList<>();
@@ -183,14 +180,6 @@ public class OpenAPITool {
 		if (!hasRequestBody(httpInterface.httpMethod)) {
 			for (int i = 0; i < httpInterface.httpParameters.size(); i++) {
 				HttpParameter pc = httpInterface.httpParameters.get(i);
-				String parameterComment = null;
-				if (pc.indexInJavaMethod < methodComment.getParameters().size()) {
-					ParameterInfo pi = methodComment.getParameters().get(pc.indexInJavaMethod);
-					parameterComment = pi.getComment();
-				}
-				if(StringUtils.isNotEmpty(parameterComment) && StringUtils.isEmpty(pc.comment)) {
-				    pc.comment =parameterComment;
-				}
 				Type parameterType = pc.getJavaType();
 				resolveParameterInfo(pc, parameterType);
 				if (!pc.isPrimitive) {
@@ -238,13 +227,6 @@ public class OpenAPITool {
 				mediaTypeContent.setEncoding(contentEncodings);
 				for (int i = 0; i < httpInterface.httpParameters.size(); i++) {
 					HttpParameter pc = httpInterface.httpParameters.get(i);
-					if (pc.indexInJavaMethod < methodComment.getParameters().size()) {
-						ParameterInfo pi = methodComment.getParameters().get(pc.indexInJavaMethod);
-						if(StringUtils.isNotEmpty(pi.getComment()) && StringUtils.isEmpty( pc.comment)) {
-						    pc.comment = pi.getComment();
-						}
-						
-					}
 					Type parameterType = pc.getJavaType();
 					resolveParameterInfo(pc, parameterType);
 					if (!pc.isPrimitive) {
@@ -346,7 +328,7 @@ public class OpenAPITool {
 			op.setRequestBody(requestBody);
 		}
 		op.setParameters(parameters);
-		resolveResponse(op, httpInterface, methodComment != null ? methodComment.getRetComment() : null);
+		resolveResponse(op, httpInterface);
 		String httpMethod=httpInterface.httpMethod;
 		addOpToPath(op,path,httpMethod);
 		return path;
@@ -380,7 +362,7 @@ public class OpenAPITool {
 
 	}
 
-	private void resolveResponse(Operation op, HttpInterface interfaceInfo, String respComment) {
+	private void resolveResponse(Operation op, HttpInterface interfaceInfo) {
 		ApiResponses responses = new ApiResponses();
 		ApiResponse resp = new ApiResponse();
 		MediaType mt = new MediaType();
@@ -404,7 +386,7 @@ public class OpenAPITool {
 		}
  
 		resp.setContent(respContent);
-		
+		String respComment=interfaceInfo.respComment;
 		if(StringUtils.isEmpty(respComment)) {
 			respComment=Comments.DEFAULT_RESPONSE_DESCRIPTION;
 		}
@@ -505,7 +487,7 @@ public class OpenAPITool {
 
 	static Set<Class<?>> resolvedClass = new HashSet<>();
 
-	public static void resolveClassFields(Class<?> clazz, OpenAPI swagger) {
+	public void resolveClassFields(Class<?> clazz, OpenAPI swagger) {
 		if (resolvedClass.contains(clazz)) {
 			return;
 		}
@@ -525,7 +507,7 @@ public class OpenAPITool {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static String resolveType(Type type, OpenAPI swagger) {
+	public String resolveType(Type type, OpenAPI swagger) {
 		Map<String, Schema> schemas = ModelConverters.getInstance().read(type);
 		if (type instanceof ParameterizedType) {
 			ParameterizedType pt = (ParameterizedType) type;
@@ -583,7 +565,7 @@ public class OpenAPITool {
 		return firstKey;
 	}
 
-	private static String getPropertyComment(Type type, String propertyName) {
+	private String getPropertyComment(Type type, String propertyName) {
 
 		Field field = null;
 		Class<?> targetClass=null;
@@ -602,7 +584,7 @@ public class OpenAPITool {
 				return null;
 			}
 		}
-		String comment = CommonClassCommentParser.getFieldComment(field);
+		String comment = parserContext.getFieldComment(field);
 		if (comment != null) {
 			return comment;
 		} else {

@@ -35,17 +35,26 @@ import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.parser.clazz.spring.MethodArgUtils;
 import com.hngd.parser.clazz.spring.SpringAnnotationUtils;
+import com.hngd.parser.entity.MethodInfo;
 import com.hngd.parser.entity.ModuleInfo;
-import com.hngd.parser.source.CommonClassCommentParser;
+import com.hngd.parser.entity.ParameterInfo;
+import com.hngd.parser.source.ParserContext;
 import com.hngd.utils.ClassUtils;
 import com.hngd.utils.RestClassUtils;
 import com.hngd.utils.TypeUtils;
 
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ClassParser {
 
-	private static final Logger logger=LoggerFactory.getLogger(ClassParser.class);
-	public static Optional<ModuleInfo> parseModule(Class<?> cls) {
+	ParserContext parserContext;
+	
+	public ClassParser(ParserContext parserContext) {
+		this.parserContext = parserContext;
+	}
+ 
+	public Optional<ModuleInfo> parseModule(Class<?> cls) {
 		ModuleInfo mi=null;
 		try {
 		    mi=doConvertClassToModule(cls);
@@ -58,10 +67,10 @@ public class ClassParser {
 		}
 		return Optional.ofNullable(mi);
 	}
-	private static ModuleInfo doConvertClassToModule(Class<?> cls) {
-		logger.info("start to process class:{}",cls.getName());
+	private ModuleInfo doConvertClassToModule(Class<?> cls) {
+		log.info("start to process class:{}",cls.getName());
 		if (!SpringAnnotationUtils.isControllerClass(cls)) {
-			logger.info("There is no annotation Controller or RestController for class:{}",cls.getName());
+			log.info("There is no annotation Controller or RestController for class:{}",cls.getName());
 			return null;
 		}
 		ModuleInfo mi = new ModuleInfo();
@@ -73,13 +82,14 @@ public class ClassParser {
 		mi.setSimpleClassName(cls.getSimpleName());
 		mi.setCanonicalClassName(cls.getName());
 		mi.setDeprecated(ClassUtils.isClassDeprecated(cls));
-		
+		String comment=parserContext.getClassComment(cls);
+		mi.setComment(comment);
 		//parse module interfaces
 		Method[] methods = cls.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
 			if(!RestClassUtils.isHttpInterface(method)) {
-				logger.debug("method:{}.{} has no http request annotation",
+				log.debug("method:{}.{} has no http request annotation",
 						cls.getName(),method.getName());
 				continue;
 			}
@@ -91,7 +101,7 @@ public class ClassParser {
 		return mi;
 	}
 	 
-	private static Optional<HttpInterface> parseMethod(Method method) {
+	private Optional<HttpInterface> parseMethod(Method method) {
 		HttpInterface hi=null;
 		try {
 		    hi=doParseMethod(method);
@@ -104,7 +114,7 @@ public class ClassParser {
 		}
 		return Optional.ofNullable(hi);
 	}
-	private static HttpInterface doParseMethod(Method method) {
+	private HttpInterface doParseMethod(Method method) {
 		HttpInterface httpInterface = new HttpInterface();
 		Optional<? extends Annotation> optionalAnnotation = RestClassUtils.getHttpRequestInfo(method);
 		Annotation mappingAnnotation=optionalAnnotation.get();
@@ -126,7 +136,7 @@ public class ClassParser {
 			RequestMethod[] methods=((RequestMapping)mappingAnnotation).method();
 			if(methods==null || methods.length==0) {
 				String methodKey=ClassUtils.getMethodIdentifier(method);
-				logger.error("The RequestMapping annotation for method:{} has a empty method value",methodKey);
+				log.error("The RequestMapping annotation for method:{} has a empty method value",methodKey);
 			    throw new RuntimeException("方法"+methodKey+"的RequestMapping注解缺少method值");
 			}else {
 				httpInterface.httpMethod = methods[0].name();
@@ -138,12 +148,17 @@ public class ClassParser {
 		//httpInterface.javaRetureType = method.getReturnType();
 		httpInterface.javaMethodName = method.getName();
 		httpInterface.javaReturnType = method.getGenericReturnType();
+		Optional<MethodInfo> optionalMethodInfo=parserContext.getMethodInfo(method);
+		if(optionalMethodInfo.isPresent()) {
+			httpInterface.comment=optionalMethodInfo.get().getComment();
+			httpInterface.respComment=optionalMethodInfo.get().getRetComment();
+		}
 		//extract http parameters
 		doProcessParamaters(method,httpInterface);
 		
 		return httpInterface;
 	}
-	private static void doProcessParamaters(Method method, HttpInterface httpInterface) {
+	private void doProcessParamaters(Method method, HttpInterface httpInterface) {
 		Parameter[] parameters = method.getParameters();
 		for (int i = 0; i < parameters.length; i++) {
 			Parameter parameter = parameters[i];
@@ -152,6 +167,17 @@ public class ClassParser {
 				final int indexInJavaMethod=i;
 				httpParams.stream()
 				    .forEach(httpParam->httpParam.indexInJavaMethod=indexInJavaMethod);
+				Optional<MethodInfo>  optionalMethodInfo=parserContext.getMethodInfo(method);
+				if(optionalMethodInfo.isPresent()) {
+					List<ParameterInfo> javaParameterInfos=optionalMethodInfo.get().getParameters();
+					httpParams.stream()
+					  .filter(hp->hp.getComment()==null)
+					  .forEach(hp->{
+						  String comment=javaParameterInfos.get(indexInJavaMethod).getComment();
+						  hp.setComment(comment);
+					  });
+				}
+
 				httpInterface.httpParameters.addAll(httpParams);
 				//根据第一个参数判定的原因是,一个MultipartFile类型的java参数只能解析出一个http请求参数
 				HttpParameter firstHttpParameter=httpParams.get(0);
@@ -161,7 +187,7 @@ public class ClassParser {
 				httpInterface.hasRequestBody=!firstHttpParameter.getHttpParamIn().isParameter();
 			}else {
 				String parameterKey=ClassUtils.getParameterIdentifier(parameter);
-				logger.warn("the http parameters extracted from {} is empty",parameterKey);
+				log.warn("the http parameters extracted from {} is empty",parameterKey);
 			}
 			
 		}
@@ -177,7 +203,7 @@ public class ClassParser {
 	 * @param indexInJavaMethod 
 	 * @return
 	 */
-	private static List<HttpParameter> processParameter(Parameter parameter) {
+	private List<HttpParameter> processParameter(Parameter parameter) {
 		Annotation[] annotations = parameter.getAnnotations();
 		HttpParameter httpParam=new HttpParameter();
 		Optional<RequestParam> optionalRequestParam=MethodArgUtils.isRequestParam(annotations);
@@ -303,11 +329,11 @@ public class ClassParser {
 		 
 		 
 	}
-	private static Optional<String> extractPropertyDateFormat(Class<?> clazz,PropertyDescriptor pd) {
+	private Optional<String> extractPropertyDateFormat(Class<?> clazz,PropertyDescriptor pd) {
 		String propertyName=pd.getName();
 		Field field=ReflectionUtils.findField(clazz, propertyName);
 		if(field==null) {
-			logger.error("field for property:{} is not found",propertyName);
+			log.error("field for property:{} is not found",propertyName);
 			return Optional.empty();
 		}
 		DateTimeFormat a=field.getAnnotation(DateTimeFormat.class);
@@ -316,7 +342,7 @@ public class ClassParser {
 		}
 		return Optional.empty();
 	}
-	private static boolean isPropertyRequired(Class<?> clazz,PropertyDescriptor pd) {
+	private boolean isPropertyRequired(Class<?> clazz,PropertyDescriptor pd) {
 		Method readMethod=pd.getReadMethod();
 		if(readMethod!=null) {
 			NotNull notNullConstraint=readMethod.getAnnotation(NotNull.class);
@@ -334,7 +360,7 @@ public class ClassParser {
 		}
 		return false;
 	}
-	public static List<HttpParameter> extractParametersFromModel(Parameter parameter){
+	public List<HttpParameter> extractParametersFromModel(Parameter parameter){
 		Class<?> clazz=parameter.getType();
 		PropertyDescriptor[] propertyDescriptors=BeanUtils.getPropertyDescriptors(clazz);
 		List<HttpParameter> httpParams=new LinkedList<>();
@@ -343,14 +369,14 @@ public class ClassParser {
 			httpParam.name = property.getName();
 			Field field=ReflectionUtils.findField(clazz,httpParam.name);
 			if(field==null) {
-				logger.warn("the property {} is read only",httpParam.name);
+				log.warn("the property {} is read only",httpParam.name);
 				continue;
 			}
 			//TODO need to analysis method mapping url
 			httpParam.httpParamIn = HttpParameterIn.query;
 			httpParam.required = isPropertyRequired(clazz,property);
 			httpParam.javaType=property.getPropertyType();
-			httpParam.comment=CommonClassCommentParser.getFieldComment(field);
+			httpParam.comment=parserContext.getFieldComment(field);
 			Optional<String> dateFormat=extractPropertyDateFormat(clazz,property);
 			if(dateFormat.isPresent()) {
 				httpParam.openapiFormat=dateFormat.get();

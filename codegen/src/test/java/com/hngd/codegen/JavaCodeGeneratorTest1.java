@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.hngd.parser.clazz.ClassParser;
 import com.hngd.parser.entity.ModuleInfo;
-import com.hngd.parser.source.CommonClassCommentParser;
+import com.hngd.parser.source.ParserContext;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 
@@ -38,8 +38,9 @@ public class JavaCodeGeneratorTest1 {
 				//new File(projectBaseDir,"target\\classes")
 				new File(jarFilePath)
 				);
+		ParserContext pc=new ParserContext();
 		for(File sourceRoot:sourceRoots) {
-        	CommonClassCommentParser.initRecursively(sourceRoot);
+        	pc.initRecursively(sourceRoot);
         }		
 		NestedJarClassLoader loader=new NestedJarClassLoader(JavaCodeGeneratorTest1.class.getClassLoader(),logger);
 		for(File classFilePath:classPaths) {
@@ -61,7 +62,7 @@ public class JavaCodeGeneratorTest1 {
 		.filter(clazz -> clazz != null)
 		.filter(clazz ->isModuleClass(clazz) )
 		.forEach(cls -> {
-			ModuleInfo moduleInfo = ClassParser.parseModule(cls).get();
+			ModuleInfo moduleInfo = new ClassParser(pc).parseModule(cls).get();
 			TypeSpec typeSpec = JavaAPICodeGenerator.toJavaFile("async",moduleInfo);
 			String s=typeSpec.toString();
 			System.out.println(s);

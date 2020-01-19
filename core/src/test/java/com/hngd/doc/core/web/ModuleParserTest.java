@@ -25,8 +25,7 @@ public class ModuleParserTest {
 	
 	@Test
 	public void testParse(){
-		File f=new File("E:\\Code\\STSCode\\hnvmns-auth\\src\\main\\java\\com\\hngd\\web\\controller\\UserController.java");
-		f=new File("D:\\company\\projects\\inspection-system\\education-training-system\\src\\main\\java\\com\\hngd\\web\\controller\\TrainingRecordController.java");
+		File f=new File("../core-test/src/main/java/com/hngd/web/controller/RoleController.java");
 		List<ModuleInfo> list= SourceParser.parse(f);
 		System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(list));
 	}

@@ -8,23 +8,23 @@
  * @备注：
  * @版本:
  */
-package com.hngd.parser.source.extension;
+package com.hngd.parser.javadoc.extension;
 
-import com.hngd.parser.source.CommentElement;
+import com.hngd.parser.javadoc.BlockTag;
 
 /**
- * https://swagger.io/specification/#pathItemObject summary
+ * https://swagger.io/specification/#pathItemObject description
  * @author tqd
  */
-public class SummaryElement extends CommentElement
+public class DescriptionBlock extends BlockTag
 {
     /**
      * 
      * @author tqd
      * @since 0.0.1 
      */
-    public SummaryElement()
+    public DescriptionBlock()
     {
-    	super("@summary");
+    	super("@description");
     }
 }

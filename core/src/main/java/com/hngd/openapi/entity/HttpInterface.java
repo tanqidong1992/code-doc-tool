@@ -64,6 +64,10 @@ public class HttpInterface {
 	 * 接口是否已弃用，true表示是，false表示
 	 */
 	public Boolean deprecated;
+	/**
+	 * Java方法返回注释
+	 */
+	public String respComment;
 
 	public HttpInterface() {
 		httpParameters = new ArrayList<>();

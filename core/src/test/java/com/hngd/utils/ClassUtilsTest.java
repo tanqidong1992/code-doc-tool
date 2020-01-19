@@ -28,7 +28,7 @@ public class ClassUtilsTest {
 		Parameter p1=m.getParameters()[0];
 		String parameterIdentifier=ClassUtils.getParameterIdentifier(p1);
 		System.out.println(parameterIdentifier);
-		Assert.assertTrue(methodIdentifier.endsWith("A.sayA.c") || methodIdentifier.endsWith("A.sayA.arg0"));
+		Assert.assertTrue(parameterIdentifier.endsWith("A.sayA.c") || parameterIdentifier.endsWith("A.sayA.arg0"));
 	    A.class.getConstructor(int.class,int.class);
 	
 	}

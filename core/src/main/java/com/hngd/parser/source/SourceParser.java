@@ -33,6 +33,7 @@ import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.type.Type;
 
+@Deprecated
 public class SourceParser {
 
 	private static final Logger logger=LoggerFactory.getLogger(SourceParser.class);

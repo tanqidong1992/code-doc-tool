@@ -5,5 +5,8 @@ import java.io.File;
 public class JavaFileUtils {
 	 public static boolean isJavaFile(File file) {
 	    	return file.getName().endsWith(".java");
-	    }
+	 }
+	 public static boolean isJavaSourceFile(File file){
+	     return file.getName().endsWith(".java");
+	 }
 }

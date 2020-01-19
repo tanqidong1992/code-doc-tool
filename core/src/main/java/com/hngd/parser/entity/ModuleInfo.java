@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * 类信息
+ * 模块信息
  * @author hnoe-dev-tqd
  *
  */

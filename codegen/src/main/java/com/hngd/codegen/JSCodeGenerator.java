@@ -25,7 +25,7 @@ import org.beetl.core.resource.ClasspathResourceLoader;
 import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.parser.entity.MethodInfo;
 import com.hngd.parser.entity.ModuleInfo;
-import com.hngd.parser.source.CommonClassCommentParser;
+import com.hngd.parser.source.ParserContext;
 import com.hngd.parser.source.SourceParser;
 
  
@@ -62,8 +62,7 @@ public class JSCodeGenerator
     	if(modules==null){
     		return null;
     	}
-    	CommonClassCommentParser.parse(f);
-    	attachCommentInfo(modules);
+    	new ParserContext().parse(f);
     	map.put("serviceUrl", serviceUrl);
     	map.put("modules", modules);
     	ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader("/beetl", "utf-8");
@@ -76,27 +75,7 @@ public class JSCodeGenerator
     	
     }
     
-	private static void attachCommentInfo(List<ModuleInfo> modules) {
-		for(ModuleInfo module:modules){
-			module.getInterfaceInfos().forEach(interfaceInfo->{
-				String key=module.getSimpleClassName()+"#"+interfaceInfo.getJavaMethodName();
-				MethodInfo mm=CommonClassCommentParser.methodComments.get(key);
-				if(mm!=null){
-					interfaceInfo.comment=mm.getComment();
-					for(int i=0;i<interfaceInfo.getHttpParameters().size();i++){
-						HttpParameter pi=interfaceInfo.getHttpParameters().get(i);
-						if(i<mm.getParameters().size()){
-							pi.comment=mm.getParameters().get(i).getComment();
-						}
-					}
-				}
-				
-			});
-			
-			
-		}
-		
-	}
+	 
 
 	private static void useBeetl() throws IOException {
 		File f=new File("E:\\Code\\STSCode\\hnvmns-auth\\src\\main\\java\\com\\hngd\\web\\controller\\MenuController.java");

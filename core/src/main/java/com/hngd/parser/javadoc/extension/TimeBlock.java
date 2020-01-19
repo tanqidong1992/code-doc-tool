@@ -9,7 +9,7 @@
  * @版本:
  */
 
-package com.hngd.parser.source.extension;
+package com.hngd.parser.javadoc.extension;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,13 +18,13 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hngd.parser.source.CommentElement;
+import com.hngd.parser.javadoc.BlockTag;
 
 /**
- * @author
+ * @author tqd
  */
-public class TimeElement extends CommentElement {
-	private static final Logger logger = LoggerFactory.getLogger(TimeElement.class);
+public class TimeBlock extends BlockTag {
+	private static final Logger logger = LoggerFactory.getLogger(TimeBlock.class);
 	public Date createTime;
 	public String createTimeStr;
 
@@ -32,7 +32,7 @@ public class TimeElement extends CommentElement {
 	 * @author
 	 * @since 0.0.1
 	 */
-	public TimeElement() {
+	public TimeBlock() {
 		super("@time");
 	}
 
