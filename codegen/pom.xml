@@ -86,6 +86,31 @@
 			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.hngd.tool</groupId>
+			<artifactId>core-test</artifactId>
+			<version>${code.tool.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.10</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.openapitools/openapi-generator -->
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>openapi-generator</artifactId>
+			<version>4.2.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.openapitools/openapi-generator-core -->
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>openapi-generator-core</artifactId>
+			<version>4.2.2</version>
+		</dependency>
 
 	</dependencies>
 	<build>
@@ -93,7 +118,7 @@
 			<resource>
 				<directory>src/main/java</directory>
 				<includes>
-					<include>**/*.txt</include>
+					<include>**/*.btl</include>
 				</includes>
 			</resource>
 		</resources>

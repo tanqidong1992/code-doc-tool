@@ -27,7 +27,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
 
 /**
- * swagger配置
+ * openapi配置
  * @author
  */
 public class ServerConfig {

@@ -13,11 +13,10 @@ import com.hngd.parser.entity.ModuleInfo;
 import com.hngd.parser.source.ParserContext;
 import com.hngd.web.controller.RoleController;
 
-public class AxiosCodeGeneratorTest {
+public class JSAxiosCodeGeneratorTest {
 
 	public static void main(String[] args) throws IOException {
-
-		AxiosCodeGenerator acg = new AxiosCodeGenerator();
+		AjaxCodeGenerator acg = new AjaxCodeGenerator();
 		ParserContext parserContext = new ParserContext();
 		parserContext.initRecursively(new File(TestConstants.JAVA_SRC_ROOT));
 		parserContext.printResult();
@@ -30,6 +29,6 @@ public class AxiosCodeGeneratorTest {
 		String serviceUrl = "/";
 		String s = acg.generate(modules, serviceUrl);
 		System.out.println(s);
-
 	}
+	 
 }

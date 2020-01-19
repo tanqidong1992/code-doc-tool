@@ -178,6 +178,9 @@ public class ParserContext {
 		methodComments.entrySet()
 		.forEach(e->{
 			System.out.println(e.getKey()+"-->"+e.getValue().getComment());
+			e.getValue().getParameters().forEach(p->{
+				System.out.println(p.getName()+"-->"+p.getComment());
+			});
 		});
 		
 	}

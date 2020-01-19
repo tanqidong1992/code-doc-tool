@@ -1,0 +1,12 @@
+	/**
+	 * 授予角色权限
+	 * 
+	 * @param roleId
+	 *            待授予角色的Id
+	 * @param permissionIds
+	 *            待授予权限的Id集合
+	 * @return
+	 * @author
+	 * @since 1.0.0
+	 * @time 2018年8月10日 下午1:49:06
+	 */

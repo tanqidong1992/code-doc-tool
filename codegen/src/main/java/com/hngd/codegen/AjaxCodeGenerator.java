@@ -37,9 +37,9 @@ import lombok.extern.slf4j.Slf4j;
  * @author tqd
  */
 @Slf4j
-public class AxiosCodeGenerator extends CodeTemplate{
-    public AxiosCodeGenerator() {
-		super("axios", "js-api-axios.btl", TemplateEngines.BEETL);
+public class AjaxCodeGenerator extends CodeTemplate{
+    public AjaxCodeGenerator() {
+		super("axios", "js-api-ajax.btl", TemplateEngines.BEETL);
 		
 	}
     @Override
