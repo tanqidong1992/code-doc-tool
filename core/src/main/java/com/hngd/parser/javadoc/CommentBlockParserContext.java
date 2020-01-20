@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CommentBlockParserContext {
 
-	private static Map<String, Class<? extends JavaDocCommentBlockTagParser>> commentElementParsers = new HashMap<>();
+	private static Map<String, Class<? extends JavaDocCommentBlockTagParseListener>> commentElementParsers = new HashMap<>();
 	static {
 		// register internal parse type
 		new ParamBlock();
@@ -35,7 +35,7 @@ public class CommentBlockParserContext {
 		new TagsBlock();
 	}
 	
-	public static synchronized void register(String parserName,Class<? extends JavaDocCommentBlockTagParser> parserType) {
+	public static synchronized void register(String parserName,Class<? extends JavaDocCommentBlockTagParseListener> parserType) {
 		
 		if (!commentElementParsers.containsKey(parserName)) {
 			commentElementParsers.put(parserName, parserType);
@@ -43,9 +43,9 @@ public class CommentBlockParserContext {
 	}
 	
 	
-	public static Optional<JavaDocCommentBlockTagParser> findElementParser(String line) {
+	public static Optional<JavaDocCommentBlockTagParseListener> findElementParser(String line) {
 		Set<String> parserNames = commentElementParsers.keySet();
-		Optional<JavaDocCommentBlockTagParser> optionalElementParser=parserNames.stream()
+		Optional<JavaDocCommentBlockTagParseListener> optionalElementParser=parserNames.stream()
 		  .filter(parserName->line.startsWith(parserName))
 		  .map(CommentBlockParserContext::newParser)
 		  .filter(parser->parser!=null)
@@ -54,12 +54,12 @@ public class CommentBlockParserContext {
 	}
 	
 	@SuppressWarnings("deprecation")
-	private static JavaDocCommentBlockTagParser newParser(String parserName) {
+	private static JavaDocCommentBlockTagParseListener newParser(String parserName) {
 		if(StringUtils.isEmpty(parserName)) {
 			return null;
 		}
-		Class<? extends JavaDocCommentBlockTagParser> parserType = commentElementParsers.get(parserName);
-		JavaDocCommentBlockTagParser parser=null;
+		Class<? extends JavaDocCommentBlockTagParseListener> parserType = commentElementParsers.get(parserName);
+		JavaDocCommentBlockTagParseListener parser=null;
 		try {
 			parser = parserType.newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {

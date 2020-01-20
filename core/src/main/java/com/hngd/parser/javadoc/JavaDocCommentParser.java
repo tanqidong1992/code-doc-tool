@@ -108,7 +108,7 @@ public class JavaDocCommentParser {
 				parseResult.endIndex = i;
 				break;
 			} else {
-				Optional<JavaDocCommentBlockTagParser> optionalElementParser = CommentBlockParserContext.findElementParser(line);
+				Optional<JavaDocCommentBlockTagParseListener> optionalElementParser = CommentBlockParserContext.findElementParser(line);
 				if (optionalElementParser.isPresent()) {
 					line = optionalElementParser.get().onParseStart(line);
 					content.append(line);

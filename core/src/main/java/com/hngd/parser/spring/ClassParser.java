@@ -1,4 +1,4 @@
-package com.hngd.parser.clazz;
+package com.hngd.parser.spring;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -6,16 +6,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.CollectionUtils;
@@ -35,8 +34,6 @@ import com.hngd.exception.ClassParseException;
 import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.openapi.entity.ModuleInfo;
-import com.hngd.parser.clazz.spring.MethodArgUtils;
-import com.hngd.parser.clazz.spring.SpringAnnotationUtils;
 import com.hngd.parser.entity.ClassInfo;
 import com.hngd.parser.entity.MethodInfo;
 import com.hngd.parser.entity.ParameterInfo;
@@ -44,6 +41,14 @@ import com.hngd.parser.javadoc.extension.DescriptionBlock;
 import com.hngd.parser.javadoc.extension.SummaryBlock;
 import com.hngd.parser.javadoc.extension.TagsBlock;
 import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.spring.parameter.CookieValueProcessor;
+import com.hngd.parser.spring.parameter.HttpParameterProcessor;
+import com.hngd.parser.spring.parameter.MatrixVariableProcessor;
+import com.hngd.parser.spring.parameter.PathVariableProcessor;
+import com.hngd.parser.spring.parameter.RequestBodyProcessor;
+import com.hngd.parser.spring.parameter.RequestHeaderProcessor;
+import com.hngd.parser.spring.parameter.RequestParamProcessor;
+import com.hngd.parser.spring.parameter.RequestPartProcessor;
 import com.hngd.utils.ClassUtils;
 import com.hngd.utils.RestClassUtils;
 import com.hngd.utils.TypeUtils;
@@ -54,9 +59,18 @@ import lombok.extern.slf4j.Slf4j;
 public class ClassParser {
 
 	ParserContext parserContext;
-	
+	List<HttpParameterProcessor> httpParameterProcessors=new ArrayList<>();
 	public ClassParser(ParserContext parserContext) {
 		this.parserContext = parserContext;
+		httpParameterProcessors.add(new RequestParamProcessor());
+		httpParameterProcessors.add(new PathVariableProcessor());
+		httpParameterProcessors.add(new RequestBodyProcessor());
+		httpParameterProcessors.add(new RequestHeaderProcessor());
+		httpParameterProcessors.add(new RequestPartProcessor());
+		httpParameterProcessors.add(new CookieValueProcessor());
+		httpParameterProcessors.add(new MatrixVariableProcessor());
+		
+
 	}
  
 	public Optional<ModuleInfo> parseModule(Class<?> cls) {
@@ -153,6 +167,7 @@ public class ClassParser {
 				log.error("The RequestMapping annotation for method:{} has a empty method value",methodKey);
 			    throw new RuntimeException("方法"+methodKey+"的RequestMapping注解缺少method值");
 			}else {
+				//TODO one java method only has one http method?
 				httpInterface.httpMethod = methods[0].name();
 			}
 		}else{
@@ -187,7 +202,6 @@ public class ClassParser {
 				List<String> tags=optionalTags.get().getPathItemTags();
 				tags.forEach(httpInterface.getTags()::add);
 			}
-			
 		}
 		//extract http parameters
 		doProcessParamaters(method,httpInterface);
@@ -213,9 +227,9 @@ public class ClassParser {
 						  hp.setComment(comment);
 					  });
 				}
-
 				httpInterface.httpParameters.addAll(httpParams);
-				//根据第一个参数判定的原因是,一个MultipartFile类型的java参数只能解析出一个http请求参数
+				//根据第一个参数判定的原因是,一个MultipartFile类型的java参数只能解析出一个http请求参数,
+				//所以只要判定第一个参数就好了
 				HttpParameter firstHttpParameter=httpParams.get(0);
 				if (!httpInterface.isMultipart) {
 					httpInterface.isMultipart = TypeUtils.isMultipartType(firstHttpParameter.getJavaType());
@@ -240,104 +254,16 @@ public class ClassParser {
 	 * @return
 	 */
 	private List<HttpParameter> processParameter(Parameter parameter) {
-		Annotation[] annotations = parameter.getAnnotations();
-		HttpParameter httpParam=new HttpParameter();
-		Optional<RequestParam> optionalRequestParam=MethodArgUtils.isRequestParam(annotations);
-		if (optionalRequestParam.isPresent()) {
-			RequestParam requestParam =optionalRequestParam.get();
-			httpParam.name = RestClassUtils.extractParameterName(requestParam);
-			httpParam.httpParamIn = HttpParameterIn.query;
-			httpParam.required = requestParam.required();
-			httpParam.javaType=parameter.getParameterizedType();
-			Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
-			if(dateFormat.isPresent()) {
-				httpParam.openapiFormat=dateFormat.get();
-			}
-			httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
-			return Arrays.asList(httpParam);
-		}
-		
-		Optional<PathVariable> optionalPathVariable=MethodArgUtils.isPathVariable(annotations);
-		if(optionalPathVariable.isPresent()) {
-			PathVariable pa =optionalPathVariable.get();
-			httpParam.name =RestClassUtils.extractParameterName(pa);
-			httpParam.httpParamIn = HttpParameterIn.path;
-			httpParam.required = pa.required();
-			httpParam.javaType=parameter.getParameterizedType();
-			Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
-			if(dateFormat.isPresent()) {
-				httpParam.openapiFormat=dateFormat.get();
-			}
-			httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
-			return Arrays.asList(httpParam);
-		}
-		
-		Optional<RequestBody> optionalRequestBody=MethodArgUtils.isRequestBody(annotations);
-		if(optionalRequestBody.isPresent()) {
-			RequestBody rb= optionalRequestBody.get();
-		    httpParam.name = parameter.getName();
-		    httpParam.httpParamIn = HttpParameterIn.body;
-		    httpParam.required = rb.required();
-		    httpParam.javaType=parameter.getParameterizedType();
-		    Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
-		    if(dateFormat.isPresent()) {
-			    httpParam.openapiFormat=dateFormat.get();
-		    }
-		    httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
-		    return Arrays.asList(httpParam);
-		}
-		
-		Optional<RequestPart> optionalRequestPart=MethodArgUtils.isRequestPart(annotations);
-		if(optionalRequestPart.isPresent()) {
-			 RequestPart requestPart =optionalRequestPart.get();
-			 httpParam.name = RestClassUtils.extractParameterName(requestPart);
-			 httpParam.httpParamIn = HttpParameterIn.body;
-			 httpParam.required = requestPart.required();
-			 httpParam.javaType=parameter.getParameterizedType();
-			 Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
-			 if(dateFormat.isPresent()) {
-			     httpParam.openapiFormat=dateFormat.get();
-			 }
-			 httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
-			 return Arrays.asList(httpParam);
-		}
-		//TODO MatrixVariable is not supported
-		Optional<MatrixVariable> optionalMatrixVariable=MethodArgUtils.extractAnnotaion(annotations, MatrixVariable.class);
-		if(optionalMatrixVariable.isPresent()) {
-			ClassParseException.throwParameterParseException(parameter, "Unspported Matrix Variable", null);
-		}
-		Optional<RequestHeader> optionalRequestHeader=MethodArgUtils.extractAnnotaion(annotations, RequestHeader.class);
-		if(optionalRequestHeader.isPresent()) {
-			RequestHeader requestHeader =optionalRequestHeader.get();
-			httpParam.name = RestClassUtils.extractParameterName(requestHeader);
-			httpParam.httpParamIn = HttpParameterIn.header;
-			httpParam.required = requestHeader.required();
-			httpParam.javaType=parameter.getParameterizedType();
-			Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
-			if(dateFormat.isPresent()) {
-				httpParam.openapiFormat=dateFormat.get();
-			}
-			httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
-			return Arrays.asList(httpParam);
-		}
-		Optional<CookieValue> optionalCookieValue=MethodArgUtils.extractAnnotaion(annotations, CookieValue.class);
-		if(optionalCookieValue.isPresent()) {
-			CookieValue cv=optionalCookieValue.get();
-			httpParam.name = RestClassUtils.extractParameterName(cv);
-			httpParam.httpParamIn = HttpParameterIn.cookie;
-			httpParam.required = cv.required();
-			httpParam.javaType=parameter.getParameterizedType();
-			Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
-			if(dateFormat.isPresent()) {
-				httpParam.openapiFormat=dateFormat.get();
-			}
-			httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
-			return Arrays.asList(httpParam);
+        
+		Optional<HttpParameterProcessor> optionalProcessor= httpParameterProcessors.stream()
+            .filter(p->p.accept(parameter))
+            .findFirst();
+		if(optionalProcessor.isPresent()) {
+			return optionalProcessor.get().process(parameter);
 		}
         //如果是Spring自动注入的参数类型就直接返回
 		Type paramType= parameter.getParameterizedType();
 		if (MethodArgUtils.isSpringAutoInjectParameterType(paramType)) {
-			
 		    return null;
 		}
 		//For access to the model that is used in HTML controllers and exposed to templates as part of view rendering.
@@ -346,11 +272,12 @@ public class ClassParser {
 		}
 		if (parameter.getType() instanceof Class && BeanUtils.isSimpleProperty((Class<?>) parameter.getType())) {
 			// requestparam
-			httpParam = new HttpParameter();
+			HttpParameter httpParam = new HttpParameter();
 			httpParam.name = parameter.getName();
 			httpParam.httpParamIn = HttpParameterIn.query;
 			httpParam.required = false;
 			httpParam.javaType = parameter.getType();
+			Annotation[] annotations=parameter.getAnnotations();
 			Optional<String> dateFormat = MethodArgUtils.extractDateFormat(annotations);
 			if (dateFormat.isPresent()) {
 				httpParam.openapiFormat = dateFormat.get();

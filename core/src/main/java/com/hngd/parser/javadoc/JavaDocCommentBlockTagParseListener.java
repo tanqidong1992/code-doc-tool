@@ -7,7 +7,7 @@ import com.hngd.parser.entity.CommentDecoratedTarget;
  *
  * @param <T>
  */
-public interface JavaDocCommentBlockTagParser {
+public interface JavaDocCommentBlockTagParseListener {
 
 	public String onParseStart(String line);
 	public void onParseEnd(CommentDecoratedTarget baseInfo) ;

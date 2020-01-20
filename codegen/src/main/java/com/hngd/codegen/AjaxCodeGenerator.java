@@ -27,9 +27,9 @@ import com.hngd.codegen.exception.CodeGenerateException;
 import com.hngd.constant.Constants;
 import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.openapi.entity.ModuleInfo;
-import com.hngd.parser.clazz.ClassParser;
 import com.hngd.parser.entity.MethodInfo;
 import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.spring.ClassParser;
 
 import lombok.extern.slf4j.Slf4j;
 

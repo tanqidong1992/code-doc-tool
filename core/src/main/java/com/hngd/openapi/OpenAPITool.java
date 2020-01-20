@@ -15,7 +15,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,11 +42,8 @@ import com.hngd.openapi.entity.ModuleInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hngd.constant.Comments;
 import com.hngd.constant.Constants;
-import com.hngd.parser.clazz.ClassParser;
-import com.hngd.parser.entity.FieldInfo;
-import com.hngd.parser.entity.MethodInfo;
-import com.hngd.parser.entity.ParameterInfo;
 import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.spring.ClassParser;
 import com.hngd.utils.ClassUtils;
 import com.hngd.utils.TypeNameUtils;
 import com.hngd.utils.TypeUtils;
@@ -180,22 +176,14 @@ public class OpenAPITool {
 		op.setDescription(httpInterface.getDescription());
         op.setSummary(httpInterface.getSummary());
 		List<Parameter> parameters = new ArrayList<>();
-
+ 
 		if (!hasRequestBody(httpInterface.httpMethod)) {
-			for (int i = 0; i < httpInterface.httpParameters.size(); i++) {
-				HttpParameter pc = httpInterface.httpParameters.get(i);
-				Type parameterType = pc.getJavaType();
-				resolveParameterInfo(pc, parameterType);
-				if (!pc.isPrimitive) {
-					resolveType(parameterType, openAPI);
-				}
-				Parameter param = createParameter(pc);
-				parameters.add(param);
-			}
-
+			//对于不在requestbody中的参数
+			parameters=processHttpParameter(httpInterface.httpParameters);
 		} else{
 			MediaType mediaTypeContent = new MediaType();
 			Content content = new Content();
+			//requestbody只有一部分的情况
 			if (httpInterface.hasRequestBody && !httpInterface.isMultipart()) {
 				
 				List<String> consumes=httpInterface.getConsumes();
@@ -206,7 +194,7 @@ public class OpenAPITool {
 						content.addMediaType(consume, mediaTypeContent);
 					}
 				}
-				
+				//RequestBody只有一部分,所以方法的参数只有一个
 				HttpParameter pc = httpInterface.getHttpParameters().get(0);
 				Type parameterType = pc.getJavaType();
 				resolveParameterInfo(pc, parameterType);
@@ -339,6 +327,22 @@ public class OpenAPITool {
 
 	}
 
+	private List<Parameter> processHttpParameter(List<HttpParameter> httpParameters) {
+		List<Parameter> parameters=new ArrayList<>();
+		for (int i = 0; i < httpParameters.size(); i++) {
+			HttpParameter pc = httpParameters.get(i);
+			Type parameterType = pc.getJavaType();
+			resolveParameterInfo(pc, parameterType);
+			if (!pc.isPrimitive) {
+				resolveType(parameterType, openAPI);
+			}
+			Parameter param = createParameter(pc);
+			parameters.add(param);
+		}
+		return parameters;
+		
+	}
+
 	private String buildOperationId(ModuleInfo moduleInfo, HttpInterface interfaceInfo) {
 		String s=moduleInfo.getCanonicalClassName()+"#"+interfaceInfo.getJavaMethodName();
 		return s.replaceAll("\\.", "#");
@@ -399,7 +403,7 @@ public class OpenAPITool {
 		op.setResponses(responses);
 	}
 
-	private void resolveParameterInfo(HttpParameter pc, Type parameterType) {
+	private static void resolveParameterInfo(HttpParameter pc, Type parameterType) {
 		Class<?> argumentClass = null;
 		if (parameterType instanceof ParameterizedType) {
 			ParameterizedType ppt = (ParameterizedType) parameterType;

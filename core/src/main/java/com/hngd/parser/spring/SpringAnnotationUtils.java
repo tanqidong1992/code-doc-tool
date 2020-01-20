@@ -1,4 +1,4 @@
-package com.hngd.parser.clazz.spring;
+package com.hngd.parser.spring;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

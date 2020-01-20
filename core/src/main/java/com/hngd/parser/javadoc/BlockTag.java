@@ -27,7 +27,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlockTagParser{
+public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlockTagParseListener{
  
 	public static final String TAG_PREFIX="@";
 	

@@ -9,8 +9,8 @@ import java.util.Optional;
 import com.hngd.codegen.AxiosCodeGenerator;
 import com.hngd.codegen.constant.TestConstants;
 import com.hngd.openapi.entity.ModuleInfo;
-import com.hngd.parser.clazz.ClassParser;
 import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.spring.ClassParser;
 import com.hngd.web.controller.RoleController;
 
 public class AxiosCodeGeneratorTest {

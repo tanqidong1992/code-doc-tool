@@ -1,4 +1,4 @@
-package com.hngd.parser.clazz.spring;
+package com.hngd.parser.spring;
 
 import java.io.InputStream;
 import java.io.OutputStream;
