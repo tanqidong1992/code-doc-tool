@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
+import com.hngd.parser.entity.ClassInfo;
 import com.hngd.parser.entity.FieldInfo;
 import com.hngd.parser.entity.MethodInfo;
 import com.hngd.parser.entity.ParameterInfo;
@@ -45,7 +46,7 @@ public class ParserContext {
 		ExtensionManager.enableExtension(MobileBlock.class);
 		ExtensionManager.enableExtension(AuthorBlock.class);
 	}
-	private  Map<String, String> classComments = new ConcurrentHashMap<>();
+	private  Map<String, ClassInfo> classComments = new ConcurrentHashMap<>();
 	private  Map<String, MethodInfo> methodComments = new ConcurrentHashMap<>();
 	private  Map<String, FieldInfo> fieldComments = new ConcurrentHashMap<>();
 	public void parseFiles(String directoryPath) {
@@ -214,7 +215,7 @@ public class ParserContext {
 		return methodKey(method)+"."+parameter.getName();
 	}
 
-	public String getClassComment(Class<?> cls) {
+	public ClassInfo getClassComment(Class<?> cls) {
 		String classKey=classKey(cls);
 		return classComments.get(classKey);
 	}

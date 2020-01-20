@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-public class MethodInfo extends BaseInfo{
+public class MethodInfo extends CommentDecoratedTarget{
 	/**
 	 * 返回注释
 	 */

@@ -18,6 +18,7 @@ import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.hngd.exception.SourceParseException;
+import com.hngd.parser.entity.ClassInfo;
 import com.hngd.parser.entity.FieldInfo;
 import com.hngd.parser.entity.MethodInfo;
 import com.hngd.parser.javadoc.BlockTag;
@@ -54,6 +55,7 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
 			if (commentLines == null || commentLines.length < 2) {
 				log.warn("javadoc comment for classOrInterface {} is not found",classOrInterfaceName);
 			}else{
+				ClassInfo ci=new ClassInfo();
 				List<JavaDocCommentElement> commentElements = JavaDocCommentParser.parse(Arrays.asList(commentLines));
 				Optional<Description> optionalDescription=commentElements.stream()
 				    .filter(commentElement->commentElement instanceof  Description)
@@ -61,8 +63,14 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
 				    .findFirst();
 				optionalDescription.ifPresent(description->{
 					String nodeFullName=getNodeFullName(classOrInterfaceDeclaration, context);
-					context.saveClassComment(nodeFullName, description.getContent());
+					ci.setName(classOrInterfaceName);
+					ci.setComment(description.getContent());
+					context.saveClassComment(nodeFullName, ci);
 				});
+				commentElements.stream()
+				    .filter(BlockTag.class::isInstance)
+				    .map(BlockTag.class::cast)
+				    .forEach(bt->bt.onParseEnd(ci));
 			}
 		}else{
 			log.warn("javadoc comment for classOrInterface {} is not found",classOrInterfaceName);

@@ -15,6 +15,7 @@ import com.hngd.parser.javadoc.BlockTag.SinceBlock;
 import com.hngd.parser.javadoc.BlockTag.ThrowsBlock;
 import com.hngd.parser.javadoc.extension.DescriptionBlock;
 import com.hngd.parser.javadoc.extension.SummaryBlock;
+import com.hngd.parser.javadoc.extension.TagsBlock;
 
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
@@ -31,6 +32,7 @@ public class CommentBlockParserContext {
 		new ThrowsBlock();
 		new SummaryBlock();
 		new DescriptionBlock();
+		new TagsBlock();
 	}
 	
 	public static synchronized void register(String parserName,Class<? extends JavaDocCommentBlockTagParser> parserType) {

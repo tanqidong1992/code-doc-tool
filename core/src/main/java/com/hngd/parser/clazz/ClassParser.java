@@ -34,11 +34,15 @@ import com.hngd.constant.HttpParameterIn;
 import com.hngd.exception.ClassParseException;
 import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
+import com.hngd.openapi.entity.ModuleInfo;
 import com.hngd.parser.clazz.spring.MethodArgUtils;
 import com.hngd.parser.clazz.spring.SpringAnnotationUtils;
+import com.hngd.parser.entity.ClassInfo;
 import com.hngd.parser.entity.MethodInfo;
-import com.hngd.parser.entity.ModuleInfo;
 import com.hngd.parser.entity.ParameterInfo;
+import com.hngd.parser.javadoc.extension.DescriptionBlock;
+import com.hngd.parser.javadoc.extension.SummaryBlock;
+import com.hngd.parser.javadoc.extension.TagsBlock;
 import com.hngd.parser.source.ParserContext;
 import com.hngd.utils.ClassUtils;
 import com.hngd.utils.RestClassUtils;
@@ -83,8 +87,10 @@ public class ClassParser {
 		mi.setSimpleClassName(cls.getSimpleName());
 		mi.setCanonicalClassName(cls.getName());
 		mi.setDeprecated(ClassUtils.isClassDeprecated(cls));
-		String comment=parserContext.getClassComment(cls);
-		mi.setComment(comment);
+		ClassInfo classInfo=parserContext.getClassComment(cls);
+		if(classInfo!=null) {
+			mi.setComment(classInfo.getComment());
+		}
 		//parse module interfaces
 		Method[] methods = cls.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
@@ -94,10 +100,17 @@ public class ClassParser {
 						cls.getName(),method.getName());
 				continue;
 			}
-			Optional<HttpInterface> info = parseMethod(method);
-			if (info.isPresent()) {
-			    mi.getInterfaceInfos().add(info.get());
-			}
+			Optional<HttpInterface> optionalInfo = parseMethod(method);
+			optionalInfo.ifPresent(hi->{
+				mi.getInterfaceInfos().add(hi);
+				//attach class tags if exists
+				if(classInfo!=null) {
+				    Optional<TagsBlock> optionalTags=classInfo.findAnyExtension(TagsBlock.class);
+				    	optionalTags.ifPresent(tagsBlock-> {
+				    	tagsBlock.getPathItemTags().forEach(hi.getTags()::add);
+				    });
+				}
+			});
 		}
 		return mi;
 	}
@@ -155,17 +168,25 @@ public class ClassParser {
 			httpInterface.comment=mi.getComment();
 			httpInterface.respComment=mi.getRetComment();
 			//SummaryBlock 
-			String summary=mi.getExtensions().get("summary");
-			if(StringUtils.isEmpty(summary)) {
-				summary=mi.getComment();
+			Optional<SummaryBlock> optionalSummary=mi.findAnyExtension(SummaryBlock.class);
+			String summary=mi.getComment();
+			if(optionalSummary.isPresent()) {
+				summary=optionalSummary.get().getContent();
 			}
 			httpInterface.setSummary(summary);
 			//DescriptionBlock 
-			String description=mi.getExtensions().get("description");
-			if(StringUtils.isEmpty(description)) {
-				description=mi.getComment();
+			Optional<DescriptionBlock> optionalDdescription=mi.findAnyExtension(DescriptionBlock.class);
+			String description=mi.getComment();
+			if(optionalDdescription.isPresent()) {
+				description=optionalDdescription.get().getContent();
 			}
 			httpInterface.setDescription(description);
+	   
+			Optional<TagsBlock> optionalTags=mi.findAnyExtension(TagsBlock.class);
+			if(optionalTags.isPresent()) {
+				List<String> tags=optionalTags.get().getPathItemTags();
+				tags.forEach(httpInterface.getTags()::add);
+			}
 			
 		}
 		//extract http parameters

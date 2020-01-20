@@ -18,7 +18,7 @@ import org.springframework.util.CollectionUtils;
 
 import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
-import com.hngd.parser.entity.ModuleInfo;
+import com.hngd.openapi.entity.ModuleInfo;
 import com.hngd.utils.ClassUtils;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.hngd.parser.entity.ClassInfo;
 import com.hngd.parser.entity.MethodInfo;
 import com.hngd.parser.source.ParserContext;
 import com.hngd.web.controller.RoleController;
@@ -22,8 +23,8 @@ public class ClassCommentParser {
 		pc.parse(f);
 		pc.printResult();
 		Class<?> clazz=RoleController.class;
-		String c=pc.getClassComment(clazz);
-		Assert.assertTrue(!StringUtils.isEmpty(c));
+		ClassInfo c=pc.getClassComment(clazz);
+		Assert.assertTrue(!StringUtils.isEmpty(c.getComment()));
 		Method[] methods=clazz.getDeclaredMethods();
 		for(int i=0;i<methods.length;i++) {
 			Method method=methods[i];

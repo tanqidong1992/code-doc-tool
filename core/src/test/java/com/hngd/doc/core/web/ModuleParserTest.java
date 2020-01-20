@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.GsonBuilder;
 import com.hngd.openapi.entity.HttpInterface;
-import com.hngd.parser.entity.ModuleInfo;
+import com.hngd.openapi.entity.ModuleInfo;
 import com.hngd.parser.source.SourceParser;
  
 

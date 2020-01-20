@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.hngd.codegen.JavaAPICodeGenerator;
+import com.hngd.openapi.entity.ModuleInfo;
 import com.hngd.parser.clazz.ClassParser;
-import com.hngd.parser.entity.ModuleInfo;
 import com.hngd.parser.source.ParserContext;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;

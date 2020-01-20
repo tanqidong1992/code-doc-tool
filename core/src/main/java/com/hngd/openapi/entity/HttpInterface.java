@@ -71,6 +71,7 @@ public class HttpInterface {
 
 	public HttpInterface() {
 		httpParameters = new ArrayList<>();
+		tags=new ArrayList<>();
 	}
 	/**
 	 * openapi path item summary
@@ -80,5 +81,8 @@ public class HttpInterface {
 	 * openapi path item description
 	 */
 	private String description;
-
+	/**
+	 * openapi path item tags
+	 */
+	private List<String> tags;
 }

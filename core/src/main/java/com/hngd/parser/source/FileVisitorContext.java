@@ -2,6 +2,7 @@ package com.hngd.parser.source;
 
 import java.util.Objects;
 
+import com.hngd.parser.entity.ClassInfo;
 import com.hngd.parser.entity.FieldInfo;
 import com.hngd.parser.entity.MethodInfo;
 
@@ -20,10 +21,10 @@ public class FileVisitorContext {
 		this.packageName=packageName;
 	}
 	
-	public void saveClassComment(String fullClassName,String comment) {
+	public void saveClassComment(String fullClassName,ClassInfo ci) {
 		Objects.requireNonNull(fullClassName);
-		Objects.requireNonNull(comment);
-		parseResult.getClassComments().put(fullClassName, comment);
+		Objects.requireNonNull(ci);
+		parseResult.getClassComments().put(fullClassName, ci);
 	}
 	public void saveMethodComment(String fullMethodName, MethodInfo mi) {
 		Objects.requireNonNull(fullMethodName);

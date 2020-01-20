@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-public class ParameterInfo extends BaseInfo{
+public class ParameterInfo extends CommentDecoratedTarget{
 	/**
 	 * 参数类型名称
 	 */

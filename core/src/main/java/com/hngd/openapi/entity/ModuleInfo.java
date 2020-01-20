@@ -1,9 +1,9 @@
-package com.hngd.parser.entity;
+package com.hngd.openapi.entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hngd.openapi.entity.HttpInterface;
+import com.hngd.parser.entity.CommentDecoratedTarget;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-public class ModuleInfo extends BaseInfo{
+public class ModuleInfo extends CommentDecoratedTarget{
  
 	/**
 	 * 模块基础路径

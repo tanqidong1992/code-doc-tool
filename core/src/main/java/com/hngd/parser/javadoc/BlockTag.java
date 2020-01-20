@@ -15,7 +15,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.hngd.parser.entity.BaseInfo;
+import com.hngd.parser.entity.CommentDecoratedTarget;
 import com.hngd.parser.entity.MethodInfo;
 import com.hngd.parser.entity.ParameterInfo;
 
@@ -46,11 +46,11 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
 		CommentBlockParserContext.register(tag, this.getClass());
 	}
     
-	public void onParseEnd(BaseInfo baseInfo) {
+	public void onParseEnd(CommentDecoratedTarget baseInfo) {
 		String key=tag;
 		key=key.replace(TAG_PREFIX, "");
 		if(StringUtils.isNotBlank(getContent())) {
-			baseInfo.addExtension(key, getContent());
+			baseInfo.addExtension(key, this);
 		}
 		
 	}
@@ -82,7 +82,7 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
 			}
 		}
 		@Override
-		public void onParseEnd(BaseInfo baseInfo) {
+		public void onParseEnd(CommentDecoratedTarget baseInfo) {
 			if(baseInfo instanceof MethodInfo) {
 				
 				ParameterInfo parameterInfo = new ParameterInfo();
@@ -100,7 +100,7 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
 		}
 		
 		@Override
-		public void onParseEnd(BaseInfo baseInfo) {
+		public void onParseEnd(CommentDecoratedTarget baseInfo) {
 			((MethodInfo)baseInfo).setRetComment(this.getContent());
 		}
 	}

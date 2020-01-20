@@ -39,13 +39,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hngd.constant.HttpParameterIn;
 import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
+import com.hngd.openapi.entity.ModuleInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hngd.constant.Comments;
 import com.hngd.constant.Constants;
 import com.hngd.parser.clazz.ClassParser;
 import com.hngd.parser.entity.FieldInfo;
 import com.hngd.parser.entity.MethodInfo;
-import com.hngd.parser.entity.ModuleInfo;
 import com.hngd.parser.entity.ParameterInfo;
 import com.hngd.parser.source.ParserContext;
 import com.hngd.utils.ClassUtils;
@@ -162,13 +162,17 @@ public class OpenAPITool {
 		}
 	}
 
-	private PathItem buildPathItem(ModuleInfo moduleInfo, HttpInterface httpInterface, Tag tag) {
+	private PathItem buildPathItem(ModuleInfo moduleInfo, HttpInterface httpInterface, Tag moduleTag) {
  
 		PathItem path = new PathItem();
 		Operation op = new Operation();
 		List<String> operationTags = new ArrayList<>();
-        
-		operationTags.add(tag.getName());
+		//如果接口本身就含有tag信息,则不使用模块的tag
+        if(!CollectionUtils.isEmpty(httpInterface.getTags())) {
+        	httpInterface.getTags().forEach(operationTags::add);
+        }else {
+		    operationTags.add(moduleTag.getName());
+        }
 		op.setDeprecated(moduleInfo.getDeprecated() || httpInterface.deprecated);
 		op.setTags(operationTags);
 		String operationId=buildOperationId(moduleInfo,httpInterface);

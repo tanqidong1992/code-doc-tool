@@ -20,8 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
+import com.hngd.openapi.entity.ModuleInfo;
 import com.hngd.parser.clazz.ClassParser;
-import com.hngd.parser.entity.ModuleInfo;
 import com.hngd.parser.source.ParserContext;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.JavaFile;

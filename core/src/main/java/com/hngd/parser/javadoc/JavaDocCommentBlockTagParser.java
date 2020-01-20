@@ -1,6 +1,6 @@
 package com.hngd.parser.javadoc;
 
-import com.hngd.parser.entity.BaseInfo;
+import com.hngd.parser.entity.CommentDecoratedTarget;
 /**
  * Java Doc注释解析接口
  * @author tqd
@@ -10,6 +10,6 @@ import com.hngd.parser.entity.BaseInfo;
 public interface JavaDocCommentBlockTagParser {
 
 	public String onParseStart(String line);
-	public void onParseEnd(BaseInfo baseInfo) ;
+	public void onParseEnd(CommentDecoratedTarget baseInfo) ;
 	public BlockTag getResult();
 }

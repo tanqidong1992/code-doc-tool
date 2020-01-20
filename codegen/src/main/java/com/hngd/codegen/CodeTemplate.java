@@ -2,7 +2,7 @@ package com.hngd.codegen;
 
 import java.util.List;
 
-import com.hngd.parser.entity.ModuleInfo;
+import com.hngd.openapi.entity.ModuleInfo;
 
 /**
  * 代码模板
