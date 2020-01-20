@@ -173,8 +173,8 @@ public class OpenAPITool {
 		op.setTags(operationTags);
 		String operationId=buildOperationId(moduleInfo,httpInterface);
 		op.setOperationId(operationId);
-		op.setDescription(httpInterface.comment);
-        op.setSummary(httpInterface.comment);
+		op.setDescription(httpInterface.getDescription());
+        op.setSummary(httpInterface.getSummary());
 		List<Parameter> parameters = new ArrayList<>();
 
 		if (!hasRequestBody(httpInterface.httpMethod)) {

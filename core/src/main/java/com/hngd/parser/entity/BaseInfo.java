@@ -25,9 +25,9 @@ public class BaseInfo {
 	 */
 	private String comment;
   
-    public Map<String,Object> extensions=new HashMap<>();
+    public Map<String,String> extensions=new HashMap<>();
      
-	public void addExtension(String key,Object value) {
+	public void addExtension(String key,String value) {
 		if(StringUtils.isEmpty(key) || value==null) {
 			return;
 		}

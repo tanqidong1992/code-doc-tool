@@ -21,6 +21,7 @@ import com.hngd.parser.source.ParserContext;
 import com.hngd.web.controller.AttachmentController;
 import com.hngd.web.controller.AutoInjectParameterTestController;
 import com.hngd.web.controller.RoleController;
+import com.hngd.web.controller.TeacherController;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -35,10 +36,13 @@ public class OpenAPITest {
 		pc.initRecursively(f);
 		OpenAPI openapi = new OpenAPI();
 		OpenAPITool tool=new OpenAPITool(openapi,pc);
-		
+		/**
 		tool.parse(Arrays.asList(RoleController.class,
 				AttachmentController.class,
 				AutoInjectParameterTestController.class));
+		*/
+		tool.parse(Arrays.asList(TeacherController.class
+				));
 		String data=Json.pretty(openapi);
 		
 		FileUtils.write(new File("./test-output/role.json"), data, Constants.DEFAULT_CHARSET);

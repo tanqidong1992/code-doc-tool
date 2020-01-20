@@ -72,5 +72,13 @@ public class HttpInterface {
 	public HttpInterface() {
 		httpParameters = new ArrayList<>();
 	}
+	/**
+	 * openapi path item summary
+	 */
+	private String summary;
+	/**
+	 * openapi path item description
+	 */
+	private String description;
 
 }

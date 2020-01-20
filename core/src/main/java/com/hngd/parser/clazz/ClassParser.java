@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -150,8 +151,22 @@ public class ClassParser {
 		httpInterface.javaReturnType = method.getGenericReturnType();
 		Optional<MethodInfo> optionalMethodInfo=parserContext.getMethodInfo(method);
 		if(optionalMethodInfo.isPresent()) {
-			httpInterface.comment=optionalMethodInfo.get().getComment();
-			httpInterface.respComment=optionalMethodInfo.get().getRetComment();
+			MethodInfo mi=optionalMethodInfo.get();
+			httpInterface.comment=mi.getComment();
+			httpInterface.respComment=mi.getRetComment();
+			//SummaryBlock 
+			String summary=mi.getExtensions().get("summary");
+			if(StringUtils.isEmpty(summary)) {
+				summary=mi.getComment();
+			}
+			httpInterface.setSummary(summary);
+			//DescriptionBlock 
+			String description=mi.getExtensions().get("description");
+			if(StringUtils.isEmpty(description)) {
+				description=mi.getComment();
+			}
+			httpInterface.setDescription(description);
+			
 		}
 		//extract http parameters
 		doProcessParamaters(method,httpInterface);
