@@ -33,9 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
     @Override
     public void visit(ClassOrInterfaceDeclaration classOrInterface, FileVisitorContext context) {
-    	//String name=JavaParserUtils.getParentNodeNameList(classOrInterface);
-    	//System.out.println("visit class:"+context.getPackageName()+"."+name);
-    	parseClassComment(classOrInterface,context);
+
+    	doParseClassJavaDocComment(classOrInterface,context);
     	classOrInterface.getChildNodes().stream()
     	    .filter(n->filterAndParseFieldComment(n,context))
 		    .filter(n -> n instanceof MethodDeclaration)
@@ -45,15 +44,15 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
     	super.visit(classOrInterface, context);
     }
     
-    public static boolean parseClassComment(ClassOrInterfaceDeclaration classOrInterfaceDeclaration,FileVisitorContext context){
+    public static boolean doParseClassJavaDocComment(ClassOrInterfaceDeclaration classOrInterfaceDeclaration,FileVisitorContext context){
 		Comment comment = classOrInterfaceDeclaration.getComment().orElse(null);
-		String classOrInterfaceName = classOrInterfaceDeclaration.getName().asString();
+		String classFullName=getNodeFullName(classOrInterfaceDeclaration, context);
 		if (comment instanceof JavadocComment) {
 			JavadocComment javadocComment = (JavadocComment) comment;
 			String content = javadocComment.getContent();
 			String commentLines[] = content.split("\n");
 			if (commentLines == null || commentLines.length < 2) {
-				log.warn("javadoc comment for classOrInterface {} is not found",classOrInterfaceName);
+				log.warn("javadoc comment for classOrInterface {} line size is less then 2",classFullName);
 			}else{
 				ClassInfo ci=new ClassInfo();
 				List<JavaDocCommentElement> commentElements = JavaDocCommentParser.parse(Arrays.asList(commentLines));
@@ -62,10 +61,11 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
 				    .map(Description.class::cast)
 				    .findFirst();
 				optionalDescription.ifPresent(description->{
-					String nodeFullName=getNodeFullName(classOrInterfaceDeclaration, context);
+					String classOrInterfaceName=classOrInterfaceDeclaration.getNameAsString();
 					ci.setName(classOrInterfaceName);
 					ci.setComment(description.getContent());
-					context.saveClassComment(nodeFullName, ci);
+					ci.setClassOrInterfaceDetail(classOrInterfaceDeclaration);
+					context.saveClassComment(classFullName, ci);
 				});
 				commentElements.stream()
 				    .filter(BlockTag.class::isInstance)
@@ -73,7 +73,7 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
 				    .forEach(bt->bt.onParseEnd(ci));
 			}
 		}else{
-			log.warn("javadoc comment for classOrInterface {} is not found",classOrInterfaceName);
+			log.warn("javadoc comment for classOrInterface {} is not found",classFullName);
 		}
 		return true;
     }
@@ -88,7 +88,7 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
 			JavadocComment javadocComment = (JavadocComment) comment;
 			String content = javadocComment.getContent();
 			try {
-				MethodInfo mi=doParseMethodJavadocComment(method, methodName, content); 
+				MethodInfo mi=doParseMethodJavaDocComment(method, methodName, content); 
 				context.saveMethodComment(fullMethodName,mi);
 			}catch(Throwable e) {
 				String msg="Parsing Method:"+fullMethodName+" Failed!";
@@ -99,7 +99,7 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
 		}
     }
     
-    private static MethodInfo doParseMethodJavadocComment(MethodDeclaration m, String methodName, String content) {
+    private static MethodInfo doParseMethodJavaDocComment(MethodDeclaration m, String methodName, String content) {
 		MethodInfo mi = new MethodInfo();
 		mi.setName(methodName);
 		String commentLines[] = content.split("\n");

@@ -2,7 +2,7 @@ package com.hngd.openapi.entity;
 
 import java.lang.reflect.Type;
 
-import com.hngd.constant.HttpParameterIn;
+import com.hngd.constant.HttpParameterLocation;
 
 import io.swagger.v3.oas.models.media.Schema;
 import lombok.Data;
@@ -18,6 +18,14 @@ public class HttpParameter {
 	 */
 	public String javaTypeName;
 	/**
+	 * 参数Java类型
+	 */
+	public Type javaType;
+	/**
+	 * 参数java类型
+	 */
+	public Class<?> javaParameterizedType;
+	/**
 	 * 参数名称
 	 */
 	public String name;
@@ -26,13 +34,9 @@ public class HttpParameter {
 	 */
 	public boolean required;
 	/**
-	 * 参数位置类型
+	 * 参数位置
 	 */
-	public HttpParameterIn httpParamIn;
-	/**
-	 * 参数Java类型
-	 */
-	public Type javaType;
+	public HttpParameterLocation location;
 	/**
 	 * 是否路径参数,目前只有生成js代码用到
 	 */
@@ -57,10 +61,6 @@ public class HttpParameter {
 	 * 是否集合
 	 */
 	public boolean isCollection;
-	/**
-	 * 参数java类型
-	 */
-	public Class<?> javaParameterizedType;
 	/**
 	 * openapi format
 	 */

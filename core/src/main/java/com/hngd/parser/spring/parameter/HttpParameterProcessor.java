@@ -2,14 +2,13 @@ package com.hngd.parser.spring.parameter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 
-import com.hngd.constant.HttpParameterIn;
+import com.hngd.constant.HttpParameterLocation;
 import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.parser.spring.MethodArgUtils;
 import com.hngd.utils.RestClassUtils;
@@ -18,10 +17,10 @@ public abstract class HttpParameterProcessor<T extends Annotation> {
 
 	protected Class<T> parameterAnnotationType;
 	protected T parameterAnnotation;
-	protected HttpParameterIn in;
+	protected HttpParameterLocation location;
 	
-	public HttpParameterProcessor(HttpParameterIn in,Class<T> parameterAnnotationType) {
-		this.in = in;
+	public HttpParameterProcessor(HttpParameterLocation location,Class<T> parameterAnnotationType) {
+		this.location = location;
 		this.parameterAnnotationType=parameterAnnotationType;
 	}
 	public boolean accept(Parameter parameter) {
@@ -37,7 +36,7 @@ public abstract class HttpParameterProcessor<T extends Annotation> {
 	public List<HttpParameter> process(Parameter parameter){
 		HttpParameter httpParam=new HttpParameter();
 		httpParam.name =RestClassUtils.extractParameterName(parameterAnnotation);
-		httpParam.httpParamIn = in;
+		httpParam.location = location;
 		httpParam.javaType=parameter.getParameterizedType();
 		Annotation[] annotations=parameter.getAnnotations();
 		Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);

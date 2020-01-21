@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import com.hngd.parser.javadoc.BlockTag;
@@ -30,7 +29,9 @@ public class CommentDecoratedTarget {
 	 * 注释
 	 */
 	private String comment;
-  
+    /**
+     * Java Doc注释,Block Tags拓展信息
+     */
     private Map<String,BlockTag> extensions=new HashMap<>();
      
 	public void addExtension(String key,BlockTag extension) {
@@ -40,7 +41,7 @@ public class CommentDecoratedTarget {
 		extensions.put(key, extension);
 	}
 	
-	public <T> List<T> getExtensions(Class<T> type) {
+	public <T extends BlockTag> List<T> getExtensions(Class<T> type) {
 		return extensions.values()
 		  .stream()
 		  .filter(type::isInstance)
@@ -48,7 +49,7 @@ public class CommentDecoratedTarget {
 		  .collect(Collectors.toList());
 	}
 	
-	public <T> Optional<T> findAnyExtension(Class<T> type) {
+	public <T extends BlockTag> Optional<T> findAnyExtension(Class<T> type) {
 		List<T> extensions=getExtensions(type);
 		if(CollectionUtils.isEmpty(extensions)) {
 			return Optional.empty();

@@ -7,11 +7,11 @@ import io.swagger.v3.oas.models.parameters.PathParameter;
 import io.swagger.v3.oas.models.parameters.QueryParameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 /**
- * http参数位置类型,
+ * http参数位置,
  * @author tqd
  *
  */
-public enum HttpParameterIn {
+public enum HttpParameterLocation {
     /**
      * 查询参数
      */
@@ -32,7 +32,7 @@ public enum HttpParameterIn {
 	 * request body 参数
 	 */
 	body(RequestBody.class);
-	private HttpParameterIn(Class<?> paramClass){
+	private HttpParameterLocation(Class<?> paramClass){
 		this.paramClass=paramClass;
 	}
 	private Class<?> paramClass;

@@ -51,7 +51,6 @@ public class SpringAnnotationUtils {
 			Class.forName(cls.getName(), false,loader);
 		} catch (Throwable e) {
 			logger.warn("load class failed",e);
-			//e.printStackTrace();
 			return false;
 		}
 		Controller controller = cls.getAnnotation(Controller.class);

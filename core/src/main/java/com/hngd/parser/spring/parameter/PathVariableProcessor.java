@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.hngd.constant.HttpParameterIn;
+import com.hngd.constant.HttpParameterLocation;
 import com.hngd.openapi.entity.HttpParameter;
 
 public class PathVariableProcessor extends HttpParameterProcessor<PathVariable> {
 
 	public PathVariableProcessor() {
-		super(HttpParameterIn.path,PathVariable.class);
+		super(HttpParameterLocation.path,PathVariable.class);
 	}
 
 	@Override

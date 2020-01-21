@@ -5,14 +5,14 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.hngd.constant.HttpParameterIn;
+import com.hngd.constant.HttpParameterLocation;
 import com.hngd.openapi.entity.HttpParameter;
 
 
 public class RequestParamProcessor extends HttpParameterProcessor<RequestParam> {
 
 	public RequestParamProcessor() {
-		super(HttpParameterIn.query,RequestParam.class);
+		super(HttpParameterLocation.query,RequestParam.class);
 	}
 
 	@Override

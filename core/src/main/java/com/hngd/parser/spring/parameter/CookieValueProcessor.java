@@ -4,17 +4,15 @@ import java.lang.reflect.Parameter;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import com.hngd.constant.HttpParameterIn;
+import com.hngd.constant.HttpParameterLocation;
 import com.hngd.openapi.entity.HttpParameter;
 
 
 public class CookieValueProcessor extends HttpParameterProcessor<CookieValue> {
 
 	public CookieValueProcessor() {
-		super(HttpParameterIn.cookie,CookieValue.class);
+		super(HttpParameterLocation.cookie,CookieValue.class);
 	}
 
 	@Override

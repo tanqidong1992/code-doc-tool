@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
@@ -19,17 +18,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.MatrixVariable;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 
-import com.hngd.constant.HttpParameterIn;
+import com.hngd.constant.HttpParameterLocation;
 import com.hngd.exception.ClassParseException;
 import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
@@ -234,7 +226,7 @@ public class ClassParser {
 				if (!httpInterface.isMultipart) {
 					httpInterface.isMultipart = TypeUtils.isMultipartType(firstHttpParameter.getJavaType());
 				}
-				httpInterface.hasRequestBody=!firstHttpParameter.getHttpParamIn().isParameter();
+				httpInterface.hasRequestBody=!firstHttpParameter.getLocation().isParameter();
 			}else {
 				String parameterKey=ClassUtils.getParameterIdentifier(parameter);
 				log.warn("the http parameters extracted from {} is empty",parameterKey);
@@ -274,7 +266,7 @@ public class ClassParser {
 			// requestparam
 			HttpParameter httpParam = new HttpParameter();
 			httpParam.name = parameter.getName();
-			httpParam.httpParamIn = HttpParameterIn.query;
+			httpParam.location = HttpParameterLocation.query;
 			httpParam.required = false;
 			httpParam.javaType = parameter.getType();
 			Annotation[] annotations=parameter.getAnnotations();
@@ -336,7 +328,7 @@ public class ClassParser {
 				continue;
 			}
 			//TODO need to analysis method mapping url
-			httpParam.httpParamIn = HttpParameterIn.query;
+			httpParam.location = HttpParameterLocation.query;
 			httpParam.required = isPropertyRequired(clazz,property);
 			httpParam.javaType=property.getPropertyType();
 			httpParam.comment=parserContext.getFieldComment(field);

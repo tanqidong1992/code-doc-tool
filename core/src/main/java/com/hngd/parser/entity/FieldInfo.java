@@ -1,7 +1,5 @@
 package com.hngd.parser.entity;
 
-import java.util.List;
-
 import com.github.javaparser.ast.body.FieldDeclaration;
 
 import lombok.Data;
@@ -10,7 +8,7 @@ import lombok.experimental.Accessors;
 
 /**
  *类成员变量信息
- * @author hnoe-dev-tqd
+ * @author tqd
  *
  */
 @Data
@@ -25,7 +23,7 @@ public class FieldInfo extends CommentDecoratedTarget{
 		this.fieldDetail = fieldDetail;
 	}
 	/**
-	 * 变量声明代码
+	 * 类成员变量声明代码
 	 */
 	private FieldDeclaration fieldDetail;
 	

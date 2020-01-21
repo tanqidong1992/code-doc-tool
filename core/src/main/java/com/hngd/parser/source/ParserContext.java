@@ -159,7 +159,6 @@ public class ParserContext {
 		MethodInfo mi = methodComments.get(key);
 		String comment = null;
 		if (mi != null) {
-
 			if (order >= 0 && order < mi.getParameters().size()) {
 				comment = mi.getParameters().get(order).getComment();
 			}
@@ -180,7 +179,7 @@ public class ParserContext {
 		.forEach(e->{
 			System.out.println(e.getKey()+"-->"+e.getValue().getComment());
 			e.getValue().getParameters().forEach(p->{
-				System.out.println(p.getName()+"-->"+p.getComment());
+				System.out.println("    "+p.getName()+"-->"+p.getComment());
 			});
 		});
 		

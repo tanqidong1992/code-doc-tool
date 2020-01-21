@@ -8,10 +8,8 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 
-import com.hngd.constant.HttpParameterIn;
+import com.hngd.constant.HttpParameterLocation;
 import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.parser.spring.MethodArgUtils;
 
@@ -19,14 +17,14 @@ import com.hngd.parser.spring.MethodArgUtils;
 public class RequestBodyProcessor extends HttpParameterProcessor<RequestBody> {
 
 	public RequestBodyProcessor() {
-		super(HttpParameterIn.body,RequestBody.class);
+		super(HttpParameterLocation.body,RequestBody.class);
 	}
 
 	@Override
 	public List<HttpParameter> process(Parameter parameter) {
 		HttpParameter httpParam=new HttpParameter();
 	    httpParam.name = parameter.getName();
-	    httpParam.httpParamIn = HttpParameterIn.body;
+	    httpParam.location = HttpParameterLocation.body;
 	    httpParam.required = parameterAnnotation.required();
 	    httpParam.javaType=parameter.getParameterizedType();
 	    Annotation[] annotations=parameter.getAnnotations();

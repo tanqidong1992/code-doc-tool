@@ -21,14 +21,6 @@ public class HttpInterface {
 	 */
 	public String javaMethodName;
 	/**
-	 * 接口路径
-	 */
-	public String url;
-	/**
-	 * 接口http请求方法
-	 */
-	public String httpMethod;
-	/**
 	 * Java方法返回类型名称
 	 */
 	public String javaReturnTypeName;
@@ -36,6 +28,14 @@ public class HttpInterface {
 	 * Java方法返回类型
 	 */
 	public Type javaReturnType;
+	/**
+	 * 接口路径
+	 */
+	public String url;
+	/**
+	 * 接口http请求方法
+	 */
+	public String httpMethod;
 	/**
 	 * 接口参数列表
 	 */

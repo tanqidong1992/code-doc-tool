@@ -4,16 +4,15 @@ import java.lang.reflect.Parameter;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.MatrixVariable;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import com.hngd.constant.HttpParameterIn;
+import com.hngd.constant.HttpParameterLocation;
 import com.hngd.exception.ClassParseException;
 import com.hngd.openapi.entity.HttpParameter;
 
 public class MatrixVariableProcessor extends HttpParameterProcessor<MatrixVariable> {
 
 	public MatrixVariableProcessor() {
-		super(HttpParameterIn.path,MatrixVariable.class);
+		super(HttpParameterLocation.path,MatrixVariable.class);
 	}
 
 	@Override

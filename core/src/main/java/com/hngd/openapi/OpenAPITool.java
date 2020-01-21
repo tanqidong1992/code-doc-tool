@@ -35,7 +35,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.hngd.constant.HttpParameterIn;
+import com.hngd.constant.HttpParameterLocation;
 import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.openapi.entity.ModuleInfo;
@@ -131,10 +131,10 @@ public class OpenAPITool {
 		}
     }
 	public static Parameter createParameter(HttpParameter pc) {
-		if (pc.httpParamIn.isParameter()) {
+		if (pc.location.isParameter()) {
 			Parameter param = null;
 			try {
-				param = (Parameter) pc.httpParamIn.getParamClass().newInstance();
+				param = (Parameter) pc.location.getParamClass().newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
 				logger.error("", e);
 			}
@@ -248,7 +248,7 @@ public class OpenAPITool {
 					}
 					contentEncodings.put(pc.name, encoding);
 					
-					if (pc.httpParamIn.equals(HttpParameterIn.query)) {
+					if (pc.location.equals(HttpParameterLocation.query)) {
 						// item.setSchema(pc.schema);
 			 
 						if (pc.isRequired()) {
@@ -277,10 +277,10 @@ public class OpenAPITool {
 							contentSchema.addProperties(pc.name, pc.schema);
 						}
 						
-					} else if (pc.httpParamIn.equals(HttpParameterIn.path)) {
+					} else if (pc.location.equals(HttpParameterLocation.path)) {
 						Parameter pathParameter = createParameter(pc);
 						parameters.add(pathParameter);
-					}else if (pc.httpParamIn.equals(HttpParameterIn.body)) {
+					}else if (pc.location.equals(HttpParameterLocation.body)) {
 						Schema<?> propertiesItem = new Schema<>();
 						propertiesItem.setDescription(pc.comment);
 						propertiesItem.setType(pc.openapiType);

@@ -1,11 +1,7 @@
 package com.hngd.parser.entity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +9,7 @@ import lombok.experimental.Accessors;
 
 /**
  * 类成员函数信息
- * @author hnoe-dev-tqd
+ * @author tqd
  *
  */
 @Data

@@ -40,10 +40,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
 public class MethodArgUtils {
-
-	public static Optional<RequestPart> isRequestPart(Annotation[] annotations) {
-		return extractAnnotaion(annotations, RequestPart.class);
-	}
+ 
     /**
      * 提取DataFormatPattern
      * @param annotations
@@ -60,9 +57,7 @@ public class MethodArgUtils {
 	public static boolean isFieldRequired(Field field) {
 		return field.getAnnotation(NotNull.class)!=null;
 	}
-	public static Optional<RequestParam> isRequestParam(Annotation [] annotations) {
-		return extractAnnotaion(annotations, RequestParam.class);
-	}
+ 
 	/**
 	 * 从注解数组中找到指定类型的注解
 	 * @param <T> 指定注解
@@ -82,13 +77,7 @@ public class MethodArgUtils {
 		}
 		return Optional.empty();
 	}
-	
-	public static Optional<RequestBody> isRequestBody(Annotation [] annotations) {
-		return extractAnnotaion(annotations, RequestBody.class);
-	}
-	public static Optional<PathVariable> isPathVariable(Annotation [] annotations) {
-		return extractAnnotaion(annotations, PathVariable.class);
-	}
+ 
 	
 	public static List<Class<?>> CONTEXT_PARAMTER_TYPES=Arrays.asList(
             //Generic access to request parameters and request and session attributes, without direct use of the Servlet API.

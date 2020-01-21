@@ -46,11 +46,11 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
 		CommentBlockParserContext.register(tag, this.getClass());
 	}
     
-	public void onParseEnd(CommentDecoratedTarget baseInfo) {
+	public void onParseEnd(CommentDecoratedTarget target) {
 		String key=tag;
 		key=key.replace(TAG_PREFIX, "");
 		if(StringUtils.isNotBlank(getContent())) {
-			baseInfo.addExtension(key, this);
+			target.addExtension(key, this);
 		}
 		
 	}
@@ -82,14 +82,13 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
 			}
 		}
 		@Override
-		public void onParseEnd(CommentDecoratedTarget baseInfo) {
-			if(baseInfo instanceof MethodInfo) {
-				
+		public void onParseEnd(CommentDecoratedTarget target) {
+			if(target instanceof MethodInfo) {
 				ParameterInfo parameterInfo = new ParameterInfo();
 				ParamBlock paramElement = this;
 				parameterInfo.setName(paramElement.paramName);
 				parameterInfo.setComment(paramElement.getContent());
-				((MethodInfo)baseInfo).getParameters().add(parameterInfo);
+				((MethodInfo)target).getParameters().add(parameterInfo);
 			}
 		}
 	}
@@ -100,8 +99,8 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
 		}
 		
 		@Override
-		public void onParseEnd(CommentDecoratedTarget baseInfo) {
-			((MethodInfo)baseInfo).setRetComment(this.getContent());
+		public void onParseEnd(CommentDecoratedTarget target) {
+			((MethodInfo)target).setRetComment(this.getContent());
 		}
 	}
 
