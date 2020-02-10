@@ -16,7 +16,12 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<code.tool.version>2.3.0-SNAPSHOT</code.tool.version>
 	</properties>
-
+	<developers>
+		<developer>
+			<name>tqd</name>
+			<email>QidongTan@qq.com</email>
+		</developer>
+	</developers>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

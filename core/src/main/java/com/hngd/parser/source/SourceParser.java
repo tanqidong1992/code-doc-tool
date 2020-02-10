@@ -111,7 +111,7 @@ public class SourceParser {
     	List<Parameter> parameters=method.getParameters();
     	if(parameters==null || parameters.size()==0){
     		info.isMultipart=false;
-    		info.httpParameters=Collections.EMPTY_LIST;
+    		info.httpParameters=Collections.emptyList();
     	}else{
         	List<Parameter> httpRequestParameters=parameters.stream()
             	    .filter(SourceParser::isHttpRequestParam)

@@ -33,7 +33,7 @@ public class DirectoryWatcher {
 
 	/**
 	 * 
-	 * @author hnoe-dev-tqd
+	 * @author tqd
 	 *
 	 */
 	public interface FileListener {

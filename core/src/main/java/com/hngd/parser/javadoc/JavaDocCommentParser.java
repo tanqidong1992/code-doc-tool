@@ -35,6 +35,7 @@ public class JavaDocCommentParser {
 
 	private static class ParseResult {
 		public static int UNSET_INDEX_VALUE=-1;
+		@SuppressWarnings("unused")
 		int startIndex = UNSET_INDEX_VALUE;
 		int endIndex = UNSET_INDEX_VALUE;
 		JavaDocCommentElement element;

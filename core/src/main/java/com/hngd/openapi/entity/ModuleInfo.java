@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 
 /**
  * 模块信息
- * @author hnoe-dev-tqd
+ * @author tqd
  *
  */
 @Data

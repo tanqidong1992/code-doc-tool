@@ -32,7 +32,7 @@ import com.hngd.common.web.page.PagedData;
 import com.hngd.common.web.result.RestResponse;
 /**
  * 文件上传接口测试
- * @author hnoe-dev-tqd
+ * @author tqd
  *
  */
 @RestController

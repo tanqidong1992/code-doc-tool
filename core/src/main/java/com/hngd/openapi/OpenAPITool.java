@@ -130,28 +130,29 @@ public class OpenAPITool {
 			paths.put(pathKey, pathItem);
 		}
     }
-	public static Parameter createParameter(HttpParameter pc) {
-		if (pc.location.isParameter()) {
+	@SuppressWarnings("deprecation")
+	public static Parameter createParameter(HttpParameter parameter) {
+		if (parameter.location.isParameter()) {
 			Parameter param = null;
 			try {
-				param = (Parameter) pc.location.getParamClass().newInstance();
+				param = (Parameter) parameter.location.getParamClass().newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
 				logger.error("", e);
 			}
-			param.setName(pc.name);
-			param.setRequired(pc.required);
+			param.setName(parameter.name);
+			param.setRequired(parameter.required);
 			
-			if(pc.isPrimitive()) {
-				param.setSchema(pc.schema);
+			if(parameter.isPrimitive()) {
+				param.setSchema(parameter.schema);
 			}else {
 				Content content=new Content();
 				MediaType value=new MediaType();
-				value.setSchema(pc.schema);
+				value.setSchema(parameter.schema);
 				content.put(Constants.DEFAULT_CONSUME_TYPE, value);
 				param.setContent(content);
 			}
 			 
-			param.setDescription(pc.comment);
+			param.setDescription(parameter.comment);
 			return param;
 		} else {
 			return null;
@@ -505,7 +506,7 @@ public class OpenAPITool {
 			if (fields != null) {
 				for (Field f : fields) {
 					Type type = f.getGenericType();
-					if(type instanceof Class && BeanUtils.isSimpleProperty((Class)type)) {
+					if(type instanceof Class && BeanUtils.isSimpleProperty((Class<?>)type)) {
 						continue;
 					}
 					resolveType(type, swagger);

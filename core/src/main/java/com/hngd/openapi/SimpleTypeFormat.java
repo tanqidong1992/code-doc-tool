@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * http://spec.openapis.org/oas/v3.0.2#data-types
- * @author hnoe-dev-tqd
+ * @author tqd
  *
  */
 @Data

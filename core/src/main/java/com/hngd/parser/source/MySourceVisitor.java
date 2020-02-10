@@ -169,6 +169,7 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
 		    for (int i = 0; i < lines.length; i++) {
 				String line = lines[i].trim();
 				line = line.replaceFirst("\\*", "");
+				line=line.trim();
 				if (!StringUtils.isEmpty(line)) {
 					trimComment.append(line);
 				}

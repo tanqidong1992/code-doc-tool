@@ -12,7 +12,7 @@ import com.hngd.common.web.RestResponses;
 import com.hngd.common.web.result.RestResponse;
 /**
  * 自动参数测试
- * @author hnoe-dev-tqd
+ * @author tqd
  *
  */
 @RestController

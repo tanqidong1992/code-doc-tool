@@ -51,7 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ClassParser {
 
 	ParserContext parserContext;
-	List<HttpParameterProcessor> httpParameterProcessors=new ArrayList<>();
+	List<HttpParameterProcessor<?>> httpParameterProcessors=new ArrayList<>();
 	public ClassParser(ParserContext parserContext) {
 		this.parserContext = parserContext;
 		httpParameterProcessors.add(new RequestParamProcessor());
@@ -247,7 +247,7 @@ public class ClassParser {
 	 */
 	private List<HttpParameter> processParameter(Parameter parameter) {
         
-		Optional<HttpParameterProcessor> optionalProcessor= httpParameterProcessors.stream()
+		Optional<HttpParameterProcessor<?>> optionalProcessor= httpParameterProcessors.stream()
             .filter(p->p.accept(parameter))
             .findFirst();
 		if(optionalProcessor.isPresent()) {
