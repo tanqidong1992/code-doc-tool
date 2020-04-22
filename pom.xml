@@ -70,6 +70,7 @@
 		<module>openapi-markdown</module>
 		<module>swagger-ui</module>
 		<module>core-test</module>
+		<module>codegen-maven-plugin</module>
 	</modules>
 
 	<distributionManagement>
@@ -83,7 +84,7 @@
 		<repository>
 			<id>hn-local-143</id>
 			<name>hnlocal maven</name>
-			<url>http://192.168.0.143:8082/nexus/content/groups/public/</url>
+			<url>http://47.115.117.222:8082/nexus/content/groups/public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
