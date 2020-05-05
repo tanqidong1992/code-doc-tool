@@ -85,12 +85,6 @@
 			<version>1.7.25</version>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-        <groupId>com.hngd.vmns</groupId>
-		<artifactId>operation-log-core</artifactId>
-		<version>0.0.4-SNAPSHOT</version>
-        </dependency>
-
 	</dependencies>
 	<build>
 		<plugins>

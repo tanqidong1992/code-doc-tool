@@ -1,6 +1,6 @@
 package com.hngd.tool.cl;
 
-import com.hngd.tool.APISwaggerGenerator;
+import com.hngd.tool.OpenAPIGenerator;
 import okhttp3.*;
 
 import java.io.File;
@@ -13,6 +13,6 @@ public class TestUploadFile {
         File file=new File("./pom.xml");
 
 
-        APISwaggerGenerator.pushToSwaggerUIServer(file,"192.168.0.140:8888");
+        OpenAPIGenerator.pushToSwaggerUIServer(file,"192.168.0.140:8888");
     }
 }

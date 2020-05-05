@@ -26,17 +26,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
-@Mojo(name="api-swagger",defaultPhase = LifecyclePhase.COMPILE)
-public class APISwaggerGenerator extends BaseMojo{
-    private static final Logger logger=LoggerFactory.getLogger(APISwaggerGenerator.class);
+@Mojo(name="openapi",defaultPhase = LifecyclePhase.COMPILE)
+public class OpenAPIGenerator extends BaseMojo{
+    private static final Logger logger=LoggerFactory.getLogger(OpenAPIGenerator.class);
 	public static final String API_FILE_NAME="api.json";
-	
-	
 	/**
-	 * the directory to save swagger document json file. default value:/target/api/swagger
+	 * the directory to save openapi document json file. default value:/target/openapi
 	 */
 	@Parameter(required = false)
-	public File swaggerOutput;
+	public File openAPIOutput;
 	
 	/**
 	 * controller package filter
@@ -66,12 +64,12 @@ public class APISwaggerGenerator extends BaseMojo{
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
 		String buildOutputPath = mavenProject.getBuild().getDirectory();
-		if(swaggerOutput==null){
-			swaggerOutput=new File(buildOutputPath+File.separator+"api"+File.separator+"swagger");
-			if(swaggerOutput.exists() || swaggerOutput.mkdirs()){
+		if(openAPIOutput==null){
+			openAPIOutput=new File(buildOutputPath+File.separator+"openapi");
+			if(openAPIOutput.exists() || openAPIOutput.mkdirs()){
 				
 			}else {
-				throw new MojoFailureException("创建输出目录失败:"+swaggerOutput.getAbsolutePath());
+				throw new MojoFailureException("创建输出目录失败:"+openAPIOutput.getAbsolutePath());
 			}
 		}
 		String jarFilePath =ProjectUtils.buildJarFilePath(mavenProject);
@@ -86,7 +84,7 @@ public class APISwaggerGenerator extends BaseMojo{
 			s=ProjectAnalysis.process(getSourceRoots(), classPaths, packageFilter, config);
 		}
 		 
-		File apiJsonFile=new File(swaggerOutput, API_FILE_NAME);
+		File apiJsonFile=new File(openAPIOutput, API_FILE_NAME);
 		try {
 			FileUtils.write(apiJsonFile, s,"utf-8");
 		} catch (IOException e) {
