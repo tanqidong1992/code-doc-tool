@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -196,18 +197,32 @@ public class OpenAPITool {
 					}
 				}
 				//RequestBody只有一部分,所以方法的参数只有一个
-				HttpParameter pc = httpInterface.getHttpParameters().get(0);
-				Type parameterType = pc.getJavaType();
-				resolveParameterInfo(pc, parameterType);
-				String key = resolveType(parameterType, openAPI);
-				//如果是简单类型就会返回null
-				if(!StringUtils.isEmpty(key)) {
-					Schema<?> schema = openAPI.getComponents().getSchemas().get(key);
-					mediaTypeContent.setSchema(schema);
-				}else {
-					mediaTypeContent.setSchema(pc.schema);
+				List<HttpParameter>  httpParameters=httpInterface.getHttpParameters();
+				Optional<HttpParameter> optioanlParameterInBody=httpParameters.stream()
+				  .filter(hp->!hp.getLocation().isParameter())
+				  .findFirst();
+				
+				if(optioanlParameterInBody.isPresent()) {
+					HttpParameter pc = optioanlParameterInBody.get();
+					Type parameterType = pc.getJavaType();
+					resolveParameterInfo(pc, parameterType);
+					String key = resolveType(parameterType, openAPI);
+					//如果是简单类型就会返回null
+					if(!StringUtils.isEmpty(key)) {
+						Schema<?> schema = openAPI.getComponents().getSchemas().get(key);
+						mediaTypeContent.setSchema(schema);
+					}else {
+						mediaTypeContent.setSchema(pc.schema);
+					}
+				}
+				List<HttpParameter> filterHttpParameters=httpParameters.stream()
+				.filter(hp->hp.getLocation().isParameter())
+				.collect(Collectors.toList());
+				if(!CollectionUtils.isEmpty(filterHttpParameters)) {
+					parameters=processHttpParameter(filterHttpParameters);
 				}
 				
+				 
 			} else {
 				if (httpInterface.isMultipart()) {
 					content.addMediaType(Constants.MULTIPART_FORM_DATA, mediaTypeContent);

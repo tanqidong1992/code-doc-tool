@@ -6,16 +6,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +34,7 @@ import com.hngd.test.dto.FormWithDate;
 import com.hngd.test.dto.FormWithJacksonDate;
 import com.hngd.test.dto.FormWithJson;
 import com.hngd.test.dto.OtherInfo;
+import com.hngd.test.dto.Person;
 
 
 /**
@@ -225,5 +230,16 @@ public class SampleController {
 		//the same as Model
 		return RestResponses.newSuccessResponse("",params);
 	}
+	/**
+	 * 测试多种参数混合
+	 * @param planId 计划Id
+	 * @param dto 人员信息
+	 * @param bindingResult 不知道哦
+	 * @return
+	 */
+	 @PutMapping(value = "/scrap/approve/{id}")
+	 public RestResponse<String> planApprove(@PathVariable("id") String planId, @RequestBody @Valid Person dto, BindingResult bindingResult){
+		 return null;
+	 }
 
 }
