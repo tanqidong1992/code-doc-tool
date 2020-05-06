@@ -212,12 +212,17 @@ public class ClassParser {
 				Optional<MethodInfo>  optionalMethodInfo=parserContext.getMethodInfo(method);
 				if(optionalMethodInfo.isPresent()) {
 					List<ParameterInfo> javaParameterInfos=optionalMethodInfo.get().getParameters();
-					httpParams.stream()
-					  .filter(hp->hp.getComment()==null)
-					  .forEach(hp->{
-						  String comment=javaParameterInfos.get(indexInJavaMethod).getComment();
-						  hp.setComment(comment);
-					  });
+					
+					if(indexInJavaMethod<javaParameterInfos.size()) {
+						httpParams.stream()
+						  .filter(hp->hp.getComment()==null)
+						  .forEach(hp->{
+							  String comment=javaParameterInfos.get(indexInJavaMethod).getComment();
+							  hp.setComment(comment);
+						  });
+					}
+					
+					
 				}
 				httpInterface.httpParameters.addAll(httpParams);
 				//根据第一个参数判定的原因是,一个MultipartFile类型的java参数只能解析出一个http请求参数,

@@ -55,7 +55,7 @@ public class App
 	
     public static void main( String[] args ) throws URISyntaxException, IOException
     {
-        File file=new File("./test-data/test.json");
+        File file=new File("./test-data/api.json");
         OpenAPI openAPI=OpenAPIUtils.loadFromFile(file);
        
         
@@ -214,8 +214,13 @@ public class App
     			String refKey=OpenAPIUtils.refToKey(itemSchema.get$ref());
     			itemSchema=openAPI.getComponents().getSchemas().get(refKey);
     		}
-    		SchemaTable sti=schemaToTableCells(keyName,openAPI, itemSchema);
-    		return Optional.of(sti);
+    		if(itemSchema!=null) {
+    			SchemaTable sti=schemaToTableCells(keyName,openAPI, itemSchema);
+        		return Optional.of(sti);
+    		}else {
+    			logger.error("haha");
+    		}
+    		
     	}
     	return Optional.empty();
     }
@@ -260,7 +265,12 @@ public class App
     public static List<String> parameterToTableCells(Parameter p){
     	List<String> s=new ArrayList<>();
     	s.add(p.getName());
-    	s.add(p.getSchema().getType());
+    	String typeStr="未知";
+    	Schema schema=p.getSchema();
+    	if(schema!=null) {
+    		typeStr=schema.getType();
+    	}
+    	s.add(typeStr);
     	s.add(p.getRequired()?"是":"否");
     	s.add("暂无");
     	s.add(p.getIn());
