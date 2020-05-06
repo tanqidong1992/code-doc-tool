@@ -194,7 +194,7 @@ public class ParserContext {
 			enclosingClass=enclosingClass.getEnclosingClass();
 		}
 		if(StringUtils.isNotEmpty(s)) {
-			String packageName=clazz.getPackageName();
+			String packageName=clazz.getPackage().getName();
 			return packageName+"."+s+clazz.getSimpleName();
 		}else {
 			return clazz.getName();

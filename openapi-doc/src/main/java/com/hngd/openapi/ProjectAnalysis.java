@@ -65,11 +65,17 @@ public class ProjectAnalysis {
 	public static String process(List<File> sourceRoots,List<File> classFilePaths,String packageFilter,ServerConfig config) {
 	    NestedJarClassLoader loader=new NestedJarClassLoader(ProjectAnalysis.class.getClassLoader(),logger);
 		for(File classFilePath:classFilePaths) {
-			try {
-				loader.addURLs(classFilePath.toURI().toURL());
-			} catch (IOException e) {
-				logger.error("",e);
+			if(classFilePath.isDirectory() || classFilePath.getName().endsWith("jar")) {
+				try {
+					loader.addURLs(classFilePath.toURI().toURL());
+				} catch (IOException e) {
+					logger.error("",e);
+				}
+			}else {
+				//当maven依赖中存在<type>pom</type>时,pom文件会被传进来
+				logger.warn("文件{},既不是目录也不是Jar",classFilePath.getAbsolutePath());
 			}
+			
 		}
 	    return doProcess(sourceRoots, loader, packageFilter, config);
 	}
