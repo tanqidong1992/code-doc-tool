@@ -100,7 +100,9 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
 		
 		@Override
 		public void onParseEnd(CommentDecoratedTarget target) {
-			((MethodInfo)target).setRetComment(this.getContent());
+			if(target instanceof MethodInfo) {
+			    ((MethodInfo)target).setRetComment(this.getContent());
+			}
 		}
 	}
 
