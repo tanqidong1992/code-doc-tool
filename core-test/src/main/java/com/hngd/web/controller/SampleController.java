@@ -241,5 +241,16 @@ public class SampleController {
 	 public RestResponse<String> planApprove(@PathVariable("id") String planId, @RequestBody @Valid Person dto, BindingResult bindingResult){
 		 return null;
 	 }
+	 /**
+	  * 没有指定名称测试
+	  * @param planId 计划id
+	  * @param name 名称
+	  * @param bindingResult
+	  * @return
+	  */
+	 @GetMapping(value = "/scrap/approve1/test")
+	 public RestResponse<String> planApprove1(@RequestParam String planId,@RequestParam String name,BindingResult bindingResult){
+		 return null;
+	 }
 
 }

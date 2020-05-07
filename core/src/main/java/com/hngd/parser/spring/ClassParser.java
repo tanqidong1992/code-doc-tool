@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.CollectionUtils;
@@ -214,12 +215,21 @@ public class ClassParser {
 					List<ParameterInfo> javaParameterInfos=optionalMethodInfo.get().getParameters();
 					
 					if(indexInJavaMethod<javaParameterInfos.size()) {
+						//此处过滤掉comment不为空的参数,是因为对于model中提取出来的参数,已经加上注释了
+						ParameterInfo pi=javaParameterInfos.get(indexInJavaMethod);
 						httpParams.stream()
 						  .filter(hp->hp.getComment()==null)
 						  .forEach(hp->{
-							  String comment=javaParameterInfos.get(indexInJavaMethod).getComment();
+							  String comment=pi.getComment();
 							  hp.setComment(comment);
 						  });
+						//补全无法从注解中获取参数名称
+						if(httpParams.size()==1) {
+							String name=httpParams.get(0).getName();
+							if(StringUtils.isBlank(name)) {
+								httpParams.get(0).setName(pi.getName());
+							}
+						}
 					}
 					
 					
