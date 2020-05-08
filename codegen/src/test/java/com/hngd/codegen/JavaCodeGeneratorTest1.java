@@ -40,7 +40,7 @@ public class JavaCodeGeneratorTest1 {
 				);
 		ParserContext pc=new ParserContext();
 		for(File sourceRoot:sourceRoots) {
-        	pc.initRecursively(sourceRoot);
+        	pc.initSource(sourceRoot);
         }		
 		NestedJarClassLoader loader=new NestedJarClassLoader(JavaCodeGeneratorTest1.class.getClassLoader(),logger);
 		for(File classFilePath:classPaths) {

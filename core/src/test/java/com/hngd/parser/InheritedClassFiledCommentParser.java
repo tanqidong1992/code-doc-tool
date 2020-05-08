@@ -16,7 +16,7 @@ public class InheritedClassFiledCommentParser {
 		ParserContext pc=new ParserContext();
 		String rootPath="../core-test/src/main/java";
 		File directory=new File(rootPath);
-		pc.initRecursively(directory);
+		pc.initSource(directory);
 		//CommonClassCommentParser.printResult();
 		Type type=Teacher.class;
 		OpenAPI openAPI=new OpenAPI();

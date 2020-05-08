@@ -2,11 +2,13 @@ package com.hngd.tool.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -150,5 +152,22 @@ public class ProjectUtils {
 			}
 		}
 		return sourceRoots;
+	}
+
+	public static List<File> resolveSourceJarFiles(List<File> classPaths) {
+		List<File> sourceJarFiles=new ArrayList<>();
+		classPaths.stream()
+		    .filter(File::isFile)
+		    .filter(file->file.getName().endsWith(".jar"))
+		    .forEach(file->{
+		    	File parent=file.getParentFile();
+		    	String baseName=FilenameUtils.getBaseName(file.getName());
+		    	String sourceJarFileName=baseName+"-sources.jar";
+		    	File sourceJarFile=new File(parent, sourceJarFileName);
+		    	if(sourceJarFile.exists() || sourceJarFile.isFile()) {
+		    		sourceJarFiles.add(sourceJarFile);
+		    	}
+		    });
+		return sourceJarFiles;
 	}
 }

@@ -26,21 +26,22 @@ import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 public class ProjectAnalysis {
 
 	private static final Logger logger=LoggerFactory.getLogger(ProjectAnalysis.class);
-	public static String process(List<File> sourceRoots,String includes,String excludes,File jarFilePath,String packageFilter,ServerConfig config) {
+	public static String process(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,File jarFilePath,String packageFilter,ServerConfig config) {
 	    NestedJarClassLoader loader=new NestedJarClassLoader(ProjectAnalysis.class.getClassLoader(),logger);
 		try {
 			loader.addURLs(jarFilePath.toURI().toURL());
 		} catch (IOException e) {
 			logger.error("",e);
 		}
-		return doProcess(sourceRoots,includes,excludes, loader, packageFilter, config);
+		return doProcess(sourceRoots,sourceJarFiles,includes,excludes, loader, packageFilter, config);
 	}
 	
-	private static String doProcess(List<File> sourceRoots,String includes,String excludes,NestedJarClassLoader loader,String packageFilter,ServerConfig config) {
+	private static String doProcess(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,NestedJarClassLoader loader,String packageFilter,ServerConfig config) {
 		ParserContext pc=new ParserContext(includes,excludes);
 		for(File sourceRoot:sourceRoots) {
-        	pc.initRecursively(sourceRoot);
+        	pc.initSource(sourceRoot);
         }
+		pc.initSourceInJar(sourceJarFiles);
 		OpenAPI openApi = new OpenAPI();
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		config.info.setDescription("最后更新时间:"+sdf.format(new Date()));
@@ -62,7 +63,7 @@ public class ProjectAnalysis {
         return s;
 	}
 	
-	public static String process(List<File> sourceRoots,String includes,String excludes,List<File> classFilePaths,String packageFilter,ServerConfig config) {
+	public static String process(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,List<File> classFilePaths,String packageFilter,ServerConfig config) {
 	    NestedJarClassLoader loader=new NestedJarClassLoader(ProjectAnalysis.class.getClassLoader(),logger);
 		for(File classFilePath:classFilePaths) {
 			if(classFilePath.isDirectory() || classFilePath.getName().endsWith("jar")) {
@@ -77,7 +78,7 @@ public class ProjectAnalysis {
 			}
 			
 		}
-	    return doProcess(sourceRoots,includes,excludes, loader, packageFilter, config);
+	    return doProcess(sourceRoots,sourceJarFiles,includes,excludes, loader, packageFilter, config);
 	}
 	
 	

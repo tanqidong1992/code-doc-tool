@@ -68,7 +68,7 @@ public class JavascriptAPIGenerator extends BaseMojo
 		
 		ParserContext parserContext=new ParserContext();
 		for(File sourceRoot:getSourceRoots()) {
-			parserContext.initRecursively(sourceRoot);
+			parserContext.initSource(sourceRoot);
 		}
 		
 		ClassParser cp=new ClassParser(parserContext);

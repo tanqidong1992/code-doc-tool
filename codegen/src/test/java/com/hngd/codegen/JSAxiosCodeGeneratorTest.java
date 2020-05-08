@@ -18,7 +18,7 @@ public class JSAxiosCodeGeneratorTest {
 	public static void main(String[] args) throws IOException {
 		AjaxCodeGenerator acg = new AjaxCodeGenerator();
 		ParserContext parserContext = new ParserContext();
-		parserContext.initRecursively(new File(TestConstants.JAVA_SRC_ROOT));
+		parserContext.initSource(new File(TestConstants.JAVA_SRC_ROOT));
 		parserContext.printResult();
 		ClassParser cp = new ClassParser(parserContext);
 		Optional<ModuleInfo> omi = cp.parseModule(RoleController.class);

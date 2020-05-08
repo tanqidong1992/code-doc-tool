@@ -82,6 +82,9 @@ public class App
         builder.documentTitle(info.getTitle());
         builder.textLine(info.getDescription());
         moduleOps.forEach((tag,ops)->{
+        	if(!tag.contains("点检") && !tag.contains("月计划开动台时")) {
+        		return;
+        	}
         	builder.sectionTitleLevel(2, tag);
         	if(!CollectionUtils.isEmpty(ops)) {
         		ops.forEach(op->resolveOperation(op,builder,openAPI));
@@ -264,6 +267,9 @@ public class App
     }
     public static List<String> parameterToTableCells(Parameter p){
     	List<String> s=new ArrayList<>();
+    	if(p==null) {
+    		System.out.println();
+    	}
     	s.add(p.getName());
     	String typeStr="未知";
     	Schema schema=p.getSchema();

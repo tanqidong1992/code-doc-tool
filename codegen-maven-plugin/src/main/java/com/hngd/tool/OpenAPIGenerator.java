@@ -88,11 +88,12 @@ public class OpenAPIGenerator extends BaseMojo{
 		ServerConfig config=ServerConfig.load(confFilePath);
 		File jarFile=new File(jarFilePath);
 		String s=null;
+		List<File> classPaths=ProjectUtils.resolveAllClassPath(mavenProject,session,projectDependenciesResolver,projects);
+		List<File> sourceJarFiles=ProjectUtils.resolveSourceJarFiles(classPaths);
 		if(jarFile.exists()) {
-			s=ProjectAnalysis.process(getSourceRoots(),includes,excludes, jarFile, packageFilter, config);
+			s=ProjectAnalysis.process(getSourceRoots(),sourceJarFiles,includes,excludes, jarFile, packageFilter, config);
 		}else {
-			List<File> classPaths=ProjectUtils.resolveAllClassPath(mavenProject,session,projectDependenciesResolver,projects);
-			s=ProjectAnalysis.process(getSourceRoots(),includes,excludes, classPaths, packageFilter, config);
+			s=ProjectAnalysis.process(getSourceRoots(),sourceJarFiles,includes,excludes, classPaths, packageFilter, config);
 		}
 		 
 		File apiJsonFile=new File(openAPIOutput, API_FILE_NAME);

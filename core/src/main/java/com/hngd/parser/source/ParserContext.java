@@ -12,16 +12,23 @@ package com.hngd.parser.source;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.shared.utils.io.FileUtils;
+import org.codehaus.plexus.util.MatchPatterns;
+import org.springframework.util.CollectionUtils;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
@@ -47,10 +54,20 @@ public class ParserContext {
 	
 	private String excludes;
 	private String includes;
+	MatchPatterns includePatterns;
+	MatchPatterns excludePatterns;
 	
 	public ParserContext(String includes,String excludes) {
 		this.excludes = excludes;
 		this.includes = includes;
+		if(StringUtils.isNotBlank(excludes)) {
+			String []excludeArray=StringUtils.split(excludes, ",");
+			excludePatterns=MatchPatterns.from(excludeArray);
+		}
+		if(StringUtils.isNotBlank(includes)) {
+			String []includeArray=StringUtils.split(includes, ",");
+			includePatterns=MatchPatterns.from(includeArray);
+		}
 	}
 
 	public ParserContext() {
@@ -65,10 +82,10 @@ public class ParserContext {
 	private  Map<String, MethodInfo> methodComments = new ConcurrentHashMap<>();
 	private  Map<String, FieldInfo> fieldComments = new ConcurrentHashMap<>();
 	 
-    public  void initRecursively(File directory) {
+    public  void initSource(File sourceBaseDirectory) {
     	boolean includeBasedir=true;
 		try {
-			List<File> files=FileUtils.getFiles(directory, includes, excludes, includeBasedir);
+			List<File> files=FileUtils.getFiles(sourceBaseDirectory, includes, excludes, includeBasedir);
 			files.stream()
 			  .parallel()
 	          .filter(JavaFileUtils::isJavaSourceFile)
@@ -77,11 +94,58 @@ public class ParserContext {
 			throw new SourceParseException("读取源代码列表失败", e);
 		}
 	}
-	 
-	public  void parse(File f) {
-		 
-		CompilationUnit cu=ClassUtils.parseClass(f);
-		Optional<PackageDeclaration>  optionalPackageDeclaration=cu.getPackageDeclaration();
+    public  void initSourceInJar(List<File> sourceJarFiles) {
+    	 if(CollectionUtils.isEmpty(sourceJarFiles)) {
+    		 return ;
+    	 }
+		 sourceJarFiles.stream()
+		     .parallel()
+		     .forEach(jarFile -> {
+				try {
+					doParseSourceJarFile(jarFile);
+				} catch (IOException e) {
+					String msg="Read file:"+jarFile.getName()+" failed!";
+					log.warn(msg,e);
+					//throw new SourceParseException(msg, e);
+				}
+			});
+	}
+    public void doParseSourceJarFile(File file) throws IOException{
+    	JarFile jarFile= new JarFile(file);
+		Enumeration<JarEntry> entries=jarFile.entries();
+		List<JarEntry> filteredJarEntries=new ArrayList<>();
+		while(entries.hasMoreElements()) {
+			JarEntry entry=entries.nextElement();
+			String name=entry.getName();
+			if(isInclude(name)) {
+				filteredJarEntries.add(entry);
+			}
+		}
+		filteredJarEntries.stream()
+		    .parallel()
+		    .forEach(je->doParseJarEntry(jarFile,je));
+    }
+	private void doParseJarEntry(JarFile jarFile, JarEntry je) {
+		try(InputStream in=jarFile.getInputStream(je)){
+			CompilationUnit cu= ClassUtils.parseClass(in);
+			doParseCompilationUnit(cu);
+		}catch(IOException e) {
+			String msg="Parse file:"+jarFile.getName()+"!"+je.getName()+" failed!";
+			 throw new SourceParseException(msg, e);
+		}
+	}
+
+	private boolean isInclude(String name) {
+		
+		if(includePatterns==null || includePatterns.matches(name, true)) {
+			if(excludePatterns==null || !excludePatterns.matches(name, true)) {
+				return true;
+			}
+		}
+		return false;
+	}
+    private void doParseCompilationUnit(CompilationUnit cu) {
+    	Optional<PackageDeclaration>  optionalPackageDeclaration=cu.getPackageDeclaration();
 		String packageName="";
 		if(optionalPackageDeclaration.isPresent()) {
 			PackageDeclaration pd=optionalPackageDeclaration.get();
@@ -100,6 +164,11 @@ public class ParserContext {
 	    result.getMethodComments().forEach((k,v)->{
 	    	this.methodComments.put(k, v);
 	    });
+    }
+	public  void parse(File f) {
+		 
+		CompilationUnit cu=ClassUtils.parseClass(f);
+		doParseCompilationUnit(cu);
 	}
      
 	public  String getMethodComment(String className, String methodName) {

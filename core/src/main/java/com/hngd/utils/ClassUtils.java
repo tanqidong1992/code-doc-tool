@@ -80,6 +80,17 @@ public class ClassUtils {
 		return cu.getResult().get();
 	}
 	
+    public static CompilationUnit parseClass(InputStream in) {
+		ParseResult<CompilationUnit> cu=null;
+		try {
+			Reader reader=new BufferedReader(new InputStreamReader(in, "UTF-8"));
+			cu = new JavaParser().parse(reader);//.parse(reader, true);
+		} catch (IOException e) {
+			logger.error("", e);
+		}
+		return cu.getResult().get();
+	}
+
 	public static String getMethodIdentifier(Method method) {
 		if(method==null) {
 			return "";

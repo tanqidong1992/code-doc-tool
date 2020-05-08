@@ -35,7 +35,7 @@ public class OpenAPITagTest {
 		String path="../core-test/src/main/java";
 		File f=new File(path);
 		ParserContext pc=new ParserContext();
-		pc.initRecursively(f);
+		pc.initSource(f);
 		OpenAPI openapi = new OpenAPI();
 		OpenAPITool tool=new OpenAPITool(openapi,pc);
  
