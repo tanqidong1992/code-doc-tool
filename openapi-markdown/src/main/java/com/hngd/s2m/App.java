@@ -89,7 +89,7 @@ public class App
         });
         
         
-        File output=new File(info.getTitle()+".md");
+        File output=new File("test-output",info.getTitle()+".md");
         if(output.exists()) {
         	output.delete();
         }

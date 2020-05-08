@@ -156,6 +156,14 @@
 			<version>1.0.1</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.shared/file-management -->
+		<dependency>
+			<groupId>org.apache.maven.shared</groupId>
+			<artifactId>file-management</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 	</build>

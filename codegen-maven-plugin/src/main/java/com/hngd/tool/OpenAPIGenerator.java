@@ -41,6 +41,17 @@ public class OpenAPIGenerator extends BaseMojo{
 	 */
 	@Parameter(required = true)
 	public String packageFilter;
+	
+	/**
+	 * 不需要解析的源码文件ANT匹配规则,多个以','分割
+	 */
+	@Parameter(required = false)
+	public String excludes;
+	/**
+	 * 需要解析的源码文件ANT匹配规则,多个以','分割 
+	 */
+	@Parameter(required = false)
+	public String includes;
 	/**
 	 * api config file info
 	 */
@@ -78,10 +89,10 @@ public class OpenAPIGenerator extends BaseMojo{
 		File jarFile=new File(jarFilePath);
 		String s=null;
 		if(jarFile.exists()) {
-			s=ProjectAnalysis.process(getSourceRoots(), jarFile, packageFilter, config);
+			s=ProjectAnalysis.process(getSourceRoots(),includes,excludes, jarFile, packageFilter, config);
 		}else {
 			List<File> classPaths=ProjectUtils.resolveAllClassPath(mavenProject,session,projectDependenciesResolver,projects);
-			s=ProjectAnalysis.process(getSourceRoots(), classPaths, packageFilter, config);
+			s=ProjectAnalysis.process(getSourceRoots(),includes,excludes, classPaths, packageFilter, config);
 		}
 		 
 		File apiJsonFile=new File(openAPIOutput, API_FILE_NAME);

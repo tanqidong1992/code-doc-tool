@@ -37,7 +37,7 @@ public class ClassLoaderTest {
 				new File(projectBaseDir,"target\\classes")
 				);
 				
-		String s=ProjectAnalysis.process(sourceRoots, jarFile, packageFilter, config);
+		String s=ProjectAnalysis.process(sourceRoots,null,null, jarFile, packageFilter, config);
 		String swaggerOutput="./";
 		File apiJsonFile=new File(swaggerOutput, "api.json");
 		try {

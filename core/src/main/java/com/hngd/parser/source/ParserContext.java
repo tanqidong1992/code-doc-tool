@@ -11,18 +11,21 @@
 package com.hngd.parser.source;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.shared.utils.io.FileUtils;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
+import com.hngd.exception.SourceParseException;
 import com.hngd.parser.entity.ClassInfo;
 import com.hngd.parser.entity.FieldInfo;
 import com.hngd.parser.entity.MethodInfo;
@@ -41,6 +44,18 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class ParserContext {
+	
+	private String excludes;
+	private String includes;
+	
+	public ParserContext(String includes,String excludes) {
+		this.excludes = excludes;
+		this.includes = includes;
+	}
+
+	public ParserContext() {
+		
+	}
 	static {
 		ExtensionManager.enableExtension(TimeBlock.class);
 		ExtensionManager.enableExtension(MobileBlock.class);
@@ -49,47 +64,22 @@ public class ParserContext {
 	private  Map<String, ClassInfo> classComments = new ConcurrentHashMap<>();
 	private  Map<String, MethodInfo> methodComments = new ConcurrentHashMap<>();
 	private  Map<String, FieldInfo> fieldComments = new ConcurrentHashMap<>();
-	public void parseFiles(String directoryPath) {
-		File file = new File(directoryPath);
-		if(!file.exists()){
-			log.error("file {} is not found",file.getAbsolutePath());
-		    return;
-		}
-		if(!file.isDirectory()){
-			log.error("file {} is not a directory",file.getAbsolutePath());
-			return ;
-		}
-        File files[] = file.listFiles();
-        if(files==null) {
-        	log.error("direcotry {} is empty",file.getAbsolutePath());
-        	return;
-        }
-		Arrays.asList(files).stream()
-		    .parallel()
-	        .filter(JavaFileUtils::isJavaSourceFile)
-			.forEach(this::parse);
-	}
-	
+	 
     public  void initRecursively(File directory) {
-    	if(directory.isFile()) {
-    		log.warn("the file:{} is not a directory",directory.getAbsolutePath());
-    		return;
-    	}
-		parseFiles(directory.getAbsolutePath());
-		File[] files=directory.listFiles();
-		if(files==null) {
-			return ;
+    	boolean includeBasedir=true;
+		try {
+			List<File> files=FileUtils.getFiles(directory, includes, excludes, includeBasedir);
+			files.stream()
+			  .parallel()
+	          .filter(JavaFileUtils::isJavaSourceFile)
+			  .forEach(this::parse);
+		} catch (IOException e) {
+			throw new SourceParseException("读取源代码列表失败", e);
 		}
-		for(File file:files) {
-			if(!file.isDirectory()) {
-				continue;
-			}
-			parseFiles(file.getAbsolutePath());
-			initRecursively(file);
-		} 
 	}
 	 
 	public  void parse(File f) {
+		 
 		CompilationUnit cu=ClassUtils.parseClass(f);
 		Optional<PackageDeclaration>  optionalPackageDeclaration=cu.getPackageDeclaration();
 		String packageName="";
