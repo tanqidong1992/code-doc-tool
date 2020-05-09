@@ -2,38 +2,29 @@ package com.hngd.s2m;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.type.ReferenceType;
-import com.fasterxml.jackson.databind.type.SimpleType;
 import com.hngd.s2m.entity.OperationWrapper;
 import com.hngd.s2m.utils.OpenAPIUtils;
 
-import io.github.swagger2markup.markup.builder.MarkupBlockStyle;
 import io.github.swagger2markup.markup.builder.MarkupDocBuilder;
 import io.github.swagger2markup.markup.builder.MarkupDocBuilders;
 import io.github.swagger2markup.markup.builder.MarkupLanguage;
 import io.github.swagger2markup.markup.builder.MarkupTableColumn;
-import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -45,20 +36,14 @@ import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-	private static final Logger logger=LoggerFactory.getLogger(App.class);
-	
-    public static void main( String[] args ) throws URISyntaxException, IOException
-    {
-        File file=new File("./test-data/api.json");
-        OpenAPI openAPI=OpenAPIUtils.loadFromFile(file);
-       
-        
+public class OpenAPIToMarkdown {
+
+    private static final Logger logger=LoggerFactory.getLogger(OpenAPIToMarkdown.class);
+    public static void openAPIToMarkdown(File openAPIFile,List<String> includeTags,File outputDirectory) {
+    	OpenAPI openAPI=OpenAPIUtils.loadFromFile(openAPIFile);
+    	openAPIToMarkdown(openAPI, includeTags, outputDirectory);
+    }
+    public static void openAPIToMarkdown(OpenAPI openAPI,List<String> includeTags,File outputDirectory){
         MarkupDocBuilder builder = MarkupDocBuilders.documentBuilder(MarkupLanguage.MARKDOWN);
         Paths paths=openAPI.getPaths();
         Map<String,List<OperationWrapper>> moduleOps=new HashMap<>();
@@ -82,17 +67,24 @@ public class App
         builder.documentTitle(info.getTitle());
         builder.textLine(info.getDescription());
         moduleOps.forEach((tag,ops)->{
-        	if(!tag.contains("点检") && !tag.contains("月计划开动台时")) {
-        		return;
+        	if(includeTags==null || includeTags.contains(tag)) {
+        		builder.sectionTitleLevel(2, tag);
+            	if(!CollectionUtils.isEmpty(ops)) {
+            		ops.forEach(op->resolveOperation(op,builder,openAPI));
+            	}
         	}
-        	builder.sectionTitleLevel(2, tag);
-        	if(!CollectionUtils.isEmpty(ops)) {
-        		ops.forEach(op->resolveOperation(op,builder,openAPI));
-        	}
+        	
         });
-        
-        
-        File output=new File("test-output",info.getTitle()+".md");
+        String tagNameSuffix=null;
+        if(CollectionUtils.isNotEmpty(includeTags)) {
+        	tagNameSuffix=StringUtils.join(includeTags, "-");
+        }
+        String title=info.getTitle();
+        //太长了,就不用追加了
+        if(tagNameSuffix!=null && tagNameSuffix.length()<10) {
+        	title+="-"+tagNameSuffix;
+        }
+        File output=new File(outputDirectory,title+".md");
         if(output.exists()) {
         	output.delete();
         }
@@ -124,7 +116,7 @@ public class App
     	List<Parameter> parameters=operation.getParameters();
     	if(!CollectionUtils.isEmpty(parameters)) {
 			List<List<String>> cells=parameters.stream()
-    		    .map(App::parameterToTableCells)
+    		    .map(OpenAPIToMarkdown::parameterToTableCells)
     		    .collect(Collectors.toList());
     		builder.tableWithColumnSpecs(columnSpecs, cells);
     	}else {
@@ -221,7 +213,7 @@ public class App
     			SchemaTable sti=schemaToTableCells(keyName,openAPI, itemSchema);
         		return Optional.of(sti);
     		}else {
-    			logger.error("haha");
+    			logger.error("The item schema of array {} is null",keyName);
     		}
     		
     	}
@@ -283,6 +275,4 @@ public class App
     	s.add(p.getDescription());
     	return s;
     }
-    
-	
 }

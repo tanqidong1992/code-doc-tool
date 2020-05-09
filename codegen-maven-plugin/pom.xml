@@ -85,6 +85,11 @@
 			<version>1.7.25</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+		<groupId>com.hngd.tool</groupId>
+		<version>2.3.0-SNAPSHOT</version>
+		<artifactId>openapi-markdown</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

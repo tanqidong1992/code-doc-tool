@@ -17,6 +17,7 @@ import com.hngd.openapi.ProjectAnalysis;
 import com.hngd.openapi.config.ServerConfig;
 import com.hngd.openapi.validator.OpenAPIValidator;
 import com.hngd.openapi.validator.ValidationResponse;
+import com.hngd.s2m.OpenAPIToMarkdown;
 import com.hngd.tool.utils.ProjectUtils;
 
 import io.swagger.util.Json;
@@ -58,6 +59,11 @@ public class OpenAPIGenerator extends BaseMojo{
 	@Parameter(required = true)
 	private String confFilePath;
 
+	/**
+	 *转化为Markdown的模块过滤器
+	 */
+	@Parameter(required=false)
+	private List<String> includeTags;
 	/**
 	 * SwaggerUI服务地址,HOST+IP,配置后将自动推送到该服务
 	 */
@@ -112,6 +118,7 @@ public class OpenAPIGenerator extends BaseMojo{
 				throw new MojoFailureException("校验OpenAPI失败");
 			}
 		}
+		OpenAPIToMarkdown.openAPIToMarkdown(apiJsonFile, includeTags, openAPIOutput);
 		if(StringUtils.isNotEmpty(swaggerUIServer)){
 			pushToSwaggerUIServer(apiJsonFile,swaggerUIServer);
 		}
