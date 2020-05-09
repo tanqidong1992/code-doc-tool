@@ -22,6 +22,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hngd.constant.HttpParameterLocation;
 import com.hngd.exception.ClassParseException;
 import com.hngd.openapi.entity.HttpInterface;
@@ -80,13 +81,12 @@ public class ClassParser {
 		return Optional.ofNullable(mi);
 	}
 	private ModuleInfo doConvertClassToModule(Class<?> cls) {
-		log.info("start to process class:{}",cls.getName());
+		log.info("Start to process class:{}",cls.getName());
 		if (!SpringAnnotationUtils.isControllerClass(cls)) {
-			log.info("There is no annotation Controller or RestController for class:{}",cls.getName());
+			log.info("There Controller or RestController annotation for class:{} is not Found!",cls.getName());
 			return null;
 		}
 		ModuleInfo mi = new ModuleInfo();
-		
 		//parse module base info
 		RequestMapping requestMapping = cls.getAnnotation(RequestMapping.class);
 		mi.setUrl(SpringAnnotationUtils.extractUrl(requestMapping));
@@ -110,7 +110,7 @@ public class ClassParser {
 			Optional<HttpInterface> optionalInfo = parseMethod(method);
 			optionalInfo.ifPresent(hi->{
 				mi.getInterfaceInfos().add(hi);
-				//attach class tags if exists
+				//attach class tags to pathItem if exists
 				if(classInfo!=null) {
 				    Optional<TagsBlock> optionalTags=classInfo.findAnyExtension(TagsBlock.class);
 				    	optionalTags.ifPresent(tagsBlock-> {
@@ -309,6 +309,10 @@ public class ClassParser {
 		DateTimeFormat a=field.getAnnotation(DateTimeFormat.class);
 		if(a!=null) {
 			return Optional.ofNullable(a.pattern());
+		}
+		JsonFormat jsonFormat=field.getAnnotation(JsonFormat.class);
+		if(jsonFormat!=null) {
+			return Optional.ofNullable(jsonFormat.pattern());
 		}
 		return Optional.empty();
 	}

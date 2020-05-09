@@ -23,7 +23,7 @@ public class ClassParseException extends ParseException {
 	    this.initCause(cause);
 	}
 	public ClassParseException(Class<?> clazz,Executable method,Parameter parameter,String msg,Throwable cause) {
-	    super("Parse method:"+clazz.getName()+"."+method.getName()+" failed!"+msg);
+	    super("Parse parameter:"+clazz.getName()+"."+method.getName()+"."+parameter.getName()+" failed!"+msg);
 	    this.initCause(cause);
 	}
 	
