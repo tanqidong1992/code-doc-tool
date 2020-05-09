@@ -1,5 +1,6 @@
 package com.hngd.swagger.model;
 
+import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import com.hngd.common.web.result.RestResponse;
 import com.hngd.openapi.OpenAPITool;
 import com.hngd.parser.entity.FieldInfo;
 import com.hngd.parser.source.ParserContext;
+import com.hngd.test.dto.ComplexDTO;
 
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.util.Json;
@@ -26,9 +28,11 @@ public class ModelResolverTest {
 		
 		Type type=new TypeToken<List<Camera>>() {}.getType();
 		OpenAPI openapi = new OpenAPI();
-		Class<?> clz = Camera.class;
-		OpenAPITool opt=new OpenAPITool(openapi, new ParserContext());
-		opt.resolveType(type, openapi);
+		Class<?> clz = ComplexDTO.class;
+		ParserContext pc=new ParserContext();
+		pc.initSource(new File("W:\\workspaces\\build-tools\\hn-code-tool\\core-test"));
+		OpenAPITool opt=new OpenAPITool(openapi, pc);
+		opt.resolveType(clz, openapi);
 		Json.prettyPrint(openapi);
 	}
 	

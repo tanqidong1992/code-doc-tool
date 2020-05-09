@@ -216,6 +216,15 @@ public class OpenAPIToMarkdown {
     			logger.error("The item schema of array {} is null",keyName);
     		}
     		
+    	}else {
+    		if(ss.get$ref()!=null) {
+    			ss=openAPI.getComponents().getSchemas().get(OpenAPIUtils.refToKey(ss.get$ref()));
+    			if(ss!=null) {
+    				SchemaTable sti= schemaToTableCells(keyName,openAPI,ss);
+            		return Optional.of(sti);
+    			}
+    			
+    		}
     	}
     	return Optional.empty();
     }

@@ -30,6 +30,7 @@ import com.hngd.common.util.GsonUtils;
 import com.hngd.common.web.RestResponses;
 import com.hngd.common.web.parameter.GsonEditor;
 import com.hngd.common.web.result.RestResponse;
+import com.hngd.test.dto.ComplexDTO;
 import com.hngd.test.dto.FormWithDate;
 import com.hngd.test.dto.FormWithJacksonDate;
 import com.hngd.test.dto.FormWithJson;
@@ -252,5 +253,12 @@ public class SampleController {
 	 public RestResponse<String> planApprove1(@RequestParam String planId,@RequestParam String name,BindingResult bindingResult){
 		 return null;
 	 }
-
+	 /**
+	  * 测试返回复杂参数
+	  * @return
+	  */
+	 @GetMapping("/test/complex")
+	 public RestResponse<ComplexDTO> getComplexResp(){
+		 return null;
+	 }
 }
