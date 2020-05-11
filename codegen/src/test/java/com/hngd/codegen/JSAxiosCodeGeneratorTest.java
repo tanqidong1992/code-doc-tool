@@ -9,7 +9,7 @@ import java.util.Optional;
 import com.hngd.codegen.AxiosCodeGenerator;
 import com.hngd.codegen.constant.TestConstants;
 import com.hngd.openapi.entity.ModuleInfo;
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.SourceParserContext;
 import com.hngd.parser.spring.ClassParser;
 import com.hngd.web.controller.RoleController;
 
@@ -17,10 +17,10 @@ public class JSAxiosCodeGeneratorTest {
 
 	public static void main(String[] args) throws IOException {
 		AjaxCodeGenerator acg = new AjaxCodeGenerator();
-		ParserContext parserContext = new ParserContext();
+		SourceParserContext parserContext = new SourceParserContext();
 		parserContext.initSource(new File(TestConstants.JAVA_SRC_ROOT));
-		parserContext.printResult();
-		ClassParser cp = new ClassParser(parserContext);
+		parserContext.getCommentStore().print();
+		ClassParser cp = new ClassParser(parserContext.getCommentStore());
 		Optional<ModuleInfo> omi = cp.parseModule(RoleController.class);
 		List<ModuleInfo> modules = new ArrayList<>();
 		if (omi.isPresent()) {

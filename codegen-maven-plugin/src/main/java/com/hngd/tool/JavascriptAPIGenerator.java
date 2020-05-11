@@ -19,7 +19,7 @@ import com.hngd.codegen.AjaxCodeGenerator;
 import com.hngd.codegen.AxiosCodeGenerator;
 import com.hngd.codegen.exception.CodeGenerateException;
 import com.hngd.openapi.entity.ModuleInfo;
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.SourceParserContext;
 import com.hngd.parser.spring.ClassParser;
 import com.hngd.tool.utils.ProjectUtils;
 
@@ -66,12 +66,12 @@ public class JavascriptAPIGenerator extends BaseMojo
 		List<File> classPaths=ProjectUtils.resolveAllClassPath(mavenProject,session,projectDependenciesResolver,projects);
 		List<Class<?>> clazzes=ProjectUtils.loadProjectClass(classPaths, packageFilter);
 		
-		ParserContext parserContext=new ParserContext();
+		SourceParserContext parserContext=new SourceParserContext();
 		for(File sourceRoot:getSourceRoots()) {
 			parserContext.initSource(sourceRoot);
 		}
 		
-		ClassParser cp=new ClassParser(parserContext);
+		ClassParser cp=new ClassParser(parserContext.getCommentStore());
 		List<ModuleInfo> modules=new LinkedList<>();
 		for(Class<?> cls:clazzes) {
 			Optional<ModuleInfo> module=cp.parseModule(cls);

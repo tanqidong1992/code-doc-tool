@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hngd.openapi.config.ServerConfig;
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.SourceParserContext;
 
 import io.squark.nestedjarclassloader.NestedJarClassLoader;
 import io.swagger.v3.core.util.Json;
@@ -37,7 +37,7 @@ public class ProjectAnalysis {
 	}
 	
 	private static String doProcess(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,NestedJarClassLoader loader,String packageFilter,ServerConfig config) {
-		ParserContext pc=new ParserContext(includes,excludes);
+		SourceParserContext pc=new SourceParserContext(includes,excludes);
 		for(File sourceRoot:sourceRoots) {
         	pc.initSource(sourceRoot);
         }
@@ -50,7 +50,7 @@ public class ProjectAnalysis {
         if(config.servers!=null) {
             config.servers.forEach(s->openApi.addServersItem(s));
         }
-		OpenAPITool openAPITool = new OpenAPITool(openApi,pc);
+		OpenAPITool openAPITool = new OpenAPITool(openApi,pc.getCommentStore());
 		List<String> allClass=loader.listAllClass("default");
 		List<Class<?>> clazzes=allClass.stream()
 			.filter(name->name.startsWith(packageFilter))

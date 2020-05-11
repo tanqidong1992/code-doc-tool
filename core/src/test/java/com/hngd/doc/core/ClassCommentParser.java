@@ -10,7 +10,8 @@ import org.junit.Test;
 
 import com.hngd.parser.entity.ClassInfo;
 import com.hngd.parser.entity.MethodInfo;
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.CommentStore;
+import com.hngd.parser.source.SourceParserContext;
 import com.hngd.web.controller.RoleController;
 
 public class ClassCommentParser {
@@ -19,16 +20,17 @@ public class ClassCommentParser {
 	public void testParse(){
 		
 		File f=new File("../core-test/src/main/java/com/hngd/web/controller/RoleController.java");
-		ParserContext pc=new ParserContext();
+		SourceParserContext pc=new SourceParserContext();
 		pc.parse(f);
-		pc.printResult();
+		CommentStore cs=pc.getCommentStore();
+		cs.print();
 		Class<?> clazz=RoleController.class;
-		ClassInfo c=pc.getClassComment(clazz);
+		ClassInfo c=cs.getClassComment(clazz);
 		Assert.assertTrue(!StringUtils.isEmpty(c.getComment()));
 		Method[] methods=clazz.getDeclaredMethods();
 		for(int i=0;i<methods.length;i++) {
 			Method method=methods[i];
-			Optional<MethodInfo> mi=pc.getMethodInfo(method);
+			Optional<MethodInfo> mi=cs.getMethodInfo(method);
 			Assert.assertTrue(StringUtils.isNotEmpty(mi.get().getComment()));
 			mi.get().getParameters()
 			.forEach(pi->{

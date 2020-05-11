@@ -34,7 +34,7 @@ import com.hngd.parser.entity.ParameterInfo;
 import com.hngd.parser.javadoc.extension.DescriptionBlock;
 import com.hngd.parser.javadoc.extension.SummaryBlock;
 import com.hngd.parser.javadoc.extension.TagsBlock;
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.CommentStore;
 import com.hngd.parser.spring.parameter.CookieValueProcessor;
 import com.hngd.parser.spring.parameter.HttpParameterProcessor;
 import com.hngd.parser.spring.parameter.MatrixVariableProcessor;
@@ -48,14 +48,18 @@ import com.hngd.utils.RestClassUtils;
 import com.hngd.utils.TypeUtils;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * Spring MVC接口类(Controller或者RestController注解修饰类)解析器
+ * @author tqd
+ *
+ */
 @Slf4j
 public class ClassParser {
 
-	ParserContext parserContext;
+	private CommentStore commentStore;
 	List<HttpParameterProcessor<?>> httpParameterProcessors=new ArrayList<>();
-	public ClassParser(ParserContext parserContext) {
-		this.parserContext = parserContext;
+	public ClassParser(CommentStore commentStore) {
+		this.commentStore = commentStore;
 		httpParameterProcessors.add(new RequestParamProcessor());
 		httpParameterProcessors.add(new PathVariableProcessor());
 		httpParameterProcessors.add(new RequestBodyProcessor());
@@ -86,17 +90,17 @@ public class ClassParser {
 			log.info("There Controller or RestController annotation for class:{} is not Found!",cls.getName());
 			return null;
 		}
-		ModuleInfo mi = new ModuleInfo();
+		ModuleInfo moduleInfo = new ModuleInfo();
 		//parse module base info
 		RequestMapping requestMapping = cls.getAnnotation(RequestMapping.class);
-		mi.setUrl(SpringAnnotationUtils.extractUrl(requestMapping));
-		mi.setName(cls.getSimpleName());
-		mi.setSimpleClassName(cls.getSimpleName());
-		mi.setCanonicalClassName(cls.getName());
-		mi.setDeprecated(ClassUtils.isClassDeprecated(cls));
-		ClassInfo classInfo=parserContext.getClassComment(cls);
+		moduleInfo.setUrl(SpringAnnotationUtils.extractUrl(requestMapping));
+		moduleInfo.setName(cls.getSimpleName());
+		moduleInfo.setSimpleClassName(cls.getSimpleName());
+		moduleInfo.setCanonicalClassName(cls.getName());
+		moduleInfo.setDeprecated(ClassUtils.isClassDeprecated(cls));
+		ClassInfo classInfo=commentStore.getClassComment(cls);
 		if(classInfo!=null) {
-			mi.setComment(classInfo.getComment());
+			moduleInfo.setComment(classInfo.getComment());
 		}
 		//parse module interfaces
 		Method[] methods = cls.getDeclaredMethods();
@@ -109,7 +113,7 @@ public class ClassParser {
 			}
 			Optional<HttpInterface> optionalInfo = parseMethod(method);
 			optionalInfo.ifPresent(hi->{
-				mi.getInterfaceInfos().add(hi);
+				moduleInfo.getInterfaceInfos().add(hi);
 				//attach class tags to pathItem if exists
 				if(classInfo!=null) {
 				    Optional<TagsBlock> optionalTags=classInfo.findAnyExtension(TagsBlock.class);
@@ -119,7 +123,7 @@ public class ClassParser {
 				}
 			});
 		}
-		return mi;
+		return moduleInfo;
 	}
 	 
 	private Optional<HttpInterface> parseMethod(Method method) {
@@ -167,10 +171,9 @@ public class ClassParser {
 			httpInterface.httpMethod = mappingAnnotation.annotationType().getSimpleName().replace("Mapping", "");
 		}
 		httpInterface.javaReturnTypeName = method.getReturnType().getSimpleName();
-		//httpInterface.javaRetureType = method.getReturnType();
 		httpInterface.javaMethodName = method.getName();
 		httpInterface.javaReturnType = method.getGenericReturnType();
-		Optional<MethodInfo> optionalMethodInfo=parserContext.getMethodInfo(method);
+		Optional<MethodInfo> optionalMethodInfo=commentStore.getMethodInfo(method);
 		if(optionalMethodInfo.isPresent()) {
 			MethodInfo mi=optionalMethodInfo.get();
 			httpInterface.comment=mi.getComment();
@@ -205,12 +208,13 @@ public class ClassParser {
 		Parameter[] parameters = method.getParameters();
 		for (int i = 0; i < parameters.length; i++) {
 			Parameter parameter = parameters[i];
+			//对于简单类型,将会返回一个参数,如果是复杂类型,可能会返回多个参数
 			List<HttpParameter> httpParams=processParameter(parameter);
 			if(!CollectionUtils.isEmpty(httpParams)) {
 				final int indexInJavaMethod=i;
 				httpParams.stream()
 				    .forEach(httpParam->httpParam.indexInJavaMethod=indexInJavaMethod);
-				Optional<MethodInfo>  optionalMethodInfo=parserContext.getMethodInfo(method);
+				Optional<MethodInfo>  optionalMethodInfo=commentStore.getMethodInfo(method);
 				if(optionalMethodInfo.isPresent()) {
 					List<ParameterInfo> javaParameterInfos=optionalMethodInfo.get().getParameters();
 					
@@ -223,7 +227,7 @@ public class ClassParser {
 							  String comment=pi.getComment();
 							  hp.setComment(comment);
 						  });
-						//补全无法从注解中获取参数名称
+						//补全在注解中没有指明名称且参数类型为简单类型的参数的名称
 						if(httpParams.size()==1) {
 							String name=httpParams.get(0).getName();
 							if(StringUtils.isBlank(name)) {
@@ -350,7 +354,7 @@ public class ClassParser {
 			httpParam.location = HttpParameterLocation.query;
 			httpParam.required = isPropertyRequired(clazz,property);
 			httpParam.javaType=property.getPropertyType();
-			httpParam.comment=parserContext.getFieldComment(field);
+			httpParam.comment=commentStore.getFieldComment(field);
 			Optional<String> dateFormat=extractPropertyDateFormat(clazz,property);
 			if(dateFormat.isPresent()) {
 				httpParam.openapiFormat=dateFormat.get();

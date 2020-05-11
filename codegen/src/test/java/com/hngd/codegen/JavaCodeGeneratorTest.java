@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.hngd.codegen.JavaAPICodeGenerator;
 import com.hngd.openapi.entity.ModuleInfo;
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.SourceParserContext;
 import com.hngd.parser.spring.ClassParser;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
@@ -44,7 +44,7 @@ public class JavaCodeGeneratorTest {
 						return clazz;
 					}).filter(clazz -> clazz != null).filter(clazz -> clazz.getAnnotation(RequestMapping.class) != null)
 					.forEach(cls -> {
-						ModuleInfo moduleInfo = new ClassParser(new ParserContext()).parseModule(cls).get();
+						ModuleInfo moduleInfo = new ClassParser(new SourceParserContext().getCommentStore()).parseModule(cls).get();
 						TypeSpec typeSpec = JavaAPICodeGenerator.toJavaFile(null,moduleInfo);
 						JavaFile javaFile = JavaFile.builder(outPackageName, typeSpec).build();
 						try {

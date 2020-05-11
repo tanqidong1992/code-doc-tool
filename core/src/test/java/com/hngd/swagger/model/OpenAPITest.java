@@ -17,7 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import com.hngd.common.web.result.RestResponse;
 import com.hngd.constant.Constants;
 import com.hngd.openapi.OpenAPITool;
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.SourceParserContext;
 import com.hngd.web.controller.AttachmentController;
 import com.hngd.web.controller.AutoInjectParameterTestController;
 import com.hngd.web.controller.RoleController;
@@ -33,10 +33,10 @@ public class OpenAPITest {
 	public  void test() throws ParseException, IOException {
 		String path="../core-test/src/main/java";
 		File f=new File(path);
-		ParserContext pc=new ParserContext();
+		SourceParserContext pc=new SourceParserContext();
 		pc.initSource(f);
 		OpenAPI openapi = new OpenAPI();
-		OpenAPITool tool=new OpenAPITool(openapi,pc);
+		OpenAPITool tool=new OpenAPITool(openapi,pc.getCommentStore());
 		/**
 		tool.parse(Arrays.asList(RoleController.class,
 				AttachmentController.class,

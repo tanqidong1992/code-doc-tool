@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.hngd.openapi.entity.ModuleInfo;
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.SourceParserContext;
 import com.hngd.parser.spring.ClassParser;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
@@ -38,7 +38,7 @@ public class JavaCodeGeneratorTest1 {
 				//new File(projectBaseDir,"target\\classes")
 				new File(jarFilePath)
 				);
-		ParserContext pc=new ParserContext();
+		SourceParserContext pc=new SourceParserContext();
 		for(File sourceRoot:sourceRoots) {
         	pc.initSource(sourceRoot);
         }		
@@ -62,7 +62,7 @@ public class JavaCodeGeneratorTest1 {
 		.filter(clazz -> clazz != null)
 		.filter(clazz ->isModuleClass(clazz) )
 		.forEach(cls -> {
-			ModuleInfo moduleInfo = new ClassParser(pc).parseModule(cls).get();
+			ModuleInfo moduleInfo = new ClassParser(pc.getCommentStore()).parseModule(cls).get();
 			TypeSpec typeSpec = JavaAPICodeGenerator.toJavaFile("async",moduleInfo);
 			String s=typeSpec.toString();
 			System.out.println(s);

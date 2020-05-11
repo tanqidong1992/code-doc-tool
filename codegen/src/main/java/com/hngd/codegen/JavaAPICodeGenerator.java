@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.openapi.entity.ModuleInfo;
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.SourceParserContext;
 import com.hngd.parser.spring.ClassParser;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.JavaFile;
@@ -68,7 +68,7 @@ public class JavaAPICodeGenerator {
  				.filter(clazz -> clazz != null)
  				.filter(clazz -> clazz.getAnnotation(RequestMapping.class) != null)
  				.forEach(cls -> {
- 					ModuleInfo moduleInfo = new ClassParser(new ParserContext()).parseModule(cls).get();
+ 					ModuleInfo moduleInfo = new ClassParser(new SourceParserContext().getCommentStore()).parseModule(cls).get();
  					TypeSpec typeSpec = toJavaFile(invokeType,moduleInfo);
  					JavaFile javaFile = JavaFile.builder(outPackageName, typeSpec).build();
  					try {
@@ -232,7 +232,7 @@ public class JavaAPICodeGenerator {
 	
 	 public static void generateJavaAPIFile(Class<?> cls,String invokeType,String baseUrl,String outPackageName,String outputDir) {
          File out = new File(outputDir);
-    	 ModuleInfo moduleInfo = new ClassParser(new ParserContext()).parseModule(cls).get();
+    	 ModuleInfo moduleInfo = new ClassParser(new SourceParserContext().getCommentStore()).parseModule(cls).get();
     	 if(moduleInfo==null) {
     		 return;
     	 }

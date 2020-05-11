@@ -43,7 +43,7 @@ import com.hngd.openapi.entity.ModuleInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hngd.constant.Comments;
 import com.hngd.constant.Constants;
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.CommentStore;
 import com.hngd.parser.spring.ClassParser;
 import com.hngd.utils.ClassUtils;
 import com.hngd.utils.TypeNameUtils;
@@ -78,13 +78,13 @@ import io.swagger.v3.oas.models.tags.Tag;
 public class OpenAPITool {
 	private static final Logger logger = LoggerFactory.getLogger(OpenAPITool.class);
 	public OpenAPI openAPI;
-	private ParserContext parserContext;
+	private CommentStore commentStore;
 	private ClassParser classParser;
 
-	public OpenAPITool(OpenAPI openAPI,ParserContext parserContext) {
+	public OpenAPITool(OpenAPI openAPI,CommentStore commentStore) {
 		this.openAPI = openAPI;
-		this.parserContext=parserContext;
-		this.classParser=new ClassParser(parserContext);
+		this.commentStore=commentStore;
+		this.classParser=new ClassParser(commentStore);
 	}
 
 	public void parse(String packageName) {
@@ -608,7 +608,7 @@ public class OpenAPITool {
 				return null;
 			}
 		}
-		String comment = parserContext.getFieldComment(field);
+		String comment = commentStore.getFieldComment(field);
 		if (comment != null) {
 			return comment;
 		} else {

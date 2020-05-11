@@ -8,7 +8,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.hngd.openapi.OpenAPITool;
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.CommentStore;
+import com.hngd.parser.source.SourceParserContext;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -20,10 +21,11 @@ public class ResolveTypeTests {
 	@Test
 	public void main() {
 		OpenAPI openAPI=new OpenAPI();
-		ParserContext parserContext=new ParserContext();
+		SourceParserContext parserContext=new SourceParserContext();
 		parserContext.parse(new File("./src/test/java/com/hngd/doc/core/ResolveTypeTests.java"));
-		parserContext.printResult();
-		OpenAPITool opt=new OpenAPITool(openAPI, parserContext);
+		CommentStore cs=parserContext.getCommentStore();
+		cs.print();
+		OpenAPITool opt=new OpenAPITool(openAPI, cs);
 		opt.resolveType(A.class, openAPI);
         System.out.println(Json.pretty(openAPI));
         Schema<?> schema=openAPI.getComponents().getSchemas().get("A");

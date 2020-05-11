@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.SourceParserContext;
 import com.hngd.parser.spring.ClassParser;
 
 import io.squark.nestedjarclassloader.NestedJarClassLoader;
@@ -46,8 +46,8 @@ public class TestSpringJarLoader {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			ParserContext parserContext=new ParserContext();
-			ClassParser cp=new ClassParser(parserContext);
+			SourceParserContext parserContext=new SourceParserContext();
+			ClassParser cp=new ClassParser(parserContext.getCommentStore());
 			
 			cp.parseModule(clazz);
 			RestController a=clazz.getAnnotation(RestController.class);

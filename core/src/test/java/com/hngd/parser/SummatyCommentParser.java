@@ -15,7 +15,7 @@ import com.hngd.doc.core.ClassCommentParseTest;
 import com.hngd.openapi.OpenAPITool;
 import com.hngd.parser.javadoc.JavaDocCommentElement;
 import com.hngd.parser.javadoc.JavaDocCommentParser;
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.SourceParserContext;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -27,9 +27,9 @@ public class SummatyCommentParser {
 	    Path path = Paths.get(url.toURI());
 	    List<String> commentLines = Files.readAllLines(path);
 	    	
-		ParserContext pc=new ParserContext();
+		SourceParserContext pc=new SourceParserContext();
 		List<JavaDocCommentElement> jdc=JavaDocCommentParser.parse(commentLines);
-		pc.printResult();
+		pc.getCommentStore().print();
 
 	}
 

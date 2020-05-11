@@ -13,7 +13,7 @@ import com.google.gson.reflect.TypeToken;
 import com.hngd.common.web.result.RestResponse;
 import com.hngd.openapi.OpenAPITool;
 import com.hngd.parser.entity.FieldInfo;
-import com.hngd.parser.source.ParserContext;
+import com.hngd.parser.source.SourceParserContext;
 import com.hngd.test.dto.ComplexDTO;
 
 import io.swagger.v3.core.converter.ModelConverters;
@@ -29,9 +29,9 @@ public class ModelResolverTest {
 		Type type=new TypeToken<List<Camera>>() {}.getType();
 		OpenAPI openapi = new OpenAPI();
 		Class<?> clz = ComplexDTO.class;
-		ParserContext pc=new ParserContext();
+		SourceParserContext pc=new SourceParserContext();
 		pc.initSource(new File("W:\\workspaces\\build-tools\\hn-code-tool\\core-test"));
-		OpenAPITool opt=new OpenAPITool(openapi, pc);
+		OpenAPITool opt=new OpenAPITool(openapi, pc.getCommentStore());
 		opt.resolveType(clz, openapi);
 		Json.prettyPrint(openapi);
 	}
@@ -41,7 +41,7 @@ public class ModelResolverTest {
 		Type type=new TypeToken<RestResponse<Camera>>() {}.getType();
 		OpenAPI openapi = new OpenAPI();
 		Class<?> clz = Camera.class;
-		OpenAPITool opt=new OpenAPITool(openapi, new ParserContext());
+		OpenAPITool opt=new OpenAPITool(openapi, new SourceParserContext().getCommentStore());
 		opt.resolveType(type, openapi);
 		Json.prettyPrint(openapi);
 	}
