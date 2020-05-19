@@ -43,22 +43,6 @@
 						<source>1.8</source>
 					</configuration>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>3.0.1</version>
-					<executions>
-						<execution>
-							<id>attach-sources</id>
-							<phase>package</phase>
-							<goals>
-								<goal>jar-no-fork</goal>
-							</goals>
-						</execution>
-					</executions>
-					<configuration>
-					</configuration>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -84,14 +68,13 @@
 		<repository>
 			<id>hn-local-143</id>
 			<name>hnlocal maven</name>
-			<url>http://47.115.117.222:8082/nexus/content/groups/public/</url>
+			<url>http://192.168.0.143:8082/nexus/content/groups/public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
-
 		</repository>
 	</repositories>
 </project>
