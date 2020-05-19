@@ -19,6 +19,7 @@
 		<docker.image.prefix>hnvmns</docker.image.prefix>
 		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
 		<java.version>1.8</java.version>
+		<maven.install.skip>true</maven.install.skip>
 	</properties>
 
 	<dependencies>
