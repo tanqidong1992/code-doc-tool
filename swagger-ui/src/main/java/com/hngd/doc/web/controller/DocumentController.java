@@ -72,7 +72,7 @@ public class DocumentController {
 			return RestResponses
 			    .newFailResponse(ErrorCode.SERVER_INTERNAL_ERROR, e.getMessage());
 		}
-		SwaggerFileLoader.reloadAll();
+		SwaggerFileLoader.addOriginFile(dest);
 		return RestResponses.newSuccessResponse();
 	}
 	/**
@@ -92,7 +92,7 @@ public class DocumentController {
 	 */
 	@GetMapping("/origin/file/list")
 	public RestResponse<List<DocumentInfo>> getAllOriginDocument(){
-		List<DocumentInfo> di=SwaggerFileLoader.loadAllOriginFile();
+		List<DocumentInfo> di=SwaggerFileLoader.loadAll();
 		return RestResponses.newSuccessResponse("", di);
 	}
 
@@ -111,7 +111,7 @@ public class DocumentController {
 			}catch (IOException e){
 				throw new HNException(ErrorCode.SERVER_INTERNAL_ERROR,"删除文件失败",e);
 			}
-			SwaggerFileLoader.reloadAll();
+			SwaggerFileLoader.deleteOriginFile(file);
 			return RestResponses.newSuccessResponse();
 		}
 	}
@@ -122,7 +122,7 @@ public class DocumentController {
 	 * @return
 	 */
 	@GetMapping("/info/{filename}")
-	public String loadDocumnet(@PathVariable("filename")String filename){
+	public String loadDocument(@PathVariable("filename")String filename){
 	    File file=new File(SwaggerFileLoader.root,filename);
 		if(!file.exists()) {
 			 return "";
@@ -144,7 +144,7 @@ public class DocumentController {
 	 * @return
 	 */
 	@GetMapping("/info/{filename}/{tag}")
-	public String loadDocumnetByTag(@PathVariable(
+	public String loadDocumentByTag(@PathVariable(
 			"filename")String filename,
 			@PathVariable("tag")String tag){
         File file=new File(SwaggerFileLoader.root,filename);

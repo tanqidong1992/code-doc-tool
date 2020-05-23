@@ -5,7 +5,11 @@ import java.util.List;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.tags.Tag;
 import lombok.Data;
-
+/**
+ * 接口文档信息
+ * @author tqd
+ *
+ */
 @Data
 public class DocumentInfo {
 
@@ -21,6 +25,10 @@ public class DocumentInfo {
 	 * 标题
 	 */
 	private String title;
+	/**
+	 * 版本
+	 */
+	private String version;
 	/**
 	 * 最后更新时间
 	 */

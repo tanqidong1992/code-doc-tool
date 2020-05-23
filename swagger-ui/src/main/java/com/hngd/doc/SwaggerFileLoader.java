@@ -44,35 +44,32 @@ public class SwaggerFileLoader {
 	}
 
 
-	public static List<DocumentInfo> loadAllOriginFile(){
+	public static void loadOriginFile(){
 		if(!documents.isEmpty()) {
-			return new ArrayList<>(documents.values());
+			return;
 		}
-		List<DocumentInfo> docs=new LinkedList<>();
-		for(File file:root.listFiles()) {
-			DocumentInfo di=readDocument(file);
-			docs.add(di);
-		}
-		docs.stream()
+		List<DocumentInfo> docs=Arrays.asList(root.listFiles())
+		    .stream().parallel()
+		    .map(SwaggerFileLoader::readDocument)
+		    .filter(Optional::isPresent)
+		    .map(Optional::get)
 		    .sorted(Comparator.comparing(d->d.getTitle()))
-			.collect(Collectors.toList());
-		return docs;
+		    .collect(Collectors.toList());
+		docs.forEach(d->addToDocuments(d));
+		 
 	}
-	public static DocumentInfo readDocument(File file) {
+	public static Optional<DocumentInfo> readDocument(File file) {
 		OpenAPI openAPI=loadFromFile(file);
 		DocumentInfo di=new DocumentInfo();
 		di.setFilename(file.getName());
 		di.setOpenAPI(openAPI);
 		di.setLastUpdateTime(file.lastModified());
-		String title=null;
 		Info info=openAPI.getInfo();
-		if(info!=null) {
-			title=info.getTitle();
-		}else {
-			title="No Title";
-			logger.error("the document:{} title is empty",file.getName());
+		if(info==null) {
+			return  Optional.empty();
 		}
-		di.setTitle(title);
+		di.setTitle(info.getTitle());
+		di.setVersion(info.getVersion());
 		List<Tag> tags=openAPI.getTags();
 		if(tags!=null) {
 			String filename=file.getName();
@@ -84,19 +81,12 @@ public class SwaggerFileLoader {
 			di.setTags(Collections.emptyList());
 			logger.error("the document:{} tags is empty",file.getName());
 		}
-		return di;
+		return Optional.ofNullable(di);
 	}
 	public static List<DocumentInfo> loadAll(){
-		if(!documents.isEmpty()) {
-			return new ArrayList<>(documents.values());
+		if(documents.isEmpty()) {
+			loadOriginFile();
 		}
-		List<DocumentInfo> docs=new LinkedList<>();
-		for(File file:root.listFiles()) {
-			DocumentInfo di=readDocument(file);
-			docs.add(di);
-		}
-		docs.stream()
-		    .forEach(d->addToDocuments(d));
 		return new ArrayList<>(documents.values());
 	}
 	public static void addToDocuments(DocumentInfo d) {
@@ -138,7 +128,6 @@ public class SwaggerFileLoader {
 		}
 		return openAPI;
 	}
-	
 	public static String toJson(OpenAPI openAPI) throws JsonProcessingException {
 		return Json.pretty(openAPI);
 	}
@@ -163,6 +152,26 @@ public class SwaggerFileLoader {
 		}
 		List<Tag> tags=openAPI.getTags();
 		return Results.newSuccessResult(null);
+	}
+
+
+	public static void addOriginFile(File dest) {
+		Optional<DocumentInfo> documentInfo=readDocument(dest);
+		if(documentInfo.isPresent()) {
+			DocumentInfo doc=documentInfo.get();
+			addToDocuments(doc);
+		}
+	}
+
+	public static void deleteOriginFile(File file) {
+		List<DocumentInfo> docs=loadAll();
+		Optional<DocumentInfo> toDeleteDocument=docs.stream()
+		    .filter(d->d.getFilename().equals(file.getName()))
+		    .findFirst();
+		toDeleteDocument.ifPresent(doc->{
+			documents.remove(buildKey(doc));
+		});
+		 
 	}
 
 }
