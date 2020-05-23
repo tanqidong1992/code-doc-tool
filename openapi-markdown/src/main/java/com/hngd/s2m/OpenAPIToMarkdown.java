@@ -71,7 +71,11 @@ public class OpenAPIToMarkdown {
         	}
         });
         Info info=openAPI.getInfo();
-        builder.documentTitle(info.getTitle());
+        if(info==null) {
+        	throw new GenerateException("接口文档信息缺失", null);
+        }
+        
+        builder.documentTitle(info.getTitle()+info.getVersion());
         builder.textLine(info.getDescription());
         moduleOps.forEach((tag,ops)->{
         	if(includeTags==null || includeTags.contains(tag)) {
@@ -91,7 +95,7 @@ public class OpenAPIToMarkdown {
         if(tagNameSuffix!=null && tagNameSuffix.length()<10) {
         	title+="-"+tagNameSuffix;
         }
-        File output=new File(outputDirectory,title+".md");
+        File output=new File(outputDirectory,title+"-"+info.getVersion()+".md");
         if(output.exists()) {
         	output.delete();
         }
