@@ -7,9 +7,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -18,8 +20,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hngd.s2m.constant.Constants;
 import com.hngd.s2m.entity.OperationWrapper;
+import com.hngd.s2m.exception.GenerateException;
 import com.hngd.s2m.utils.OpenAPIUtils;
+import com.hngd.s2m.utils.SchemaResolver;
+import com.hngd.s2m.utils.SchemaUtils;
 
 import io.github.swagger2markup.markup.builder.MarkupDocBuilder;
 import io.github.swagger2markup.markup.builder.MarkupDocBuilders;
@@ -35,6 +41,7 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import com.hngd.s2m.entity.SchemaTable;
 
 public class OpenAPIToMarkdown {
 
@@ -99,8 +106,14 @@ public class OpenAPIToMarkdown {
     	return ops;
     	 
 	}
-    
     private static void resolveOperation(OperationWrapper op,MarkupDocBuilder builder, OpenAPI openAPI) {
+    	try {
+    	    doResolveOperation(op, builder, openAPI);
+    	}catch(Throwable e) {
+    		throw new GenerateException("解析接口:"+op.path+" "+op.method+"失败:", e);
+    	}
+    }
+    private static void doResolveOperation(OperationWrapper op,MarkupDocBuilder builder, OpenAPI openAPI) {
     	Operation operation=op.operation;
     	String summary=operation.getSummary();
 		if(StringUtils.isEmpty(summary)) {
@@ -118,7 +131,7 @@ public class OpenAPIToMarkdown {
 			List<List<String>> cells=parameters.stream()
     		    .map(OpenAPIToMarkdown::parameterToTableCells)
     		    .collect(Collectors.toList());
-    		builder.tableWithColumnSpecs(columnSpecs, cells);
+    		builder.tableWithColumnSpecs(Constants.columnSpecs, cells);
     	}else {
     		if(operation.getRequestBody()==null) {
     		    builder.textLine("无请求参数");
@@ -127,15 +140,21 @@ public class OpenAPIToMarkdown {
     	RequestBody requestBody=operation.getRequestBody();
     	if(requestBody!=null) {
     		requestBody.getContent().forEach((ss,mt)->{
-    			 Schema schema=mt.getSchema();
+    			 Schema<?> schema=mt.getSchema();
       		   if(schema!=null) {
       			   if(schema.get$ref()!=null) {
       				   String refKey=OpenAPIUtils.refToKey(schema.get$ref());
       				   schema=openAPI.getComponents().getSchemas().get(refKey);
       			   }
-         		    SchemaTable tables=schemaToTableCells(null,openAPI,schema);
-         		    builder.textLine("请求体类型:"+ss);
-         		    tables.render(builder);
+      			   
+         		   Optional<SchemaTable> optionalTables=SchemaResolver
+         				   .newSchemaResolver(openAPI)
+         				   .schemaToTableCells(null,schema);
+         		   optionalTables.ifPresent(tables->{
+         			  builder.textLine("请求体类型:"+ss);
+           		      tables.render(builder);
+         		   });
+         		    
          		}
     		});
     	}
@@ -144,128 +163,31 @@ public class OpenAPIToMarkdown {
     	resps.forEach((key1,resp)->{
     		String ref=resp.get$ref();
     		resp.getContent().forEach((ss,mt)->{
-    		   Schema schema=mt.getSchema();
-    		   if(schema!=null) {
-    			   if(schema.get$ref()!=null) {
-    				   String refKey=OpenAPIUtils.refToKey(schema.get$ref());
-    				   schema=openAPI.getComponents().getSchemas().get(refKey);
-    			   }
-       		    SchemaTable tables=schemaToTableCells(null,openAPI,schema);
-       		    builder.textLine("返回类型:"+ss);
-       		    tables.render(builder);
-       		}
+    		   Schema<?> schema=mt.getSchema();
+    		   if(schema==null) {
+    			   return;
+    		   }
+    		   if(schema.get$ref()!=null) {
+    			    String refKey=OpenAPIUtils.refToKey(schema.get$ref());
+    				schema=openAPI.getComponents().getSchemas().get(refKey);
+    		   }
+       		   Optional<SchemaTable> optionalTables=SchemaResolver
+     				   .newSchemaResolver(openAPI)
+     				   .schemaToTableCells(null,schema);
+       		   optionalTables.ifPresent(tables->{
+       		       builder.textLine("返回类型:"+ss);
+       		       tables.render(builder);
+       		   });
+       		    
+       		 
     		});
     	});
 	}
-
-	static class SchemaTable{
-    	String tableName;
-    	List<List<String>> tables;
-    	List<SchemaTable> subTables=new ArrayList<>();
-    	public void render(MarkupDocBuilder builder) {
-    		if(tableName!=null) {
-    		    builder.textLine(tableName);
-    		}
-    		if(!CollectionUtils.isEmpty(tables)) {
-    		    builder.tableWithColumnSpecs(columnSpecs, tables);
-    		}
-    		for(SchemaTable sti:subTables) {
-    			sti.render(builder);
-    		}
-    		
-    	}
-    }
+ 
+	
     
-    public static SchemaTable schemaToTableCells(String tableName,OpenAPI openAPI,Schema schema){
-    	
-    	SchemaTable sti=new SchemaTable();
-    	sti.tableName=tableName;
-    	Map<Object,Object> map=schema.getProperties();
-    	if(map==null) {
-    		return new SchemaTable();
-    	}
-    	sti.tables=map.entrySet().stream()
-    	    .map((e)->{
-    	    	Optional<SchemaTable> optionalSchemaTableInfo=resolveProperty(openAPI,e);
-    	    	optionalSchemaTableInfo.ifPresent(sti.subTables::add);
-    	    	String refTable=optionalSchemaTableInfo.isPresent()?optionalSchemaTableInfo.get().tableName:null;
-    		return schemaPropertyToCells(e.getKey(),e.getValue(),refTable);
-    	})
-    	 .collect(Collectors.toList());
-    	
-    	return sti;
-    	
-    }
-    static Optional<SchemaTable> resolveProperty(OpenAPI openAPI,Entry<Object,Object> e) {
-    	String keyName=(String)e.getKey();
-    	Schema ss=(Schema)e.getValue();
-    	if("object".equals(ss.getType())) {
-    		SchemaTable sti= schemaToTableCells(keyName,openAPI,ss);
-    		return Optional.of(sti);
-    	}else if(ss instanceof ArraySchema) {
-    		ArraySchema as=(ArraySchema)ss;
-    		Schema<?> itemSchema=as.getItems();
-    		if(itemSchema.get$ref()!=null) {
-    			String refKey=OpenAPIUtils.refToKey(itemSchema.get$ref());
-    			itemSchema=openAPI.getComponents().getSchemas().get(refKey);
-    		}
-    		if(itemSchema!=null) {
-    			SchemaTable sti=schemaToTableCells(keyName,openAPI, itemSchema);
-        		return Optional.of(sti);
-    		}else {
-    			logger.error("The item schema of array {} is null",keyName);
-    		}
-    		
-    	}else {
-    		if(ss.get$ref()!=null) {
-    			ss=openAPI.getComponents().getSchemas().get(OpenAPIUtils.refToKey(ss.get$ref()));
-    			if(ss!=null) {
-    				SchemaTable sti= schemaToTableCells(keyName,openAPI,ss);
-            		return Optional.of(sti);
-    			}
-    			
-    		}
-    	}
-    	return Optional.empty();
-    }
-    static List<String> schemaPropertyToCells(Object key,Object value,String refTable){
-    	List<String> s=new ArrayList<>();
-		s.add((String)key);
-		Schema ss=(Schema) value;
-		String typeStr=ss.getType();
-		String format=ss.getFormat();
-		if(format!=null) {
-			typeStr+="("+format+")";
-		}
-		s.add(typeStr);
-		
-		if(ss.getRequired()!=null) {
-		    s.add(ss.getRequired().contains(key)?"是":"否");
-		}else {
-			s.add("否");
-		}
-		s.add("暂无");
-		s.add("缺失");
-		String desc=ss.getDescription();
-		if(refTable!=null) {
-			if(desc!=null) {
-			    desc+=",具体字段参考表:"+refTable;
-			}else {
-				desc="字段参考表:"+refTable;
-			}
-		}
-		s.add(desc);
-		return s;
-    }
-    static List<MarkupTableColumn> columnSpecs=new ArrayList<MarkupTableColumn>();
-    static {
-    	columnSpecs.add(new MarkupTableColumn("字段名称"));
-    	columnSpecs.add(new MarkupTableColumn("类型"));
-    	columnSpecs.add(new MarkupTableColumn("是否必填"));
-    	columnSpecs.add(new MarkupTableColumn("约束限制"));
-    	columnSpecs.add(new MarkupTableColumn("参数位置"));
-    	columnSpecs.add(new MarkupTableColumn("备注"));
-    }
+
+
     public static List<String> parameterToTableCells(Parameter p){
     	List<String> s=new ArrayList<>();
     	if(p==null) {
@@ -273,7 +195,7 @@ public class OpenAPIToMarkdown {
     	}
     	s.add(p.getName());
     	String typeStr="未知";
-    	Schema schema=p.getSchema();
+    	Schema<?> schema=p.getSchema();
     	if(schema!=null) {
     		typeStr=schema.getType();
     	}
