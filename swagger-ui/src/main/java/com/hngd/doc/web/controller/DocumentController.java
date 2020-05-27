@@ -32,7 +32,11 @@ import com.hngd.doc.utils.FileDigest;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.oas.models.OpenAPI;
 
-
+/**
+ * 接口文档管理
+ * @author tqd
+ *
+ */
 @RestController
 @RequestMapping("/api/document")
 public class DocumentController {
@@ -40,7 +44,7 @@ public class DocumentController {
 	private static final Logger logger=LoggerFactory.getLogger(DocumentController.class);
 	/**
 	 * 上传接口文档
-	 * @param file 稳定文件
+	 * @param file 接口文件
 	 * @return
 	 * @throws NoSuchAlgorithmException 
 	 * @throws IOException 
@@ -76,7 +80,7 @@ public class DocumentController {
 		return RestResponses.newSuccessResponse();
 	}
 	/**
-	 * 加载所有模块的接口文档
+	 * 加载所有的接口文档
 	 * @return
 	 */
 	@GetMapping("/list/all")
@@ -87,7 +91,7 @@ public class DocumentController {
 
 
 	/**
-	 * 加载所有模块接口文档的原文件
+	 * 加载所有接口文档的原文件
 	 * @return
 	 */
 	@GetMapping("/origin/file/list")
@@ -96,10 +100,11 @@ public class DocumentController {
 		return RestResponses.newSuccessResponse("", di);
 	}
 
-	/**
-	 * 删除原文件
-	 * @return
-	 */
+    /**
+     * 删除接口文档源文件
+     * @param filename 文件名
+     * @return
+     */
 	@PostMapping("/origin/file/delete")
 	public RestResponse<Void> deleteOriginFile(@RequestParam("filename")String filename){
 		File file=new File(SwaggerFileLoader.root,filename);
@@ -118,7 +123,7 @@ public class DocumentController {
 
 	/**
 	 * 加载接口文档
-	 * @param filename
+	 * @param filename 待加载接口文档源文件名称 
 	 * @return
 	 */
 	@GetMapping("/info/{filename}")
@@ -138,9 +143,9 @@ public class DocumentController {
 	}
 	
 	/**
-	 * 加载接口文档
-	 * @param filename 接口文档名称
-	 * @param tag 模块名称
+	 * 按照Tag过滤并加载指定接口文档
+	 * @param filename 接口文档源文件名称
+	 * @param tag 过滤模块名称,可选过滤参数
 	 * @return
 	 */
 	@GetMapping("/info/{filename}/{tag}")
@@ -163,8 +168,5 @@ public class DocumentController {
         }
 		return "";
 	}
-	
-	
-	
-	
+	 
 }
