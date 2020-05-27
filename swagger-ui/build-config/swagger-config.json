@@ -1,11 +1,8 @@
 {
   "servers": [
+     
     {
-      "url": "https://192.168.0.144:8080/doc/api",
-      "description": "144网关"
-    },
-    {
-      "url": "https://localhost:8080/doc/api",
+      "url": "http://localhost:8080",
       "description": "本地测试"
     }
   ],

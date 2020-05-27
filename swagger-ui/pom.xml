@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>com.hngd.tool</groupId>
 			<artifactId>core</artifactId>
-			<version>2.2.1-SNAPSHOT</version>
+			<version>2.3.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.hngd.vmns</groupId>
@@ -108,12 +108,16 @@
 			<plugin>
 				<groupId>com.hngd.tool</groupId>
 				<artifactId>codegen-maven-plugin</artifactId>
-				<version>0.1.0-SNAPSHOT</version>
+				<version>2.3.0-SNAPSHOT</version>
 				<configuration>
 					<serviceUrl>/doc</serviceUrl>
 					<confFilePath>${basedir}/build-config/swagger-config.json</confFilePath>
 					<outputDirectory>${basedir}/src/main/resources/static/js/api</outputDirectory>
 					<type>axios</type>
+					<swaggerUIServer>localhost:8080</swaggerUIServer>
+					<excludes>**/com/hngd/model/*Example.java,**/com/hngd/dao/*.java</excludes>
+                    <includes>**/com/hngd/**/*.java,com/hngd/**/*.java</includes>
+                    <packageFilter>com.hngd.doc.web.controller</packageFilter>
 				</configuration>
 			</plugin>
 
@@ -152,7 +156,7 @@
 			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
-				<version>1.6.1</version>
+				<version>2.3.0</version>
 				<configuration>
 					<to>
 						<image>192.168.0.140:8082/${docker.image.prefix}/${project.artifactId}</image>
@@ -181,6 +185,7 @@
 					<allowInsecureRegistries>true</allowInsecureRegistries>
 				</configuration>
 			</plugin>
+			
 		</plugins>
 	</build>
 	<repositories>
