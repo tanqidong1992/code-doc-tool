@@ -212,7 +212,11 @@ public class OpenAPITool {
 						Schema<?> schema = openAPI.getComponents().getSchemas().get(key);
 						mediaTypeContent.setSchema(schema);
 					}else {
-						mediaTypeContent.setSchema(pc.schema);
+						Schema<?> paramSchema=pc.schema;
+						mediaTypeContent.setSchema(paramSchema);
+						if(paramSchema!=null && StringUtils.isEmpty(paramSchema.getDescription())) {
+						    pc.schema.setDescription(pc.comment);
+						}
 					}
 				}
 				List<HttpParameter> filterHttpParameters=httpParameters.stream()

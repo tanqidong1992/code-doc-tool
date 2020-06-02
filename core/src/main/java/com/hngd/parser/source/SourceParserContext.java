@@ -75,7 +75,7 @@ public class SourceParserContext {
 	}
     
 	public SourceParserContext() {
-		
+		this(null,null);
 	}
 	static {
 		ExtensionManager.enableExtension(TimeBlock.class);

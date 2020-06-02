@@ -21,7 +21,7 @@ import com.hngd.parser.source.SourceParserContext;
 import com.hngd.web.controller.AttachmentController;
 import com.hngd.web.controller.AutoInjectParameterTestController;
 import com.hngd.web.controller.RoleController;
-import com.hngd.web.controller.SampleController;
+import com.hngd.web.controller.TempController;
 import com.hngd.web.controller.TeacherController;
 
 import io.swagger.v3.core.util.Json;
@@ -42,7 +42,7 @@ public class OpenAPITest {
 				AttachmentController.class,
 				AutoInjectParameterTestController.class));
 		*/
-		tool.parse(Arrays.asList(SampleController.class
+		tool.parse(Arrays.asList(TempController.class
 				));
 		String data=Json.pretty(openapi);
 		
