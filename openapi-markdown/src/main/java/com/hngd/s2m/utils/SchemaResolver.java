@@ -86,14 +86,19 @@ public class SchemaResolver {
      public Optional<SchemaTable> rootSchemaToTableCells(Schema<?> schema){
 	     return schemaToTableCells(null, schema);
      }
-     public  Optional<SchemaTable> schemaToTableCells(String tableName,Schema<?> schema) {
-		SchemaTable st=null;
-		try {
-		    st=doSchemaToTableCells(tableName, schema);
-		}catch(Throwable e) {
-			throw new GenerateException("解析成表格"+tableName+"失败",e);
-		}
-		return Optional.ofNullable(st);
+    public  Optional<SchemaTable> schemaToTableCells(String tableName,Schema<?> schema) {
+        SchemaTable st=null;
+    	try {
+    	    if(schema instanceof ArraySchema) {
+        	    st=doArraySchemaToTableCells(tableName,(ArraySchema)schema);
+    	    }else {
+    		    st=doSchemaToTableCells(tableName, schema);
+    	     }
+    	 }catch(Throwable e) {
+ 		    throw new GenerateException("解析成表格"+tableName+"失败",e);
+ 		}
+    	return Optional.ofNullable(st);
+		
 	}
    
     public Optional<SchemaTable> resolveProperty(Entry<String,Schema> schemaNameValuePair) {

@@ -14,6 +14,12 @@
 		<swagger-inflector-version>2.0.4</swagger-inflector-version>
 	</properties>
 	<dependencies>
+			<dependency>
+			<groupId>com.hngd.tool</groupId>
+			<artifactId>core-test</artifactId>
+			<version>${code.tool.version}</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

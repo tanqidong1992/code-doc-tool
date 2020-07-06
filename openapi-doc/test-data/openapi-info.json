@@ -1,0 +1,27 @@
+{
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "本地测试"
+    },
+    {
+      "url": "https://192.168.0.140:18888/sample",
+      "description": "140网关"
+    }
+  ],
+  "info": {
+    "title": "Java示例模块接口文档",
+    "description": "更新时间:2019/06/13 09:48:45",
+    "termsOfService": "api",
+    "contact": {
+      "name": "谭奇栋",
+      "url": "http://192.168.0.239/web",
+      "email": "903843602@qq.com"
+    },
+    "license": {
+      "name": "参考资料",
+      "url": "http://192.168.0.239/hndoc/"
+    },
+    "version": "V1.0.1"
+  }
+}
