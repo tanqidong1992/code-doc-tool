@@ -101,7 +101,30 @@ public class SchemaResolver {
 		
 	}
    
-    public Optional<SchemaTable> resolveProperty(Entry<String,Schema> schemaNameValuePair) {
+    private SchemaTable doArraySchemaToTableCells(String tableName, ArraySchema schema) {
+    	if(schema==null) {
+    		return null;
+    	}
+    	SchemaTable sti=new SchemaTable();
+    	sti.tableName=tableName;
+    	Map<String, Schema> map=schema.getProperties();
+    	if(map==null) {
+    		return new SchemaTable();
+    	}
+    	sti.tables=map.entrySet().stream()
+    	    .map((e)->{
+    	    	Optional<SchemaTable> optionalSchemaTableInfo=resolveProperty(e);
+    	    	optionalSchemaTableInfo.ifPresent(sti.subTables::add);
+    	    	String refTable=optionalSchemaTableInfo.isPresent()?optionalSchemaTableInfo.get().tableName:null;
+    		return schemaPropertyToCells(e.getKey(),e.getValue(),refTable);
+    	})
+    	  .filter(ts->ts!=null)
+    	 .collect(Collectors.toList());
+    	
+    	return sti;
+	}
+
+	public Optional<SchemaTable> resolveProperty(Entry<String,Schema> schemaNameValuePair) {
     	String keyName=schemaNameValuePair.getKey();
     	Schema<?> schema=schemaNameValuePair.getValue();
     	if("object".equals(schema.getType())) {

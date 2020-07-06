@@ -161,6 +161,7 @@ public class OpenAPIGenerator extends BaseMojo{
 
 		try(Response resp=call.execute()){
 			String s=resp.body().string();
+			logger.info("push openapi json result:{}",s);
 		}catch (IOException e){
 			logger.error("",e);
 		}
