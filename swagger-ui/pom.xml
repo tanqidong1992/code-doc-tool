@@ -64,6 +64,20 @@
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.openapitools/openapi-generator -->
+<!-- 		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>openapi-generator</artifactId>
+			<version>4.3.1</version>
+		</dependency>
+		https://mvnrepository.com/artifact/org.openapitools/openapi-generator-cli
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>openapi-generator-cli</artifactId>
+			<version>4.3.1</version>
+			<scope>provided</scope>
+		</dependency> -->
+
 	</dependencies>
 
 	<build>
@@ -116,8 +130,8 @@
 					<type>axios</type>
 					<swaggerUIServer>localhost:8080</swaggerUIServer>
 					<excludes>**/com/hngd/model/*Example.java,**/com/hngd/dao/*.java</excludes>
-                    <includes>**/com/hngd/**/*.java,com/hngd/**/*.java</includes>
-                    <packageFilter>com.hngd.doc.web.controller</packageFilter>
+					<includes>**/com/hngd/**/*.java,com/hngd/**/*.java</includes>
+					<packageFilter>com.hngd.doc.web.controller</packageFilter>
 				</configuration>
 			</plugin>
 
@@ -133,7 +147,6 @@
 					<dockerDirectory>src/main/docker</dockerDirectory>
 					<dockerCertPath>/data/workspaces/license/license-parent/license-core/hngd/docker-daemon/192.168.0.239-client</dockerCertPath>
 					<dockerHost>https://192.168.0.140:2376</dockerHost>
-
 					<resources>
 						<resource>
 							<targetPath>/</targetPath>
@@ -179,13 +192,26 @@
 					<container>
 						<!-- 如果工程中有多个入口类,则需要指定此配置项 -->
 						<mainClass>com.hngd.doc.HnvmnsSwaggerUiApplication</mainClass>
-						<!-- <jvmFlags> <jvmFlag> -Xdebug </jvmFlag> <jvmFlag> -Xrunjdwp:transport=dt_socket,address=81,server=y,suspend=n 
-							</jvmFlag> </jvmFlags> -->
+						<!-- <jvmFlags>
+						 <jvmFlag> -Xdebug </jvmFlag> <jvmFlag> -Xrunjdwp:transport=dt_socket,address=81,server=y,suspend=n 
+							</jvmFlag> 
+							</jvmFlags> -->
+						<jvmFlags>
+						  <jvmFlag>-Dspring.profiles.active=prod</jvmFlag>
+						</jvmFlags>
 					</container>
 					<allowInsecureRegistries>true</allowInsecureRegistries>
+					<extraDirectories>
+					  <paths>
+					    <path>
+					      <from>${basedir}/config</from>
+					      <into>/config</into>
+					    </path>
+					  </paths>
+					</extraDirectories>
 				</configuration>
 			</plugin>
-			
+
 		</plugins>
 	</build>
 	<repositories>
