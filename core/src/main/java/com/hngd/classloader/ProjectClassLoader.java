@@ -140,6 +140,11 @@ public class ProjectClassLoader extends ClassLoader{
 			while((temp=in.read(buffer, 0, buffer.length))>=0) {
 				baos.write(buffer, 0, temp);
 			}
+			//support Spring Boot Flat Jar
+            if(className.startsWith("BOOT-INF.classes."))
+            {
+            	className=className.replace("BOOT-INF.classes.", "");
+            }
 			this.byteCache.put(className, baos.toByteArray());
 		} catch (IOException e) {
 			logger.error("",e);

@@ -9,23 +9,24 @@ public class ProjectClassLoaderTest {
 		String s="W:\\workspaces\\build-tools\\hnvmns-java-sample\\target\\hnvmns-java-sample-0.0.1.jar";
 		ProjectClassLoader cl=new ProjectClassLoader();
 		cl.addClasspath(s);
-		cl.listAllClass().forEach(System.out::println);
+		//cl.listAllClass().forEach(System.out::println);
+		
+		//cl.loadClass("com.xxl.rpc.remoting.net.impl.jetty.client.JettyClient$1");
 		
 		List<String> classes=cl.listAllClass();
-		String className="com.hngd.common.exception.HNException";
-		if(classes.contains(className)) {
-			System.out.println("a");
-		}
-		cl.loadClass(className);
-		//System.exit(0);
+ 
 		classes.stream()
 		    //.filter(cn->cn.startsWith("com.hngd"))
 		    .forEach(cn->{
 			try {
 				cl.loadClass(cn);
+				System.out.println(cn+"-->");
 			} catch (ClassNotFoundException e) {
+				
+			}catch(UnsupportedClassVersionError e) {
 				String s1=e.getMessage();
-				System.out.println(s1);
+				e.printStackTrace();
+				System.exit(0);
 			}
 		});
 		
