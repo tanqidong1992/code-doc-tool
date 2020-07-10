@@ -63,12 +63,6 @@
 			<artifactId>maven-core</artifactId>
 			<version>${maven.api.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/io.squark/nested-jar-classloader -->
-		<dependency>
-			<groupId>com.hngd</groupId>
-			<artifactId>nested-jar-classloader</artifactId>
-			<version>0.2.1-SNAPSHOT</version>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
 			<groupId>commons-io</groupId>

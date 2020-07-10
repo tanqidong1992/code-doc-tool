@@ -12,10 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hngd.classloader.ProjectClassLoader;
 import com.hngd.parser.source.SourceParserContext;
 import com.hngd.parser.spring.ClassParser;
-
-import io.squark.nestedjarclassloader.NestedJarClassLoader;
 
 public class TestSpringJarLoader {
 
@@ -23,12 +22,12 @@ public class TestSpringJarLoader {
 		
 		String path="./test-data/tar_res-0.0.1.jar";
 		Logger logger=LoggerFactory.getLogger("XX");
-		NestedJarClassLoader loader=new NestedJarClassLoader(TestSpringJarLoader.class.getClassLoader(),logger);
+		ProjectClassLoader loader=new ProjectClassLoader(TestSpringJarLoader.class.getClassLoader());
 		File file=new File(path);
-		loader.addURLs(file.toURL());
+		loader.addClasspath(file.getAbsolutePath());
 		
 		//Class<?> clazz1=loader.loadClass("org.apache.logging.log4j.core.Filter",true);
-		List<String> classNames=loader.listAllClass("default");
+		List<String> classNames=loader.listAllClass();
 		classNames.stream()
 		    .filter(name->name.contains(".Filter"))
             .forEach(System.out::println);		    
@@ -60,7 +59,7 @@ public class TestSpringJarLoader {
 		});
 		 
 		
-		List<String> allClass=loader.listAllClass("default");
+		List<String> allClass=loader.listAllClass();
 		allClass.stream()
 		.filter(name->name.contains("hngd"))
 		.forEach(System.out::println);
