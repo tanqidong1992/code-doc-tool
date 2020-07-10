@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hngd.classloader.ProjectClassLoader;
 import com.hngd.openapi.config.ServerConfig;
 import com.hngd.parser.source.SourceParserContext;
 
-import io.squark.nestedjarclassloader.NestedJarClassLoader;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.OAuthFlow;
@@ -27,16 +27,12 @@ public class ProjectAnalysis {
 
 	private static final Logger logger=LoggerFactory.getLogger(ProjectAnalysis.class);
 	public static String process(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,File jarFilePath,String packageFilter,ServerConfig config) {
-	    NestedJarClassLoader loader=new NestedJarClassLoader(ProjectAnalysis.class.getClassLoader(),logger);
-		try {
-			loader.addURLs(jarFilePath.toURI().toURL());
-		} catch (IOException e) {
-			logger.error("",e);
-		}
+	    ProjectClassLoader loader=new ProjectClassLoader(ProjectAnalysis.class.getClassLoader());
+		loader.addClasspath(jarFilePath.getAbsolutePath());
 		return doProcess(sourceRoots,sourceJarFiles,includes,excludes, loader, packageFilter, config);
 	}
 	
-	private static String doProcess(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,NestedJarClassLoader loader,String packageFilter,ServerConfig config) {
+	private static String doProcess(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,ProjectClassLoader loader,String packageFilter,ServerConfig config) {
 		SourceParserContext pc=new SourceParserContext(includes,excludes);
 		for(File sourceRoot:sourceRoots) {
         	pc.initSource(sourceRoot);
@@ -51,7 +47,7 @@ public class ProjectAnalysis {
             config.servers.forEach(s->openApi.addServersItem(s));
         }
 		OpenAPITool openAPITool = new OpenAPITool(openApi,pc.getCommentStore());
-		List<String> allClass=loader.listAllClass("default");
+		List<String> allClass=loader.listAllClass();
 		List<Class<?>> clazzes=allClass.stream()
 			.filter(name->name.startsWith(packageFilter))
 	        .map(name->loadClassFromNestedJar(loader,name))
@@ -64,25 +60,19 @@ public class ProjectAnalysis {
 	}
 	
 	public static String process(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,List<File> classFilePaths,String packageFilter,ServerConfig config) {
-	    NestedJarClassLoader loader=new NestedJarClassLoader(ProjectAnalysis.class.getClassLoader(),logger);
+		ProjectClassLoader loader=new ProjectClassLoader(ProjectAnalysis.class.getClassLoader());
 		for(File classFilePath:classFilePaths) {
 			if(classFilePath.isDirectory() || classFilePath.getName().endsWith("jar")) {
-				try {
-					loader.addURLs(classFilePath.toURI().toURL());
-				} catch (IOException e) {
-					logger.error("",e);
-				}
+				loader.addClasspath(classFilePath.getAbsolutePath());
 			}else {
 				//当maven依赖中存在<type>pom</type>时,pom文件会被传进来
 				logger.warn("文件{},既不是目录也不是Jar",classFilePath.getAbsolutePath());
 			}
-			
 		}
 	    return doProcess(sourceRoots,sourceJarFiles,includes,excludes, loader, packageFilter, config);
 	}
-	
-	
-	public static Class<?> loadClassFromNestedJar(NestedJarClassLoader loader,String className){
+
+	public static Class<?> loadClassFromNestedJar(ProjectClassLoader loader,String className){
 	    try {
 			return loader.loadClass(className,true);
 		} catch (ClassNotFoundException e) {

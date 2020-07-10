@@ -35,10 +35,9 @@ public class ProjectClassLoader extends ClassLoader{
 	 */
 	private List<String> classpaths;
 	
-	public ProjectClassLoader(String...classpath) {
-		for(String cp:classpath) {
-			resolveClasspath(cp);
-		}
+	public ProjectClassLoader(ClassLoader parent) {
+		super(parent);
+		Thread.currentThread().setContextClassLoader(this);
 	}
 	
 	public void addClasspath(String...classpath) {
@@ -189,7 +188,7 @@ public class ProjectClassLoader extends ClassLoader{
         synchronized (getClassLoadingLock(name)) {
         	Class<?> found =null;
         	try {
-        		found=getParent().getParent().loadClass(name);
+        		found=getParent().loadClass(name);
         	}catch(Throwable e) {
     	        //logger.error("",e);
         	}

@@ -7,9 +7,8 @@ import java.net.MalformedURLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hngd.classloader.ProjectClassLoader;
 import com.hngd.tool.RestJavaAPIGenerator;
-
-import io.squark.nestedjarclassloader.NestedJarClassLoader;
 
 public class JavaAPICodeGeneratorTest {
 
@@ -18,9 +17,8 @@ public class JavaAPICodeGeneratorTest {
 		String path="E:\\workspaces\\hnvmns-code-modules\\inspection-system\\target\\inspection-system-0.0.1-SNAPSHOT.jar";
 		path="D:\\company\\projects\\inspection-system\\inspection-system\\target\\inspection-system-0.0.1-SNAPSHOT.jar";
 		Logger logger=LoggerFactory.getLogger("XX");
-		NestedJarClassLoader loader=new NestedJarClassLoader(JavaAPICodeGeneratorTest.class.getClassLoader(),logger);
-		File file=new File(path);
-		loader.addURLs(file.toURL());
+		ProjectClassLoader loader=new ProjectClassLoader(JavaAPICodeGeneratorTest.class.getClassLoader());
+		loader.addClasspath(path);
 	    File outDir=new File("./api/java");
 	    if(outDir.exists() || outDir.mkdirs()) {
 	    	

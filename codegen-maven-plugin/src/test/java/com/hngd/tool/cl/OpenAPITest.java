@@ -14,7 +14,7 @@ import com.hngd.openapi.validator.ValidationResponse;
 
 import io.swagger.util.Json;
 
-public class ClassLoaderTest {
+public class OpenAPITest {
 
 	public static void main(String[] args) throws IOException {
 		
@@ -38,7 +38,7 @@ public class ClassLoaderTest {
 				);
 				
 		String s=ProjectAnalysis.process(sourceRoots,null,null,null, jarFile, packageFilter, config);
-		String swaggerOutput="./";
+		String swaggerOutput="./test-out";
 		File apiJsonFile=new File(swaggerOutput, "api.json");
 		try {
 			FileUtils.write(apiJsonFile, s,"utf-8");

@@ -22,10 +22,9 @@ import org.eclipse.aether.graph.DependencyFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hngd.classloader.ProjectClassLoader;
 import com.hngd.openapi.ProjectAnalysis;
 import com.hngd.tool.RestJavaAPIGenerator;
-
-import io.squark.nestedjarclassloader.NestedJarClassLoader;
 
 public class ProjectUtils {
 
@@ -44,14 +43,9 @@ public class ProjectUtils {
 	}
 	static final   Logger logger=LoggerFactory.getLogger(RestJavaAPIGenerator.class);
 	public static List<Class<?>> loadSpringBootJar(String jarFilePath,String packageFilter){
-	    NestedJarClassLoader loader=new NestedJarClassLoader(ProjectUtils.class.getClassLoader(),logger);
-		File file=new File(jarFilePath);
-		try {
-			loader.addURLs(file.toURI().toURL());
-		} catch (IOException e) {
-			logger.error("",e);;
-		}
-		List<String> allClass=loader.listAllClass("default");
+	    ProjectClassLoader loader=new ProjectClassLoader(ProjectUtils.class.getClassLoader());
+		loader.addClasspath(jarFilePath);
+		List<String> allClass=loader.listAllClass();
 		List<Class<?>>clazzes=allClass.stream()
 			.filter(name->name.startsWith(packageFilter))
 	        .map(name->ProjectAnalysis.loadClassFromNestedJar(loader, name))
@@ -62,15 +56,11 @@ public class ProjectUtils {
 	
 	
 	public static List<Class<?>> loadProjectClass(List<File> classFilePaths,String packageFilter){
-	    NestedJarClassLoader loader=new NestedJarClassLoader(ProjectUtils.class.getClassLoader(),logger);
+	    ProjectClassLoader loader=new ProjectClassLoader(ProjectUtils.class.getClassLoader());
 		for(File file:classFilePaths) {
-			try {
-				loader.addURLs(file.toURI().toURL());
-			} catch (IOException e) {
-				logger.error("",e);
-			}
+		    loader.addClasspath(file.getAbsolutePath());
 		}
-		List<String> allClass=loader.listAllClass("default");
+		List<String> allClass=loader.listAllClass();
 		List<Class<?>>clazzes=allClass.stream()
 			.filter(name->name.startsWith(packageFilter))
 	        .map(name->ProjectAnalysis.loadClassFromNestedJar(loader, name))
