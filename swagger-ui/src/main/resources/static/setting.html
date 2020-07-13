@@ -27,6 +27,7 @@
  
     <li class="list-group-item" v-for="(doc,index) in data.data">
       <a href="#">{{doc.title}}-{{doc.filename}}</a>
+      <input type="button" v-bind:id="doc.filename"v-on:click="onEdite" value="编辑">
       <input type="button" v-bind:id="doc.filename"v-on:click="onDelete" value="删除">
     </li>
    
@@ -59,7 +60,13 @@
                 var filename=event.target.id;
                 console.log("click delete:"+event);   
                 deleteOriginFileByName(filename);
+               },
+               onEdite:function(event){
+            	   var filename=event.target.id;
+            	   var localtion="/doc/editor?docUrl="+host+"/doc/api/document/info/"+filename;
+            	   window.parent.location=localtion;
                }
+               
                
            }
         };

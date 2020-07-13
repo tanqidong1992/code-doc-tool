@@ -87,7 +87,9 @@ public class SwaggerFileLoader {
 		if(documents.isEmpty()) {
 			loadOriginFile();
 		}
-		return new ArrayList<>(documents.values());
+		List<DocumentInfo> di=new ArrayList<>(documents.values());
+		di.sort(Comparator.comparing(DocumentInfo::getTitle));
+		return di;
 	}
 	public static void addToDocuments(DocumentInfo d) {
 		String key=buildKey(d);
