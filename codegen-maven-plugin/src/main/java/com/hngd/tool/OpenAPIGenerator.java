@@ -30,15 +30,15 @@ import org.springframework.util.CollectionUtils;
 @Mojo(name="openapi",defaultPhase = LifecyclePhase.COMPILE)
 public class OpenAPIGenerator extends BaseMojo{
     private static final Logger logger=LoggerFactory.getLogger(OpenAPIGenerator.class);
-	public static final String API_FILE_NAME="api.json";
+	public static final String API_FILE_NAME="openapi.json";
 	/**
-	 * the directory to save openapi document json file. default value:/target/openapi
+	 * 用于保存OpenAPI文档的目录. 默认值为:${basedir}/target/openapi
 	 */
 	@Parameter(required = false)
 	public File openAPIOutput;
 	
 	/**
-	 * controller package filter
+	 * Spring Controller所在包的包名前缀
 	 */
 	@Parameter(required = true)
 	public String packageFilter;
@@ -54,9 +54,9 @@ public class OpenAPIGenerator extends BaseMojo{
 	@Parameter(required = false)
 	public String includes;
 	/**
-	 * api config file info
+	 * OpenAPI基础信息配置文件,默认取值为 ${basedir}/build-config/openapi.json
 	 */
-	@Parameter(required = true)
+	@Parameter(required = false)
 	private String confFilePath;
 
 	/**
@@ -89,11 +89,19 @@ public class OpenAPIGenerator extends BaseMojo{
 				throw new MojoFailureException("创建输出目录失败:"+openAPIOutput.getAbsolutePath());
 			}
 		}
-		String jarFilePath =ProjectUtils.buildJarFilePath(mavenProject);
 		
+		if(confFilePath==null) {
+			confFilePath=mavenProject.getBasedir().getAbsolutePath()
+					+File.separator+"build-config"+
+					File.separator+"openapi.json";
+			getLog().info("Using the default openapi config file path:"+confFilePath);
+		}
+		//判断配置文件是否存在
+		if(!(new File(confFilePath).exists())) {
+			throw new MojoFailureException("找不到OpenAPI基础信息配置文件:"+confFilePath);
+		}
 		ServerConfig config=ServerConfig.load(confFilePath);
-		File jarFile=new File(jarFilePath);
-		String s=null;
+		 
 		List<File> classPaths=ProjectUtils.resolveAllClassPath(mavenProject,session,projectDependenciesResolver,projects);
 		getLog().debug("---class paths---");
 		classPaths.forEach(cp->{
@@ -101,12 +109,7 @@ public class OpenAPIGenerator extends BaseMojo{
 		});
 		getLog().debug("---class paths end---");
 		List<File> sourceJarFiles=ProjectUtils.resolveSourceJarFiles(classPaths);
-		//if(jarFile.exists()) {
-			//s=ProjectAnalysis.process(getSourceRoots(),sourceJarFiles,includes,excludes, jarFile, packageFilter, config);
-		//}else {
-			s=ProjectAnalysis.process(getSourceRoots(),sourceJarFiles,includes,excludes, classPaths, packageFilter, config);
-		//}
-		 
+		String s=ProjectAnalysis.process(getSourceRoots(),sourceJarFiles,includes,excludes, classPaths, packageFilter, config);
 		File apiJsonFile=new File(openAPIOutput, API_FILE_NAME);
 		try {
 			FileUtils.write(apiJsonFile, s,"utf-8");
@@ -128,9 +131,7 @@ public class OpenAPIGenerator extends BaseMojo{
 			pushToSwaggerUIServer(apiJsonFile,swaggerUIServer);
 		}
 	}
-	
-
-
+	 
 	private ValidationResponse validate(File apiJsonFile) {
 		ValidationResponse vr=null;
 		try {
@@ -165,14 +166,5 @@ public class OpenAPIGenerator extends BaseMojo{
 		}catch (IOException e){
 			logger.error("",e);
 		}
-
 	}
-
-
-	
-	
-	
-	
-	
-
 }
