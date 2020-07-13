@@ -115,7 +115,7 @@ public class JavaDocCommentParser {
 					content.append(line);
 					element = optionalElementParser.get().getResult();
 				} else {
-					logger.error("Could not parse line:{}", line);
+					logger.warn("Could not parse line:{}", line);
 				}
 				isFoundAt = true;
 			}

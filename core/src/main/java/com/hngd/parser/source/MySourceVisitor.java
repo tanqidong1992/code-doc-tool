@@ -52,7 +52,7 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
 			String content = javadocComment.getContent();
 			String commentLines[] = content.split("\n");
 			if (commentLines == null || commentLines.length < 2) {
-				log.warn("javadoc comment for classOrInterface {} line size is less then 2",classFullName);
+				log.debug("javadoc comment for classOrInterface {} line size is less then 2",classFullName);
 			}else{
 				ClassInfo ci=new ClassInfo();
 				List<JavaDocCommentElement> commentElements = JavaDocCommentParser.parse(Arrays.asList(commentLines));
@@ -73,7 +73,7 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
 				    .forEach(bt->bt.onParseEnd(ci));
 			}
 		}else{
-			log.warn("javadoc comment for classOrInterface {} is not found",classFullName);
+			log.debug("javadoc comment for classOrInterface {} is not found",classFullName);
 		}
 		return true;
     }
@@ -95,7 +95,7 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
 				throw new SourceParseException(msg,e);
 			}
 		} else {
-			log.warn("method {} has no javadoc comment",fullMethodName);
+			log.debug("method {} has no javadoc comment",fullMethodName);
 		}
     }
     
@@ -135,7 +135,7 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
 		if (trimComment.length() > 0) {
 			context.saveFieldComment(fullFieldName, new FieldInfo(trimComment, fieldName, field));
 		} else {
-			log.warn("the java document comment for field:{} is empty",fullFieldName);
+			log.debug("the java document comment for field:{} is empty",fullFieldName);
 		}
         return true;
 	}

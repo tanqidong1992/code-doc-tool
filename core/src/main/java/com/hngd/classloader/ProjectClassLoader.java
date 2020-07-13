@@ -129,7 +129,7 @@ public class ProjectClassLoader extends ClassLoader{
 
 	private void doAddDirectory(File directory) {
 		Collection<File> classFiles=FileUtils
-				.listFiles(directory, new String[] {".class"}, true);
+				.listFiles(directory, new String[] {"class"}, true);
 		classFiles.forEach(cf->this.doAddClassFile(directory,cf));
 	}
 	
@@ -146,8 +146,8 @@ public class ProjectClassLoader extends ClassLoader{
 	}
 	
 	public static String extractClassName(File classpath,File classFile) {
-		String fullPath=classFile.getAbsolutePath();
-		String relativePath=fullPath.replace(classpath.getAbsolutePath(), "");
+		String fullPath=classFile.toURI().toString();
+		String relativePath=fullPath.replace(classpath.toURI().toString(), "");
 		String className=relativePathToClassName(relativePath);
 		return className;
 	}
