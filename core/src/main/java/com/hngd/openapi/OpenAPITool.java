@@ -11,18 +11,15 @@
 
 package com.hngd.openapi;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +29,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,7 +36,6 @@ import com.hngd.constant.HttpParameterLocation;
 import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.openapi.entity.ModuleInfo;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hngd.constant.Comments;
 import com.hngd.constant.Constants;
 import com.hngd.parser.source.CommentStore;
@@ -49,7 +44,6 @@ import com.hngd.utils.ClassUtils;
 import com.hngd.utils.TypeNameUtils;
 import com.hngd.utils.TypeUtils;
 
-import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -78,33 +72,45 @@ import io.swagger.v3.oas.models.tags.Tag;
 public class OpenAPITool {
 	private static final Logger logger = LoggerFactory.getLogger(OpenAPITool.class);
 	public OpenAPI openAPI;
-	private CommentStore commentStore;
 	private ClassParser classParser;
-
+    private TypeResolver typeResolver;
 	public OpenAPITool(OpenAPI openAPI,CommentStore commentStore) {
 		this.openAPI = openAPI;
-		this.commentStore=commentStore;
+		typeResolver=new TypeResolver(commentStore);
+		if(CollectionUtils.isEmpty(openAPI.getPaths())) {
+			Paths paths = new Paths();
+			openAPI.setPaths(paths);
+		}
+		if(CollectionUtils.isEmpty(openAPI.getTags())) {
+			List<Tag> tags = new ArrayList<Tag>();
+			openAPI.setTags(tags);
+		}
 		this.classParser=new ClassParser(commentStore);
 	}
-
-	public void parse(String packageName) {
-		List<Class<?>> clses = ClassUtils.getClassBelowPacakge(packageName);
+    /**
+           * 解析指定包名(包含子包)下的所有类
+     * @param basePackageName 包名
+     */
+	public void parse(String basePackageName) {
+		List<Class<?>> clses = ClassUtils.getClassBelowPacakge(basePackageName);
 		parse(clses);
 	}
 
 	public void parse(List<Class<?>> clses) {
-		List<Tag> tags = new ArrayList<Tag>();
-		Paths paths = new Paths();
-		openAPI.setPaths(paths);
-		openAPI.setTags(tags);
+
 		clses.stream()
 		    .map(clazz -> classParser.parseModule(clazz))
 		    .filter(Optional::isPresent)
 		    .map(Optional::get)
-			.forEach(mi -> buildPaths(mi, paths, tags));
+			.forEach(this::buildPaths);
 	}
-
-	private void buildPaths(ModuleInfo moduleInfo, Paths paths, List<Tag> tags) {
+	public void parse(Class<?>... clazz) {
+		for(Class<?> c : clazz) {
+			Optional<ModuleInfo> optionalModule=classParser.parseModule(c);
+			optionalModule.ifPresent(this::buildPaths);	
+		}
+	}
+	private void buildPaths(ModuleInfo moduleInfo) {
 		String classComment = moduleInfo.getComment();
 		if (StringUtils.isBlank(classComment)) {
 			logger.warn("the comment for class:{} is empty", moduleInfo.getCanonicalClassName());
@@ -112,17 +118,18 @@ public class OpenAPITool {
 		String moduleTagName = StringUtils.isNotBlank(classComment) ? 
 				classComment : moduleInfo.getSimpleClassName();
 		Tag moduleTag = new Tag().name(moduleTagName);
-		tags.add(moduleTag);
+		openAPI.getTags().add(moduleTag);
 		for (HttpInterface interfaceInfo : moduleInfo.getInterfaceInfos()) {
 			PathItem pathItem = buildPathItem(moduleInfo, interfaceInfo, moduleTag);
 			if (pathItem == null) {
 				continue;
 			}
 			String pathKey = moduleInfo.getUrl() + interfaceInfo.url;//+interfaceInfo.httpMethod;
-			addPathItemToPaths(paths,pathKey,pathItem);
+			addPathItemToPaths(pathKey,pathItem);
 		}
 	}
-    public static void addPathItemToPaths(Paths paths,String pathKey,PathItem pathItem) {
+    private void addPathItemToPaths(String pathKey,PathItem pathItem) {
+    	Paths paths=openAPI.getPaths();
     	if(paths.containsKey(pathKey)) {
 			PathItem oldPath=paths.get(pathKey);
 			Map<HttpMethod, Operation> operations=pathItem.readOperationsMap();
@@ -131,7 +138,7 @@ public class OpenAPITool {
 			paths.put(pathKey, pathItem);
 		}
     }
-	@SuppressWarnings("deprecation")
+    
 	public static Parameter createParameter(HttpParameter parameter) {
 		if (parameter.location.isParameter()) {
 			Parameter param = null;
@@ -206,7 +213,7 @@ public class OpenAPITool {
 					HttpParameter pc = optioanlParameterInBody.get();
 					Type parameterType = pc.getJavaType();
 					resolveParameterInfo(pc, parameterType);
-					String key = resolveType(parameterType, openAPI);
+					String key = typeResolver.resolveType(parameterType, openAPI);
 					//如果是简单类型就会返回null
 					if(!StringUtils.isEmpty(key)) {
 						Schema<?> schema = openAPI.getComponents().getSchemas().get(key);
@@ -242,7 +249,7 @@ public class OpenAPITool {
 					Type parameterType = pc.getJavaType();
 					resolveParameterInfo(pc, parameterType);
 					if (!pc.isPrimitive) {
-						resolveType(parameterType, openAPI);
+						typeResolver.resolveType(parameterType, openAPI);
 					}
 					Encoding encoding = new Encoding();
 					if (parameterType instanceof Class) {
@@ -354,7 +361,7 @@ public class OpenAPITool {
 			Type parameterType = pc.getJavaType();
 			resolveParameterInfo(pc, parameterType);
 			if (!pc.isPrimitive) {
-				resolveType(parameterType, openAPI);
+				typeResolver.resolveType(parameterType, openAPI);
 			}
 			Parameter param = createParameter(pc);
 			parameters.add(param);
@@ -395,7 +402,7 @@ public class OpenAPITool {
 		ApiResponse resp = new ApiResponse();
 		MediaType mt = new MediaType();
 		if(!Void.class.equals(interfaceInfo.javaReturnType)) {
-			String firstKey = resolveType(interfaceInfo.javaReturnType, openAPI);
+			String firstKey = typeResolver.resolveType(interfaceInfo.javaReturnType, openAPI);
 			if(firstKey!=null) {
 				Schema<?> schema = new ObjectSchema();
 				schema.set$ref("#/components/schemas/" + firstKey);
@@ -513,126 +520,14 @@ public class OpenAPITool {
 
 	}
 
-	static Set<Class<?>> resolvedClass = new HashSet<>();
+	
 
-	public void resolveClassFields(Class<?> clazz, OpenAPI swagger) {
-		if (resolvedClass.contains(clazz)) {
-			return;
-		}
-		resolvedClass.add(clazz);
-		if (!BeanUtils.isSimpleProperty(clazz)) {
-			Field[] fields = clazz.getDeclaredFields();
-			if (fields != null) {
-				for (Field f : fields) {
-					Type type = f.getGenericType();
-					if(type instanceof Class && BeanUtils.isSimpleProperty((Class<?>)type)) {
-						continue;
-					}
-					resolveType(type, swagger);
-				}
-			}
-		}
-	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public String resolveType(Type type, OpenAPI swagger) {
-		Map<String, Schema> schemas = ModelConverters.getInstance().read(type);
-		if (type instanceof ParameterizedType) {
-			ParameterizedType pt = (ParameterizedType) type;
-			Type[] subTypes = pt.getActualTypeArguments();
-			for (Type subType : subTypes) {
-				String tempKey=resolveType(subType, swagger);
-			}
-			Type rawType=pt.getRawType();
-			if(rawType instanceof Class<?>) {
-				Class<?> rawClass=(Class<?>) rawType;
-				if(rawClass.isArray() || Collection.class.isAssignableFrom(rawClass)) {
-					
-				}
-			}
-			 
-			
-		}
-		if (type instanceof Class<?>) {
-			Class<?> clazz = (Class<?>) type;
-			if(!BeanUtils.isSimpleProperty(clazz)) {
-				resolveClassFields(clazz, swagger);
-			}
-			
-		}
 
-		String firstKey = null;
-		for (String key : schemas.keySet()) {
-			firstKey = key;
-			Schema model = schemas.get(key);
-			swagger.schema(key, model);
-			Map<String, Schema> properties = new HashMap<>();
-			Map<String, Schema> cps = model.getProperties();
-			if (cps == null) {
-				continue;
-			}
-			cps.values().forEach(property -> {
-				Schema schema =   property;
-				String name = schema.getName();
-				if (name.startsWith("get")) {
-					name = name.replace("get", "");
-				}
-				String propertyType=schema.getType();
-				String propertyComment = getPropertyComment(type, name);
-				if (propertyComment != null) {
-					schema.setDescription(propertyComment);
-				}
-				schema.setName(name);
-				properties.put(name, schema);
-			});
-			model.getProperties().clear();
-			model.setProperties(properties);
-			
-		}
-		
-		return firstKey;
-	}
+	
 
-	private String getPropertyComment(Type type, String propertyName) {
-
-		Field field = null;
-		Class<?> targetClass=null;
-		if (type instanceof Class<?>) {
-			targetClass=(Class<?>) type;
-			field=ReflectionUtils.findField((Class<?>) type,propertyName);
-		} else if (type instanceof ParameterizedType) {
-			ParameterizedType pt = (ParameterizedType) type;
-			targetClass=(Class<?>) pt.getRawType();
-		}
-		field=ReflectionUtils.findField(targetClass,propertyName);
-		if(field==null) {
-			field=tryToFindJsonProperty(targetClass, propertyName);
-			if(field==null) {
-				logger.error("Counld not found property:{} At Class:{}",propertyName,type.getTypeName());
-				return null;
-			}
-		}
-		String comment = commentStore.getFieldComment(field);
-		if (comment != null) {
-			return comment;
-		} else {
-			return null;
-		}
-	}
-	public static Field tryToFindJsonProperty(Class<?> type, String propertyName) {
-		Field[] fields=type.getDeclaredFields();
-		for(Field field:fields) {
-			JsonProperty jp=field.getAnnotation(JsonProperty.class);
-			if(jp!=null && propertyName.equals(jp.value())) {
-				return field;
-			}
-		}
-		Class<?> superClass=type.getSuperclass();
-		if(Object.class==superClass) {
-			return null;
-		}
-		return tryToFindJsonProperty(superClass, propertyName);
-	}
+	
+	
 	
 	public static boolean hasRequestBody(String httpMethod) {
 		//CONNECT

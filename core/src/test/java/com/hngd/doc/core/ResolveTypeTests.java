@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.hngd.openapi.OpenAPITool;
+import com.hngd.openapi.TypeResolver;
 import com.hngd.parser.source.CommentStore;
 import com.hngd.parser.source.SourceParserContext;
 
@@ -26,7 +27,8 @@ public class ResolveTypeTests {
 		CommentStore cs=parserContext.getCommentStore();
 		cs.print();
 		OpenAPITool opt=new OpenAPITool(openAPI, cs);
-		opt.resolveType(A.class, openAPI);
+		TypeResolver tr=new TypeResolver(cs);
+		tr.resolveType(A.class, openAPI);
         System.out.println(Json.pretty(openAPI));
         Schema<?> schema=openAPI.getComponents().getSchemas().get("A");
         

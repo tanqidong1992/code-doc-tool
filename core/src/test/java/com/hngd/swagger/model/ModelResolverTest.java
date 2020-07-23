@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.google.gson.reflect.TypeToken;
 import com.hngd.common.web.result.RestResponse;
 import com.hngd.openapi.OpenAPITool;
+import com.hngd.openapi.TypeResolver;
 import com.hngd.parser.entity.FieldInfo;
 import com.hngd.parser.source.SourceParserContext;
 import com.hngd.test.dto.ComplexDTO;
@@ -32,7 +33,8 @@ public class ModelResolverTest {
 		SourceParserContext pc=new SourceParserContext();
 		pc.initSource(new File("W:\\workspaces\\build-tools\\hn-code-tool\\core-test"));
 		OpenAPITool opt=new OpenAPITool(openapi, pc.getCommentStore());
-		opt.resolveType(clz, openapi);
+		TypeResolver tr=new TypeResolver(pc.getCommentStore());
+		tr.resolveType(clz, openapi);
 		Json.prettyPrint(openapi);
 	}
 	
@@ -42,7 +44,8 @@ public class ModelResolverTest {
 		OpenAPI openapi = new OpenAPI();
 		Class<?> clz = Camera.class;
 		OpenAPITool opt=new OpenAPITool(openapi, new SourceParserContext().getCommentStore());
-		opt.resolveType(type, openapi);
+		TypeResolver tr=new TypeResolver(new SourceParserContext().getCommentStore());
+		tr.resolveType(type, openapi);
 		Json.prettyPrint(openapi);
 	}
 

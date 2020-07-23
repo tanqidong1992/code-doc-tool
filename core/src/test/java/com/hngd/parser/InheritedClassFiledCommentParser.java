@@ -5,6 +5,7 @@ import java.lang.reflect.Type;
 
 import com.hngd.test.dto.Teacher;
 import com.hngd.openapi.OpenAPITool;
+import com.hngd.openapi.TypeResolver;
 import com.hngd.parser.source.SourceParserContext;
 
 import io.swagger.v3.core.util.Json;
@@ -21,7 +22,8 @@ public class InheritedClassFiledCommentParser {
 		Type type=Teacher.class;
 		OpenAPI openAPI=new OpenAPI();
 		OpenAPITool opt=new OpenAPITool(openAPI, pc.getCommentStore());
-		opt.resolveType(type, openAPI);
+		TypeResolver tr=new TypeResolver(pc.getCommentStore());
+		tr.resolveType(type, openAPI);
 		Json.prettyPrint(openAPI);
 
 	}
