@@ -72,25 +72,17 @@
 
 	<build>
 		<plugins>
-			<!-- windows下应用程序打包 -->
 			<plugin>
 				<groupId>com.hngd.tool</groupId>
 				<artifactId>service-maven-plugin</artifactId>
-				<version>0.0.5-SNAPSHOT</version>
+				<version>0.1.0-SNAPSHOT</version>
 				<configuration>
-					<jreDirectory>/app/portable-software/jdk1.8.0_211/jre</jreDirectory>
 					<scriptConfigFile>${basedir}/package-config/package.properties</scriptConfigFile>
-					<outputDirectory>${project.build.directory}/hnvmns-swagger-ui</outputDirectory>
-					<dependencyDirectory>${project.build.directory}/libs</dependencyDirectory>
-					<configAndDataDirectories>
-						<param>${basedir}/config</param>
-						<param>${basedir}/data</param>
-					</configAndDataDirectories>
+					<resources>
+						<resource>${basedir}/config</resource>
+						<resource>${basedir}/data</resource>
+					</resources>
 				</configuration>
-				<executions>
-					<!-- <execution> <goals> <goal>win-package</goal> </goals> <phase>post-package</phase> 
-						</execution> -->
-				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -180,24 +172,21 @@
 						</auth>
 					</from>
 					<container>
-						<!-- 如果工程中有多个入口类,则需要指定此配置项 -->
 						<mainClass>com.hngd.doc.HnvmnsSwaggerUiApplication</mainClass>
-						<!-- <jvmFlags>
-						 <jvmFlag> -Xdebug </jvmFlag> <jvmFlag> -Xrunjdwp:transport=dt_socket,address=81,server=y,suspend=n 
-							</jvmFlag> 
-							</jvmFlags> -->
+						<!-- <jvmFlags> <jvmFlag> -Xdebug </jvmFlag> <jvmFlag> -Xrunjdwp:transport=dt_socket,address=81,server=y,suspend=n 
+							</jvmFlag> </jvmFlags> -->
 						<jvmFlags>
-						  <jvmFlag>-Dspring.profiles.active=prod</jvmFlag>
+							<jvmFlag>-Dspring.profiles.active=prod</jvmFlag>
 						</jvmFlags>
 					</container>
 					<allowInsecureRegistries>true</allowInsecureRegistries>
 					<extraDirectories>
-					  <paths>
-					    <path>
-					      <from>${basedir}/config</from>
-					      <into>/config</into>
-					    </path>
-					  </paths>
+						<paths>
+							<path>
+								<from>${basedir}/config</from>
+								<into>/config</into>
+							</path>
+						</paths>
 					</extraDirectories>
 				</configuration>
 			</plugin>
