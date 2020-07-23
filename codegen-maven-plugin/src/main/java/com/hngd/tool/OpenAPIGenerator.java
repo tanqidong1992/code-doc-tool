@@ -2,11 +2,13 @@ package com.hngd.tool;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 
 import okhttp3.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.maven.model.Developer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -21,6 +23,10 @@ import com.hngd.s2m.OpenAPIToMarkdown;
 import com.hngd.tool.utils.ProjectUtils;
 
 import io.swagger.util.Json;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.servers.Server;
 
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
@@ -36,7 +42,6 @@ public class OpenAPIGenerator extends BaseMojo{
 	 */
 	@Parameter(required = false)
 	public File openAPIOutput;
-	
 	/**
 	 * Spring Controller所在包的包名前缀
 	 */
@@ -44,12 +49,12 @@ public class OpenAPIGenerator extends BaseMojo{
 	public String packageFilter;
 	
 	/**
-	 * 不需要解析的源码文件ANT匹配规则,多个以','分割
+	 * 不需要解析的源码文件路径ANT匹配规则,多个以','分割
 	 */
 	@Parameter(required = false)
 	public String excludes;
 	/**
-	 * 需要解析的源码文件ANT匹配规则,多个以','分割 
+	 * 需要解析的源码文件路径ANT匹配规则,多个以','分割 
 	 */
 	@Parameter(required = false)
 	public String includes;
@@ -58,14 +63,13 @@ public class OpenAPIGenerator extends BaseMojo{
 	 */
 	@Parameter(required = false)
 	private String confFilePath;
-
 	/**
 	 *转化为Markdown的模块过滤器
 	 */
 	@Parameter(required=false)
 	private List<String> includeTags;
 	/**
-	 * SwaggerUI服务地址,HOST+IP,配置后将自动推送到该服务
+	 * SwaggerUI服务地址,HOST+IP,配置后将自动将生成的openapi文档推送到该服务
 	 */
 	@Parameter(required = false)
 	private String swaggerUIServer;
@@ -76,6 +80,11 @@ public class OpenAPIGenerator extends BaseMojo{
 	@Parameter(required=false)
 	private Boolean disableValidation=true;
 	
+	/**
+	 * openapi文档中的server url,默认为 http://localhost:8080
+	 */
+	@Parameter(required = false,defaultValue = "http://localhost:8080")
+	private String openAPIServerURL;
 	
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
@@ -97,11 +106,18 @@ public class OpenAPIGenerator extends BaseMojo{
 			getLog().info("Using the default openapi config file path:"+confFilePath);
 		}
 		//判断配置文件是否存在
+		ServerConfig config;
 		if(!(new File(confFilePath).exists())) {
-			throw new MojoFailureException("找不到OpenAPI基础信息配置文件:"+confFilePath);
+			//throw new MojoFailureException("找不到OpenAPI基础信息配置文件:"+confFilePath);
+			config=new ServerConfig();
+		}else {
+			config=ServerConfig.load(confFilePath);
 		}
-		ServerConfig config=ServerConfig.load(confFilePath);
-		 
+		
+		autoFillConfig(config);
+		
+		
+		
 		List<File> classPaths=ProjectUtils.resolveAllClassPath(mavenProject,session,projectDependenciesResolver,projects);
 		getLog().debug("---class paths---");
 		classPaths.forEach(cp->{
@@ -131,7 +147,56 @@ public class OpenAPIGenerator extends BaseMojo{
 			pushToSwaggerUIServer(apiJsonFile,swaggerUIServer);
 		}
 	}
-	 
+ 
+	private void autoFillConfig(ServerConfig config) {
+		
+		if(CollectionUtils.isEmpty(config.servers)) {
+			Server server=new Server();
+			server.setUrl(openAPIServerURL);
+			config.servers=Arrays.asList(server);
+		}
+		if(config.info==null) {
+			config.info=new Info();
+		}
+		Info info=config.info;
+		if(StringUtils.isEmpty(info.getTitle())) {
+			String title=mavenProject.getName();
+			if(StringUtils.isEmpty(title)) {
+				title=mavenProject.getArtifactId();
+			}
+			info.setTitle(title);
+		}
+		if(StringUtils.isEmpty(info.getDescription())) {
+			info.setDescription(mavenProject.getDescription());
+		}
+		if(StringUtils.isEmpty(info.getVersion())) {
+			info.setVersion(mavenProject.getVersion());
+		}
+		Contact contact=info.getContact();
+		if(contact==null) {
+			List<Developer> developers=mavenProject.getDevelopers();
+			if(!CollectionUtils.isEmpty(developers)) {
+				Developer firstDeveloper=developers.get(0);
+				contact=new Contact();
+				info.setContact(contact);
+				contact.setEmail(firstDeveloper.getEmail());
+				contact.setName(firstDeveloper.getName());
+				contact.setUrl(firstDeveloper.getUrl());
+			}
+		}
+		License license=info.getLicense();
+		if(license==null) {
+			List<org.apache.maven.model.License> mls=mavenProject.getLicenses();
+			if(!CollectionUtils.isEmpty(mls)) {
+				org.apache.maven.model.License ml=mls.get(0);
+				license=new License();
+				license.setName(ml.getName());
+				license.setUrl(ml.getUrl());
+				info.setLicense(license);
+			}
+		}
+	}
+
 	private ValidationResponse validate(File apiJsonFile) {
 		ValidationResponse vr=null;
 		try {
