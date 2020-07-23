@@ -9,9 +9,9 @@ import com.hngd.constant.HttpParameterLocation;
 import com.hngd.openapi.entity.HttpParameter;
 
 
-public class RequestPartProcessor extends HttpParameterProcessor<RequestPart> {
+public class RequestPartParameterExtractor extends HttpParameterExtractor<RequestPart> {
 
-	public RequestPartProcessor() {
+	public RequestPartParameterExtractor() {
 		super(HttpParameterLocation.body,RequestPart.class);
 	}
 

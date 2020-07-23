@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.hngd.constant.HttpParameterLocation;
 import com.hngd.openapi.entity.HttpParameter;
 
-public class PathVariableProcessor extends HttpParameterProcessor<PathVariable> {
+public class PathVariableParameterExtractor extends HttpParameterExtractor<PathVariable> {
 
-	public PathVariableProcessor() {
+	public PathVariableParameterExtractor() {
 		super(HttpParameterLocation.path,PathVariable.class);
 	}
 

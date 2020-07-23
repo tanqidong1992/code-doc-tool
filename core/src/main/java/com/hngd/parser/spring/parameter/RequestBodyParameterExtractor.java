@@ -14,9 +14,9 @@ import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.parser.spring.MethodArgUtils;
 
 
-public class RequestBodyProcessor extends HttpParameterProcessor<RequestBody> {
+public class RequestBodyParameterExtractor extends HttpParameterExtractor<RequestBody> {
 
-	public RequestBodyProcessor() {
+	public RequestBodyParameterExtractor() {
 		super(HttpParameterLocation.body,RequestBody.class);
 	}
 

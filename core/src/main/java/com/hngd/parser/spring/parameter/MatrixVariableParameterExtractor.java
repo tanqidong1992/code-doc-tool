@@ -9,9 +9,9 @@ import com.hngd.constant.HttpParameterLocation;
 import com.hngd.exception.ClassParseException;
 import com.hngd.openapi.entity.HttpParameter;
 
-public class MatrixVariableProcessor extends HttpParameterProcessor<MatrixVariable> {
+public class MatrixVariableParameterExtractor extends HttpParameterExtractor<MatrixVariable> {
 
-	public MatrixVariableProcessor() {
+	public MatrixVariableParameterExtractor() {
 		super(HttpParameterLocation.path,MatrixVariable.class);
 	}
 

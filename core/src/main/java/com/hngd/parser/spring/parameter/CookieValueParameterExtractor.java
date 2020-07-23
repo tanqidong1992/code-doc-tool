@@ -3,24 +3,25 @@ package com.hngd.parser.spring.parameter;
 import java.lang.reflect.Parameter;
 import java.util.List;
 
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ValueConstants;
 
 import com.hngd.constant.HttpParameterLocation;
 import com.hngd.openapi.entity.HttpParameter;
 
 
-public class RequestHeaderProcessor extends HttpParameterProcessor<RequestHeader> {
+public class CookieValueParameterExtractor extends HttpParameterExtractor<CookieValue> {
 
-	public RequestHeaderProcessor() {
-		super(HttpParameterLocation.header,RequestHeader.class);
+	public CookieValueParameterExtractor() {
+		super(HttpParameterLocation.cookie,CookieValue.class);
 	}
 
 	@Override
 	public List<HttpParameter> process(Parameter parameter) {
+		List<HttpParameter> httpParams=super.process(parameter);
 		boolean isParameterRequired=ValueConstants.DEFAULT_NONE.equals(parameterAnnotation.defaultValue())
 				&& parameterAnnotation.required();
-		List<HttpParameter> httpParams=super.process(parameter);
 		httpParams.forEach(hp->{
 			hp.required=isParameterRequired;
 			hp.defaultValue=parameterAnnotation.defaultValue();

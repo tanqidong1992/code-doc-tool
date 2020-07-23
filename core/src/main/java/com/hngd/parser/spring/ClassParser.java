@@ -35,14 +35,14 @@ import com.hngd.parser.javadoc.extension.DescriptionBlock;
 import com.hngd.parser.javadoc.extension.SummaryBlock;
 import com.hngd.parser.javadoc.extension.TagsBlock;
 import com.hngd.parser.source.CommentStore;
-import com.hngd.parser.spring.parameter.CookieValueProcessor;
-import com.hngd.parser.spring.parameter.HttpParameterProcessor;
-import com.hngd.parser.spring.parameter.MatrixVariableProcessor;
-import com.hngd.parser.spring.parameter.PathVariableProcessor;
-import com.hngd.parser.spring.parameter.RequestBodyProcessor;
-import com.hngd.parser.spring.parameter.RequestHeaderProcessor;
-import com.hngd.parser.spring.parameter.RequestParamProcessor;
-import com.hngd.parser.spring.parameter.RequestPartProcessor;
+import com.hngd.parser.spring.parameter.CookieValueParameterExtractor;
+import com.hngd.parser.spring.parameter.HttpParameterExtractor;
+import com.hngd.parser.spring.parameter.MatrixVariableParameterExtractor;
+import com.hngd.parser.spring.parameter.PathVariableParameterExtractor;
+import com.hngd.parser.spring.parameter.RequestBodyParameterExtractor;
+import com.hngd.parser.spring.parameter.RequestHeaderParameterExtractor;
+import com.hngd.parser.spring.parameter.RequestParamParameterExtractor;
+import com.hngd.parser.spring.parameter.RequestPartParameterExtractor;
 import com.hngd.utils.ClassUtils;
 import com.hngd.utils.RestClassUtils;
 import com.hngd.utils.TypeUtils;
@@ -57,16 +57,16 @@ import lombok.extern.slf4j.Slf4j;
 public class ClassParser {
 
 	private CommentStore commentStore;
-	List<HttpParameterProcessor<?>> httpParameterProcessors=new ArrayList<>();
+	List<HttpParameterExtractor<?>> httpParameterProcessors=new ArrayList<>();
 	public ClassParser(CommentStore commentStore) {
 		this.commentStore = commentStore;
-		httpParameterProcessors.add(new RequestParamProcessor());
-		httpParameterProcessors.add(new PathVariableProcessor());
-		httpParameterProcessors.add(new RequestBodyProcessor());
-		httpParameterProcessors.add(new RequestHeaderProcessor());
-		httpParameterProcessors.add(new RequestPartProcessor());
-		httpParameterProcessors.add(new CookieValueProcessor());
-		httpParameterProcessors.add(new MatrixVariableProcessor());
+		httpParameterProcessors.add(new RequestParamParameterExtractor());
+		httpParameterProcessors.add(new PathVariableParameterExtractor());
+		httpParameterProcessors.add(new RequestBodyParameterExtractor());
+		httpParameterProcessors.add(new RequestHeaderParameterExtractor());
+		httpParameterProcessors.add(new RequestPartParameterExtractor());
+		httpParameterProcessors.add(new CookieValueParameterExtractor());
+		httpParameterProcessors.add(new MatrixVariableParameterExtractor());
 		
 
 	}
@@ -266,11 +266,11 @@ public class ClassParser {
 	 */
 	private List<HttpParameter> extractHttpParameter(Parameter parameter) {
         
-		Optional<HttpParameterProcessor<?>> optionalProcessor= httpParameterProcessors.stream()
+		Optional<HttpParameterExtractor<?>> optionalParameterExtractor= httpParameterProcessors.stream()
             .filter(p->p.accept(parameter))
             .findFirst();
-		if(optionalProcessor.isPresent()) {
-			return optionalProcessor.get().process(parameter);
+		if(optionalParameterExtractor.isPresent()) {
+			return optionalParameterExtractor.get().process(parameter);
 		}
         //如果是Spring自动注入的参数类型就直接返回
 		Type paramType= parameter.getParameterizedType();

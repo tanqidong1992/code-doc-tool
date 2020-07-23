@@ -13,13 +13,13 @@ import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.parser.spring.MethodArgUtils;
 import com.hngd.utils.RestClassUtils;
 
-public abstract class HttpParameterProcessor<T extends Annotation> {
+public abstract class HttpParameterExtractor<T extends Annotation> {
 
 	protected Class<T> parameterAnnotationType;
 	protected T parameterAnnotation;
 	protected HttpParameterLocation location;
 	
-	public HttpParameterProcessor(HttpParameterLocation location,Class<T> parameterAnnotationType) {
+	public HttpParameterExtractor(HttpParameterLocation location,Class<T> parameterAnnotationType) {
 		this.location = location;
 		this.parameterAnnotationType=parameterAnnotationType;
 	}
