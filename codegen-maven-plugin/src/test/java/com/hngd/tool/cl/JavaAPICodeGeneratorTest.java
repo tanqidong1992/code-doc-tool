@@ -3,6 +3,7 @@ package com.hngd.tool.cl;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class JavaAPICodeGeneratorTest {
 	    
 	    String packageFilter="com.hngd.web.controller.";
 		String apiPackage="com.hngd.api";
-		RestJavaAPIGenerator.generateJavaAPIFile(packageFilter,"async","baseurl", apiPackage, outDir, path);
+		RestJavaAPIGenerator.generateJavaAPIFile(packageFilter,"async","baseurl", apiPackage, outDir, Arrays.asList(new File(path)));
 		/*
 		 * List<String> allClass=loader.listAllClass("default"); allClass.stream()
 		 * .filter(name->name.startsWith("com.hngd.web.controller.")) .map(name->{ try {

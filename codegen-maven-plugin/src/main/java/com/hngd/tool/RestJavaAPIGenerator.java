@@ -25,7 +25,7 @@ import com.hngd.tool.utils.ProjectUtils;
  *
  */
 @Mojo(name="api-java",defaultPhase=LifecyclePhase.COMPILE)
-public class RestJavaAPIGenerator extends AbstractMojo
+public class RestJavaAPIGenerator extends BaseMojo
 {
 	@Component
 	public MavenProject mavenProject;
@@ -71,15 +71,15 @@ public class RestJavaAPIGenerator extends AbstractMojo
 				
 			}
 		}
-		String jarFilePath =ProjectUtils.buildJarFilePath(mavenProject);
+		List<File> classpaths=ProjectUtils.resolveAllClassPath(mavenProject,session,projectDependenciesResolver,projects);
 		try {
-			generateJavaAPIFile(packageFilter,invokeType,serviceUrl,apiPackage,javaAPIOutputDirectory,jarFilePath);
+			generateJavaAPIFile(packageFilter,invokeType,serviceUrl,apiPackage,javaAPIOutputDirectory,classpaths);
 		} catch (IOException e) {
 			throw new MojoExecutionException("", e);
 		}
 	}
-    public static void generateJavaAPIFile(String packageFilter,String invokeType,String baseUrl,String apiPackage,File output,String jarFilePath) throws MalformedURLException, IOException {
-	    List<Class<?>> clazzes=ProjectUtils.loadSpringBootJar(jarFilePath, packageFilter);  
+    public static void generateJavaAPIFile(String packageFilter,String invokeType,String baseUrl,String apiPackage,File output,List<File> classpaths) throws MalformedURLException, IOException {
+	    List<Class<?>> clazzes=ProjectUtils.loadControllerClass(classpaths, packageFilter);  
 	    clazzes.forEach(cls->{
 		    JavaAPICodeGenerator.generateJavaAPIFile(cls,invokeType,baseUrl,apiPackage,output.getAbsolutePath());
 		});

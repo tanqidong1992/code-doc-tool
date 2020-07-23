@@ -42,9 +42,11 @@ public class ProjectUtils {
 		return jarFilePath;
 	}
 	static final   Logger logger=LoggerFactory.getLogger(RestJavaAPIGenerator.class);
-	public static List<Class<?>> loadSpringBootJar(String jarFilePath,String packageFilter){
+	public static List<Class<?>> loadControllerClass(List<File> classpaths,String packageFilter){
 	    ProjectClassLoader loader=new ProjectClassLoader(ProjectUtils.class.getClassLoader());
-		loader.addClasspath(jarFilePath);
+	    for(File classpath:classpaths) {
+	    	loader.addClasspath(classpath.getAbsolutePath());
+	    }
 		List<String> allClass=loader.listAllClass();
 		List<Class<?>>clazzes=allClass.stream()
 			.filter(name->name.startsWith(packageFilter))

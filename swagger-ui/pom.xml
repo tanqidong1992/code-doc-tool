@@ -114,6 +114,7 @@
 					<excludes>**/com/hngd/model/*Example.java,**/com/hngd/dao/*.java</excludes>
 					<includes>**/com/hngd/**/*.java,com/hngd/**/*.java</includes>
 					<packageFilter>com.hngd.doc.web.controller</packageFilter>
+					<apiPackage>com.hngd.client.doc</apiPackage>
 				</configuration>
 			</plugin>
 
