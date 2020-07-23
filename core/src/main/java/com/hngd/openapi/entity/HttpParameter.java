@@ -74,5 +74,9 @@ public class HttpParameter {
 	 * 参数在Java方法中的位置
 	 */
 	public Integer indexInJavaMethod;
+	/**
+	 * 参数默认值
+	 */
+	public String defaultValue;
  
 }

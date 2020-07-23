@@ -209,7 +209,7 @@ public class ClassParser {
 		for (int i = 0; i < parameters.length; i++) {
 			Parameter parameter = parameters[i];
 			//对于简单类型,将会返回一个参数,如果是复杂类型,可能会返回多个参数
-			List<HttpParameter> httpParams=processParameter(parameter);
+			List<HttpParameter> httpParams=extractHttpParameter(parameter);
 			if(!CollectionUtils.isEmpty(httpParams)) {
 				final int indexInJavaMethod=i;
 				httpParams.stream()
@@ -264,7 +264,7 @@ public class ClassParser {
 	 * @param indexInJavaMethod 
 	 * @return
 	 */
-	private List<HttpParameter> processParameter(Parameter parameter) {
+	private List<HttpParameter> extractHttpParameter(Parameter parameter) {
         
 		Optional<HttpParameterProcessor<?>> optionalProcessor= httpParameterProcessors.stream()
             .filter(p->p.accept(parameter))
