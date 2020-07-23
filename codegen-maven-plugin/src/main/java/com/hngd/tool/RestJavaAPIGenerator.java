@@ -20,39 +20,39 @@ import com.hngd.tool.utils.ProjectUtils;
 
 
 /**
- * Hello world!
+ * 用于生成Java Client的Mojo
+ * @author tqd
  *
  */
-
 @Mojo(name="api-java",defaultPhase=LifecyclePhase.COMPILE)
 public class RestJavaAPIGenerator extends AbstractMojo
 {
 	@Component
 	public MavenProject mavenProject;
 	/**
-	 * the directory to save the package file. default value:/src/test/java
+	 * 用来保存客户端接口代码的路径,默认值为:${basedir}/target/openapi/client/java
 	 */
 	@Parameter(required = false)
 	public File javaAPIOutputDirectory;
 	/**
-	 * controller package filter
+	 * Spring控制器类所在包的包名前缀
 	 */
 	@Parameter(required = true)
 	public String packageFilter;
 	/**
-	 * output java package 
+	 * 输出客户端类的报名
 	 */
 	@Parameter(required = true)
 	public String apiPackage;
 	
 	/**
-	 * system module base url,default value is "/"
+	 * 系统模块的url前缀
 	 */
 	@Parameter(required = true,defaultValue="/")
 	public String serviceUrl;
 	
 	/**
-	 * 调用方式,取值async,sync,默认为sync
+	 * 生成接口的样式,取值async,sync,async表示生成异步接口,sync表示生成同步接口,默认为sync
 	 */
 	@Parameter(required = false,defaultValue = "sync")
 	public String invokeType;
@@ -61,9 +61,12 @@ public class RestJavaAPIGenerator extends AbstractMojo
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		log=getLog();
-		String baseDir = mavenProject.getBasedir().getAbsolutePath();
 		if(javaAPIOutputDirectory==null){
-			javaAPIOutputDirectory=new File(baseDir+File.separator+"src"+File.separator+"test"+File.separator+"java");
+			String buildOutputPath = mavenProject.getBuild().getDirectory();
+			javaAPIOutputDirectory=new File(buildOutputPath+
+					File.separator+"openapi"+
+					File.separator+"client"+
+					File.separator+"java");
 			if(javaAPIOutputDirectory.exists() || javaAPIOutputDirectory.mkdirs()){
 				
 			}

@@ -24,40 +24,43 @@ import com.hngd.parser.spring.ClassParser;
 import com.hngd.tool.utils.ProjectUtils;
 
 /**
- * Hello world!
+ * 生成javascript接口代码的mojo
+ * @author tqd
  *
  */
 @Mojo(name="api-js",defaultPhase=LifecyclePhase.COMPILE)
 public class JavascriptAPIGenerator extends BaseMojo
 {
 	/**
-	 * controller package filter
+	 *Spring控制器类所在包的包名前缀
 	 */
 	@Parameter(required = true)
 	public String packageFilter;
 	/**
-	 * the directory to save the package file. default value:/target/ajax-api
+	 * 用于保存生成代码的目录. 默认值为:${basedir}/target/openapi/client/js
 	 */
 	@Parameter(required = false)
 	public File outputDirectory;
 	/**
-	 * system module base url,default value is "/"
+	 * 系统模块的url前缀,默认为'/'
 	 */
 	@Parameter(required = true,defaultValue="/")
 	public String serviceUrl;
 	/**
-	 * code template type,should be "ajax","axios"
+	 * 生成代码样式可取值 ajax,axios;ajax表示生成基于ajax的接口,axios表示生成基于axios的接口,默认为axios
 	 */
-	@Parameter(required = true)
-	public String type;
+	@Parameter(required = true,defaultValue = "axios")
+	public String jsClientType;
 	Log log;
-	@SuppressWarnings("unused")
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		log=getLog();
-		String buildOutputPath = mavenProject.getBuild().getDirectory();
 		if(outputDirectory==null){
-			outputDirectory=new File(buildOutputPath+File.separator+"api"+File.separator+"js");
+			String buildOutputPath = mavenProject.getBuild().getDirectory();
+			outputDirectory=new File(buildOutputPath+
+					File.separator+"openapi"+
+					File.separator+"client"+
+					File.separator+"js");
 		}
 		if(outputDirectory.exists() || outputDirectory.mkdirs()){
 			
@@ -78,14 +81,14 @@ public class JavascriptAPIGenerator extends BaseMojo
 			module.ifPresent(modules::add);
 		}
 		String code=null;
-		if("ajax".equals(type)) {
+		if("ajax".equals(jsClientType)) {
 			AjaxCodeGenerator acg=new AjaxCodeGenerator();
 			code=acg.generate(modules, serviceUrl);
-		}else if("axios".equals(type)){
+		}else if("axios".equals(jsClientType)){
 			AxiosCodeGenerator acg=new AxiosCodeGenerator();
 			code=acg.generate(modules, serviceUrl);
 		}else {
-			throw new CodeGenerateException("Unspported Code Type:"+type, null);
+			throw new CodeGenerateException("Unspported Code Type:"+jsClientType, null);
 		}
 		if(!StringUtils.isEmpty(code)){
 			File file=new File(outputDirectory,"client.js");

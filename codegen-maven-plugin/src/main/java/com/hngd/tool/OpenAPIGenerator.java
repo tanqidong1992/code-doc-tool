@@ -43,7 +43,7 @@ public class OpenAPIGenerator extends BaseMojo{
 	@Parameter(required = false)
 	public File openAPIOutput;
 	/**
-	 * Spring Controller所在包的包名前缀
+	 * Spring控制器类所在包的包名前缀
 	 */
 	@Parameter(required = true)
 	public String packageFilter;
@@ -88,9 +88,8 @@ public class OpenAPIGenerator extends BaseMojo{
 	
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-
-		String buildOutputPath = mavenProject.getBuild().getDirectory();
 		if(openAPIOutput==null){
+			String buildOutputPath = mavenProject.getBuild().getDirectory();
 			openAPIOutput=new File(buildOutputPath+File.separator+"openapi");
 			if(openAPIOutput.exists() || openAPIOutput.mkdirs()){
 				
@@ -115,8 +114,6 @@ public class OpenAPIGenerator extends BaseMojo{
 		}
 		
 		autoFillConfig(config);
-		
-		
 		
 		List<File> classPaths=ProjectUtils.resolveAllClassPath(mavenProject,session,projectDependenciesResolver,projects);
 		getLog().debug("---class paths---");
