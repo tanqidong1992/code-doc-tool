@@ -88,7 +88,8 @@ public class SwaggerFileLoader {
 			loadOriginFile();
 		}
 		List<DocumentInfo> di=new ArrayList<>(documents.values());
-		di.sort(Comparator.comparing(DocumentInfo::getTitle));
+		di.sort(Comparator.comparing(DocumentInfo::getLastUpdateTime).reversed());
+		 
 		return di;
 	}
 	public static void addToDocuments(DocumentInfo d) {
