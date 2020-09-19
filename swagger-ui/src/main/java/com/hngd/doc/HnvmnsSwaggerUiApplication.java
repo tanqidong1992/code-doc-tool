@@ -12,16 +12,12 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-@SpringBootApplication(scanBasePackages = {"com.hngd"})
+@SpringBootApplication
 public class HnvmnsSwaggerUiApplication {
 
 	private static final Logger logger=LoggerFactory.getLogger(HnvmnsSwaggerUiApplication.class);
 	public static void main(String[] args) {
-		File file=new File(".");
-		logger.info("before workdir:{}",file.getAbsoluteFile().getAbsolutePath());
 		SpringApplication.run(HnvmnsSwaggerUiApplication.class, args);
-		file=new File(".");
-		logger.info("after workdir:{}",file.getAbsoluteFile().getAbsolutePath());
 	}
 	@Bean
 	 public FilterRegistrationBean<CorsFilter> corsFilter() {

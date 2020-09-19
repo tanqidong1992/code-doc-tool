@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<header>
+  <meta charset="UTF-8">
+  <title>API文档主页</title>
+  <script src="libs/qs.min.js"></script>
+  <script src="libs/axios/axios.js"></script>
+  <script src="js/common/common.js"></script>
+  <script src="js/api/DocumentController.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="libs/layui/css/layui.css" >
+
+
+ 
+  <script src="libs/jquery/jquery.js"></script>
+</header>
+<body id="win" class="no-scroller">
+<ul class="layui-nav" lay-filter="">
+  <li class="layui-nav-item"><a href=""><h1 style="font-size:18px;">安全生产实时预警系统</h1></a></li>
+
+  <li class="layui-nav-item">
+    <a href="javascript:;">导出当前文档</a>
+    <dl class="layui-nav-child"> <!-- 二级菜单 -->
+      <dd><a href="">导出为PDF</a></dd>
+      <dd><a href="">导出为Markdown</a></dd>
+        <dd><a href="">导出为OpenAPI JSON文件</a></dd>
+    </dl>
+  </li>
+    <li class="layui-nav-item"><a href="/doc/setting">接口文档管理</a></li>
+</ul>
+  <div id="app">
+        <div class="layui-row">
+                <div class="layui-col-md2">
+                  <div id="left-menu" class="grid-content bg-purple">
+                  <ul class="layui-nav layui-nav-tree " lay-filter="test" lay-shrink="all">
+
+                      <% for(doc in documents ){%>
+                      <li class="layui-nav-item">
+ 
+                          <a href="javascript:;" onClick="onMenuSelect('${doc.filename}')"> ${doc.title} </a>
+                          <dl class="layui-nav-child">
+                              <% for(tag in doc.tags ){%>
+
+                              <dd><a href="javascript:;" onClick="onMenuSelect('${tag.query}')">${tag.name}</a></dd>
+                              <%}%>
+
+
+                      </dl>
+                      </li>
+                      <%}%>
+                </ul>
+                        
+                    </div>
+                  </div>
+                <div class="layui-col-md10">
+                  <div class="grid-content bg-purple">
+                    <iframe id="swagger" width="100%" height="100%"></iframe>
+                  </div>
+                </div>
+            </div>
+    </div>
+  
+  <style>
+    .el-menu-vertical-demo:not(.el-menu--collapse) {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+    }
+    .el-row{
+      margin-left: 0px!important;
+      margin-right: 0px!important;
+    }
+    .el-col{
+      padding-left: 0px!important;
+      padding-right: 0px!important;
+    }
+    .layui-nav-tree{
+      width:100%!important;
+    }
+    #left-menu{
+      overflow:auto;
+    }
+
+    .layui-nav-tree .layui-nav-child dd.layui-this,
+    .layui-nav-tree .layui-nav-child dd.layui-this a,
+    .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a,
+    .layui-nav-tree .layui-this>a:hover {
+    background-color: #393D49!important;
+    color: #fff!important;
+}
+ 
+ 
+  </style>
+
+
+  <script>
+  function onMenuSelect(doc){
+      if('menu-setting'==doc){
+        document.getElementById("swagger").src="setting.html";
+      }else{
+        console.log(doc);
+        updateSwaggerUI(doc);
+      }
+        
+    }
+    function onUploadSuccess(resp){
+      if(resp.success){
+        alert("上传文档成功");
+      }else{
+       alert("上传文档失败："+resp.description);
+      }
+    }
+    
+  
+  var dc = new DocumentController();
+    dc.getAllDocument(function(resp) {
+      if (resp.data.success) {
+        initView(resp.data.data);
+      }
+    });
+    function initView(data) {
+        if(data.length>0){
+            updateSwaggerUI(data[0].filename)
+        }
+        
+        var appData = {
+            data: function() {
+                return {
+                    visible: false,
+                    data:data,
+                    uploadUrl:host+"/doc/api"+"/document"+"/upload"
+               };
+           },
+           methods:{
+              
+           }
+        };
+
+
+    }
+    function updateSwaggerUI(filename){
+    	filename=encodeURIComponent(filename);
+     document.getElementById("swagger").src="swagger.html?url="+host+"/doc/api/document/info/"+filename;
+      //window.ui = ui
+    }
+  </script>
+
+<script>
+  // 定义事件侦听器函数
+  function displayWindowSize() {
+    // 获取窗口的宽度和高度，不包括滚动条
+    var w = document.documentElement.clientWidth-5;
+    var h = document.documentElement.clientHeight-70;
+    // 在div元素中显示结果
+    console.log("宽: " + w + ", " + "高: " + h);
+    $("#win").css("height",h+"px");
+    $("#win").css("width",w+"px");
+    $("#swagger").css("height",h+"px");
+    $("#left-menu").css("height",h+"px");
+    
+  }
+  // 将事件侦听器函数附加到窗口的resize事件
+  window.addEventListener("resize", displayWindowSize);
+  // 第一次调用该函数
+  displayWindowSize();
+  </script>
+  <script src="libs/layui/layui.all.js"></script>
+</body>

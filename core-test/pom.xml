@@ -72,9 +72,15 @@
 			<version>1.7.30</version>
 		</dependency>
 		<dependency>
-			<groupId>com.hngd.vmns</groupId>
+			<groupId>com.hngd.common</groupId>
 			<artifactId>hnvmns-web-spring-boot-starter</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
+			<version>2.0.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

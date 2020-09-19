@@ -24,9 +24,9 @@ import com.hngd.common.result.Result;
 import com.hngd.common.result.Results;
 import com.hngd.common.util.GsonUtils;
 import com.hngd.doc.constants.Constants;
+import com.hngd.doc.controller.DocumentController;
 import com.hngd.doc.entity.DocumentInfo;
-import com.hngd.doc.entity.DocumentInfo.MyTag;
-import com.hngd.doc.web.controller.DocumentController;
+import com.hngd.doc.entity.MyTag;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -88,6 +88,11 @@ public class SwaggerFileLoader {
 			loadOriginFile();
 		}
 		List<DocumentInfo> di=new ArrayList<>(documents.values());
+		di.forEach(d->{
+			
+			d.getTags().sort(Comparator.comparing(MyTag::getName));
+			
+		});
 		di.sort(Comparator.comparing(DocumentInfo::getLastUpdateTime).reversed());
 		 
 		return di;

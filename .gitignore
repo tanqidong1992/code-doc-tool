@@ -106,3 +106,4 @@ apidoc-web/api.json
 */.sts4-cache/** 
 web-test
 .vscode/
+.idea/

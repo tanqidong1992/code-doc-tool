@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 
-import com.hngd.doc.web.controller.DocumentController;
+import com.hngd.doc.controller.DocumentController;
 import com.hngd.openapi.OpenAPITool;
 import com.hngd.parser.source.SourceParserContext;
 

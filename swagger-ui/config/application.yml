@@ -1,11 +1,17 @@
 spring:
   profiles:
     active:
-    - dev  servlet:    multipart:      max-file-size: 100MB
+    - dev
+  servlet:
+    multipart:
+      max-file-size: 100MB
       max-request-size: 100MB
+    
+beetl:  suffix: html
 
 ---
-spring:  profiles: dev
+spring:
+  profiles: dev
 server:
   port: 8080
   servlet:
@@ -20,4 +26,6 @@ server:
   servlet:
     context-path: /doc
 logging: 
-  config: ./config/log4j2.xml                
+  config: ./config/log4j2.xml
+        
+        

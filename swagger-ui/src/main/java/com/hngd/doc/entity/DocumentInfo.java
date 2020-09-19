@@ -37,18 +37,5 @@ public class DocumentInfo {
 	 * 子模块
 	 */
 	private List<MyTag> tags;
- 
-	public static class MyTag{
-		public String name;
-		public String query;
-		public static MyTag fromTag(String filename,Tag tag) {
-			MyTag mt=new MyTag();
-			mt.query= filename+"/"+tag.getName();
-			mt.name=tag.getName();
-			
-			return mt;
-		}
-	}
-	
-	
+
 }
