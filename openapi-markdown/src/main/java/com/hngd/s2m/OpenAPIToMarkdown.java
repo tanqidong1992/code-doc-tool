@@ -46,11 +46,11 @@ import com.hngd.s2m.entity.SchemaTable;
 public class OpenAPIToMarkdown {
 
     private static final Logger logger=LoggerFactory.getLogger(OpenAPIToMarkdown.class);
-    public static void openAPIToMarkdown(File openAPIFile,List<String> includeTags,File outputDirectory) {
+    public static File openAPIToMarkdown(File openAPIFile,List<String> includeTags,File outputDirectory) {
     	OpenAPI openAPI=OpenAPIUtils.loadFromFile(openAPIFile);
-    	openAPIToMarkdown(openAPI, includeTags, outputDirectory);
+    	return openAPIToMarkdown(openAPI, includeTags, outputDirectory);
     }
-    public static void openAPIToMarkdown(OpenAPI openAPI,List<String> includeTags,File outputDirectory){
+    public static File openAPIToMarkdown(OpenAPI openAPI,List<String> includeTags,File outputDirectory){
         MarkupDocBuilder builder = MarkupDocBuilders.documentBuilder(MarkupLanguage.MARKDOWN);
         Paths paths=openAPI.getPaths();
         Map<String,List<OperationWrapper>> moduleOps=new HashMap<>();
@@ -101,7 +101,7 @@ public class OpenAPIToMarkdown {
         }
         output=output.getAbsoluteFile();
 		builder.writeToFileWithoutExtension(output.toPath(), StandardCharsets.UTF_8,StandardOpenOption.CREATE_NEW);
-        
+        return output;
     }
     
     private static List<OperationWrapper> convertPath(MarkupDocBuilder builder, OpenAPI openAPI, String path, PathItem pathItem) {

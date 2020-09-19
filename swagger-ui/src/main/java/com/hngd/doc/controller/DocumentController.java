@@ -2,6 +2,8 @@ package com.hngd.doc.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.List;
@@ -10,8 +12,13 @@ import java.util.List;
 import com.hngd.common.exception.HNException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.assertj.core.util.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +36,7 @@ import com.hngd.doc.SwaggerFileLoader;
 import com.hngd.doc.entity.DocumentInfo;
 import com.hngd.doc.swagger.TagFilter;
 import com.hngd.doc.utils.FileDigest;
+import com.hngd.s2m.OpenAPIToMarkdown;
 
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -143,6 +151,32 @@ public class DocumentController {
         }
 	}
 	
+	
+	/**
+	 * 导出接口文档为markdown
+	 * @param filename 待导出接口文档源文件名称 
+	 * @return
+	 * @throws IOException 
+	 */
+	@GetMapping("/info/markdown/{filename}")
+	public ResponseEntity<byte[]> exportDocumentAsMarkdown(@PathVariable("filename")String filename) throws IOException{
+	    File file=new File(SwaggerFileLoader.root,filename);
+	    File outputDirectory=Files.newTemporaryFolder();
+		File markdownFile=OpenAPIToMarkdown.openAPIToMarkdown(file, null, outputDirectory);
+		byte[] data=FileUtils.readFileToByteArray(markdownFile);
+		String fileName=markdownFile.getName();
+		 HttpHeaders headers = new HttpHeaders();
+	        try{
+	        	fileName = URLEncoder.encode(fileName, "utf-8");
+	        } catch (UnsupportedEncodingException e){
+	            logger.error("", e);
+	        }
+	        headers.setContentType(MediaType.TEXT_MARKDOWN);
+	        headers.set("Content-Disposition", "attachment;fileName=" + fileName);
+	        HttpStatus statusCode=HttpStatus.OK;
+			return new ResponseEntity<byte[]>(data, headers, statusCode);
+	}
+	 
 	/**
 	 * 按照Tag过滤并加载指定接口文档
 	 * @param filename 接口文档源文件名称
@@ -168,6 +202,41 @@ public class DocumentController {
 		    }
         }
 		return "";
+	}
+	
+	
+	/**
+	 * 按照Tag过滤并导出指定接口文档
+	 * @param filename 接口文档源文件名称
+	 * @param tag 过滤模块名称,可选过滤参数
+	 * @return
+	 * @throws IOException 
+	 */
+	@GetMapping("/info/markdown/{filename}/{tag}")
+	public ResponseEntity<byte[]> exportDocumentAsMarkdownByTag(@PathVariable(
+			"filename")String filename,
+			@PathVariable("tag")String tag) throws IOException{
+        File file=new File(SwaggerFileLoader.root,filename);
+		
+			OpenAPI openAPI=SwaggerFileLoader.loadFromFile(file);
+			TagFilter tagFilter=new TagFilter(tag);
+			SpecFilter filter=new SpecFilter();
+			openAPI=filter.filter(openAPI, tagFilter, null, null, null);
+			File outputDirectory=Files.newTemporaryFolder();
+			File markdownFile=OpenAPIToMarkdown.openAPIToMarkdown(openAPI, null, outputDirectory);
+			byte[] data=FileUtils.readFileToByteArray(markdownFile);
+			//String fileName=markdownFile.getName();
+			String fileName=openAPI.getInfo().getTitle()+"-"+tag+"-"+openAPI.getInfo().getVersion()+".md";
+			 HttpHeaders headers = new HttpHeaders();
+		        try{
+		        	fileName = URLEncoder.encode(fileName, "utf-8");
+		        } catch (UnsupportedEncodingException e){
+		            logger.error("", e);
+		        }
+		        headers.setContentType(MediaType.TEXT_MARKDOWN);
+		        headers.set("Content-Disposition", "attachment;fileName=" + fileName);
+		        HttpStatus statusCode=HttpStatus.OK;
+				return new ResponseEntity<byte[]>(data, headers, statusCode);
 	}
 	 
 }

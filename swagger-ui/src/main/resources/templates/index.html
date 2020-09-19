@@ -20,9 +20,9 @@
   <li class="layui-nav-item">
     <a href="javascript:;">导出当前文档</a>
     <dl class="layui-nav-child"> <!-- 二级菜单 -->
-      <dd><a href="">导出为PDF</a></dd>
-      <dd><a href="">导出为Markdown</a></dd>
-        <dd><a href="">导出为OpenAPI JSON文件</a></dd>
+      <dd><a href="javascript:;" onclick="exportAsPdf()">导出为PDF</a></dd>
+      <dd><a href="javascript:;" onclick="exportAsMarkdown()">导出为Markdown</a></dd>
+        <dd><a href="javascript:;" onclick="exportAsJson()">导出为OpenAPI JSON文件</a></dd>
     </dl>
   </li>
     <li class="layui-nav-item"><a href="/doc/setting">接口文档管理</a></li>
@@ -137,10 +137,20 @@
 
 
     }
+    var originFilename;
     function updateSwaggerUI(filename){
-    	filename=encodeURIComponent(filename);
-     document.getElementById("swagger").src="swagger.html?url="+host+"/doc/api/document/info/"+filename;
-      //window.ui = ui
+        originFilename=filename;
+    	var encodedFilename=encodeURIComponent(filename);
+        document.getElementById("swagger").src="swagger.html?url="+host+"/doc/api/document/info/"+encodedFilename;
+        //window.ui = ui
+    }
+    function exportAsJson(){
+        location.href=host+"/doc/api/document/info/"+originFilename;
+    }
+    function exportAsMarkdown(){
+        location.href=host+"/doc/api/document/info/markdown/"+originFilename;
+    }
+    function exportAsPdf(){
     }
   </script>
 
