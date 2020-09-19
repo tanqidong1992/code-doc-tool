@@ -59,10 +59,24 @@
   }
   var docApi=DocumentController();
   function deleteOriginFileByName(filename){
-    docApi.deleteOriginFile(filename,function(resp){
+
+
+layer.confirm('确认删除此接口文档?', function(index){
+  //do something
+  doDeleteOriginFileByName(filename);
+  layer.close(index);
+});
+
+
+  }
+
+  function doDeleteOriginFileByName(filename){
+  docApi.deleteOriginFile(filename,function(resp){
       var data=resp.data;
        if(data.errorCode==0){
+       location.reload()
         alert("删除成功");
+
        }else{
          alert("删除失败:"+data.description);
        }
@@ -90,8 +104,9 @@ var upload = layui.upload;
      ,accept:"file"
      ,done: function(resp){
        if(resp.errorCode==0){
+       location.reload()
         alert("上传成功");
-        location.reload()
+
        }else{
         alert("上传失败:"+resp.description);
        }
