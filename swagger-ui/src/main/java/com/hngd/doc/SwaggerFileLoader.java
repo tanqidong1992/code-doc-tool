@@ -53,16 +53,25 @@ public class SwaggerFileLoader {
 		    .map(SwaggerFileLoader::readDocument)
 		    .filter(Optional::isPresent)
 		    .map(Optional::get)
-		    .sorted(Comparator.comparing(d->d.getTitle()))
+		    .sorted(Comparator.comparing(DocumentInfo::getLastUpdateTime).reversed())
+		    .map(d->{
+		    	d.getTags().sort(Comparator.comparing(MyTag::getName));
+		    	return d;
+		    })
 		    .collect(Collectors.toList());
 		docs.forEach(d->addToDocuments(d));
+		/**
+		di.forEach(d->{
+			d.getTags().sort(Comparator.comparing(MyTag::getName));
+		});
+		*/
+		//di.sort(Comparator.comparing(DocumentInfo::getLastUpdateTime).reversed());
 		 
 	}
 	public static Optional<DocumentInfo> readDocument(File file) {
 		OpenAPI openAPI=loadFromFile(file);
 		DocumentInfo di=new DocumentInfo();
 		di.setFilename(file.getName());
-		di.setOpenAPI(openAPI);
 		di.setLastUpdateTime(file.lastModified());
 		Info info=openAPI.getInfo();
 		if(info==null) {
@@ -88,12 +97,6 @@ public class SwaggerFileLoader {
 			loadOriginFile();
 		}
 		List<DocumentInfo> di=new ArrayList<>(documents.values());
-		di.forEach(d->{
-			
-			d.getTags().sort(Comparator.comparing(MyTag::getName));
-			
-		});
-		di.sort(Comparator.comparing(DocumentInfo::getLastUpdateTime).reversed());
 		 
 		return di;
 	}

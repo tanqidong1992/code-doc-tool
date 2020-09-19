@@ -57,6 +57,7 @@
     var localtion="/doc/editor?docUrl="+host+"/doc/api/document/info/"+filename;
     window.parent.location=localtion;
   }
+  var docApi=DocumentController();
   function deleteOriginFileByName(filename){
     docApi.deleteOriginFile(filename,function(resp){
       var data=resp.data;

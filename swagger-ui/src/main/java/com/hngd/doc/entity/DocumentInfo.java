@@ -18,10 +18,6 @@ public class DocumentInfo {
 	 */
 	private String filename;
 	/**
-	 * OpenAPI对象
-	 */
-	private OpenAPI openAPI;
-	/**
 	 * 标题
 	 */
 	private String title;
