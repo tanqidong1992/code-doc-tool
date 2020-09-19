@@ -20,11 +20,11 @@
   <li class="layui-nav-item"><a href="/doc/setting">接口文档管理</a></li>
 </ul>
 <div id="app">
-  <div class="layui-btn-container">
+  <div class="layui-btn-container" style="padding-top:10px!important;margin-left:10px;">
     <button class="layui-btn layui-btn-sm" id="uploadDocument">上传接口文档</button>
   </div>
 
-  <table lay-filter="tb_documents">
+  <table lay-filter="tb_documents" style="padding-left:10px;">
     <thead>
       <tr>
         <th lay-data="{field:'title', width:300}">文档标题</th>
@@ -52,37 +52,7 @@
 </div>
 
 <script>
-  var docApi=new DocumentController();
-  docApi.getAllOriginDocument(function(resp){
-      var data=resp.data;
-      console.log(data);
-      initView(data);
-  });
-  function initView(data){
-    
-    var appData = {
-            data: function() {
-                return {
-                    visible: false,
-                    data:data,
-                    uploadUrl:host+"/doc/api"+"/document"+"/upload"
-               };
-           },
-           methods:{
-               onDelete:function(event){
-                var filename=event.target.id;
-                console.log("click delete:"+event);   
-                deleteOriginFileByName(filename);
-               },
-               onEdite:function(event){
-            	   var filename=event.target.id;
-            	   var localtion="/doc/editor?docUrl="+host+"/doc/api/document/info/"+filename;
-            	   window.parent.location=localtion;
-               } 
-           }
-        };
 
-  }
   function editFile(filename){
     var localtion="/doc/editor?docUrl="+host+"/doc/api/document/info/"+filename;
     window.parent.location=localtion;
@@ -106,8 +76,8 @@ var table = layui.table;
  
 //转换静态表格
 table.init('tb_documents', {
-  height: 315 //设置高度
-  ,limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+  //height: 400, //设置高度
+  limit: 999 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
   //支持所有基础参数
 }); 
 var upload = layui.upload;
@@ -120,6 +90,7 @@ var upload = layui.upload;
      ,done: function(resp){
        if(resp.errorCode==0){
         alert("上传成功");
+        location.reload()
        }else{
         alert("上传失败:"+resp.description);
        }
