@@ -15,7 +15,7 @@
 </header>
 <body id="win" class="no-scroller">
 <ul class="layui-nav" lay-filter="">
-  <li class="layui-nav-item"><a href=""><h1 style="font-size:18px;">安全生产实时预警系统</h1></a></li>
+  <li class="layui-nav-item"><a href=""><h1 style="font-size:18px;">${systemName}</h1></a></li>
 
   <li class="layui-nav-item">
     <a href="javascript:;">导出当前文档</a>
@@ -27,9 +27,10 @@
   </li>
     <li class="layui-nav-item"><a href="/doc/setting">接口文档管理</a></li>
 </ul>
+<hr style="margin:0px">
   <div id="app">
         <div class="layui-row">
-                <div class="layui-col-md2">
+                <div class="layui-col-md2 layui-bg-black">
                   <div id="left-menu" class="grid-content bg-purple">
                   <ul class="layui-nav layui-nav-tree " lay-filter="test" lay-shrink="all">
 
@@ -151,6 +152,7 @@
         location.href=host+"/doc/api/document/info/markdown/"+originFilename;
     }
     function exportAsPdf(){
+        alert("此功能待开发");
     }
   </script>
 
