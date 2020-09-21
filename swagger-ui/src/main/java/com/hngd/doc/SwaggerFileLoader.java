@@ -53,6 +53,7 @@ public class SwaggerFileLoader {
 		    .map(SwaggerFileLoader::readDocument)
 		    .filter(Optional::isPresent)
 		    .map(Optional::get)
+		    .filter(d->d.getLastUpdateTime()!=null && d.getTags()!=null)
 		    .sorted(Comparator.comparing(DocumentInfo::getLastUpdateTime).reversed())
 		    .map(d->{
 		    	d.getTags().sort(Comparator.comparing(MyTag::getName));
@@ -83,6 +84,7 @@ public class SwaggerFileLoader {
 		if(tags!=null) {
 			String filename=file.getName();
 			List<MyTag> myTags=tags.stream()
+				.filter(tag->tag.getName()!=null)
 			    .map(tag->MyTag.fromTag(filename, tag))
 			    .collect(Collectors.toList());
 			di.setTags(myTags);
