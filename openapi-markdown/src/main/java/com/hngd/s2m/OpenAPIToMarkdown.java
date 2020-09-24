@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.models.servers.Server;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -77,6 +78,12 @@ public class OpenAPIToMarkdown {
         
         builder.documentTitle(info.getTitle()+info.getVersion());
         builder.textLine(info.getDescription());
+        List<Server> servers=openAPI.getServers();
+        if(servers!=null){
+			servers.forEach(server -> {
+				builder.textLine("("+server.getDescription()+")接口基础地址："+server.getUrl());
+			});
+		}
         moduleOps.forEach((tag,ops)->{
         	if(includeTags==null || includeTags.contains(tag)) {
         		builder.sectionTitleLevel(2, tag);
