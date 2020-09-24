@@ -1,0 +1,2480 @@
+<html><head><meta http-equiv="content-type" content="text/html;charset=utf-8"><style type="text/css">* {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: none;
+}
+
+/* reset CSS */
+table, td, tr {
+    font-size: 100%;
+     border: 1px solid black;
+}
+/* end reset CSS */
+
+body {
+    font-family:"lucida grande", "lucida sans unicode", lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    font-size: 18px;
+}
+
+body.mobile {
+    font-size: 32px;
+}
+
+P, li {
+  line-height: 1.8;
+}
+
+H1 {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, Helvetica, STKaiti, SimSun, serif;
+}
+
+H2 {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, Helvetica, STKaiti, SimSun, serif;
+    margin-bottom: 60px;
+    margin-bottom: 40px;
+    padding: 5px;
+    border-bottom: 2px LightGrey solid;
+    width: 98%;
+    line-height: 150%;
+    color: #666666;
+}
+
+
+H3 {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, Helvetica, STKaiti, SimSun, serif;
+    margin-top: 40px;
+    margin-bottom: 30px;
+    border-bottom: 1px LightGrey solid;
+    width: 98%;
+    line-height: 150%;
+    color: #666666;
+}
+
+
+H4 {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, Helvetica, STKaiti, SimSun, serif;
+    margin-top: 40px;
+    margin-bottom: 30px;
+    border-bottom: 1px LightGrey solid;
+    width: 98%;
+    line-height: 150%;
+    color: #666666;
+}
+
+.box {
+    padding: 2% 8% 5% 8%;
+    border: 1px solid LightGrey;
+}
+
+
+li {
+    margin-left: 10px;
+}
+
+
+blockquote {
+    border-left: 5px lightgrey solid;
+    padding-left: 15px;
+    margin-left: 20px;
+    background: #f4f4f4;
+}
+
+
+pre {
+    font-family: Inconsolata, Consolas, "DEJA VU SANS MONO", "DROID SANS MONO", Proggy, monospace;
+    font-size: 80%;
+    background-color: #FAFAFA;
+    border: 1px solid #E0E0E0;
+    border-radius: 4px;
+    padding: 12px;
+    line-height: 1.5;
+    display: block;
+    width: 100%;
+    overflow: auto;
+}
+
+
+code {
+    font-family: Inconsolata, Consolas, "DEJA VU SANS MONO", "DROID SANS MONO", Proggy, monospace;
+}
+
+
+a {
+    text-decoration: none;
+    cursor: crosshair;
+    border-bottom: 1px dashed orange;
+    color: #930ee4;
+}
+
+
+a:hover {
+    background-color: LightGrey;
+}
+
+
+img {
+    display: block;
+    box-shadow: 0 0 10px #555;
+    border-radius: 6px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    -webkit-box-shadow: 0 0 10px #555;
+}
+
+img.displayed {
+    text-align: center;
+    display: block;
+}
+
+hr {
+    color: LightGrey;
+}
+
+p.notice {
+    color: #AA4433;
+    font-size: 14px;
+}
+
+div.tweet p {
+    font-size: 16px;
+    border: 1px solid #aaa;
+    border-left: 10px solid #f28500;
+    padding: 2px 0.5em 2px 0.5em;
+    margin-bottom: 20px;
+    background-color: #fbfbfb;
+}
+
+div.tweet i {
+    color: brown;
+    font-size: 14px;
+    font-style: normal;
+    border: 1px solid #aaa;
+    margin-right: 0.5em;
+    padding: 0px 2px;
+}
+
+div.outer {
+    margin: 2% 5% 2% 5%;
+}
+
+body.mobile div.outer {
+    margin: 2% 0% 2% 0%;
+}
+
+div.inner {
+    margin: 0% 14%;
+    padding: 2% 8% 4% 8%;
+    border: 1px solid LightGrey;
+}
+
+body.mobile div.inner {
+    margin: 0;
+    padding: 2% 4% 4% 4%;
+}
+
+div.ad-banner {
+    margin: 0% 14%;
+}
+
+body.mobile div.ad-banner {
+    display: none;
+}
+
+.side-ad.mobile {
+    display: none;
+}
+
+.left {
+    float: left;
+    clear: both;
+    width: 50%;
+    padding: 25 24 25 0;
+    border-top: 1px solid lightblue;
+}
+
+.right {
+    float: left;
+    clear: none;
+    width: 50%;
+    padding: 25 0 25 24;
+    border-top: 1px solid lightblue;
+}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.row {
+    clear: both;
+}
+
+.highlight .hll { background-color: #ffc; }
+.highlight .c { color: #888; font-weight: bold; } /* Comment */
+.highlight .err { color: #a00; background-color: #fff } /* Error */
+.highlight .k { color: #cc7832; } /* Keyword */
+.highlight .o { color: #555 } /* Operator */
+.highlight .p { color: #333 } /* Punctuation */
+.highlight .po { color: #333 } /* Parenthesis Outer */
+.highlight .pi { color: #553 } /* Parenthesis Inner */
+.highlight .cm { color: #09f; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #099 } /* Comment.Preproc */
+.highlight .c1 { color: #999; } /* Comment.Single */
+.highlight .cs { color: #999; } /* Comment.Special */
+.highlight .gd { background-color: #fcc; border: 1px solid #c00 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #f00 } /* Generic.Error */
+.highlight .gh { color: #030; } /* Generic.Heading */
+.highlight .gi { background-color: #cfc; border: 1px solid #0c0 } /* Generic.Inserted */
+.highlight .go { color: #aaa } /* Generic.Output */
+.highlight .gp { color: #009; } /* Generic.Prompt */
+.highlight .gs { } /* Generic.Strong */
+.highlight .gu { color: #030; } /* Generic.Subheading */
+.highlight .gt { color: #9c6 } /* Generic.Traceback */
+.highlight .kc { color: #cc7832; } /* Keyword.Constant */
+.highlight .kd { color: #cc7832; } /* Keyword.Declaration */
+.highlight .kn { color: #cc7832; } /* Keyword.Namespace */
+.highlight .kp { color: #cc7832 } /* Keyword.Pseudo */
+.highlight .kr { color: #cc7832; } /* Keyword.Reserved */
+.highlight .kt { color: #cc7832; } /* Keyword.Type */
+.highlight .m  { color: #6897BB } /* Literal.Number */
+.highlight .s  { color: #d44950 } /* Literal.String */
+.highlight .s2 { color: #d44950 } /* Literal.String */
+.highlight .s2 { color: #d44950 } /* Literal.String */
+.highlight .na { color: #9876aa } /* Name.Attribute */
+.highlight .nb { color: #366 } /* Name.Builtin */
+.highlight .nc { color: #000; } /* Name.Class */
+.highlight .no { color: #360 } /* Name.Constant */
+.highlight .nd { color: #77c } /* Name.Decorator */
+.highlight .ni { color: #999; } /* Name.Entity */
+.highlight .ne { color: #c00; } /* Name.Exception */
+.highlight .nf { color: #182669 } /* Name.Function */
+.highlight .nl { color: #648 } /* Name.Label */
+.highlight .nn { color: #0cf; } /* Name.Namespace */
+.highlight .nt { color: #2f6f9f; } /* Name.Tag */
+.highlight .nv { color: #033 } /* Name.Variable */
+.highlight .ow { color: #000; } /* Operator.Word */
+.highlight .w { color: #bbb } /* Text.Whitespace */
+.highlight .mf { color: #6897BB } /* Literal.Number.Float */
+.highlight .mh { color: #6897BB } /* Literal.Number.Hex */
+.highlight .mi { color: #6897BB } /* Literal.Number.Integer */
+.highlight .mo { color: #6897BB } /* Literal.Number.Oct */
+.highlight .sb { color: #c30 } /* Literal.String.Backtick */
+.highlight .sc { color: #c30 } /* Literal.String.Char */
+.highlight .sd { color: #c30; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #c30 } /* Literal.String.Double */
+.highlight .se { color: #c30; } /* Literal.String.Escape */
+.highlight .sh { color: #c30 } /* Literal.String.Heredoc */
+.highlight .si { color: #a00 } /* Literal.String.Interpol */
+.highlight .sx { color: #c30 } /* Literal.String.Other */
+.highlight .sr { color: #3aa } /* Literal.String.Regex */
+.highlight .s1 { color: #c30 } /* Literal.String.Single */
+.highlight .ss { color: #fc3 } /* Literal.String.Symbol */
+.highlight .bp { color: #366 } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #033 } /* Name.Variable.Class */
+.highlight .vg { color: #033 } /* Name.Variable.Global */
+.highlight .vi { color: #033 } /* Name.Variable.Instance */
+.highlight .il { color: #f60 } /* Literal.Number.Integer.Long */</style></head><body>
+<h1><a href="#基础数据001-snapshot" id="基础数据001-snapshot">基础数据0.0.1-SNAPSHOT</a></h1>
+<p>最后更新时间:2020/09/18 15:19:50</p>
+<h3><a href="#监控点管理" id="监控点管理">监控点管理</a></h3>
+<h4><a href="#新增监控点" id="新增监控点">新增监控点</a></h4>
+<p>请求地址:/monitoring/point/add<br />
+请求方式:POST<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>manageableElementFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否作为管理要素，可取值0，1;0表示否，1表示是</td></tr>
+<tr><td>safetyDirector</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全责任人</td></tr>
+<tr><td>relatedDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备Id</td></tr>
+<tr><td>safetyRules</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全条例</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>mainMonitoringRiskId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险Id</td></tr>
+<tr><td>defaultCoverUrl</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点固定封面</td></tr>
+<tr><td>dangerLevelId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级Id</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>上级监控点Id，，顶级监控点的上级监控点Id为-1</td></tr>
+<tr><td>contacts</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联系方式</td></tr>
+<tr><td>peopleNumberLimitation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>人数限制</td></tr>
+<tr><td>relatedDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道号</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#修改监控点信息" id="修改监控点信息">修改监控点信息</a></h4>
+<p>请求地址:/monitoring/point/update<br />
+请求方式:PUT<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>manageableElementFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否作为管理要素，可取值0，1;0表示否，1表示是</td></tr>
+<tr><td>relatedDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备Id</td></tr>
+<tr><td>dangerLevelId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级Id</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>上级监控点Id，，顶级监控点的上级监控点Id为-1</td></tr>
+<tr><td>safetyDirector</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全责任人</td></tr>
+<tr><td>safetyRules</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全条例</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>mainMonitoringRiskId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险Id</td></tr>
+<tr><td>defaultCoverUrl</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点固定封面</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id</td></tr>
+<tr><td>contacts</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联系方式</td></tr>
+<tr><td>peopleNumberLimitation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>人数限制</td></tr>
+<tr><td>relatedDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道号</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#更新监控点的同级展示顺序" id="更新监控点的同级展示顺序">更新监控点的同级展示顺序</a></h4>
+<p>请求地址:/monitoring/point/update/order<br />
+请求方式:PUT<br />
+请求参数列表:<br />
+请求体类型:application/json<br />
+返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#删除指定监控点信息" id="删除指定监控点信息">删除指定监控点信息</a></h4>
+<p>请求地址:/monitoring/point/delete<br />
+请求方式:DELETE<br />
+请求参数列表:</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>id</td><td>string</td><td>是</td><td>暂无</td><td>query</td><td>指定监控点的id</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#分页查询监控点列表" id="分页查询监控点列表">分页查询监控点列表</a></h4>
+<p>请求地址:/monitoring/point/paged/list<br />
+请求方式:GET<br />
+请求参数列表:</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>监控点名称，模糊查询，可选查询条件之一</td></tr>
+<tr><td>pageNo</td><td>number</td><td>是</td><td>暂无</td><td>query</td><td>页号,从1开始</td></tr>
+<tr><td>pageSize</td><td>number</td><td>是</td><td>暂无</td><td>query</td><td>页大小,最小值取1</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>上级监控点Id，可选查询条件之一</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>dangerLevelDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级显示名称</td></tr>
+<tr><td>manageableElementFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否作为管理要素，可取值0，1;0表示否，1表示是</td></tr>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>relatedDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备Id</td></tr>
+<tr><td>safetyDirector</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全责任人</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>mainMonitoringRiskId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险Id</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id</td></tr>
+<tr><td>relatedDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道号</td></tr>
+<tr><td>namePath</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>orderNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>同级排序字段,升序排序</td></tr>
+<tr><td>dangerLevelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级名称</td></tr>
+<tr><td>dangerLevelId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级Id</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>上级监控点Id，，顶级监控点的上级监控点Id为-1</td></tr>
+<tr><td>mainMonitoringRiskName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险名称</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>safetyRules</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全条例</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>defaultCoverUrl</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点固定封面</td></tr>
+<tr><td>relatedDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备名称</td></tr>
+<tr><td>mainMonitoringRiskDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险显示名称</td></tr>
+<tr><td>contacts</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联系方式</td></tr>
+<tr><td>peopleNumberLimitation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>人数限制</td></tr>
+<tr><td>relatedDeviceChannelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道名称</td></tr>
+</tbody>
+</table>
+<h4><a href="#加载危险等级列表" id="加载危险等级列表">加载危险等级列表</a></h4>
+<p>请求地址:/monitoring/point/danger/levels<br />
+请求方式:GET<br />
+请求参数列表:<br />
+无请求参数<br />
+返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>displayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典显示名称</td></tr>
+<tr><td>inbuilt</td><td>integer(int32)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>pinyinCode</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>拼音码</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典ID</td></tr>
+<tr><td>sort</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>字典项排序字段,按DESC排序</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典父级ID，顶级字典的父级id为-1</td></tr>
+</tbody>
+</table>
+<h4><a href="#加载监控风险列表" id="加载监控风险列表">加载监控风险列表</a></h4>
+<p>请求地址:/monitoring/point/monitoring/risks<br />
+请求方式:GET<br />
+请求参数列表:<br />
+无请求参数<br />
+返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>displayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典显示名称</td></tr>
+<tr><td>inbuilt</td><td>integer(int32)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>pinyinCode</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>拼音码</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典ID</td></tr>
+<tr><td>sort</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>字典项排序字段,按DESC排序</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典父级ID，顶级字典的父级id为-1</td></tr>
+</tbody>
+</table>
+<h4><a href="#加载指定监控点的下属所有监控点树包含指定监控点" id="加载指定监控点的下属所有监控点树包含指定监控点">加载指定监控点的下属所有监控点树（包含指定监控点）</a></h4>
+<p>请求地址:/monitoring/point/{rootId}/tree<br />
+请求方式:GET<br />
+请求参数列表:</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>rootId</td><td>string</td><td>是</td><td>暂无</td><td>path</td><td>指定监控点的id，如果要获取根监控点，请传入-1</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>dangerLevelDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级显示名称</td></tr>
+<tr><td>manageableElementFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否作为管理要素，可取值0，1;0表示否，1表示是</td></tr>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>relatedDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备Id</td></tr>
+<tr><td>subMonitoringPoints</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>下级监控点,具体字段参考表:subMonitoringPoints</td></tr>
+<tr><td>safetyDirector</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全责任人</td></tr>
+<tr><td>subDevices</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>本级监控点下属设备列表,具体字段参考表:subDevices</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>mainMonitoringRiskId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险Id</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id</td></tr>
+<tr><td>relatedDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道号</td></tr>
+<tr><td>namePath</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>orderNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>同级排序字段,升序排序</td></tr>
+<tr><td>dangerLevelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级名称</td></tr>
+<tr><td>dangerLevelId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级Id</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>上级监控点Id，，顶级监控点的上级监控点Id为-1</td></tr>
+<tr><td>mainMonitoringRiskName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险名称</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>safetyRules</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全条例</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>defaultCoverUrl</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点固定封面</td></tr>
+<tr><td>relatedDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备名称</td></tr>
+<tr><td>mainMonitoringRiskDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险显示名称</td></tr>
+<tr><td>contacts</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联系方式</td></tr>
+<tr><td>peopleNumberLimitation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>人数限制</td></tr>
+<tr><td>relatedDeviceChannelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道名称</td></tr>
+</tbody>
+</table>
+<p>subMonitoringPoints</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>dangerLevelDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级显示名称</td></tr>
+<tr><td>manageableElementFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否作为管理要素，可取值0，1;0表示否，1表示是</td></tr>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>relatedDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备Id</td></tr>
+<tr><td>subMonitoringPoints</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>下级监控点</td></tr>
+<tr><td>safetyDirector</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全责任人</td></tr>
+<tr><td>subDevices</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>本级监控点下属设备列表,具体字段参考表:subDevices</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>mainMonitoringRiskId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险Id</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id</td></tr>
+<tr><td>relatedDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道号</td></tr>
+<tr><td>namePath</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>orderNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>同级排序字段,升序排序</td></tr>
+<tr><td>dangerLevelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级名称</td></tr>
+<tr><td>dangerLevelId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级Id</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>上级监控点Id，，顶级监控点的上级监控点Id为-1</td></tr>
+<tr><td>mainMonitoringRiskName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险名称</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>safetyRules</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全条例</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>defaultCoverUrl</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点固定封面</td></tr>
+<tr><td>relatedDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备名称</td></tr>
+<tr><td>mainMonitoringRiskDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险显示名称</td></tr>
+<tr><td>contacts</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联系方式</td></tr>
+<tr><td>peopleNumberLimitation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>人数限制</td></tr>
+<tr><td>relatedDeviceChannelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道名称</td></tr>
+</tbody>
+</table>
+<p>subDevices</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>channelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道号</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>关联监控点Id</td></tr>
+<tr><td>streamTypeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流类型Id</td></tr>
+<tr><td>streamPriorityId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级</td></tr>
+<tr><td>videoRecordDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备通道号</td></tr>
+<tr><td>deviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道所属设备Id</td></tr>
+<tr><td>streamTypeName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>码流类型名称</td></tr>
+<tr><td>streamTypeDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>码流类型显示名称</td></tr>
+<tr><td>monitoringPointNamePath</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称路径</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>videoRecordDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道名称</td></tr>
+<tr><td>monitoringPointName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>videoRecordDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>streamPriorityName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级名称</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道id</td></tr>
+<tr><td>streamPriorityDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级显示名称</td></tr>
+</tbody>
+</table>
+<p>subDevices</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>channelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道号</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>关联监控点Id</td></tr>
+<tr><td>streamTypeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流类型Id</td></tr>
+<tr><td>streamPriorityId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级</td></tr>
+<tr><td>videoRecordDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备通道号</td></tr>
+<tr><td>deviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道所属设备Id</td></tr>
+<tr><td>streamTypeName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>码流类型名称</td></tr>
+<tr><td>streamTypeDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>码流类型显示名称</td></tr>
+<tr><td>monitoringPointNamePath</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称路径</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>videoRecordDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道名称</td></tr>
+<tr><td>monitoringPointName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>videoRecordDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>streamPriorityName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级名称</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道id</td></tr>
+<tr><td>streamPriorityDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级显示名称</td></tr>
+</tbody>
+</table>
+<h3><a href="#设备通道管理" id="设备通道管理">设备通道管理</a></h3>
+<h4><a href="#加载码流类型列表" id="加载码流类型列表">加载码流类型列表</a></h4>
+<p>请求地址:/device/channel/stream/types<br />
+请求方式:GET<br />
+请求参数列表:<br />
+无请求参数<br />
+返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>displayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典显示名称</td></tr>
+<tr><td>inbuilt</td><td>integer(int32)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>pinyinCode</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>拼音码</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典ID</td></tr>
+<tr><td>sort</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>字典项排序字段,按DESC排序</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典父级ID，顶级字典的父级id为-1</td></tr>
+</tbody>
+</table>
+<h4><a href="#加载取流优先级列表" id="加载取流优先级列表">加载取流优先级列表</a></h4>
+<p>请求地址:/device/channel/stream/priorities<br />
+请求方式:GET<br />
+请求参数列表:<br />
+无请求参数<br />
+返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>displayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典显示名称</td></tr>
+<tr><td>inbuilt</td><td>integer(int32)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>pinyinCode</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>拼音码</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典ID</td></tr>
+<tr><td>sort</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>字典项排序字段,按DESC排序</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典父级ID，顶级字典的父级id为-1</td></tr>
+</tbody>
+</table>
+<h4><a href="#新增设备通道" id="新增设备通道">新增设备通道</a></h4>
+<p>请求地址:/device/channel/add<br />
+请求方式:POST<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>channelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道号</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>关联监控点Id</td></tr>
+<tr><td>streamTypeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流类型Id</td></tr>
+<tr><td>streamPriorityId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级</td></tr>
+<tr><td>videoRecordDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备Id</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道名称</td></tr>
+<tr><td>videoRecordDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备通道号</td></tr>
+<tr><td>deviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道所属设备Id</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#修改设备通道信息" id="修改设备通道信息">修改设备通道信息</a></h4>
+<p>请求地址:/device/channel/update<br />
+请求方式:PUT<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>channelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道号</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>关联监控点Id</td></tr>
+<tr><td>streamTypeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流类型Id</td></tr>
+<tr><td>streamPriorityId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级</td></tr>
+<tr><td>videoRecordDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备Id</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道名称</td></tr>
+<tr><td>videoRecordDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备通道号</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道id</td></tr>
+<tr><td>deviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道所属设备Id</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h3><a href="#联动动作管理" id="联动动作管理">联动动作管理</a></h3>
+<h4><a href="#新增联动动作" id="新增联动动作">新增联动动作</a></h4>
+<p>请求地址:/linkage/action/add<br />
+请求方式:POST<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>eventStrategyId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略id</td></tr>
+<tr><td>recordVideoTime</td><td>integer(int64)</td><td>否</td><td>暂无</td><td>缺失</td><td>录像时长;单位秒</td></tr>
+<tr><td>captureFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否抓拍;可取值0,1;0表示不抓拍;1表示抓拍</td></tr>
+<tr><td>linkageDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联动设备id</td></tr>
+<tr><td>presetLocation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>预置位调用</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#修改联动动作" id="修改联动动作">修改联动动作</a></h4>
+<p>请求地址:/linkage/action/update<br />
+请求方式:PUT<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>eventStrategyId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略id</td></tr>
+<tr><td>recordVideoTime</td><td>integer(int64)</td><td>否</td><td>暂无</td><td>缺失</td><td>录像时长;单位秒</td></tr>
+<tr><td>captureFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否抓拍;可取值0,1;0表示不抓拍;1表示抓拍</td></tr>
+<tr><td>linkageDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联动设备id</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联动动作Id</td></tr>
+<tr><td>presetLocation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>预置位调用</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#删除指定联动动作" id="删除指定联动动作">删除指定联动动作</a></h4>
+<p>请求地址:/linkage/action/delete<br />
+请求方式:DELETE<br />
+请求参数列表:</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>id</td><td>string</td><td>是</td><td>暂无</td><td>query</td><td>指定联动动作的id</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h3><a href="#布防策略管理" id="布防策略管理">布防策略管理</a></h3>
+<h4><a href="#加载所有的事件类型" id="加载所有的事件类型">加载所有的事件类型</a></h4>
+<p>请求地址:/event/strategy/event/types<br />
+请求方式:GET<br />
+请求参数列表:<br />
+无请求参数<br />
+返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>displayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典显示名称</td></tr>
+<tr><td>inbuilt</td><td>integer(int32)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>pinyinCode</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>拼音码</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典ID</td></tr>
+<tr><td>sort</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>字典项排序字段,按DESC排序</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典父级ID，顶级字典的父级id为-1</td></tr>
+</tbody>
+</table>
+<h4><a href="#新增布防策略" id="新增布防策略">新增布防策略</a></h4>
+<p>请求地址:/event/strategy/add<br />
+请求方式:POST<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>eventTypeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>事件类型Id</td></tr>
+<tr><td>broadcastFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否播报;可取值0,1;0表示不播报;1表示播报</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id，与告警源设备保持一致</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略名称</td></tr>
+<tr><td>popWindowFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否弹窗;可取值0,1;0表示不弹窗;1表示弹窗</td></tr>
+<tr><td>alarmSourceDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>告警源设备Id</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#新增布防策略扩展" id="新增布防策略扩展">新增布防策略(扩展)</a></h4>
+<p>请求地址:/event/strategy/add/ext<br />
+请求方式:POST<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>eventTypeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>事件类型Id</td></tr>
+<tr><td>broadcastFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否播报;可取值0,1;0表示不播报;1表示播报</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id，与告警源设备保持一致</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略名称</td></tr>
+<tr><td>popWindowFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否弹窗;可取值0,1;0表示不弹窗;1表示弹窗</td></tr>
+<tr><td>alarmSourceDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>告警源设备Id</td></tr>
+<tr><td>linkageActions</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>联动动作,具体字段参考表:linkageActions</td></tr>
+</tbody>
+</table>
+<p>linkageActions</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>recordVideoTime</td><td>integer(int64)</td><td>否</td><td>暂无</td><td>缺失</td><td>录像时长;单位秒</td></tr>
+<tr><td>captureFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否抓拍;可取值0,1;0表示不抓拍;1表示抓拍</td></tr>
+<tr><td>linkageDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联动设备id</td></tr>
+<tr><td>presetLocation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>预置位调用</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#修改布防策略" id="修改布防策略">修改布防策略</a></h4>
+<p>请求地址:/event/strategy/update<br />
+请求方式:PUT<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>eventTypeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>事件类型Id</td></tr>
+<tr><td>broadcastFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否播报;可取值0,1;0表示不播报;1表示播报</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id，与告警源设备保持一致</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略名称</td></tr>
+<tr><td>popWindowFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否弹窗;可取值0,1;0表示不弹窗;1表示弹窗</td></tr>
+<tr><td>alarmSourceDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>告警源设备Id</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略Id</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#修改布防策略扩展" id="修改布防策略扩展">修改布防策略(扩展)</a></h4>
+<p>请求地址:/event/strategy/update/ext<br />
+请求方式:PUT<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>eventTypeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>事件类型Id</td></tr>
+<tr><td>broadcastFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否播报;可取值0,1;0表示不播报;1表示播报</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id，与告警源设备保持一致</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略名称</td></tr>
+<tr><td>popWindowFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否弹窗;可取值0,1;0表示不弹窗;1表示弹窗</td></tr>
+<tr><td>alarmSourceDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>告警源设备Id</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略Id</td></tr>
+<tr><td>linkageActions</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>联动动作,具体字段参考表:linkageActions</td></tr>
+</tbody>
+</table>
+<p>linkageActions</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>recordVideoTime</td><td>integer(int64)</td><td>否</td><td>暂无</td><td>缺失</td><td>录像时长;单位秒</td></tr>
+<tr><td>captureFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否抓拍;可取值0,1;0表示不抓拍;1表示抓拍</td></tr>
+<tr><td>linkageDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联动设备id</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联动动作Id</td></tr>
+<tr><td>presetLocation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>预置位调用</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#删除指定布防策略" id="删除指定布防策略">删除指定布防策略</a></h4>
+<p>请求地址:/event/strategy/delete<br />
+请求方式:DELETE<br />
+请求参数列表:</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>id</td><td>string</td><td>是</td><td>暂无</td><td>query</td><td>指定布防策略的id</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#批量修改指定布防策略的布防状态" id="批量修改指定布防策略的布防状态">批量修改指定布防策略的布防状态</a></h4>
+<p>请求地址:/event/strategy/update/state<br />
+请求方式:PUT<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>ids</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略Id集合</td></tr>
+<tr><td>state</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略状态;可取值0,1;0表示撤防;1表示布防</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#设置指定布防策略的弹窗标志位" id="设置指定布防策略的弹窗标志位">设置指定布防策略的弹窗标志位</a></h4>
+<p>请求地址:/event/strategy/update/pop/window/flag<br />
+请求方式:PUT<br />
+请求参数列表:<br />
+请求体类型:application/x-www-form-urlencoded</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>指定布防策略的id</td></tr>
+<tr><td>flag</td><td>number</td><td>否</td><td>暂无</td><td>缺失</td><td>是否弹窗;可取值0,1;0表示不弹窗;1表示弹窗</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#设置指定布防策略的播报标志位" id="设置指定布防策略的播报标志位">设置指定布防策略的播报标志位</a></h4>
+<p>请求地址:/event/strategy/update/broadcast/flag<br />
+请求方式:PUT<br />
+请求参数列表:<br />
+请求体类型:application/x-www-form-urlencoded</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>指定布防策略的id</td></tr>
+<tr><td>flag</td><td>number</td><td>否</td><td>暂无</td><td>缺失</td><td>是否播报;可取值0,1;0表示不播报;1表示播报</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#分页查询布防策略列表" id="分页查询布防策略列表">分页查询布防策略列表</a></h4>
+<p>请求地址:/event/strategy/paged/list<br />
+请求方式:GET<br />
+请求参数列表:</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>alarmSourceDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>告警源设备名称，模糊查询，可选查询条件之一</td></tr>
+<tr><td>eventTypeId</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>事件类型Id，可选查询条件之一</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>布防监控点Id，可选查询条件之一</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>布防策略名称，模糊查询，可选查询条件之一</td></tr>
+<tr><td>pageNo</td><td>number</td><td>是</td><td>暂无</td><td>query</td><td>页号,从1开始</td></tr>
+<tr><td>pageSize</td><td>number</td><td>是</td><td>暂无</td><td>query</td><td>页大小,最小值取1</td></tr>
+<tr><td>state</td><td>number</td><td>否</td><td>暂无</td><td>query</td><td>布防策略状态;可取值0,1;0表示撤防;1表示布防，可选查询条件之一</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>eventTypeDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>事件类型显示名称</td></tr>
+<tr><td>broadcastFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否播报;可取值0,1;0表示不播报;1表示播报</td></tr>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id，与告警源设备保持一致</td></tr>
+<tr><td>alarmSourceDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>告警源设备名称</td></tr>
+<tr><td>alarmSourceDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>告警源设备Id</td></tr>
+<tr><td>eventTypeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>事件类型Id</td></tr>
+<tr><td>monitoringPointNamePath</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称路径</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略名称</td></tr>
+<tr><td>monitoringPointName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>eventTypeName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>事件类型名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>popWindowFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否弹窗;可取值0,1;0表示不弹窗;1表示弹窗</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略Id</td></tr>
+<tr><td>state</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略状态;可取值0,1;0表示撤防;1表示布防</td></tr>
+</tbody>
+</table>
+<h4><a href="#加载指定布防策略详细信息" id="加载指定布防策略详细信息">加载指定布防策略详细信息</a></h4>
+<p>请求地址:/event/strategy/{id}/detail<br />
+请求方式:GET<br />
+请求参数列表:</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>id</td><td>string</td><td>是</td><td>暂无</td><td>path</td><td>指定布防策略的id</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td colspan="2">data</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>eventTypeDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>事件类型显示名称</td></tr>
+<tr><td>broadcastFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否播报;可取值0,1;0表示不播报;1表示播报</td></tr>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id，与告警源设备保持一致</td></tr>
+<tr><td>alarmSourceDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>告警源设备名称</td></tr>
+<tr><td>alarmSourceDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>告警源设备Id</td></tr>
+<tr><td>eventTypeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>事件类型Id</td></tr>
+<tr><td>monitoringPointNamePath</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称路径</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略名称</td></tr>
+<tr><td>monitoringPointName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>eventTypeName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>事件类型名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>popWindowFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否弹窗;可取值0,1;0表示不弹窗;1表示弹窗</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略Id</td></tr>
+<tr><td>state</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略状态;可取值0,1;0表示撤防;1表示布防</td></tr>
+<tr><td>linkageActions</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>联动动作,具体字段参考表:linkageActions</td></tr>
+<tr><td colspan="2">alarmDeviceDetail</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:alarmDeviceDetail</td></tr>
+</tbody>
+</table>
+<p>linkageActions</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>eventStrategyId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>布防策略id</td></tr>
+<tr><td>recordVideoTime</td><td>integer(int64)</td><td>否</td><td>暂无</td><td>缺失</td><td>录像时长;单位秒</td></tr>
+<tr><td>captureFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否抓拍;可取值0,1;0表示不抓拍;1表示抓拍</td></tr>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>linkageDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联动设备id</td></tr>
+<tr><td>linkageDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联动设备名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联动动作Id</td></tr>
+<tr><td>presetLocation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>预置位调用</td></tr>
+</tbody>
+</table>
+<p>alarmDeviceDetail</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>stateId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备状态Id</td></tr>
+<tr><td>ipAddress</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备IP地址</td></tr>
+<tr><td>videoChannelCount</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备视频通道数</td></tr>
+<tr><td>typeName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型名称</td></tr>
+<tr><td>typeDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型显示名称</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>port</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备端口</td></tr>
+<tr><td>stateName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备状态名称</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>loginName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>登录用户名称</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备名称</td></tr>
+<tr><td>loginPassword</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>登录密码</td></tr>
+<tr><td>stateLastUpdateTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后更新时间</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>typeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型id</td></tr>
+<tr><td>stateDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备状态显示名称</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备id</td></tr>
+</tbody>
+</table>
+<h3><a href="#设备状态信息管理" id="设备状态信息管理">设备状态信息管理</a></h3>
+<h4><a href="#更新设备状态信息" id="更新设备状态信息">更新设备状态信息</a></h4>
+<p>请求地址:/device/state/update<br />
+请求方式:PUT<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>stateId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备状态Id</td></tr>
+<tr><td>deviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备id</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h3><a href="#设备管理" id="设备管理">设备管理</a></h3>
+<h4><a href="#导入设备信息" id="导入设备信息">导入设备信息</a></h4>
+<p>请求地址:/device/import<br />
+请求方式:POST<br />
+请求参数列表:<br />
+请求体类型:multipart/form-data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>file</td><td>string(binary)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备信息excel文件</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#新增设备" id="新增设备">新增设备</a></h4>
+<p>请求地址:/device/add<br />
+请求方式:POST<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>port</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备端口</td></tr>
+<tr><td>loginName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>登录用户名称</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备名称</td></tr>
+<tr><td>ipAddress</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备IP地址</td></tr>
+<tr><td>loginPassword</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>登录密码</td></tr>
+<tr><td>videoChannelCount</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备视频通道数</td></tr>
+<tr><td>typeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型id</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#修改设备信息" id="修改设备信息">修改设备信息</a></h4>
+<p>请求地址:/device/update<br />
+请求方式:PUT<br />
+请求参数列表:<br />
+请求体类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>port</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备端口</td></tr>
+<tr><td>loginName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>登录用户名称</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备名称</td></tr>
+<tr><td>ipAddress</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备IP地址</td></tr>
+<tr><td>loginPassword</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>登录密码</td></tr>
+<tr><td>videoChannelCount</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备视频通道数</td></tr>
+<tr><td>typeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型id</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备id</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#删除设备信息" id="删除设备信息">删除设备信息</a></h4>
+<p>请求地址:/device/delete<br />
+请求方式:DELETE<br />
+请求参数列表:</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>deviceId</td><td>string</td><td>是</td><td>暂无</td><td>query</td><td>修改后的设备表单信息</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>数据</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<h4><a href="#分页查询设备列表" id="分页查询设备列表">分页查询设备列表</a></h4>
+<p>请求地址:/device/paged/list<br />
+请求方式:GET<br />
+请求参数列表:</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>ipAddress</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>设备IP，模糊查询，可选查询条件之一</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>设备名称，模糊查询，可选查询条件之一</td></tr>
+<tr><td>pageNo</td><td>number</td><td>是</td><td>暂无</td><td>query</td><td>页号,从1开始</td></tr>
+<tr><td>pageSize</td><td>number</td><td>是</td><td>暂无</td><td>query</td><td>页大小,最小值取1</td></tr>
+<tr><td>port</td><td>number</td><td>否</td><td>暂无</td><td>query</td><td>设备端口，可选查询条件之一</td></tr>
+<tr><td>stateId</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>设备状态，可选查询条件之一</td></tr>
+<tr><td>typeId</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>设备类型，可选查询条件之一</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>stateId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备状态Id</td></tr>
+<tr><td>ipAddress</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备IP地址</td></tr>
+<tr><td>videoChannelCount</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备视频通道数</td></tr>
+<tr><td>typeName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型名称</td></tr>
+<tr><td>typeDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型显示名称</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>port</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备端口</td></tr>
+<tr><td>stateName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备状态名称</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>loginName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>登录用户名称</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备名称</td></tr>
+<tr><td>loginPassword</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>登录密码</td></tr>
+<tr><td>stateLastUpdateTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后更新时间</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>typeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型id</td></tr>
+<tr><td>stateDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备状态显示名称</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备id</td></tr>
+</tbody>
+</table>
+<h4><a href="#加载所有的视频储存设备" id="加载所有的视频储存设备">加载所有的视频储存设备</a></h4>
+<p>请求地址:/device/all/record/devices<br />
+请求方式:GET<br />
+请求参数列表:<br />
+无请求参数<br />
+返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>stateId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备状态Id</td></tr>
+<tr><td>ipAddress</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备IP地址</td></tr>
+<tr><td>videoChannelCount</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备视频通道数</td></tr>
+<tr><td>typeName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型名称</td></tr>
+<tr><td>typeDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型显示名称</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>port</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备端口</td></tr>
+<tr><td>stateName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备状态名称</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>loginName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>登录用户名称</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备名称</td></tr>
+<tr><td>loginPassword</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>登录密码</td></tr>
+<tr><td>stateLastUpdateTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后更新时间</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>typeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型id</td></tr>
+<tr><td>stateDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备状态显示名称</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备id</td></tr>
+</tbody>
+</table>
+<h4><a href="#查询指定设备的详细信息" id="查询指定设备的详细信息">查询指定设备的详细信息</a></h4>
+<p>请求地址:/device/{deviceId}/detail<br />
+请求方式:GET<br />
+请求参数列表:</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>deviceId</td><td>string</td><td>是</td><td>暂无</td><td>path</td><td>指定设备的Id</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td colspan="2">data</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>stateId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备状态Id</td></tr>
+<tr><td>ipAddress</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备IP地址</td></tr>
+<tr><td>videoChannelCount</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备视频通道数</td></tr>
+<tr><td>typeName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型名称</td></tr>
+<tr><td>typeDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型显示名称</td></tr>
+<tr><td>deviceChannels</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道信息,具体字段参考表:deviceChannels</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>port</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备端口</td></tr>
+<tr><td>stateName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备状态名称</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>loginName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>登录用户名称</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备名称</td></tr>
+<tr><td>loginPassword</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>登录密码</td></tr>
+<tr><td>stateLastUpdateTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后更新时间</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>typeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型id</td></tr>
+<tr><td>stateDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备状态显示名称</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备id</td></tr>
+</tbody>
+</table>
+<p>deviceChannels</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>channelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道号</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>关联监控点Id</td></tr>
+<tr><td>streamTypeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流类型Id</td></tr>
+<tr><td>streamPriorityId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级</td></tr>
+<tr><td>videoRecordDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备通道号</td></tr>
+<tr><td>deviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道所属设备Id</td></tr>
+<tr><td>streamTypeName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>码流类型名称</td></tr>
+<tr><td>streamTypeDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>码流类型显示名称</td></tr>
+<tr><td>monitoringPointNamePath</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称路径</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>videoRecordDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道名称</td></tr>
+<tr><td>monitoringPointName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>videoRecordDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>streamPriorityName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级名称</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道id</td></tr>
+<tr><td>streamPriorityDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级显示名称</td></tr>
+</tbody>
+</table>
+<h4><a href="#加载设备类型列表" id="加载设备类型列表">加载设备类型列表</a></h4>
+<p>请求地址:/device/types<br />
+请求方式:GET<br />
+请求参数列表:<br />
+无请求参数<br />
+返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>displayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典显示名称</td></tr>
+<tr><td>inbuilt</td><td>integer(int32)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>pinyinCode</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>拼音码</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典ID</td></tr>
+<tr><td>sort</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>字典项排序字段,按DESC排序</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典父级ID，顶级字典的父级id为-1</td></tr>
+</tbody>
+</table>
+<h4><a href="#加载设备状态列表" id="加载设备状态列表">加载设备状态列表</a></h4>
+<p>请求地址:/device/states<br />
+请求方式:GET<br />
+请求参数列表:<br />
+无请求参数<br />
+返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>displayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典显示名称</td></tr>
+<tr><td>inbuilt</td><td>integer(int32)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>pinyinCode</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>拼音码</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典ID</td></tr>
+<tr><td>sort</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>字典项排序字段,按DESC排序</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>字典父级ID，顶级字典的父级id为-1</td></tr>
+</tbody>
+</table>
+<h4><a href="#导出设备设备列表" id="导出设备设备列表">导出设备设备列表</a></h4>
+<p>请求地址:/device/export/list<br />
+请求方式:GET<br />
+请求参数列表:</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>ipAddress</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>设备IP，模糊查询，可选查询条件之一</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>设备名称，模糊查询，可选查询条件之一</td></tr>
+<tr><td>pageNo</td><td>number</td><td>是</td><td>暂无</td><td>query</td><td>页号,从1开始</td></tr>
+<tr><td>pageSize</td><td>number</td><td>是</td><td>暂无</td><td>query</td><td>页大小,最小值取1</td></tr>
+<tr><td>port</td><td>number</td><td>否</td><td>暂无</td><td>query</td><td>设备端口，可选查询条件之一</td></tr>
+<tr><td>stateId</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>设备状态，可选查询条件之一</td></tr>
+<tr><td>typeId</td><td>string</td><td>否</td><td>暂无</td><td>query</td><td>设备类型，可选查询条件之一</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/vnd.ms-excel</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>headers</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:headers</td></tr>
+<tr><td>statusCodeValue</td><td>integer(int32)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>body</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>statusCode</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>headers</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>origin</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>lastModified</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td colspan="2">contentType</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>contentLength</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>date</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>ifModifiedSince</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>connection</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>empty</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>location</td><td>string(uri)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>host</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:host</td></tr>
+<tr><td>all</td><td>object</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>range</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accept</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>acceptLanguage</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:acceptLanguage</td></tr>
+<tr><td>acceptLanguageAsLocales</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:acceptLanguageAsLocales</td></tr>
+<tr><td>accessControlAllowCredentials</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlAllowHeaders</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlAllowMethods</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlAllowOrigin</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlExposeHeaders</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlMaxAge</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlRequestHeaders</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlRequestMethod</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>acceptCharset</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:acceptCharset</td></tr>
+<tr><td>allow</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>cacheControl</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td colspan="2">contentDisposition</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>contentLanguage</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:contentLanguage</td></tr>
+<tr><td>etag</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>expires</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>ifMatch</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>ifNoneMatch</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>ifUnmodifiedSince</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>pragma</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>upgrade</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>vary</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>host</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>hostString</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>address</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:address</td></tr>
+<tr><td>port</td><td>integer(int32)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>unresolved</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>hostName</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>address</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>canonicalHostName</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>anyLocalAddress</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>multicastAddress</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>loopbackAddress</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>linkLocalAddress</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>siteLocalAddress</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>mcglobal</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>mcnodeLocal</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>mclinkLocal</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>mcsiteLocal</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>mcorgLocal</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>hostAddress</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>address</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>hostName</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>acceptLanguage</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>range</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>weight</td><td>number(double)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>acceptLanguageAsLocales</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>script</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>country</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>variant</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>extensionKeys</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>unicodeLocaleAttributes</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>unicodeLocaleKeys</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>iso3Language</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>iso3Country</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayLanguage</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayScript</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayCountry</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayVariant</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>language</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayName</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>acceptCharset</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>registered</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>contentLanguage</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>script</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>country</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>variant</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>extensionKeys</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>unicodeLocaleAttributes</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>unicodeLocaleKeys</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>iso3Language</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>iso3Country</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayLanguage</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayScript</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayCountry</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayVariant</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>language</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayName</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<h4><a href="#下载设备导入模板" id="下载设备导入模板">下载设备导入模板</a></h4>
+<p>请求地址:/device/template/download<br />
+请求方式:GET<br />
+请求参数列表:<br />
+无请求参数<br />
+返回值:<br />
+返回类型:application/vnd.ms-excel</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>headers</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:headers</td></tr>
+<tr><td>statusCodeValue</td><td>integer(int32)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>body</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>statusCode</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>headers</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>origin</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>lastModified</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td colspan="2">contentType</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>contentLength</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>date</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>ifModifiedSince</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>connection</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>empty</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>location</td><td>string(uri)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>host</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:host</td></tr>
+<tr><td>all</td><td>object</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>range</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accept</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>acceptLanguage</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:acceptLanguage</td></tr>
+<tr><td>acceptLanguageAsLocales</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:acceptLanguageAsLocales</td></tr>
+<tr><td>accessControlAllowCredentials</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlAllowHeaders</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlAllowMethods</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlAllowOrigin</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlExposeHeaders</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlMaxAge</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlRequestHeaders</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>accessControlRequestMethod</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>acceptCharset</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:acceptCharset</td></tr>
+<tr><td>allow</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>cacheControl</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td colspan="2">contentDisposition</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>contentLanguage</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:contentLanguage</td></tr>
+<tr><td>etag</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>expires</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>ifMatch</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>ifNoneMatch</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>ifUnmodifiedSince</td><td>integer(int64)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>pragma</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>upgrade</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>vary</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>host</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>hostString</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>address</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>字段参考表:address</td></tr>
+<tr><td>port</td><td>integer(int32)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>unresolved</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>hostName</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>address</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>canonicalHostName</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>anyLocalAddress</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>multicastAddress</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>loopbackAddress</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>linkLocalAddress</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>siteLocalAddress</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>mcglobal</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>mcnodeLocal</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>mclinkLocal</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>mcsiteLocal</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>mcorgLocal</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>hostAddress</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>address</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>hostName</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>acceptLanguage</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>range</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>weight</td><td>number(double)</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>acceptLanguageAsLocales</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>script</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>country</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>variant</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>extensionKeys</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>unicodeLocaleAttributes</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>unicodeLocaleKeys</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>iso3Language</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>iso3Country</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayLanguage</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayScript</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayCountry</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayVariant</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>language</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayName</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>acceptCharset</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>registered</td><td>boolean</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<p>contentLanguage</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>script</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>country</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>variant</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>extensionKeys</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>unicodeLocaleAttributes</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>unicodeLocaleKeys</td><td>array</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>iso3Language</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>iso3Country</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayLanguage</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayScript</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayCountry</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayVariant</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>language</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>displayName</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+</tbody>
+</table>
+<h4><a href="#加载指定监控点的下属所有设备通道树包含指定监控点" id="加载指定监控点的下属所有设备通道树包含指定监控点">加载指定监控点的下属所有设备通道树（包含指定监控点）</a></h4>
+<p>请求地址:/device/{rootId}/tree<br />
+请求方式:GET<br />
+请求参数列表:</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>rootId</td><td>string</td><td>是</td><td>暂无</td><td>path</td><td>指定监控点的id，如果要获取根监控点，请传入-1</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>dangerLevelDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级显示名称</td></tr>
+<tr><td>manageableElementFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否作为管理要素，可取值0，1;0表示否，1表示是</td></tr>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>relatedDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备Id</td></tr>
+<tr><td>subMonitoringPoints</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>下级监控点,具体字段参考表:subMonitoringPoints</td></tr>
+<tr><td>safetyDirector</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全责任人</td></tr>
+<tr><td>subDevices</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>本级监控点下属设备列表,具体字段参考表:subDevices</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>mainMonitoringRiskId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险Id</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id</td></tr>
+<tr><td>relatedDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道号</td></tr>
+<tr><td>namePath</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>orderNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>同级排序字段,升序排序</td></tr>
+<tr><td>dangerLevelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级名称</td></tr>
+<tr><td>dangerLevelId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级Id</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>上级监控点Id，，顶级监控点的上级监控点Id为-1</td></tr>
+<tr><td>mainMonitoringRiskName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险名称</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>safetyRules</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全条例</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>defaultCoverUrl</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点固定封面</td></tr>
+<tr><td>relatedDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备名称</td></tr>
+<tr><td>mainMonitoringRiskDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险显示名称</td></tr>
+<tr><td>contacts</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联系方式</td></tr>
+<tr><td>peopleNumberLimitation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>人数限制</td></tr>
+<tr><td>relatedDeviceChannelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道名称</td></tr>
+</tbody>
+</table>
+<p>subMonitoringPoints</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>dangerLevelDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级显示名称</td></tr>
+<tr><td>manageableElementFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否作为管理要素，可取值0，1;0表示否，1表示是</td></tr>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>relatedDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备Id</td></tr>
+<tr><td>subMonitoringPoints</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>下级监控点</td></tr>
+<tr><td>safetyDirector</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全责任人</td></tr>
+<tr><td>subDevices</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>本级监控点下属设备列表,具体字段参考表:subDevices</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>mainMonitoringRiskId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险Id</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id</td></tr>
+<tr><td>relatedDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道号</td></tr>
+<tr><td>namePath</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>orderNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>同级排序字段,升序排序</td></tr>
+<tr><td>dangerLevelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级名称</td></tr>
+<tr><td>dangerLevelId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级Id</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>上级监控点Id，，顶级监控点的上级监控点Id为-1</td></tr>
+<tr><td>mainMonitoringRiskName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险名称</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>safetyRules</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全条例</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>defaultCoverUrl</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点固定封面</td></tr>
+<tr><td>relatedDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备名称</td></tr>
+<tr><td>mainMonitoringRiskDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险显示名称</td></tr>
+<tr><td>contacts</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联系方式</td></tr>
+<tr><td>peopleNumberLimitation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>人数限制</td></tr>
+<tr><td>relatedDeviceChannelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道名称</td></tr>
+</tbody>
+</table>
+<p>subDevices</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>channelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道号</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>关联监控点Id</td></tr>
+<tr><td>streamTypeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流类型Id</td></tr>
+<tr><td>streamPriorityId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级</td></tr>
+<tr><td>videoRecordDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备通道号</td></tr>
+<tr><td>deviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道所属设备Id</td></tr>
+<tr><td>streamTypeName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>码流类型名称</td></tr>
+<tr><td>streamTypeDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>码流类型显示名称</td></tr>
+<tr><td>monitoringPointNamePath</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称路径</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>videoRecordDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道名称</td></tr>
+<tr><td>monitoringPointName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>videoRecordDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>streamPriorityName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级名称</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道id</td></tr>
+<tr><td>streamPriorityDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级显示名称</td></tr>
+</tbody>
+</table>
+<p>subDevices</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>channelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道号</td></tr>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>关联监控点Id</td></tr>
+<tr><td>streamTypeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流类型Id</td></tr>
+<tr><td>streamPriorityId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级</td></tr>
+<tr><td>videoRecordDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备通道号</td></tr>
+<tr><td>deviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道所属设备Id</td></tr>
+<tr><td>streamTypeName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>码流类型名称</td></tr>
+<tr><td>streamTypeDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>码流类型显示名称</td></tr>
+<tr><td>monitoringPointNamePath</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称路径</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>videoRecordDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备Id</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道名称</td></tr>
+<tr><td>monitoringPointName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>videoRecordDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>视频存储关联设备名称</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>streamPriorityName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级名称</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备通道id</td></tr>
+<tr><td>streamPriorityDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>取流优先级显示名称</td></tr>
+</tbody>
+</table>
+<h4><a href="#加载指定监控点的下属所有设备树包含指定监控点" id="加载指定监控点的下属所有设备树包含指定监控点">加载指定监控点的下属所有设备树（包含指定监控点）</a></h4>
+<p>请求地址:/device/{rootId}/device/tree<br />
+请求方式:GET<br />
+请求参数列表:</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>rootId</td><td>string</td><td>是</td><td>暂无</td><td>path</td><td>指定监控点的id，如果要获取根监控点，请传入-1</td></tr>
+</tbody>
+</table>
+<p>返回值:<br />
+返回类型:application/json</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>data</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>数据,具体字段参考表:data</td></tr>
+<tr><td>success</td><td>boolean</td><td>否</td><td>暂无</td><td>缺失</td><td>调用是否成功,true表示成功,false表示失败</td></tr>
+<tr><td>extra</td><td>object</td><td>否</td><td>暂无</td><td>缺失</td><td>附加属性</td></tr>
+<tr><td>description</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果描述</td></tr>
+<tr><td>errorCode</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>请求结果代码 详情参考{@link ErrorCode}</td></tr>
+<tr><td>dataSize</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>返回数据的数量</td></tr>
+</tbody>
+</table>
+<p>data</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>dangerLevelDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级显示名称</td></tr>
+<tr><td>manageableElementFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否作为管理要素，可取值0，1;0表示否，1表示是</td></tr>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>relatedDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备Id</td></tr>
+<tr><td>subMonitoringPoints</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>下级监控点,具体字段参考表:subMonitoringPoints</td></tr>
+<tr><td>safetyDirector</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全责任人</td></tr>
+<tr><td>subDevices</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>本级监控点下属设备列表,具体字段参考表:subDevices</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>mainMonitoringRiskId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险Id</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id</td></tr>
+<tr><td>relatedDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道号</td></tr>
+<tr><td>namePath</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>orderNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>同级排序字段,升序排序</td></tr>
+<tr><td>dangerLevelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级名称</td></tr>
+<tr><td>dangerLevelId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级Id</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>上级监控点Id，，顶级监控点的上级监控点Id为-1</td></tr>
+<tr><td>mainMonitoringRiskName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险名称</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>safetyRules</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全条例</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>defaultCoverUrl</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点固定封面</td></tr>
+<tr><td>relatedDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备名称</td></tr>
+<tr><td>mainMonitoringRiskDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险显示名称</td></tr>
+<tr><td>contacts</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联系方式</td></tr>
+<tr><td>peopleNumberLimitation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>人数限制</td></tr>
+<tr><td>relatedDeviceChannelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道名称</td></tr>
+</tbody>
+</table>
+<p>subMonitoringPoints</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>dangerLevelDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级显示名称</td></tr>
+<tr><td>manageableElementFlag</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>是否作为管理要素，可取值0，1;0表示否，1表示是</td></tr>
+<tr><td>creationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>创建时间</td></tr>
+<tr><td>relatedDeviceId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备Id</td></tr>
+<tr><td>subMonitoringPoints</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>下级监控点</td></tr>
+<tr><td>safetyDirector</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全责任人</td></tr>
+<tr><td>subDevices</td><td>array</td><td>否</td><td>暂无</td><td>缺失</td><td>本级监控点下属设备列表,具体字段参考表:subDevices</td></tr>
+<tr><td>deleteStatus</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>删除标识；可取值0,1；0表示未删除，1表示删除</td></tr>
+<tr><td>modificationTime</td><td>string(date-time)</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改时间</td></tr>
+<tr><td>mainMonitoringRiskId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险Id</td></tr>
+<tr><td>modifiedBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>最后修改人</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点Id</td></tr>
+<tr><td>relatedDeviceChannelNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道号</td></tr>
+<tr><td>namePath</td><td>string</td><td>否</td><td>暂无</td><td colspan="2">缺失</td></tr>
+<tr><td>orderNo</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>同级排序字段,升序排序</td></tr>
+<tr><td>dangerLevelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级名称</td></tr>
+<tr><td>dangerLevelId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>危险等级Id</td></tr>
+<tr><td>parentId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>上级监控点Id，，顶级监控点的上级监控点Id为-1</td></tr>
+<tr><td>mainMonitoringRiskName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险名称</td></tr>
+<tr><td>createdBy</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>创建人Id</td></tr>
+<tr><td>safetyRules</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>安全条例</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点名称</td></tr>
+<tr><td>defaultCoverUrl</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>监控点固定封面</td></tr>
+<tr><td>relatedDeviceName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备名称</td></tr>
+<tr><td>mainMonitoringRiskDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>主要监管风险显示名称</td></tr>
+<tr><td>contacts</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>联系方式</td></tr>
+<tr><td>peopleNumberLimitation</td><td>integer(int32)</td><td>否</td><td>暂无</td><td>缺失</td><td>人数限制</td></tr>
+<tr><td>relatedDeviceChannelName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>动态封面关联设备通道名称</td></tr>
+</tbody>
+</table>
+<p>subDevices</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>所属 监控点Id</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备名称</td></tr>
+<tr><td>typeName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型名称</td></tr>
+<tr><td>monitoringPointName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>所属 监控点名称</td></tr>
+<tr><td>typeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备Id</td></tr>
+<tr><td>typeDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型显示名称</td></tr>
+</tbody>
+</table>
+<p>subDevices</p>
+<table>
+<thead>
+<tr><th>字段名称</th><th>类型</th><th>是否必填</th><th>约束限制</th><th>参数位置</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td>monitoringPointId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>所属 监控点Id</td></tr>
+<tr><td>name</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备名称</td></tr>
+<tr><td>typeName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型名称</td></tr>
+<tr><td>monitoringPointName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>所属 监控点名称</td></tr>
+<tr><td>typeId</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型</td></tr>
+<tr><td>id</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备Id</td></tr>
+<tr><td>typeDisplayName</td><td>string</td><td>否</td><td>暂无</td><td>缺失</td><td>设备类型显示名称</td></tr>
+</tbody>
+</table>
+</body></html>

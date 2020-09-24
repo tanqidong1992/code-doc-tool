@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.hngd.tool</groupId>
 	<artifactId>swagger-ui</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<name>swagger-ui</name>
 	<description>swagger ui</description>
 
@@ -88,6 +88,11 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>com.vladsch.flexmark</groupId>
+			<artifactId>flexmark-all</artifactId>
+			<version>0.62.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -129,7 +134,7 @@
 					<serviceUrl>/doc</serviceUrl>
 					<confFilePath>${basedir}/build-config/swagger-config.json</confFilePath>
 					<outputDirectory>${basedir}/src/main/resources/static/js/api</outputDirectory>
-					<type>axios</type>
+					<jsClientType>axios</jsClientType>
 					<swaggerUIServer>localhost:8080</swaggerUIServer>
 					<excludes>**/com/hngd/model/*Example.java,**/com/hngd/dao/*.java</excludes>
 					<includes>**/com/hngd/**/*.java,com/hngd/**/*.java</includes>
@@ -219,17 +224,6 @@
 			<id>hnlocal</id>
 			<name>hnlocal maven</name>
 			<url>http://47.115.117.222:8082/nexus/content/groups/public/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>aliyun</id>
-			<name>aliyun</name>
-			<url>http://maven.aliyun.com/nexus/content/groups/public</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
