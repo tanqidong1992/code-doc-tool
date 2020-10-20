@@ -13,6 +13,8 @@ package com.hngd.openapi;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -88,7 +91,7 @@ public class OpenAPITool {
 		this.classParser=new ClassParser(commentStore);
 	}
     /**
-           * 解析指定包名(包含子包)下的所有类
+     * 解析指定包名(包含子包)下的所有类
      * @param basePackageName 包名
      */
 	public void parse(String basePackageName) {
@@ -99,7 +102,7 @@ public class OpenAPITool {
 	public void parse(List<Class<?>> clses) {
 
 		clses.stream()
-		    .map(clazz -> classParser.parseModule(clazz))
+		    .map(classParser::parseModule)
 		    .filter(Optional::isPresent)
 		    .map(Optional::get)
 			.forEach(this::buildPaths);
@@ -203,7 +206,7 @@ public class OpenAPITool {
 						content.addMediaType(consume, mediaTypeContent);
 					}
 				}
-				//RequestBody只有一部分,所以方法的参数只有一个
+				//RequestBody只有一部分,所以被RequestBody注解修饰的方法参数只有一个
 				List<HttpParameter>  httpParameters=httpInterface.getHttpParameters();
 				Optional<HttpParameter> optioanlParameterInBody=httpParameters.stream()
 				  .filter(hp->!hp.getLocation().isParameter())
@@ -494,7 +497,9 @@ public class OpenAPITool {
 			pc.openapiType = argumentClass.getSimpleName();
 			pc.isPrimitive = true;
 			pc.schema = new FileSchema();
-		} else if (Date.class.isAssignableFrom(argumentClass)) {
+		} else if (Date.class.isAssignableFrom(argumentClass) 
+				|| LocalDate.class.isAssignableFrom(argumentClass)
+				|| LocalDateTime.class.isAssignableFrom(argumentClass)) {
 			// pc.format = "File";
 			pc.openapiType = "date";
 			pc.isPrimitive = true;

@@ -60,7 +60,7 @@
 	<distributionManagement>
 		<repository>
 			<id>hnlocal</id>
-			<url>http://47.115.117.222:8081/repository/maven-snapshots/</url>
+			<url>http://47.115.117.222:8082/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</distributionManagement>
 
@@ -68,7 +68,7 @@
 		<repository>
 			<id>hn-local-143</id>
 			<name>hnlocal maven</name>
-			<url>http://47.115.117.222:8081/repository/maven-public/</url>
+			<url>http://47.115.117.222:8082/nexus/content/groups/public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
