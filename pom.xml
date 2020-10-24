@@ -15,6 +15,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<code.tool.version>2.4.0-SNAPSHOT</code.tool.version>
+		<maven.compiler.version>1.8</maven.compiler.version>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 	<developers>
 		<developer>
@@ -30,23 +32,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.1</version>
-					<configuration>
-						<target>1.8</target>
-						<compilerVersion>1.8</compilerVersion>
-						<source>1.8</source>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-
-	</build>
 	<modules>
 		<module>core</module>
 		<module>openapi-doc</module>
@@ -66,7 +51,7 @@
 
 	<repositories>
 		<repository>
-			<id>hn-local-143</id>
+			<id>hnlocal</id>
 			<name>hnlocal maven</name>
 			<url>http://47.115.117.222:8082/nexus/content/groups/public/</url>
 			<releases>
