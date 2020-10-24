@@ -28,7 +28,7 @@ public class ResolveTypeTests {
 		cs.print();
 		OpenAPITool opt=new OpenAPITool(openAPI, cs);
 		TypeResolver tr=new TypeResolver(cs);
-		tr.resolveType(A.class, openAPI);
+		tr.resolveAsSchema(A.class, openAPI);
         System.out.println(Json.pretty(openAPI));
         Schema<?> schema=openAPI.getComponents().getSchemas().get("A");
         

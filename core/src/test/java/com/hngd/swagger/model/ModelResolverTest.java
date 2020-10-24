@@ -34,7 +34,7 @@ public class ModelResolverTest {
 		pc.initSource(new File("W:\\workspaces\\build-tools\\hn-code-tool\\core-test"));
 		OpenAPITool opt=new OpenAPITool(openapi, pc.getCommentStore());
 		TypeResolver tr=new TypeResolver(pc.getCommentStore());
-		tr.resolveType(clz, openapi);
+		tr.resolveAsSchema(clz, openapi);
 		Json.prettyPrint(openapi);
 	}
 	
@@ -45,7 +45,7 @@ public class ModelResolverTest {
 		Class<?> clz = Camera.class;
 		OpenAPITool opt=new OpenAPITool(openapi, new SourceParserContext().getCommentStore());
 		TypeResolver tr=new TypeResolver(new SourceParserContext().getCommentStore());
-		tr.resolveType(type, openapi);
+		tr.resolveAsSchema(type, openapi);
 		Json.prettyPrint(openapi);
 	}
 

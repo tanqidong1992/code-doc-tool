@@ -208,15 +208,15 @@ public class OpenAPITool {
 				}
 				//RequestBody只有一部分,所以被RequestBody注解修饰的方法参数只有一个
 				List<HttpParameter>  httpParameters=httpInterface.getHttpParameters();
-				Optional<HttpParameter> optioanlParameterInBody=httpParameters.stream()
+				Optional<HttpParameter> optionalParameterInBody=httpParameters.stream()
 				  .filter(hp->!hp.getLocation().isParameter())
 				  .findFirst();
 				
-				if(optioanlParameterInBody.isPresent()) {
-					HttpParameter pc = optioanlParameterInBody.get();
+				if(optionalParameterInBody.isPresent()) {
+					HttpParameter pc = optionalParameterInBody.get();
 					Type parameterType = pc.getJavaType();
 					resolveParameterInfo(pc, parameterType);
-					String key = typeResolver.resolveType(parameterType, openAPI);
+					String key = typeResolver.resolveAsSchema(parameterType, openAPI);
 					//如果是简单类型就会返回null
 					if(!StringUtils.isEmpty(key)) {
 						Schema<?> schema = openAPI.getComponents().getSchemas().get(key);
@@ -235,8 +235,6 @@ public class OpenAPITool {
 				if(!CollectionUtils.isEmpty(filterHttpParameters)) {
 					parameters=processHttpParameter(filterHttpParameters);
 				}
-				
-				 
 			} else {
 				if (httpInterface.isMultipart()) {
 					content.addMediaType(Constants.MULTIPART_FORM_DATA, mediaTypeContent);
@@ -252,7 +250,7 @@ public class OpenAPITool {
 					Type parameterType = pc.getJavaType();
 					resolveParameterInfo(pc, parameterType);
 					if (!pc.isPrimitive) {
-						typeResolver.resolveType(parameterType, openAPI);
+						typeResolver.resolveAsSchema(parameterType, openAPI);
 					}
 					Encoding encoding = new Encoding();
 					if (parameterType instanceof Class) {
@@ -277,10 +275,8 @@ public class OpenAPITool {
 						}
 					}
 					contentEncodings.put(pc.name, encoding);
-					
 					if (pc.location.equals(HttpParameterLocation.query)) {
 						// item.setSchema(pc.schema);
-			 
 						if (pc.isRequired()) {
 							contentSchema.addRequiredItem(pc.name);
 						}
@@ -288,7 +284,6 @@ public class OpenAPITool {
 							Schema<?> propertiesItem = new Schema<>();
 							 propertiesItem.format("binary");
 							 propertiesItem.setType("string");
-							 
 							 Class<?> type=(Class<?>) parameterType;
 							 if(type.isArray()) {
 								 ArraySchema as=new ArraySchema();
@@ -364,13 +359,12 @@ public class OpenAPITool {
 			Type parameterType = pc.getJavaType();
 			resolveParameterInfo(pc, parameterType);
 			if (!pc.isPrimitive) {
-				typeResolver.resolveType(parameterType, openAPI);
+				typeResolver.resolveAsSchema(parameterType, openAPI);
 			}
 			Parameter param = createParameter(pc);
 			parameters.add(param);
 		}
 		return parameters;
-		
 	}
 
 	private String buildOperationId(ModuleInfo moduleInfo, HttpInterface interfaceInfo) {
@@ -397,7 +391,6 @@ public class OpenAPITool {
 		} else if (httpMethod.equalsIgnoreCase(RequestMethod.TRACE.name())) {
 			path.setTrace(op);
 		}
-
 	}
 
 	private void resolveResponse(Operation op, HttpInterface interfaceInfo) {
@@ -405,13 +398,12 @@ public class OpenAPITool {
 		ApiResponse resp = new ApiResponse();
 		MediaType mt = new MediaType();
 		if(!Void.class.equals(interfaceInfo.javaReturnType)) {
-			String firstKey = typeResolver.resolveType(interfaceInfo.javaReturnType, openAPI);
+			String firstKey = typeResolver.resolveAsSchema(interfaceInfo.javaReturnType, openAPI);
 			if(firstKey!=null) {
 				Schema<?> schema = new ObjectSchema();
 				schema.set$ref("#/components/schemas/" + firstKey);
 				mt.setSchema(schema);
 			}
-			
 		}
 		Content respContent = new Content();
 		List<String> ps=interfaceInfo.produces;
@@ -524,16 +516,7 @@ public class OpenAPITool {
 		}
 
 	}
-
-	
-
-
-
-	
-
-	
-	
-	
+ 
 	public static boolean hasRequestBody(String httpMethod) {
 		//CONNECT
 		boolean mustNotHasBody=httpMethod.equalsIgnoreCase(RequestMethod.GET.name()) ||

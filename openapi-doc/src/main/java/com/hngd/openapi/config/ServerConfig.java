@@ -28,7 +28,7 @@ import io.swagger.v3.oas.models.servers.Server;
 
 /**
  * openapi配置
- * @author
+ * @author tqd
  */
 public class ServerConfig {
 	public List<Server> servers;

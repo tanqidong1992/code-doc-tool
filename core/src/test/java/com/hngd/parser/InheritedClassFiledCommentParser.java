@@ -23,7 +23,7 @@ public class InheritedClassFiledCommentParser {
 		OpenAPI openAPI=new OpenAPI();
 		OpenAPITool opt=new OpenAPITool(openAPI, pc.getCommentStore());
 		TypeResolver tr=new TypeResolver(pc.getCommentStore());
-		tr.resolveType(type, openAPI);
+		tr.resolveAsSchema(type, openAPI);
 		Json.prettyPrint(openAPI);
 
 	}
