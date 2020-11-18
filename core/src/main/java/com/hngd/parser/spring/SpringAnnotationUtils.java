@@ -60,6 +60,5 @@ public class SpringAnnotationUtils {
 			return false;
 		}
 		return true;
-		
 	}
 }

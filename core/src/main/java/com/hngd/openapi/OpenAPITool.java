@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -44,6 +43,7 @@ import com.hngd.constant.Constants;
 import com.hngd.parser.source.CommentStore;
 import com.hngd.parser.spring.ClassParser;
 import com.hngd.utils.ClassUtils;
+import com.hngd.utils.ReflectionExtUtils;
 import com.hngd.utils.TypeNameUtils;
 import com.hngd.utils.TypeUtils;
 
@@ -144,15 +144,10 @@ public class OpenAPITool {
     
 	public static Parameter createParameter(HttpParameter parameter) {
 		if (parameter.location.isParameter()) {
-			Parameter param = null;
-			try {
-				param = (Parameter) parameter.location.getParamClass().newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				logger.error("", e);
-			}
+			Parameter param =(Parameter) ReflectionExtUtils
+					.newInstance(parameter.location.getParamClass());
 			param.setName(parameter.name);
 			param.setRequired(parameter.required);
-			
 			if(parameter.isPrimitive()) {
 				param.setSchema(parameter.schema);
 			}else {
@@ -162,7 +157,6 @@ public class OpenAPITool {
 				content.put(Constants.DEFAULT_CONSUME_TYPE, value);
 				param.setContent(content);
 			}
-			 
 			param.setDescription(parameter.comment);
 			return param;
 		} else {
@@ -444,12 +438,8 @@ public class OpenAPITool {
 				}
 			}
 			argumentClass=(Class<?>) rawType;
-			
 		} else {
 			argumentClass = (Class<?>) parameterType;
-		}
-		if(argumentClass==null) {
-			logger.debug("");
 		}
 		if(pc.isCollection){
 			pc.openapiType="array";
@@ -457,7 +447,6 @@ public class OpenAPITool {
 			pc.schema=as;
 			ObjectSchema items=new ObjectSchema();
 			as.setItems(items);
-			
 			if(pc.ref!=null) {
 				if (pc.ref.contains("<")) {
 					pc.ref = pc.ref.replace("<", "").replace(">", "").replace(",", "");

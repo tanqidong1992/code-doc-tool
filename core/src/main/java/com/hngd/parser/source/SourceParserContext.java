@@ -13,15 +13,11 @@ package com.hngd.parser.source;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Parameter;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -33,10 +29,7 @@ import org.springframework.util.CollectionUtils;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.hngd.exception.SourceParseException;
-import com.hngd.parser.entity.ClassInfo;
-import com.hngd.parser.entity.FieldInfo;
-import com.hngd.parser.entity.MethodInfo;
-import com.hngd.parser.entity.ParameterInfo;
+
 import com.hngd.parser.javadoc.BlockTag.AuthorBlock;
 import com.hngd.parser.javadoc.extension.ExtensionManager;
 import com.hngd.parser.javadoc.extension.MobileBlock;

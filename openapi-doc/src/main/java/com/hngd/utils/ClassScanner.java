@@ -32,7 +32,7 @@ public class ClassScanner {
 	 * @since 1.0.0
 	 * @time 2017年2月28日 上午10:59:24
 	 */
-	public static void showJarFile(JarFile jfile) {
+	public static void showJarFile(JarFile jfile){
 		Enumeration<JarEntry> entries = jfile.entries();
 		while (entries.hasMoreElements()) {
 			JarEntry entry = entries.nextElement();

@@ -67,8 +67,6 @@ public class ClassParser {
 		httpParameterProcessors.add(new RequestPartParameterExtractor());
 		httpParameterProcessors.add(new CookieValueParameterExtractor());
 		httpParameterProcessors.add(new MatrixVariableParameterExtractor());
-		
-
 	}
  
 	public Optional<ModuleInfo> parseModule(Class<?> cls) {
@@ -117,7 +115,7 @@ public class ClassParser {
 				//attach class tags to pathItem if exists
 				if(classInfo!=null) {
 				    Optional<TagsBlock> optionalTags=classInfo.findAnyExtension(TagsBlock.class);
-				    	optionalTags.ifPresent(tagsBlock-> {
+				    optionalTags.ifPresent(tagsBlock-> {
 				    	tagsBlock.getPathItemTags().forEach(hi.getTags()::add);
 				    });
 				}
