@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 public class RestClassUtils {
 
@@ -28,7 +29,6 @@ public class RestClassUtils {
 			DeleteMapping.class,
 			PatchMapping.class,
 			PutMapping.class
-
 	);
 
 	public static Optional<? extends Annotation> getHttpRequestInfo(Method method) {
@@ -68,9 +68,7 @@ public class RestClassUtils {
 			if(values.length>0) {
 				url =values[0];
 			}
-			
 		}
-		
 		if(url==null){
 			Method pathMethod = null;
 			try {
@@ -81,7 +79,6 @@ public class RestClassUtils {
 					if(values.length>0) {
 						url =values[0];
 					}
-					
 				}
 			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				logger.error("",e);
@@ -95,7 +92,27 @@ public class RestClassUtils {
 			}
 			return url;
 		}
-		
+	}
+	
+	/**
+	 * 从Mapping中提取出请求方法
+	 * @param req，
+	 * @return
+	 */
+	public static Optional<String> extractHttpMethod(Annotation req) {
+		String method=null;
+		if(req instanceof RequestMapping){
+			RequestMethod[] methods=((RequestMapping)req).method();
+			if(methods==null || methods.length==0) {
+				 return Optional.empty();
+			}else {
+				//TODO one java method only has one http method?
+				method = methods[0].name();
+			}
+		}else{
+			method = req.annotationType().getSimpleName().replace("Mapping", "");
+		}
+		return Optional.ofNullable(method);
 	}
 	
 	public static List<String> extractCosumes(Annotation req){
@@ -167,6 +184,5 @@ public class RestClassUtils {
 		}else {
 			return name;
 		}
-		
 	}
 }

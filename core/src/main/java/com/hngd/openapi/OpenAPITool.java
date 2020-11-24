@@ -127,7 +127,7 @@ public class OpenAPITool {
 			if (pathItem == null) {
 				continue;
 			}
-			String pathKey = moduleInfo.getUrl() + interfaceInfo.url;//+interfaceInfo.httpMethod;
+			String pathKey = moduleInfo.getUrl() + interfaceInfo.getUrl();//+interfaceInfo.httpMethod;
 			addPathItemToPaths(pathKey,pathItem);
 		}
 	}
@@ -143,7 +143,7 @@ public class OpenAPITool {
     }
     
 	public static Parameter createParameter(HttpParameter parameter) {
-		if (parameter.location.isParameter()) {
+		if (parameter.getLocation().isParameter()) {
 			Parameter param =(Parameter) ReflectionExtUtils
 					.newInstance(parameter.location.getParamClass());
 			param.setName(parameter.name);

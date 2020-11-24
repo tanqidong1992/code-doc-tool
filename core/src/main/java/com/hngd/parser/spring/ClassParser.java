@@ -70,9 +70,8 @@ public class ClassParser {
 	}
  
 	public Optional<ModuleInfo> parseModule(Class<?> cls) {
-		ModuleInfo mi=null;
 		try {
-		    mi=doConvertClassToModule(cls);
+		    return doConvertClassToModule(cls);
 		}catch(Exception e) {
 			if(e instanceof ClassParseException) {
 				throw e;
@@ -80,13 +79,12 @@ public class ClassParser {
 				throw new ClassParseException(cls,e);
 			}
 		}
-		return Optional.ofNullable(mi);
 	}
-	private ModuleInfo doConvertClassToModule(Class<?> cls) {
+	private Optional<ModuleInfo> doConvertClassToModule(Class<?> cls) {
 		log.info("Start to process class:{}",cls.getName());
 		if (!SpringAnnotationUtils.isControllerClass(cls)) {
 			log.info("There Controller or RestController annotation for class:{} is not Found!",cls.getName());
-			return null;
+			return Optional.empty();
 		}
 		ModuleInfo moduleInfo = new ModuleInfo();
 		//parse module base info
@@ -121,13 +119,12 @@ public class ClassParser {
 				}
 			});
 		}
-		return moduleInfo;
+		return Optional.of(moduleInfo);
 	}
 	 
 	private Optional<HttpInterface> parseMethod(Method method) {
-		HttpInterface hi=null;
 		try {
-		    hi=doParseMethod(method);
+		    return doParseMethod(method);
 		}catch(Exception e) {
 			if(e instanceof ClassParseException) {
 				throw e;
@@ -135,73 +132,63 @@ public class ClassParser {
 				throw new ClassParseException(method.getDeclaringClass(),method,e);
 			}
 		}
-		return Optional.ofNullable(hi);
 	}
-	private HttpInterface doParseMethod(Method method) {
+	private Optional<HttpInterface> doParseMethod(Method method) {
 		HttpInterface httpInterface = new HttpInterface();
 		Optional<? extends Annotation> optionalAnnotation = RestClassUtils.getHttpRequestInfo(method);
 		Annotation mappingAnnotation=optionalAnnotation.get();
 		httpInterface.deprecated=isMethodDeprecated(method);
 		//extract consumes
-        List<String> consumes=RestClassUtils.extractCosumes(mappingAnnotation);
-		if (consumes != null) {
-			httpInterface.consumes = consumes;
-		}
+		httpInterface.consumes=RestClassUtils.extractCosumes(mappingAnnotation);
 		//extract produces
-		List<String> produces=RestClassUtils.extractProduces(mappingAnnotation);
-		if (produces != null) {
-			httpInterface.produces = produces;
-		}
+		httpInterface.produces=RestClassUtils.extractProduces(mappingAnnotation);
 		//extract http url
         httpInterface.url =RestClassUtils.extractUrl(mappingAnnotation);
         //extract http method
-		if(mappingAnnotation instanceof RequestMapping){
-			RequestMethod[] methods=((RequestMapping)mappingAnnotation).method();
-			if(methods==null || methods.length==0) {
-				String methodKey=ClassUtils.getMethodIdentifier(method);
-				log.error("The RequestMapping annotation for method:{} has a empty method value",methodKey);
-			    throw new RuntimeException("方法"+methodKey+"的RequestMapping注解缺少method值");
-			}else {
-				//TODO one java method only has one http method?
-				httpInterface.httpMethod = methods[0].name();
-			}
-		}else{
-			httpInterface.httpMethod = mappingAnnotation.annotationType().getSimpleName().replace("Mapping", "");
-		}
+        Optional<String> httpMethod=RestClassUtils.extractHttpMethod(mappingAnnotation);
+        if(httpMethod.isPresent()) {
+        	httpInterface.httpMethod = httpMethod.get();
+        }else {
+        	String methodKey=ClassUtils.getMethodIdentifier(method);
+			log.error("The RequestMapping annotation for method:{} has a empty method value",methodKey);
+		    throw new RuntimeException("The method "+methodKey+"的RequestMapping注解缺少method值");
+        }
 		httpInterface.javaReturnTypeName = method.getReturnType().getSimpleName();
 		httpInterface.javaMethodName = method.getName();
 		httpInterface.javaReturnType = method.getGenericReturnType();
+		//attach comment to http interface
 		Optional<MethodInfo> optionalMethodInfo=commentStore.getMethodInfo(method);
-		if(optionalMethodInfo.isPresent()) {
-			MethodInfo mi=optionalMethodInfo.get();
-			httpInterface.comment=mi.getComment();
-			httpInterface.respComment=mi.getRetComment();
-			//SummaryBlock 
-			Optional<SummaryBlock> optionalSummary=mi.findAnyExtension(SummaryBlock.class);
-			String summary=mi.getComment();
-			if(optionalSummary.isPresent()) {
-				summary=optionalSummary.get().getContent();
-			}
-			httpInterface.setSummary(summary);
-			//DescriptionBlock 
-			Optional<DescriptionBlock> optionalDdescription=mi.findAnyExtension(DescriptionBlock.class);
-			String description=mi.getComment();
-			if(optionalDdescription.isPresent()) {
-				description=optionalDdescription.get().getContent();
-			}
-			httpInterface.setDescription(description);
-	   
-			Optional<TagsBlock> optionalTags=mi.findAnyExtension(TagsBlock.class);
-			if(optionalTags.isPresent()) {
-				List<String> tags=optionalTags.get().getPathItemTags();
-				tags.forEach(httpInterface.getTags()::add);
-			}
-		}
+		optionalMethodInfo.ifPresent(mi->attachComment(httpInterface,mi));
 		//extract http parameters
 		doProcessParamaters(method,httpInterface);
-		
-		return httpInterface;
+		return Optional.of(httpInterface);
 	}
+	private void attachComment(HttpInterface httpInterface, MethodInfo mi) {
+		httpInterface.comment=mi.getComment();
+		httpInterface.respComment=mi.getRetComment();
+		//SummaryBlock 
+		Optional<SummaryBlock> optionalSummary=mi.findAnyExtension(SummaryBlock.class);
+		String summary=mi.getComment();
+		if(optionalSummary.isPresent()) {
+			summary=optionalSummary.get().getContent();
+		}
+		httpInterface.setSummary(summary);
+		//DescriptionBlock 
+		Optional<DescriptionBlock> optionalDdescription=mi.findAnyExtension(DescriptionBlock.class);
+		String description=mi.getComment();
+		if(optionalDdescription.isPresent()) {
+			description=optionalDdescription.get().getContent();
+		}
+		httpInterface.setDescription(description);
+   
+		Optional<TagsBlock> optionalTags=mi.findAnyExtension(TagsBlock.class);
+		if(optionalTags.isPresent()) {
+			List<String> tags=optionalTags.get().getPathItemTags();
+			tags.forEach(httpInterface.getTags()::add);
+		}
+		
+	}
+
 	private void doProcessParamaters(Method method, HttpInterface httpInterface) {
 		Parameter[] parameters = method.getParameters();
 		for (int i = 0; i < parameters.length; i++) {
