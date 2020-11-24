@@ -17,9 +17,8 @@ public class SpringAnnotationUtils {
 	 * @return
 	 */
 	public static String extractUrl(RequestMapping req) {
-		
 		if(req==null) {
-			return HTTP_PATH_DELIMITER;
+			return "";
 		}
 		String[] values=req.value();
 		String[] paths=req.path();
@@ -30,7 +29,7 @@ public class SpringAnnotationUtils {
 			url=values[0];
 		}
 		if(url==null) {
-		    return HTTP_PATH_DELIMITER;
+		    return "";
 		}else {
 			if (!StringUtils.startsWith(url, HTTP_PATH_DELIMITER)) {
 				url = HTTP_PATH_DELIMITER + url;
