@@ -12,8 +12,8 @@ public class SpringAnnotationUtils {
 	private static final Logger logger=LoggerFactory.getLogger(SpringAnnotationUtils.class);
 	public static String HTTP_PATH_DELIMITER="/";
 	/**
-	 * 从RequestMapping中提取出请求url，req为null则返回"/"
-	 * @param req，
+	 * 从RequestMapping中提取出请求url，req为null则返回""
+	 * @param req 请求映射注解
 	 * @return
 	 */
 	public static String extractUrl(RequestMapping req) {
@@ -28,7 +28,7 @@ public class SpringAnnotationUtils {
 		}else if(values!=null && values.length>0) {
 			url=values[0];
 		}
-		if(url==null) {
+		if(StringUtils.isBlank(url)) {
 		    return "";
 		}else {
 			if (!StringUtils.startsWith(url, HTTP_PATH_DELIMITER)) {

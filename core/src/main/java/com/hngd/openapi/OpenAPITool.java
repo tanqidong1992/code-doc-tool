@@ -203,8 +203,8 @@ public class OpenAPITool {
 				//RequestBody只有一部分,所以被RequestBody注解修饰的方法参数只有一个
 				List<HttpParameter>  httpParameters=httpInterface.getHttpParameters();
 				Optional<HttpParameter> optionalParameterInBody=httpParameters.stream()
-				  .filter(hp->!hp.getLocation().isParameter())
-				  .findFirst();
+				    .filter(hp->!hp.getLocation().isParameter())
+				    .findFirst();
 				
 				if(optionalParameterInBody.isPresent()) {
 					HttpParameter pc = optionalParameterInBody.get();
@@ -224,8 +224,8 @@ public class OpenAPITool {
 					}
 				}
 				List<HttpParameter> filterHttpParameters=httpParameters.stream()
-				.filter(hp->hp.getLocation().isParameter())
-				.collect(Collectors.toList());
+				    .filter(hp->hp.getLocation().isParameter())
+				    .collect(Collectors.toList());
 				if(!CollectionUtils.isEmpty(filterHttpParameters)) {
 					parameters=processHttpParameter(filterHttpParameters);
 				}
@@ -247,19 +247,11 @@ public class OpenAPITool {
 						typeResolver.resolveAsSchema(parameterType, openAPI);
 					}
 					Encoding encoding = new Encoding();
-					if (parameterType instanceof Class) {
-						if (BeanUtils.isSimpleProperty((Class<?>) parameterType)) {
-							if (parameterType.equals(String.class)) {
-								encoding.setContentType("string");
-							} else {
-								encoding.setContentType("text/plain");
-							}
+					if (parameterType instanceof Class && BeanUtils.isSimpleProperty((Class<?>) parameterType)) {
+						if (parameterType.equals(String.class)) {
+							encoding.setContentType("string");
 						} else {
-							if (TypeUtils.isMultipartType(parameterType)) {
-								encoding.setContentType(Constants.MULTIPART_FILE_TYPE);
-							} else {
-								encoding.setContentType(Constants.DEFAULT_CONSUME_TYPE);
-							}
+							encoding.setContentType("text/plain");
 						}
 					} else {
 						if (TypeUtils.isMultipartType(parameterType)) {
@@ -419,7 +411,7 @@ public class OpenAPITool {
 		op.setResponses(responses);
 	}
 
-	private static void resolveParameterInfo(HttpParameter pc, Type parameterType) {
+	public static void resolveParameterInfo(HttpParameter pc, Type parameterType) {
 		Class<?> argumentClass = null;
 		if (parameterType instanceof ParameterizedType) {
 			ParameterizedType ppt = (ParameterizedType) parameterType;
@@ -474,6 +466,7 @@ public class OpenAPITool {
 			pc.isPrimitive = true;
 			pc.schema = new BooleanSchema();
 		} else if (MultipartFile.class.isAssignableFrom(argumentClass)) {
+			//TODO fix it
 			pc.openapiFormat = "File";
 			pc.openapiType = argumentClass.getSimpleName();
 			pc.isPrimitive = true;
@@ -481,7 +474,6 @@ public class OpenAPITool {
 		} else if (Date.class.isAssignableFrom(argumentClass) 
 				|| LocalDate.class.isAssignableFrom(argumentClass)
 				|| LocalDateTime.class.isAssignableFrom(argumentClass)) {
-			// pc.format = "File";
 			pc.openapiType = "date";
 			pc.isPrimitive = true;
 			DateSchema ds = new DateSchema();
