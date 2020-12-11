@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +17,9 @@ import org.springframework.web.filter.CorsFilter;
 
 import com.hngd.doc.config.DocumentProperties;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+		CacheAutoConfiguration.class,
+		HibernateJpaAutoConfiguration.class})
 @EnableConfigurationProperties(value = {DocumentProperties.class})
 public class HnvmnsSwaggerUiApplication {
 
