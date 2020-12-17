@@ -123,6 +123,20 @@ public class TypeResolverTest {
 		
 	}
 
+	@Test
+	public void testListNestedType() {
+		CommentStore commentStore=pc.getCommentStore();
+		TypeResolver resolver=new TypeResolver(commentStore);
+		Type type=new TypeToken<StudentGroup>() {}.getType();
+		OpenAPI swagger=new OpenAPI();
+		String schemaKey=resolver.resolveAsSchema(type, swagger);
+		System.out.println("schemaKey："+schemaKey);
+		//Assert.assertTrue(schemaKey==null);
+		Map<String,Schema> schemaMap=swagger.getComponents().getSchemas();
+		schemaMap.values().forEach(this::assertSchemaNotEmptyComment);
+		Json.prettyPrint(swagger);
+	}
+
 	@Data
 	public static class Rest<T>{
 		/**
@@ -171,5 +185,18 @@ public class TypeResolverTest {
 		 * 学校信息
 		 */
 		private School school;
+	}
+
+	@Data
+	public static class StudentGroup{
+
+		/**
+		 * 团体名称
+		 */
+		private String name;
+		/**
+		 * 学生列表
+		 */
+		private List<Student> students;
 	}
 }

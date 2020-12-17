@@ -107,3 +107,6 @@ apidoc-web/api.json
 web-test
 .vscode/
 .idea/
+**/test-out/
+**/test-output/
+**/.attach_pid*
