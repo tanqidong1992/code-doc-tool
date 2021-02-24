@@ -29,8 +29,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class TagsBlock extends BlockTag
 {
-	public static String TAG_DELIMITER=",";
-	private List<String> pathItemTags=new ArrayList<>();
+    public static String TAG_DELIMITER=",";
+    private List<String> pathItemTags=new ArrayList<>();
     /**
      * 
      * @author tqd
@@ -38,23 +38,23 @@ public class TagsBlock extends BlockTag
      */
     public TagsBlock()
     {
-    	super("@tags");
+        super("@tags");
     }
     @Override
     public void onParseEnd(CommentDecoratedTarget baseInfo) {
-    	super.onParseEnd(baseInfo);
-    	String content=this.getContent();
-    	if(content.contains(TAG_DELIMITER)) {
-    		String[] items=content.split(TAG_DELIMITER);
-    		for(String item:items) {
-    			item=item.trim();
-    			if(StringUtils.isNotBlank(item)) {
-    				pathItemTags.add(item);
-    			}
-    		}
-    	}else {
-    		pathItemTags.add(content);
-    	}
+        super.onParseEnd(baseInfo);
+        String content=this.getContent();
+        if(content.contains(TAG_DELIMITER)) {
+            String[] items=content.split(TAG_DELIMITER);
+            for(String item:items) {
+                item=item.trim();
+                if(StringUtils.isNotBlank(item)) {
+                    pathItemTags.add(item);
+                }
+            }
+        }else {
+            pathItemTags.add(content);
+        }
     }
     
     

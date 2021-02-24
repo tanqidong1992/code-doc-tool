@@ -12,20 +12,20 @@ import com.hngd.openapi.entity.HttpParameter;
 
 public class RequestHeaderParameterExtractor extends HttpParameterExtractor<RequestHeader> {
 
-	public RequestHeaderParameterExtractor() {
-		super(HttpParameterLocation.header,RequestHeader.class);
-	}
+    public RequestHeaderParameterExtractor() {
+        super(HttpParameterLocation.header,RequestHeader.class);
+    }
 
-	@Override
-	public List<HttpParameter> process(Parameter parameter) {
-		boolean isParameterRequired=ValueConstants.DEFAULT_NONE.equals(parameterAnnotation.defaultValue())
-				&& parameterAnnotation.required();
-		List<HttpParameter> httpParams=super.process(parameter);
-		httpParams.forEach(hp->{
-			hp.required=isParameterRequired;
-			hp.defaultValue=parameterAnnotation.defaultValue();
-		});
-		return httpParams;
-		 
-	}
+    @Override
+    public List<HttpParameter> process(Parameter parameter) {
+        boolean isParameterRequired=ValueConstants.DEFAULT_NONE.equals(parameterAnnotation.defaultValue())
+                && parameterAnnotation.required();
+        List<HttpParameter> httpParams=super.process(parameter);
+        httpParams.forEach(hp->{
+            hp.required=isParameterRequired;
+            hp.defaultValue=parameterAnnotation.defaultValue();
+        });
+        return httpParams;
+         
+    }
 }

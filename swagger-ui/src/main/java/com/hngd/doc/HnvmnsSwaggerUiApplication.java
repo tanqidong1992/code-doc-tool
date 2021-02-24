@@ -18,27 +18,27 @@ import org.springframework.web.filter.CorsFilter;
 import com.hngd.doc.config.DocumentProperties;
 
 @SpringBootApplication(exclude = {
-		CacheAutoConfiguration.class,
-		HibernateJpaAutoConfiguration.class})
+        CacheAutoConfiguration.class,
+        HibernateJpaAutoConfiguration.class})
 @EnableConfigurationProperties(value = {DocumentProperties.class})
 public class HnvmnsSwaggerUiApplication {
 
-	private static final Logger logger=LoggerFactory.getLogger(HnvmnsSwaggerUiApplication.class);
-	public static void main(String[] args) {
-		SpringApplication.run(HnvmnsSwaggerUiApplication.class, args);
-	}
-	@Bean
-	 public FilterRegistrationBean<CorsFilter> corsFilter() {
-	     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-	     CorsConfiguration config = new CorsConfiguration();
-	     config.setAllowCredentials(true);
-	     config.addAllowedOrigin("*");
-	     config.addAllowedHeader("*");
-	     config.addAllowedMethod("*");
-	     source.registerCorsConfiguration("/**", config);
-	     FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
-	     bean.setOrder(0);
-	     return bean;
-	 }
+    private static final Logger logger=LoggerFactory.getLogger(HnvmnsSwaggerUiApplication.class);
+    public static void main(String[] args) {
+        SpringApplication.run(HnvmnsSwaggerUiApplication.class, args);
+    }
+    @Bean
+     public FilterRegistrationBean<CorsFilter> corsFilter() {
+         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+         CorsConfiguration config = new CorsConfiguration();
+         config.setAllowCredentials(true);
+         config.addAllowedOrigin("*");
+         config.addAllowedHeader("*");
+         config.addAllowedMethod("*");
+         source.registerCorsConfiguration("/**", config);
+         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+         bean.setOrder(0);
+         return bean;
+     }
 
 }

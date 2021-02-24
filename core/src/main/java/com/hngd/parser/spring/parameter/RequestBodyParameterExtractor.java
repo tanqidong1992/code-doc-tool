@@ -16,24 +16,24 @@ import com.hngd.parser.spring.MethodArgUtils;
 
 public class RequestBodyParameterExtractor extends HttpParameterExtractor<RequestBody> {
 
-	public RequestBodyParameterExtractor() {
-		super(HttpParameterLocation.body,RequestBody.class);
-	}
+    public RequestBodyParameterExtractor() {
+        super(HttpParameterLocation.body,RequestBody.class);
+    }
 
-	@Override
-	public List<HttpParameter> process(Parameter parameter) {
-		HttpParameter httpParam=new HttpParameter();
-	    httpParam.name = parameter.getName();
-	    httpParam.location = HttpParameterLocation.body;
-	    httpParam.required = parameterAnnotation.required();
-	    httpParam.javaType=parameter.getParameterizedType();
-	    Annotation[] annotations=parameter.getAnnotations();
-	    Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
-	    if(dateFormat.isPresent()) {
-		    httpParam.openapiFormat=dateFormat.get();
-	    }
-	    httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
-	    return Arrays.asList(httpParam);
-		 
-	}
+    @Override
+    public List<HttpParameter> process(Parameter parameter) {
+        HttpParameter httpParam=new HttpParameter();
+        httpParam.name = parameter.getName();
+        httpParam.location = HttpParameterLocation.body;
+        httpParam.required = parameterAnnotation.required();
+        httpParam.javaType=parameter.getParameterizedType();
+        Annotation[] annotations=parameter.getAnnotations();
+        Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
+        if(dateFormat.isPresent()) {
+            httpParam.openapiFormat=dateFormat.get();
+        }
+        httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
+        return Arrays.asList(httpParam);
+         
+    }
 }

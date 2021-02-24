@@ -31,24 +31,24 @@ import io.swagger.v3.oas.models.servers.Server;
  * @author tqd
  */
 public class ServerConfig {
-	public List<Server> servers;
-	public Info info;
-	private static final Logger logger=LoggerFactory.getLogger(ServerConfig.class);
-	public static ServerConfig load(String filePath) {
-		Gson gson = new Gson();
-		File file = new File(filePath);
-		Path path = file.toPath();
-		byte[] data = null;
-		try {
-			data = Files.readAllBytes(path);
-		} catch (IOException e) {
-			logger.error("",e);
-		}
-		if (data == null) {
-			return null;
-		}
-		String src = new String(data, Charset.forName(Constant.DEFAULT_CHARSET_NAME));
-		return gson.fromJson(src, ServerConfig.class);
-	}
+    public List<Server> servers;
+    public Info info;
+    private static final Logger logger=LoggerFactory.getLogger(ServerConfig.class);
+    public static ServerConfig load(String filePath) {
+        Gson gson = new Gson();
+        File file = new File(filePath);
+        Path path = file.toPath();
+        byte[] data = null;
+        try {
+            data = Files.readAllBytes(path);
+        } catch (IOException e) {
+            logger.error("",e);
+        }
+        if (data == null) {
+            return null;
+        }
+        String src = new String(data, Charset.forName(Constant.DEFAULT_CHARSET_NAME));
+        return gson.fromJson(src, ServerConfig.class);
+    }
 
 }

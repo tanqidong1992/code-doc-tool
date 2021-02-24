@@ -32,31 +32,31 @@ import io.swagger.v3.oas.models.OpenAPI;
 
 public class OpenAPITest {
 
-	@Test
-	public  void test() throws ParseException, IOException {
-		
-		String path="../core-test/src/main/java";
-		File f=new File(path);
-		SourceParserContext pc=new SourceParserContext();
-		pc.initSource(f);
-		OpenAPI openapi = new OpenAPI();
-		ServerConfig config=ServerConfig.load("test-data/openapi-info.json");
-		SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		config.info.setDescription("最后更新时间:"+sdf.format(new Date()));
-		openapi.setInfo(config.info);
-		
-		OpenAPITool tool=new OpenAPITool(openapi,pc.getCommentStore());
-		/**
-		tool.parse(Arrays.asList(RoleController.class,
-				AttachmentController.class,
-				AutoInjectParameterTestController.class));
-		*/
-		tool.parse(Arrays.asList(TempController.class
-				));
-		String data=Json.pretty(openapi);
-		
-		FileUtils.write(new File("./test-output/role.json"), data, Constants.DEFAULT_CHARSET);
-	}
+    @Test
+    public  void test() throws ParseException, IOException {
+        
+        String path="../core-test/src/main/java";
+        File f=new File(path);
+        SourceParserContext pc=new SourceParserContext();
+        pc.initSource(f);
+        OpenAPI openapi = new OpenAPI();
+        ServerConfig config=ServerConfig.load("test-data/openapi-info.json");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        config.info.setDescription("最后更新时间:"+sdf.format(new Date()));
+        openapi.setInfo(config.info);
+        
+        OpenAPITool tool=new OpenAPITool(openapi,pc.getCommentStore());
+        /**
+        tool.parse(Arrays.asList(RoleController.class,
+                AttachmentController.class,
+                AutoInjectParameterTestController.class));
+        */
+        tool.parse(Arrays.asList(TempController.class
+                ));
+        String data=Json.pretty(openapi);
+        
+        FileUtils.write(new File("./test-output/role.json"), data, Constants.DEFAULT_CHARSET);
+    }
 
-	 
+     
 }

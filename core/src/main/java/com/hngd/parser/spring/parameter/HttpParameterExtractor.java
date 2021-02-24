@@ -15,35 +15,35 @@ import com.hngd.utils.RestClassUtils;
 
 public abstract class HttpParameterExtractor<T extends Annotation> {
 
-	protected Class<T> parameterAnnotationType;
-	protected T parameterAnnotation;
-	protected HttpParameterLocation location;
-	
-	public HttpParameterExtractor(HttpParameterLocation location,Class<T> parameterAnnotationType) {
-		this.location = location;
-		this.parameterAnnotationType=parameterAnnotationType;
-	}
-	public boolean accept(Parameter parameter) {
-		Annotation[] annotations = parameter.getAnnotations();
-		Optional<T> t=MethodArgUtils.extractAnnotaion(annotations, parameterAnnotationType);
-		if(t.isPresent()) {
-			parameterAnnotation=t.get();
-			return true;
-		}else {
-		    return false;
-		}
-	}
-	public List<HttpParameter> process(Parameter parameter){
-		HttpParameter httpParam=new HttpParameter();
-		httpParam.name =RestClassUtils.extractParameterName(parameterAnnotation);
-		httpParam.location = location;
-		httpParam.javaType=parameter.getParameterizedType();
-		Annotation[] annotations=parameter.getAnnotations();
-		Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
-		if(dateFormat.isPresent()) {
-			httpParam.openapiFormat=dateFormat.get();
-		}
-		httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
-		return Arrays.asList(httpParam);
-	}
+    protected Class<T> parameterAnnotationType;
+    protected T parameterAnnotation;
+    protected HttpParameterLocation location;
+    
+    public HttpParameterExtractor(HttpParameterLocation location,Class<T> parameterAnnotationType) {
+        this.location = location;
+        this.parameterAnnotationType=parameterAnnotationType;
+    }
+    public boolean accept(Parameter parameter) {
+        Annotation[] annotations = parameter.getAnnotations();
+        Optional<T> t=MethodArgUtils.extractAnnotaion(annotations, parameterAnnotationType);
+        if(t.isPresent()) {
+            parameterAnnotation=t.get();
+            return true;
+        }else {
+            return false;
+        }
+    }
+    public List<HttpParameter> process(Parameter parameter){
+        HttpParameter httpParam=new HttpParameter();
+        httpParam.name =RestClassUtils.extractParameterName(parameterAnnotation);
+        httpParam.location = location;
+        httpParam.javaType=parameter.getParameterizedType();
+        Annotation[] annotations=parameter.getAnnotations();
+        Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
+        if(dateFormat.isPresent()) {
+            httpParam.openapiFormat=dateFormat.get();
+        }
+        httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
+        return Arrays.asList(httpParam);
+    }
 }

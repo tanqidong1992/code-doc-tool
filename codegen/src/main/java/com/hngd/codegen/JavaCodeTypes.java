@@ -10,21 +10,21 @@ import rx.Observable;
 
 public class JavaCodeTypes {
 
-	public static final String SYNC="sync";
-	public static final String ASYNC="async";
-	static Map<String,Class<?>> type2Clazz= new HashMap<>();
-	static {
-		type2Clazz.put(SYNC, Call.class);
-		type2Clazz.put(ASYNC, Observable.class);
-	}
-	
-	public static Class<?> getReturnType(String invokeType){
-		
-		if(StringUtils.isEmpty(invokeType)) {
-			return type2Clazz.get(SYNC);
-		}else {
-			return type2Clazz.get(invokeType);
-		}
-	}
-	
+    public static final String SYNC="sync";
+    public static final String ASYNC="async";
+    static Map<String,Class<?>> type2Clazz= new HashMap<>();
+    static {
+        type2Clazz.put(SYNC, Call.class);
+        type2Clazz.put(ASYNC, Observable.class);
+    }
+    
+    public static Class<?> getReturnType(String invokeType){
+        
+        if(StringUtils.isEmpty(invokeType)) {
+            return type2Clazz.get(SYNC);
+        }else {
+            return type2Clazz.get(invokeType);
+        }
+    }
+    
 }

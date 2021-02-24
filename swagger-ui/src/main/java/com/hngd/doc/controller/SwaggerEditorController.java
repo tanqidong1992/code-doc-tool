@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class SwaggerEditorController {
     
-	@GetMapping("/editor")
-	public String editor(@RequestParam(value="docUrl",required=false)String docUrl) {
-		return "/swagger-editor.html?docUrl="+docUrl;
-	}
+    @GetMapping("/editor")
+    public String editor(@RequestParam(value="docUrl",required=false)String docUrl) {
+        return "/swagger-editor.html?docUrl="+docUrl;
+    }
 }

@@ -16,15 +16,15 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 public class FieldInfo extends CommentDecoratedTarget{
 
-	public FieldInfo(String comment, String fieldName, FieldDeclaration fieldDetail) {
-		 
-		this.setComment(comment)
-		    .setName(fieldName);
-		this.fieldDetail = fieldDetail;
-	}
-	/**
-	 * 类成员变量声明代码
-	 */
-	private FieldDeclaration fieldDetail;
-	
+    public FieldInfo(String comment, String fieldName, FieldDeclaration fieldDetail) {
+         
+        this.setComment(comment)
+            .setName(fieldName);
+        this.fieldDetail = fieldDetail;
+    }
+    /**
+     * 类成员变量声明代码
+     */
+    private FieldDeclaration fieldDetail;
+    
 }

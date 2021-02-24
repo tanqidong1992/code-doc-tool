@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class FormWithJson {
 
-	private String name;
-	private OtherInfo info;
+    private String name;
+    private OtherInfo info;
 }

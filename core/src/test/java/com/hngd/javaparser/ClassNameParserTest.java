@@ -115,57 +115,57 @@ import lombok.Data;
 
 public class ClassNameParserTest {
 
-	/**
-	 *  a b c
-	 */
-	int a;
-	public static void main(String[] args) throws FileNotFoundException {
-		
-		File file=new File("./src/test/java/com/hngd/javaparser/ClassNameParserTest.java");
-		ParseResult<CompilationUnit> parseResult=new JavaParser().parse(file);
-		CompilationUnit cu=parseResult.getResult().get();
-		Optional<PackageDeclaration>  optionalPackageDeclaration=cu.getPackageDeclaration();
-		String packageName=null;
-		if(optionalPackageDeclaration.isPresent()) {
-			PackageDeclaration pd=optionalPackageDeclaration.get();
-			packageName=pd.getNameAsString();
-		}
-		FileVisitorContext context=new FileVisitorContext(packageName);
-		cu.accept(new MyClassVisitor(), context);
-	}
+    /**
+     *  a b c
+     */
+    int a;
+    public static void main(String[] args) throws FileNotFoundException {
+        
+        File file=new File("./src/test/java/com/hngd/javaparser/ClassNameParserTest.java");
+        ParseResult<CompilationUnit> parseResult=new JavaParser().parse(file);
+        CompilationUnit cu=parseResult.getResult().get();
+        Optional<PackageDeclaration>  optionalPackageDeclaration=cu.getPackageDeclaration();
+        String packageName=null;
+        if(optionalPackageDeclaration.isPresent()) {
+            PackageDeclaration pd=optionalPackageDeclaration.get();
+            packageName=pd.getNameAsString();
+        }
+        FileVisitorContext context=new FileVisitorContext(packageName);
+        cu.accept(new MyClassVisitor(), context);
+    }
 
-	static class MyClassVisitor extends VoidVisitorAdapter<FileVisitorContext>{
+    static class MyClassVisitor extends VoidVisitorAdapter<FileVisitorContext>{
         @Override
         public void visit(ClassOrInterfaceDeclaration n, FileVisitorContext context) {
-        	String name=JavaParserUtils.getParentNodeNameList(n);
-        	System.out.println("visit class:"+context.getPackageName()+"."+name);
-        	super.visit(n, context);
+            String name=JavaParserUtils.getParentNodeNameList(n);
+            System.out.println("visit class:"+context.getPackageName()+"."+name);
+            super.visit(n, context);
         }
         @Override
         public void visit(FieldDeclaration n, FileVisitorContext context) {
-        	String fullName=getNodeFullName(n, context);
-        	System.out.println(fullName);
-        	super.visit(n, context);
+            String fullName=getNodeFullName(n, context);
+            System.out.println(fullName);
+            super.visit(n, context);
         }
         @Override
         public void visit(MethodDeclaration n, FileVisitorContext context) {
-        	String fullName=getNodeFullName(n, context);
-        	System.out.println(fullName);
-        	super.visit(n, context);
+            String fullName=getNodeFullName(n, context);
+            System.out.println(fullName);
+            super.visit(n, context);
         }
-		
-	}
-	
-    public static String getNodeFullName(Node node,FileVisitorContext context) {
-    	String name=JavaParserUtils.getParentNodeNameList(node);
-    	String packageName=context.getPackageName();
-    	return StringUtils.isBlank(packageName)?name:packageName+"."+name;
+        
     }
-	
-	public void test() {
-		
-		class B{
-			
-		}
-	}
+    
+    public static String getNodeFullName(Node node,FileVisitorContext context) {
+        String name=JavaParserUtils.getParentNodeNameList(node);
+        String packageName=context.getPackageName();
+        return StringUtils.isBlank(packageName)?name:packageName+"."+name;
+    }
+    
+    public void test() {
+        
+        class B{
+            
+        }
+    }
 }

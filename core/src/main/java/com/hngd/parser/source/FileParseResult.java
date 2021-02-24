@@ -12,8 +12,8 @@ import lombok.Data;
 @Data
 public class FileParseResult {
 
-	private String fileSha2;
-	private  Map<String, ClassInfo> classComments = new ConcurrentHashMap<>();
-	private  Map<String, MethodInfo> methodComments = new ConcurrentHashMap<>();
-	private  Map<String, FieldInfo> fieldComments = new ConcurrentHashMap<>();
+    private String fileSha2;
+    private  Map<String, ClassInfo> classComments = new ConcurrentHashMap<>();
+    private  Map<String, MethodInfo> methodComments = new ConcurrentHashMap<>();
+    private  Map<String, FieldInfo> fieldComments = new ConcurrentHashMap<>();
 }

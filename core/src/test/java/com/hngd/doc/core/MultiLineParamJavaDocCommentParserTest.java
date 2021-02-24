@@ -27,7 +27,7 @@ import com.hngd.parser.javadoc.JavaDocCommentParser;
 public class MultiLineParamJavaDocCommentParserTest
 {
 
-	@Test
+    @Test
     public void main() throws URISyntaxException, IOException
     {
         URL url = MultiLineParamJavaDocCommentParserTest.class.getResource("multili-block.txt");
@@ -40,17 +40,17 @@ public class MultiLineParamJavaDocCommentParserTest
           .map(Description.class::cast)
           .findFirst()
           .ifPresent(description->{
-        	  System.out.println("java doc comment description:"+description.getContent());
+              System.out.println("java doc comment description:"+description.getContent());
           });
         pce.stream()
         .filter(BlockTag.class::isInstance)
         .map(BlockTag.class::cast)
         .forEach(ce ->{
-        	if(ce instanceof ParamBlock) {
-        		System.out.println(ce.getTag() + "-->"+((ParamBlock)ce).getParamName()+"-->" + ce.getContent());
-        	}else {
-        		System.out.println(ce.getTag() + "-->" + ce.getContent());
-        	}
+            if(ce instanceof ParamBlock) {
+                System.out.println(ce.getTag() + "-->"+((ParamBlock)ce).getParamName()+"-->" + ce.getContent());
+            }else {
+                System.out.println(ce.getTag() + "-->" + ce.getContent());
+            }
             
         });
     }

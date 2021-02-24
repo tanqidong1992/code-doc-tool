@@ -22,15 +22,15 @@ import io.swagger.v3.oas.models.OpenAPI;
 
 public class SummatyCommentParser {
 
-	public static void main(String[] args) throws URISyntaxException, IOException {
-		URL url = SummatyCommentParser.class.getResource("summary-comment.txt");
-	    Path path = Paths.get(url.toURI());
-	    List<String> commentLines = Files.readAllLines(path);
-	    	
-		SourceParserContext pc=new SourceParserContext();
-		List<JavaDocCommentElement> jdc=JavaDocCommentParser.parse(commentLines);
-		pc.getCommentStore().print();
+    public static void main(String[] args) throws URISyntaxException, IOException {
+        URL url = SummatyCommentParser.class.getResource("summary-comment.txt");
+        Path path = Paths.get(url.toURI());
+        List<String> commentLines = Files.readAllLines(path);
+            
+        SourceParserContext pc=new SourceParserContext();
+        List<JavaDocCommentElement> jdc=JavaDocCommentParser.parse(commentLines);
+        pc.getCommentStore().print();
 
-	}
+    }
 
 }

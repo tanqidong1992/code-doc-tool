@@ -16,33 +16,33 @@ import java.util.List;
 @RequestMapping("/")
 public class IndexController {
     
-	@Autowired
-	private DocumentProperties docProperties;
-	/**
-	 * 文档主页
-	 * @param model
-	 * @return
-	 */
-	@GetMapping("")
-	public String index(Model model) {
-		List<DocumentInfo> documents= SwaggerFileLoader.loadAll();
-		injectCommentAttributes(model);
-		model.addAttribute("documents",documents);
-		return "index.html";
-	}
-	/**
-	 * 文档管理页面
-	 * @param model
-	 * @return
-	 */
-	@GetMapping("/setting")
-	public String setting(Model model) {
-		List<DocumentInfo> documents= SwaggerFileLoader.loadAll();
-		injectCommentAttributes(model);
-		model.addAttribute("documents",documents);
-		return "setting.html";
-	}
-	private void injectCommentAttributes(Model model) {
-		model.addAttribute("systemName", docProperties.getSystemName());
-	}
+    @Autowired
+    private DocumentProperties docProperties;
+    /**
+     * 文档主页
+     * @param model
+     * @return
+     */
+    @GetMapping("")
+    public String index(Model model) {
+        List<DocumentInfo> documents= SwaggerFileLoader.loadAll();
+        injectCommentAttributes(model);
+        model.addAttribute("documents",documents);
+        return "index.html";
+    }
+    /**
+     * 文档管理页面
+     * @param model
+     * @return
+     */
+    @GetMapping("/setting")
+    public String setting(Model model) {
+        List<DocumentInfo> documents= SwaggerFileLoader.loadAll();
+        injectCommentAttributes(model);
+        model.addAttribute("documents",documents);
+        return "setting.html";
+    }
+    private void injectCommentAttributes(Model model) {
+        model.addAttribute("systemName", docProperties.getSystemName());
+    }
 }

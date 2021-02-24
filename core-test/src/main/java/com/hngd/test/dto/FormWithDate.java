@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class FormWithDate {
  
-	@DateTimeFormat(pattern="yyyy-MM-dd")
-	private Date date;
-	private String name;
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    private Date date;
+    private String name;
 }

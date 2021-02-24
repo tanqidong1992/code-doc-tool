@@ -40,7 +40,7 @@ import com.hngd.common.web.result.RestResponse;
 @Validated
 public class AttachmentController {
 
-	  /**
+      /**
      * 上传附件
      * @param file 附件
      * @param ownerId 业务对象Id
@@ -49,33 +49,33 @@ public class AttachmentController {
      * @param tags 附件标签,多个以','分隔
      * @return
      */
-	@PostMapping("/upload")
-	public RestResponse<String> uploadAttachment(
-			@RequestPart("file")MultipartFile file,
-			@RequestPart("ownerId")String ownerId,
-			@RequestPart(value="ownerTypeCode",required=false)String ownerTypeCode,
-			@RequestPart(value="typeCode",required=false)String typeCode,
-			@Size(max=1024)@RequestPart(value="tags",required=false)String tags){
-		
-		 
-		return RestResponses.newSuccessResponse("","");
-	}
-	/**
-	 * 批量上传附件
-	 * @param files 附件集合
+    @PostMapping("/upload")
+    public RestResponse<String> uploadAttachment(
+            @RequestPart("file")MultipartFile file,
+            @RequestPart("ownerId")String ownerId,
+            @RequestPart(value="ownerTypeCode",required=false)String ownerTypeCode,
+            @RequestPart(value="typeCode",required=false)String typeCode,
+            @Size(max=1024)@RequestPart(value="tags",required=false)String tags){
+        
+         
+        return RestResponses.newSuccessResponse("","");
+    }
+    /**
+     * 批量上传附件
+     * @param files 附件集合
      * @param ownerId 业务对象Id
      * @param ownerTypeCode 业务对象类型代码,默认值为-1
      * @param typeCode 附件类型代码,默认值为-1
      * @param tags 附件标签,多个以','分隔
-	 * @return
-	 */
-	@PostMapping("/batch/upload")
-	public RestResponse<String> uploadBatchAttachment(
-			@RequestPart("files")MultipartFile[] files,
-			@RequestPart("ownerId")String ownerId,
-			@RequestPart(value="ownerTypeCode",required=false)String ownerTypeCode,
-			@RequestPart(value="typeCode",required=false)String typeCode,
-			@Size(max=1024)@RequestPart(value="tags",required=false)String tags){
-		return RestResponses.newSuccessResponse("","");
-	}
+     * @return
+     */
+    @PostMapping("/batch/upload")
+    public RestResponse<String> uploadBatchAttachment(
+            @RequestPart("files")MultipartFile[] files,
+            @RequestPart("ownerId")String ownerId,
+            @RequestPart(value="ownerTypeCode",required=false)String ownerTypeCode,
+            @RequestPart(value="typeCode",required=false)String typeCode,
+            @Size(max=1024)@RequestPart(value="tags",required=false)String tags){
+        return RestResponses.newSuccessResponse("","");
+    }
 }

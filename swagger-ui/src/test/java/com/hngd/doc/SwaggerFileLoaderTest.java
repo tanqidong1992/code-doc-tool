@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 
 public class SwaggerFileLoaderTest {
 
-	@Test
-	public void test() {
-		SwaggerFileLoader.loadAll();
-	}
+    @Test
+    public void test() {
+        SwaggerFileLoader.loadAll();
+    }
 }

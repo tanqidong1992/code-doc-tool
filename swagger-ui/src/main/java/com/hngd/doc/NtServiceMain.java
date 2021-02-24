@@ -29,74 +29,74 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class NtServiceMain {
 
-	// init log
-	static {
-		File file = new File("./config/log4j2.xml");
-		try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));) {
-			final ConfigurationSource source = new ConfigurationSource(in);
-			Configurator.initialize(null, source);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	private static final Logger logger = LogManager.getLogger(NtServiceMain.class);
-	static ConfigurableApplicationContext mApplicationContext;
+    // init log
+    static {
+        File file = new File("./config/log4j2.xml");
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));) {
+            final ConfigurationSource source = new ConfigurationSource(in);
+            Configurator.initialize(null, source);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private static final Logger logger = LogManager.getLogger(NtServiceMain.class);
+    static ConfigurableApplicationContext mApplicationContext;
 
-	public static boolean isStart() {
-		return mApplicationContext.isActive();
-	}
+    public static boolean isStart() {
+        return mApplicationContext.isActive();
+    }
 
-	public static void onStop(String[] args) {
-		if (logger.isInfoEnabled()) {
-			logger.info("stop service....");
-		}
-		isStoped = true;
-		if (mBootstrapThread != null) {
-			if (mBootstrapThread.isAlive()) {
-				mBootstrapThread.interrupt();
-			}
-		}
-		if (mApplicationContext != null) {
-			try {
-				mApplicationContext.stop();
-			} finally {
-				mApplicationContext.close();
-			}
-		}
+    public static void onStop(String[] args) {
+        if (logger.isInfoEnabled()) {
+            logger.info("stop service....");
+        }
+        isStoped = true;
+        if (mBootstrapThread != null) {
+            if (mBootstrapThread.isAlive()) {
+                mBootstrapThread.interrupt();
+            }
+        }
+        if (mApplicationContext != null) {
+            try {
+                mApplicationContext.stop();
+            } finally {
+                mApplicationContext.close();
+            }
+        }
 
-	}
+    }
 
-	static volatile boolean isStoped = false;
-	static volatile Thread mBootstrapThread;
+    static volatile boolean isStoped = false;
+    static volatile Thread mBootstrapThread;
 
-	public static void onStart(String[] args) {
+    public static void onStart(String[] args) {
 
-		mBootstrapThread = new Thread(() -> {
-			while (!isStoped && mApplicationContext == null) {
-				try {
-					mApplicationContext = SpringApplication.run(HnvmnsSwaggerUiApplication.class, args);
-				} catch (Exception e) {
-					logger.error("start app...", e);
-				}
-				try {
-					TimeUnit.SECONDS.sleep(10);
-				} catch (InterruptedException e) {
-					logger.error("start app...", e);
-				}
-			}
-		});
-		mBootstrapThread.start();
-		if (logger.isInfoEnabled()) {
-			logger.info("start service ....");
-		}
-	}
+        mBootstrapThread = new Thread(() -> {
+            while (!isStoped && mApplicationContext == null) {
+                try {
+                    mApplicationContext = SpringApplication.run(HnvmnsSwaggerUiApplication.class, args);
+                } catch (Exception e) {
+                    logger.error("start app...", e);
+                }
+                try {
+                    TimeUnit.SECONDS.sleep(10);
+                } catch (InterruptedException e) {
+                    logger.error("start app...", e);
+                }
+            }
+        });
+        mBootstrapThread.start();
+        if (logger.isInfoEnabled()) {
+            logger.info("start service ....");
+        }
+    }
 
-	public static void init(ApplicationListener<ApplicationEvent> listener) {
-		mApplicationContext.addApplicationListener(listener);
+    public static void init(ApplicationListener<ApplicationEvent> listener) {
+        mApplicationContext.addApplicationListener(listener);
 
-	}
+    }
 
-	public static void main(String[] args) {
-		onStart(args);
-	}
+    public static void main(String[] args) {
+        onStart(args);
+    }
 }

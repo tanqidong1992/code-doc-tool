@@ -9,9 +9,9 @@ import lombok.Data;
 @Data
 public class Person {
 
-	
-	/**
-	 * 姓名
-	 */
-	private String name;
+    
+    /**
+     * 姓名
+     */
+    private String name;
 }

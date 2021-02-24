@@ -15,9 +15,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class ClassInfo extends CommentDecoratedTarget{
-	/**
-	 * 类声明代码
-	 */
-	private ClassOrInterfaceDeclaration classOrInterfaceDetail;
-	
+    /**
+     * 类声明代码
+     */
+    private ClassOrInterfaceDeclaration classOrInterfaceDetail;
+    
 }

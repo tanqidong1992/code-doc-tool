@@ -31,5 +31,5 @@ import com.hngd.common.web.result.RestResponse;
 @RequestMapping("/camera")
 public class CameraController<CameraInfo> {
 
-	 
+     
 }

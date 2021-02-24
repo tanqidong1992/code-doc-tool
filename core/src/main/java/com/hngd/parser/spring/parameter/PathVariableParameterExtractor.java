@@ -10,16 +10,16 @@ import com.hngd.openapi.entity.HttpParameter;
 
 public class PathVariableParameterExtractor extends HttpParameterExtractor<PathVariable> {
 
-	public PathVariableParameterExtractor() {
-		super(HttpParameterLocation.path,PathVariable.class);
-	}
+    public PathVariableParameterExtractor() {
+        super(HttpParameterLocation.path,PathVariable.class);
+    }
 
-	@Override
-	public List<HttpParameter> process(Parameter parameter) {
-		List<HttpParameter> httpParams=super.process(parameter);
-		httpParams.forEach(hp->{
-			hp.required=parameterAnnotation.required();
-		});
-		return httpParams;
-	}
+    @Override
+    public List<HttpParameter> process(Parameter parameter) {
+        List<HttpParameter> httpParams=super.process(parameter);
+        httpParams.forEach(hp->{
+            hp.required=parameterAnnotation.required();
+        });
+        return httpParams;
+    }
 }

@@ -11,15 +11,15 @@ public interface JavaDocCommentBlockTagParseListener {
      * @param firstLine 当block tags被解析器匹配时,传入的第一行注释
      * @return
      */
-	public String onParseStart(String firstLine);
-	/**
-	 * 
-	 * @param target
-	 */
-	public void onParseEnd(CommentDecoratedTarget target) ;
-	/**
-	 * 
-	 * @return
-	 */
-	public BlockTag getResult();
+    public String onParseStart(String firstLine);
+    /**
+     * 
+     * @param target
+     */
+    public void onParseEnd(CommentDecoratedTarget target) ;
+    /**
+     * 
+     * @return
+     */
+    public BlockTag getResult();
 }

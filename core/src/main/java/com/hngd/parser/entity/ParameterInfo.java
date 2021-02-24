@@ -13,9 +13,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class ParameterInfo extends CommentDecoratedTarget{
-	/**
-	 * 参数类型名称
-	 */
-	private String typeName;
-	 
+    /**
+     * 参数类型名称
+     */
+    private String typeName;
+     
 }

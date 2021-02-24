@@ -30,21 +30,21 @@ import io.swagger.v3.oas.models.OpenAPI;
 
 public class OpenAPITagTest {
 
-	@Test
-	public  void test() throws ParseException, IOException {
-		String path="../core-test/src/main/java";
-		File f=new File(path);
-		SourceParserContext pc=new SourceParserContext();
-		pc.initSource(f);
-		OpenAPI openapi = new OpenAPI();
-		OpenAPITool tool=new OpenAPITool(openapi,pc.getCommentStore());
+    @Test
+    public  void test() throws ParseException, IOException {
+        String path="../core-test/src/main/java";
+        File f=new File(path);
+        SourceParserContext pc=new SourceParserContext();
+        pc.initSource(f);
+        OpenAPI openapi = new OpenAPI();
+        OpenAPITool tool=new OpenAPITool(openapi,pc.getCommentStore());
  
-		tool.parse(Arrays.asList(NoClassTagController.class,ExistsClassTagController.class
-				));
-		String data=Json.pretty(openapi);
-		
-		FileUtils.write(new File("./test-output/role.json"), data, Constants.DEFAULT_CHARSET);
-	}
+        tool.parse(Arrays.asList(NoClassTagController.class,ExistsClassTagController.class
+                ));
+        String data=Json.pretty(openapi);
+        
+        FileUtils.write(new File("./test-output/role.json"), data, Constants.DEFAULT_CHARSET);
+    }
 
-	 
+     
 }

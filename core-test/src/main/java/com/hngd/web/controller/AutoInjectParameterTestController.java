@@ -19,35 +19,35 @@ import com.hngd.common.web.result.RestResponse;
 @RequestMapping("/auto/inject")
 public class AutoInjectParameterTestController {
 
-	/**
-	 * HttpServletRequest Test
-	 * @param req  HttpServletRequest
-	 * @param name  the name of user
-	 * @return
-	 */
-	@GetMapping("/req")
-	public RestResponse<Void> getHttpRequest(HttpServletRequest req,@RequestParam("name")String name){
-		return RestResponses.newSuccessResponse();
-	}
-	/**
-	 * Cookie Value Test
-	 * @param name cookie name
-	 * @param age the age of user
-	 * @return
-	 */
-	@GetMapping("/cookie")
-	public RestResponse<Void> getCookieValue(@CookieValue("name")String name
-			,@RequestParam("age")Integer age){
-		return RestResponses.newSuccessResponse();
-	}
-	
-	/**
-	 * Cookie Value Test
-	 * @param name cookie name
-	 * @return
-	 */
-	@GetMapping("/cookie/only")
-	public RestResponse<Void> getCookieValueOnly(@CookieValue("name")String name){
-		return RestResponses.newSuccessResponse();
-	}
+    /**
+     * HttpServletRequest Test
+     * @param req  HttpServletRequest
+     * @param name  the name of user
+     * @return
+     */
+    @GetMapping("/req")
+    public RestResponse<Void> getHttpRequest(HttpServletRequest req,@RequestParam("name")String name){
+        return RestResponses.newSuccessResponse();
+    }
+    /**
+     * Cookie Value Test
+     * @param name cookie name
+     * @param age the age of user
+     * @return
+     */
+    @GetMapping("/cookie")
+    public RestResponse<Void> getCookieValue(@CookieValue("name")String name
+            ,@RequestParam("age")Integer age){
+        return RestResponses.newSuccessResponse();
+    }
+    
+    /**
+     * Cookie Value Test
+     * @param name cookie name
+     * @return
+     */
+    @GetMapping("/cookie/only")
+    public RestResponse<Void> getCookieValueOnly(@CookieValue("name")String name){
+        return RestResponses.newSuccessResponse();
+    }
 }

@@ -15,13 +15,13 @@ import lombok.Data;
 @Data
 public class MenuTreeNode extends Menu{
 
-	/**
-	 * 子菜单项
-	 */
-	private List<MenuTreeNode> subMenus=new LinkedList<>();
-	/**
-	 * 对应页面路径
-	 */
-	private String pageUrl;
-	
+    /**
+     * 子菜单项
+     */
+    private List<MenuTreeNode> subMenus=new LinkedList<>();
+    /**
+     * 对应页面路径
+     */
+    private String pageUrl;
+    
 }

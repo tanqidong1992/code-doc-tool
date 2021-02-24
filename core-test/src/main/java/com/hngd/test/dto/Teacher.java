@@ -7,8 +7,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Teacher extends Person {
 
-	/**
-	 * 年龄
-	 */
-	private Long age;
+    /**
+     * 年龄
+     */
+    private Long age;
 }

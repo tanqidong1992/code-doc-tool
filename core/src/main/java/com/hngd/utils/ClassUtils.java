@@ -26,90 +26,90 @@ import com.hngd.openapi.OpenAPITool;
 
 public class ClassUtils {
 
-	private static final Logger logger=LoggerFactory.getLogger(ClassUtils.class);
-	public static List<Class<?>> getClassBelowPacakge(String packageName) {
-		String packagePath = packageName.replaceAll("\\.", "/");
-		Enumeration<URL> dirs = null;
-		try {
-			dirs = OpenAPITool.class.getClassLoader().getResources(packagePath);
-		} catch (IOException e) {
-			logger.error("", e);
-		}
+    private static final Logger logger=LoggerFactory.getLogger(ClassUtils.class);
+    public static List<Class<?>> getClassBelowPacakge(String packageName) {
+        String packagePath = packageName.replaceAll("\\.", "/");
+        Enumeration<URL> dirs = null;
+        try {
+            dirs = OpenAPITool.class.getClassLoader().getResources(packagePath);
+        } catch (IOException e) {
+            logger.error("", e);
+        }
 
-		List<Class<?>> clazzs = new LinkedList<>();
-		while (dirs.hasMoreElements()) {
-			URL url = dirs.nextElement();
-			File file = new File(url.getFile());
-			// 把此目录下的所有文件列出
-			String[] fileNames = file.list();
-			// 循环此数组，并把.class去掉
-			for (String fileName : fileNames) {
-				if (!fileName.endsWith(".class")) {
-					logger.warn("the file {} is not a class",file.getAbsolutePath() + fileName );
-					continue;
-				}
-				fileName = fileName.substring(0, fileName.length() - 6);
-				// 拼接上包名，变成全限定名
-				String qName = packageName + "." + fileName;
-				// 如有需要，把每个类生实一个实例
-				Class<?> cls = null;
-				try {
-					cls = Class.forName(qName);
-				} catch (ClassNotFoundException e) {
-					logger.error("", e);
-				}
-				if (cls != null) {
-					clazzs.add(cls);
-				}
-			}
-		}
-		return clazzs;
-	}
-	public static Boolean isClassDeprecated(Class<?> cls) {
-		return cls.getAnnotation(Deprecated.class)!=null;
-	}
-	public static CompilationUnit parseClass(File f) {
-		
-		ParseResult<CompilationUnit> cu=null;
-		try(InputStream in=new FileInputStream(f)) {
-			Reader reader=new BufferedReader(new InputStreamReader(in, "UTF-8"));
-			cu = new JavaParser().parse(reader);//.parse(reader, true);
-		} catch (IOException e) {
-			logger.error("", e);
-		}
-		return cu.getResult().get();
-	}
-	
+        List<Class<?>> clazzs = new LinkedList<>();
+        while (dirs.hasMoreElements()) {
+            URL url = dirs.nextElement();
+            File file = new File(url.getFile());
+            // 把此目录下的所有文件列出
+            String[] fileNames = file.list();
+            // 循环此数组，并把.class去掉
+            for (String fileName : fileNames) {
+                if (!fileName.endsWith(".class")) {
+                    logger.warn("the file {} is not a class",file.getAbsolutePath() + fileName );
+                    continue;
+                }
+                fileName = fileName.substring(0, fileName.length() - 6);
+                // 拼接上包名，变成全限定名
+                String qName = packageName + "." + fileName;
+                // 如有需要，把每个类生实一个实例
+                Class<?> cls = null;
+                try {
+                    cls = Class.forName(qName);
+                } catch (ClassNotFoundException e) {
+                    logger.error("", e);
+                }
+                if (cls != null) {
+                    clazzs.add(cls);
+                }
+            }
+        }
+        return clazzs;
+    }
+    public static Boolean isClassDeprecated(Class<?> cls) {
+        return cls.getAnnotation(Deprecated.class)!=null;
+    }
+    public static CompilationUnit parseClass(File f) {
+        
+        ParseResult<CompilationUnit> cu=null;
+        try(InputStream in=new FileInputStream(f)) {
+            Reader reader=new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            cu = new JavaParser().parse(reader);//.parse(reader, true);
+        } catch (IOException e) {
+            logger.error("", e);
+        }
+        return cu.getResult().get();
+    }
+    
     public static CompilationUnit parseClass(InputStream in) {
-		ParseResult<CompilationUnit> cu=null;
-		try {
-			Reader reader=new BufferedReader(new InputStreamReader(in, "UTF-8"));
-			cu = new JavaParser().parse(reader);//.parse(reader, true);
-		} catch (IOException e) {
-			logger.error("", e);
-		}
-		return cu.getResult().get();
-	}
+        ParseResult<CompilationUnit> cu=null;
+        try {
+            Reader reader=new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            cu = new JavaParser().parse(reader);//.parse(reader, true);
+        } catch (IOException e) {
+            logger.error("", e);
+        }
+        return cu.getResult().get();
+    }
 
-	public static String getMethodIdentifier(Method method) {
-		if(method==null) {
-			return "";
-		}
-		return method.getDeclaringClass().getName()+"."+method.getName();
-	}
-	
-	public static String getParameterIdentifier(Parameter parameter) {
-		if(parameter==null) {
-			return "";
-		}
-		Executable executable=parameter.getDeclaringExecutable();
-		String name=parameter.getName();
-		if(executable instanceof Method) {
-			return getMethodIdentifier((Method)executable)+"."+name;
-		}else if(executable instanceof Constructor) {
-			Constructor<?> c=(Constructor<?>) executable;
-			return c.getDeclaringClass().getName()+"."+c.getName()+"."+name;
-		}
-		return executable.getDeclaringClass().getName()+"."+executable.getName()+"."+name;
-	}
+    public static String getMethodIdentifier(Method method) {
+        if(method==null) {
+            return "";
+        }
+        return method.getDeclaringClass().getName()+"."+method.getName();
+    }
+    
+    public static String getParameterIdentifier(Parameter parameter) {
+        if(parameter==null) {
+            return "";
+        }
+        Executable executable=parameter.getDeclaringExecutable();
+        String name=parameter.getName();
+        if(executable instanceof Method) {
+            return getMethodIdentifier((Method)executable)+"."+name;
+        }else if(executable instanceof Constructor) {
+            Constructor<?> c=(Constructor<?>) executable;
+            return c.getDeclaringClass().getName()+"."+c.getName()+"."+name;
+        }
+        return executable.getDeclaringClass().getName()+"."+executable.getName()+"."+name;
+    }
 }

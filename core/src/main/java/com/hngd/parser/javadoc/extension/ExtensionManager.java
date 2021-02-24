@@ -20,14 +20,14 @@ import com.hngd.parser.javadoc.BlockTag;
  * @author tqd
  */
 public class ExtensionManager {
-	private static final Logger logger = LoggerFactory.getLogger(ExtensionManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExtensionManager.class);
 
-	@SuppressWarnings("deprecation")
-	public static void enableExtension(Class<? extends BlockTag> clazz) {
-		try {
-			clazz.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			logger.error("", e);
-		}
-	}
+    @SuppressWarnings("deprecation")
+    public static void enableExtension(Class<? extends BlockTag> clazz) {
+        try {
+            clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            logger.error("", e);
+        }
+    }
 }

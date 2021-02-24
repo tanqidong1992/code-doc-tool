@@ -39,31 +39,31 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AjaxCodeGenerator extends CodeTemplate{
     public AjaxCodeGenerator() {
-		super("axios", "js-api-ajax.btl", TemplateEngines.BEETL);
-		
-	}
+        super("axios", "js-api-ajax.btl", TemplateEngines.BEETL);
+        
+    }
     @Override
-	public String generate(List<ModuleInfo> modules,String serviceUrl){
-    	 
-    	if(CollectionUtils.isEmpty(modules)){
-    		return null;
-    	}
-    	Map<String, Object> map = new HashMap<>();
-    	map.put("serviceUrl", serviceUrl);
-    	map.put("modules", modules);
-    	ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader("/code/template", Constants.DEFAULT_CHARSET_NAME);
-		Configuration cfg=null;
-		try {
-			cfg = Configuration.defaultConfiguration();
-		} catch (IOException e) {
-			throw new CodeGenerateException("", e);
-		}
-		GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
-		Template t = gt.getTemplate(templateFilePath);
-		t.binding(map);
-		String str = t.render();
-		return str;
-    	
+    public String generate(List<ModuleInfo> modules,String serviceUrl){
+         
+        if(CollectionUtils.isEmpty(modules)){
+            return null;
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("serviceUrl", serviceUrl);
+        map.put("modules", modules);
+        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader("/code/template", Constants.DEFAULT_CHARSET_NAME);
+        Configuration cfg=null;
+        try {
+            cfg = Configuration.defaultConfiguration();
+        } catch (IOException e) {
+            throw new CodeGenerateException("", e);
+        }
+        GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
+        Template t = gt.getTemplate(templateFilePath);
+        t.binding(map);
+        String str = t.render();
+        return str;
+        
     }
  
      

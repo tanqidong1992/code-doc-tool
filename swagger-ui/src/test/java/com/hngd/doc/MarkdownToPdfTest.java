@@ -16,13 +16,13 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 @Deprecated
 public class MarkdownToPdfTest {
 
-	@Test
-	public void test() {
-	}
-	final private static Map<String, DataHolder> optionsMap = new HashMap<>();
-	static {
-		optionsMap.put("ltr-text", new MutableDataSet().set(PdfConverterExtension.DEFAULT_TEXT_DIRECTION, PdfRendererBuilder.TextDirection.LTR));
-		optionsMap.put("rtl-text", new MutableDataSet().set(PdfConverterExtension.DEFAULT_TEXT_DIRECTION, PdfRendererBuilder.TextDirection.RTL));
-	}
+    @Test
+    public void test() {
+    }
+    final private static Map<String, DataHolder> optionsMap = new HashMap<>();
+    static {
+        optionsMap.put("ltr-text", new MutableDataSet().set(PdfConverterExtension.DEFAULT_TEXT_DIRECTION, PdfRendererBuilder.TextDirection.LTR));
+        optionsMap.put("rtl-text", new MutableDataSet().set(PdfConverterExtension.DEFAULT_TEXT_DIRECTION, PdfRendererBuilder.TextDirection.RTL));
+    }
 
 }

@@ -12,21 +12,21 @@ import lombok.Data;
  */
 @Data
 public class RoleForm {
-	/**
-	 * 角色Id
-	 */
-	@Size(min=32,max=32)
-	private String id;
+    /**
+     * 角色Id
+     */
+    @Size(min=32,max=32)
+    private String id;
     /**
      * 角色名称
      */
-	@NotNull
-	@Size(max=40)
-	//@Pattern
-	private String name;
-	/**
-	 * 角色描述
-	 */
-	@Size(max=200)
-	private String remark;
+    @NotNull
+    @Size(max=40)
+    //@Pattern
+    private String name;
+    /**
+     * 角色描述
+     */
+    @Size(max=200)
+    private String remark;
 }

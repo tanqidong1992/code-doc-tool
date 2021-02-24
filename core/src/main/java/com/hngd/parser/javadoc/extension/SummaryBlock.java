@@ -25,6 +25,6 @@ public class SummaryBlock extends BlockTag
      */
     public SummaryBlock()
     {
-    	super("@summary");
+        super("@summary");
     }
 }

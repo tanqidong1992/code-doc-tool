@@ -12,20 +12,20 @@ import com.hngd.openapi.entity.HttpParameter;
 
 public class CookieValueParameterExtractor extends HttpParameterExtractor<CookieValue> {
 
-	public CookieValueParameterExtractor() {
-		super(HttpParameterLocation.cookie,CookieValue.class);
-	}
+    public CookieValueParameterExtractor() {
+        super(HttpParameterLocation.cookie,CookieValue.class);
+    }
 
-	@Override
-	public List<HttpParameter> process(Parameter parameter) {
-		List<HttpParameter> httpParams=super.process(parameter);
-		boolean isParameterRequired=ValueConstants.DEFAULT_NONE.equals(parameterAnnotation.defaultValue())
-				&& parameterAnnotation.required();
-		httpParams.forEach(hp->{
-			hp.required=isParameterRequired;
-			hp.defaultValue=parameterAnnotation.defaultValue();
-		});
-		return httpParams;
-		 
-	}
+    @Override
+    public List<HttpParameter> process(Parameter parameter) {
+        List<HttpParameter> httpParams=super.process(parameter);
+        boolean isParameterRequired=ValueConstants.DEFAULT_NONE.equals(parameterAnnotation.defaultValue())
+                && parameterAnnotation.required();
+        httpParams.forEach(hp->{
+            hp.required=isParameterRequired;
+            hp.defaultValue=parameterAnnotation.defaultValue();
+        });
+        return httpParams;
+         
+    }
 }

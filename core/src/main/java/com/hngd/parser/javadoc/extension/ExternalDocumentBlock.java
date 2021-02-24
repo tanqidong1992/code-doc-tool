@@ -25,6 +25,6 @@ public class ExternalDocumentBlock extends BlockTag
      */
     public ExternalDocumentBlock()
     {
-    	super("@externalDocument");
+        super("@externalDocument");
     }
 }

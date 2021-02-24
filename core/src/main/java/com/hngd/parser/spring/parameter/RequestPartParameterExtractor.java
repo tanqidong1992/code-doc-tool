@@ -11,17 +11,17 @@ import com.hngd.openapi.entity.HttpParameter;
 
 public class RequestPartParameterExtractor extends HttpParameterExtractor<RequestPart> {
 
-	public RequestPartParameterExtractor() {
-		super(HttpParameterLocation.body,RequestPart.class);
-	}
+    public RequestPartParameterExtractor() {
+        super(HttpParameterLocation.body,RequestPart.class);
+    }
 
-	@Override
-	public List<HttpParameter> process(Parameter parameter) {
-		List<HttpParameter> httpParams=super.process(parameter);
-		httpParams.forEach(hp->{
-			hp.required=parameterAnnotation.required();
-		});
-		return httpParams;
-		 
-	}
+    @Override
+    public List<HttpParameter> process(Parameter parameter) {
+        List<HttpParameter> httpParams=super.process(parameter);
+        httpParams.forEach(hp->{
+            hp.required=parameterAnnotation.required();
+        });
+        return httpParams;
+         
+    }
 }

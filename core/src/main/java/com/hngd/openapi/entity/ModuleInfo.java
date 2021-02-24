@@ -19,33 +19,33 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 public class ModuleInfo extends CommentDecoratedTarget{
  
-	/**
-	 * 模块基础路径
-	 */
-	private String url;
-	/**
-	 * 模块接口列表
-	 */
-	private List<HttpInterface> interfaceInfos=new ArrayList<HttpInterface>();
-	/**
-	 * 模块类名称
-	 */
-	private String simpleClassName;
-	/**
-	 * 模块所在类全路径
-	 */
-	private String canonicalClassName;
-	/**
-	 * 是否被弃用
-	 */
-	private Boolean deprecated;
+    /**
+     * 模块基础路径
+     */
+    private String url;
+    /**
+     * 模块接口列表
+     */
+    private List<HttpInterface> interfaceInfos=new ArrayList<HttpInterface>();
+    /**
+     * 模块类名称
+     */
+    private String simpleClassName;
+    /**
+     * 模块所在类全路径
+     */
+    private String canonicalClassName;
+    /**
+     * 是否被弃用
+     */
+    private Boolean deprecated;
     /**
      * 作者
      */
-	private String author;
-	/**
-	 * since
-	 */
-	private String since;
-	 
+    private String author;
+    /**
+     * since
+     */
+    private String since;
+     
 }

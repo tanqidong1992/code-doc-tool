@@ -13,19 +13,19 @@ import io.swagger.v3.oas.models.OpenAPI;
 
 public class InheritedClassFiledCommentParser {
 
-	public static void main(String[] args) {
-		SourceParserContext pc=new SourceParserContext();
-		String rootPath="../core-test/src/main/java";
-		File directory=new File(rootPath);
-		pc.initSource(directory);
-		//CommonClassCommentParser.printResult();
-		Type type=Teacher.class;
-		OpenAPI openAPI=new OpenAPI();
-		OpenAPITool opt=new OpenAPITool(openAPI, pc.getCommentStore());
-		TypeResolver tr=new TypeResolver(pc.getCommentStore());
-		tr.resolveAsSchema(type, openAPI);
-		Json.prettyPrint(openAPI);
+    public static void main(String[] args) {
+        SourceParserContext pc=new SourceParserContext();
+        String rootPath="../core-test/src/main/java";
+        File directory=new File(rootPath);
+        pc.initSource(directory);
+        //CommonClassCommentParser.printResult();
+        Type type=Teacher.class;
+        OpenAPI openAPI=new OpenAPI();
+        OpenAPITool opt=new OpenAPITool(openAPI, pc.getCommentStore());
+        TypeResolver tr=new TypeResolver(pc.getCommentStore());
+        tr.resolveAsSchema(type, openAPI);
+        Json.prettyPrint(openAPI);
 
-	}
+    }
 
 }

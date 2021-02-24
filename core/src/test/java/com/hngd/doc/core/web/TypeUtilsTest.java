@@ -11,14 +11,14 @@ import com.hngd.utils.TypeUtils;
 
 public class TypeUtilsTest {
 
-	@Test
-	public void testMultipart() {
-		
-		Type parameterType=new TypeToken<MultipartFile[]>() {}.getType();
-		Boolean result=TypeUtils.isMultipartType(parameterType);
-		Assert.assertTrue(result);
-		parameterType=new TypeToken<MultipartFile>() {}.getType();
-		 result=TypeUtils.isMultipartType(parameterType);
-		 Assert.assertTrue(result);
-	}
+    @Test
+    public void testMultipart() {
+        
+        Type parameterType=new TypeToken<MultipartFile[]>() {}.getType();
+        Boolean result=TypeUtils.isMultipartType(parameterType);
+        Assert.assertTrue(result);
+        parameterType=new TypeToken<MultipartFile>() {}.getType();
+         result=TypeUtils.isMultipartType(parameterType);
+         Assert.assertTrue(result);
+    }
 }

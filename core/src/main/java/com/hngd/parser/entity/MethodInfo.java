@@ -16,22 +16,22 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class MethodInfo extends CommentDecoratedTarget{
-	/**
-	 * 返回注释
-	 */
-	private String retComment;
-	/**
-	 * 参数信息列表
-	 */
-	private List<ParameterInfo> parameters=new ArrayList<>();
+    /**
+     * 返回注释
+     */
+    private String retComment;
+    /**
+     * 参数信息列表
+     */
+    private List<ParameterInfo> parameters=new ArrayList<>();
     /**
      * 作者
      */
-	private String author;
-	/**
-	 * since
-	 */
-	private String since;
+    private String author;
+    /**
+     * since
+     */
+    private String since;
 }
 
 

@@ -10,5 +10,5 @@ public class DocumentProperties {
     /**
      * 系统名称
      */
-	private String systemName;
+    private String systemName;
 }

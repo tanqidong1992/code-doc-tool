@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class FormWithJacksonDate {
  
-	@JsonFormat(pattern="yyyy-MM-dd")
-	private Date date;
-	private String name;
+    @JsonFormat(pattern="yyyy-MM-dd")
+    private Date date;
+    private String name;
 }

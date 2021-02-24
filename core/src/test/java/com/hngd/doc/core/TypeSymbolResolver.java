@@ -22,37 +22,37 @@ import com.hngd.utils.ClassUtils;
 
 public class TypeSymbolResolver {
 
-	public static void main(String[] args) throws FileNotFoundException {
-		
-		String filePath="../core-test/src/main/java/com/hngd/web/controller/RoleController.java";
-		File srcDir=new File("../core-test/src/main/java");
-		 
-		 
-		CompilationUnit	cu = ClassUtils.parseClass(new File(filePath));
-		 
-		List<Node>  nodes=getChild(cu);
-		nodes.stream()
-		 .filter(node->{
-			 if(node instanceof Type){
-				 return true;
-			 }
-			 return false;
-		 })
-		.forEach(node->{
-			 
-			System.out.println(node);
-		});
-	}
-	
-	public static List<Node> getChild(Node node){
-		LinkedList<Node> nodes=new LinkedList<>();
-		List<Node> children=node.getChildNodes();
-		if(children.size()>0){
-			nodes.addAll(children);
-			children.forEach(child->{
-				nodes.addAll(getChild(child));
-			});
-		}
-		return nodes;
-	}
+    public static void main(String[] args) throws FileNotFoundException {
+        
+        String filePath="../core-test/src/main/java/com/hngd/web/controller/RoleController.java";
+        File srcDir=new File("../core-test/src/main/java");
+         
+         
+        CompilationUnit    cu = ClassUtils.parseClass(new File(filePath));
+         
+        List<Node>  nodes=getChild(cu);
+        nodes.stream()
+         .filter(node->{
+             if(node instanceof Type){
+                 return true;
+             }
+             return false;
+         })
+        .forEach(node->{
+             
+            System.out.println(node);
+        });
+    }
+    
+    public static List<Node> getChild(Node node){
+        LinkedList<Node> nodes=new LinkedList<>();
+        List<Node> children=node.getChildNodes();
+        if(children.size()>0){
+            nodes.addAll(children);
+            children.forEach(child->{
+                nodes.addAll(getChild(child));
+            });
+        }
+        return nodes;
+    }
 }

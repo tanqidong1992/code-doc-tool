@@ -22,14 +22,14 @@ import com.hngd.parser.source.SourceParser;
 
 public class ModuleParserTest {
 
-	
-	@Test
-	public void testParse(){
-		File f=new File("../core-test/src/main/java/com/hngd/web/controller/RoleController.java");
-		List<ModuleInfo> list= SourceParser.parse(f);
-		System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(list));
-	}
+    
+    @Test
+    public void testParse(){
+        File f=new File("../core-test/src/main/java/com/hngd/web/controller/RoleController.java");
+        List<ModuleInfo> list= SourceParser.parse(f);
+        System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(list));
+    }
 
  
-	
+    
 }

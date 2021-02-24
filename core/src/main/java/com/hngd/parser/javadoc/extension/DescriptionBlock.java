@@ -25,6 +25,6 @@ public class DescriptionBlock extends BlockTag
      */
     public DescriptionBlock()
     {
-    	super("@description");
+        super("@description");
     }
 }

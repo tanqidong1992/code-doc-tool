@@ -2,6 +2,7 @@ package com.hngd.web.controller;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,60 +37,60 @@ public class TempController {
       * @param ids 待新增学生群体
       * @return
       */
-    @PostMapping("/nested/test")
+    @PutMapping("/nested/test")
     public RestResponse<String> addStudentGroup(@RequestBody StudentGroup ids) {
         return null;
     } 
 
 
     @Data
-	public static class Person{
-		/**
-		 * 人员姓名
-		 */
-		private String name;
-		/**
-		 * 人员年龄
-		 */
-		private Integer age;
-		/**
-		 * 出生日期
-		 */
-		private LocalDate birthday;
-	}
-	@Data
-	public static class School{
-		/**
-		 * 学校名称
-		 */
-		private String name;
-		/**
-		 * 学校地址
-		 */
-		private Integer address;
-	}
-	@Data
-	public static class Student extends Person{
-		/**
-		 * 班级名称
-		 */
-		private String className;
-		/**
-		 * 学校信息
-		 */
-		private School school;
-	}
+    public static class Person{
+        /**
+         * 人员姓名
+         */
+        private String name;
+        /**
+         * 人员年龄
+         */
+        private Integer age;
+        /**
+         * 出生日期
+         */
+        private LocalDate birthday;
+    }
+    @Data
+    public static class School{
+        /**
+         * 学校名称
+         */
+        private String name;
+        /**
+         * 学校地址
+         */
+        private Integer address;
+    }
+    @Data
+    public static class Student extends Person{
+        /**
+         * 班级名称
+         */
+        private String className;
+        /**
+         * 学校信息
+         */
+        private School school;
+    }
 
-	@Data
-	public static class StudentGroup{
+    @Data
+    public static class StudentGroup{
 
-		/**
-		 * 团体名称
-		 */
-		private String name;
-		/**
-		 * 学生列表
-		 */
-		private List<Student> students;
-	}
+        /**
+         * 团体名称
+         */
+        private String name;
+        /**
+         * 学生列表
+         */
+        private List<Student> students;
+    }
 }

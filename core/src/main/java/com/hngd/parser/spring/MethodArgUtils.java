@@ -46,42 +46,42 @@ public class MethodArgUtils {
      * @param annotations
      * @return
      */
-	public static Optional<String> extractDateFormat(Annotation[] annotations) {
-		Optional<DateTimeFormat> optionalDateTimeFormat=extractAnnotaion(annotations, DateTimeFormat.class);
-		if(optionalDateTimeFormat.isPresent()) {
-		    return Optional.of(optionalDateTimeFormat.get().pattern());
-		}
-		return Optional.empty();
-	}
+    public static Optional<String> extractDateFormat(Annotation[] annotations) {
+        Optional<DateTimeFormat> optionalDateTimeFormat=extractAnnotaion(annotations, DateTimeFormat.class);
+        if(optionalDateTimeFormat.isPresent()) {
+            return Optional.of(optionalDateTimeFormat.get().pattern());
+        }
+        return Optional.empty();
+    }
 
-	public static boolean isFieldRequired(Field field) {
-		return field.getAnnotation(NotNull.class)!=null;
-	}
+    public static boolean isFieldRequired(Field field) {
+        return field.getAnnotation(NotNull.class)!=null;
+    }
  
-	/**
-	 * 从注解数组中找到指定类型的注解
-	 * @param <T> 指定注解
-	 * @param annotations 注解数组
-	 * @param type 指定注解的类型
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T extends Annotation> Optional<T> extractAnnotaion(Annotation [] annotations,Class<T> type){
-		if(annotations.length<=0) {
-			return Optional.empty();
-		}
-		for (Annotation a : annotations) {
-			if(type.isInstance(a)) {
-				return Optional.of((T)a);
-			}
-		}
-		return Optional.empty();
-	}
+    /**
+     * 从注解数组中找到指定类型的注解
+     * @param <T> 指定注解
+     * @param annotations 注解数组
+     * @param type 指定注解的类型
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Annotation> Optional<T> extractAnnotaion(Annotation [] annotations,Class<T> type){
+        if(annotations.length<=0) {
+            return Optional.empty();
+        }
+        for (Annotation a : annotations) {
+            if(type.isInstance(a)) {
+                return Optional.of((T)a);
+            }
+        }
+        return Optional.empty();
+    }
  
-	
-	public static List<Class<?>> CONTEXT_PARAMTER_TYPES=Arrays.asList(
+    
+    public static List<Class<?>> CONTEXT_PARAMTER_TYPES=Arrays.asList(
             //Generic access to request parameters and request and session attributes, without direct use of the Servlet API.
-			WebRequest.class,
+            WebRequest.class,
             NativeWebRequest.class,
             //Choose any specific request or response type — for example, ServletRequest, HttpServletRequest, or Spring’s MultipartRequest, MultipartHttpServletRequest.
             ServletRequest.class,
@@ -120,43 +120,43 @@ public class MethodArgUtils {
             //For preparing a URL relative to the current request’s host, port, scheme, context path, and the literal part of the servlet mapping. See URI Links.
             UriComponentsBuilder.class
             
-			);
-	/**
-	 * 判定指定参数类型是否是Spring自动注入的参数类型		
-	 * @param type 指定参数类型
-	 * @return
-	 */
-	public static boolean isSpringAutoInjectParameterType(Type type) {
-		Class<?> paramClass=getRawType(type);
-		Optional<Class<?>> innerSuperCalss=CONTEXT_PARAMTER_TYPES.stream()
-		    .filter(innerType->innerType.isAssignableFrom(paramClass))
-		    .findFirst();
-		return innerSuperCalss.isPresent();
-	}
-	
-	public static Class<?> getRawType(Type type){
-		Class<?> paramClass;
-		if(type instanceof Class<?>) {
-			paramClass=(Class<?>)type;
-		}else {
-			ParameterizedType parameterizedType=(ParameterizedType) type;
-			paramClass=(Class<?>)parameterizedType.getRawType();
-		}
-		return paramClass;
-	}
-	/**
-	 * 判定是否是Map,Model,ModelMap类型的参数
-	 * For access to the model that is used in HTML controllers and exposed to templates as part of view rendering.
-	 * @param type 参数类型
-	 * @return
-	 */
-	public static boolean isModelParameterType(Type type) {
-		Class<?> rawType=getRawType(type);
-		return Map.class.isAssignableFrom(rawType) ||
-			   Model.class.isAssignableFrom(rawType) ||
-			   ModelMap.class.isAssignableFrom(rawType);
-	}
-	/**
-	 * java.util.Map, org.springframework.ui.Model, org.springframework.ui.ModelMap
-	 */
+            );
+    /**
+     * 判定指定参数类型是否是Spring自动注入的参数类型        
+     * @param type 指定参数类型
+     * @return
+     */
+    public static boolean isSpringAutoInjectParameterType(Type type) {
+        Class<?> paramClass=getRawType(type);
+        Optional<Class<?>> innerSuperCalss=CONTEXT_PARAMTER_TYPES.stream()
+            .filter(innerType->innerType.isAssignableFrom(paramClass))
+            .findFirst();
+        return innerSuperCalss.isPresent();
+    }
+    
+    public static Class<?> getRawType(Type type){
+        Class<?> paramClass;
+        if(type instanceof Class<?>) {
+            paramClass=(Class<?>)type;
+        }else {
+            ParameterizedType parameterizedType=(ParameterizedType) type;
+            paramClass=(Class<?>)parameterizedType.getRawType();
+        }
+        return paramClass;
+    }
+    /**
+     * 判定是否是Map,Model,ModelMap类型的参数
+     * For access to the model that is used in HTML controllers and exposed to templates as part of view rendering.
+     * @param type 参数类型
+     * @return
+     */
+    public static boolean isModelParameterType(Type type) {
+        Class<?> rawType=getRawType(type);
+        return Map.class.isAssignableFrom(rawType) ||
+               Model.class.isAssignableFrom(rawType) ||
+               ModelMap.class.isAssignableFrom(rawType);
+    }
+    /**
+     * java.util.Map, org.springframework.ui.Model, org.springframework.ui.ModelMap
+     */
 }

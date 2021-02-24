@@ -18,27 +18,27 @@ import com.hngd.test.dto.Teacher;
 @RestController
 public class TeacherController {
 
-	/**
-	 * 新增老师信息
-	 * @param teacher 待新增的老师信息
-	 * @return
-	 */
-	@PostMapping("/add")
-	public RestResponse<String> addTeacher(@RequestBody Teacher teacher){
-		
-		return null;
-	}
-	
-	/**
-	 * 删除老师信息
-	 * @summary summary for deleteTeacher
-	 * @description description for deleteTeacher
-	 * @param id 待删除老师的ID
-	 * @return
-	 */
-	@DeleteMapping("/")
-	public RestResponse<String> deleteTeacher(@RequestParam("id") String id){
-		
-		return null;
-	}
+    /**
+     * 新增老师信息
+     * @param teacher 待新增的老师信息
+     * @return
+     */
+    @PostMapping("/add")
+    public RestResponse<String> addTeacher(@RequestBody Teacher teacher){
+        
+        return null;
+    }
+    
+    /**
+     * 删除老师信息
+     * @summary summary for deleteTeacher
+     * @description description for deleteTeacher
+     * @param id 待删除老师的ID
+     * @return
+     */
+    @DeleteMapping("/")
+    public RestResponse<String> deleteTeacher(@RequestParam("id") String id){
+        
+        return null;
+    }
 }

@@ -25,29 +25,29 @@ import io.swagger.v3.oas.models.media.StringSchema;
 
 public class ModelResolverTest {
 
-	public static void main(String[] args) {
-		
-		Type type=new TypeToken<List<Camera>>() {}.getType();
-		OpenAPI openapi = new OpenAPI();
-		Class<?> clz = ComplexDTO.class;
-		SourceParserContext pc=new SourceParserContext();
-		pc.initSource(new File("W:\\workspaces\\build-tools\\hn-code-tool\\core-test"));
-		OpenAPITool opt=new OpenAPITool(openapi, pc.getCommentStore());
-		TypeResolver tr=new TypeResolver(pc.getCommentStore());
-		tr.resolveAsSchema(clz, openapi);
-		Json.prettyPrint(openapi);
-	}
-	
-	@Test
-	public void testModelResolve() {
-		Type type=new TypeToken<RestResponse<Camera>>() {}.getType();
-		OpenAPI openapi = new OpenAPI();
-		Class<?> clz = Camera.class;
-		OpenAPITool opt=new OpenAPITool(openapi, new SourceParserContext().getCommentStore());
-		TypeResolver tr=new TypeResolver(new SourceParserContext().getCommentStore());
-		tr.resolveAsSchema(type, openapi);
-		Json.prettyPrint(openapi);
-	}
+    public static void main(String[] args) {
+        
+        Type type=new TypeToken<List<Camera>>() {}.getType();
+        OpenAPI openapi = new OpenAPI();
+        Class<?> clz = ComplexDTO.class;
+        SourceParserContext pc=new SourceParserContext();
+        pc.initSource(new File("W:\\workspaces\\build-tools\\hn-code-tool\\core-test"));
+        OpenAPITool opt=new OpenAPITool(openapi, pc.getCommentStore());
+        TypeResolver tr=new TypeResolver(pc.getCommentStore());
+        tr.resolveAsSchema(clz, openapi);
+        Json.prettyPrint(openapi);
+    }
+    
+    @Test
+    public void testModelResolve() {
+        Type type=new TypeToken<RestResponse<Camera>>() {}.getType();
+        OpenAPI openapi = new OpenAPI();
+        Class<?> clz = Camera.class;
+        OpenAPITool opt=new OpenAPITool(openapi, new SourceParserContext().getCommentStore());
+        TypeResolver tr=new TypeResolver(new SourceParserContext().getCommentStore());
+        tr.resolveAsSchema(type, openapi);
+        Json.prettyPrint(openapi);
+    }
 
-	 
+     
 }

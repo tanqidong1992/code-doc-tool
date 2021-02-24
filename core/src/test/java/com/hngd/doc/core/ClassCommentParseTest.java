@@ -38,26 +38,26 @@ import com.hngd.parser.javadoc.extension.TimeBlock;
 public class ClassCommentParseTest
 {
  
-	@Test
+    @Test
     public void main() throws URISyntaxException, IOException
     {
         URL url = ClassCommentParseTest.class.getResource("classcomment.txtx");
         Path path = Paths.get(url.toURI());
-    	List<String> commentLines = Files.readAllLines(path);
+        List<String> commentLines = Files.readAllLines(path);
         List<JavaDocCommentElement>  ces= JavaDocCommentParser.parse(commentLines);
         ces.stream()
         .filter(Description.class::isInstance)
         .map(Description.class::cast)
         .findFirst()
         .ifPresent(desc->{
-        	Assert.assertEquals("设备状态", desc.getContent());
+            Assert.assertEquals("设备状态", desc.getContent());
         });
         
         ces.stream()
         .filter(BlockTag.class::isInstance)
         .map(BlockTag.class::cast)
         .forEach(ce ->{
-        	Assert.assertTrue(StringUtils.isNotEmpty(ce.getContent()));
+            Assert.assertTrue(StringUtils.isNotEmpty(ce.getContent()));
             System.out.println(ce+"-->"+ce.getTag() + "-->" + ce.getContent());
         });
     }

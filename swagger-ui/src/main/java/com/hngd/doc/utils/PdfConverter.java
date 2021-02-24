@@ -13,11 +13,11 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 
 public class PdfConverter {
 
-	final private static DataHolder OPTIONS = PegdownOptionsAdapter.flexmarkOptions(
+    final private static DataHolder OPTIONS = PegdownOptionsAdapter.flexmarkOptions(
             Extensions.ALL
     );
  
-	public static String convertToHtml(String markdown,String css){
+    public static String convertToHtml(String markdown,String css){
         MutableDataSet options = new MutableDataSet(OPTIONS);
         Parser parser = Parser.builder(options).build();
         HtmlRenderer renderer = HtmlRenderer.builder(options).build();
@@ -33,8 +33,8 @@ public class PdfConverter {
                 html + "</body></html>\n";
         return html;
     }
-	public static void convertToPdf(String markdown,OutputStream out) {
+    public static void convertToPdf(String markdown,OutputStream out) {
         String html=convertToHtml(markdown,"");
         PdfConverterExtension.exportToPdf(out, html,"", OPTIONS);
-	}
+    }
 }

@@ -12,19 +12,19 @@ import io.swagger.v3.core.util.Json;
 
 public class OpenAPIValidatorTest {
 
-	@Test
-	public void test() {
-		OpenAPIValidator oav=new OpenAPIValidator();
-		String s="{}";
-		ValidationResponse vr=oav.validate(s);
-		//System.out.println(Json.pretty(vr));
-	}
-	
-	@Test
-	public void test1() throws IOException {
-		OpenAPIValidator oav=new OpenAPIValidator();
-		String s=FileUtils.readFileToString(new File("./test-data/api.json"), Constant.DEFAULT_CHARSET);
-		ValidationResponse vr=oav.validate(s);
-		System.out.println(Json.pretty(vr));
-	}
+    @Test
+    public void test() {
+        OpenAPIValidator oav=new OpenAPIValidator();
+        String s="{}";
+        ValidationResponse vr=oav.validate(s);
+        //System.out.println(Json.pretty(vr));
+    }
+    
+    @Test
+    public void test1() throws IOException {
+        OpenAPIValidator oav=new OpenAPIValidator();
+        String s=FileUtils.readFileToString(new File("./test-data/api.json"), Constant.DEFAULT_CHARSET);
+        ValidationResponse vr=oav.validate(s);
+        System.out.println(Json.pretty(vr));
+    }
 }

@@ -15,20 +15,20 @@ import com.hngd.web.controller.RoleController;
 
 public class JSAxiosCodeGeneratorTest {
 
-	public static void main(String[] args) throws IOException {
-		AjaxCodeGenerator acg = new AjaxCodeGenerator();
-		SourceParserContext parserContext = new SourceParserContext();
-		parserContext.initSource(new File(TestConstants.JAVA_SRC_ROOT));
-		parserContext.getCommentStore().print();
-		ClassParser cp = new ClassParser(parserContext.getCommentStore());
-		Optional<ModuleInfo> omi = cp.parseModule(RoleController.class);
-		List<ModuleInfo> modules = new ArrayList<>();
-		if (omi.isPresent()) {
-			modules.add(omi.get());
-		}
-		String serviceUrl = "/";
-		String s = acg.generate(modules, serviceUrl);
-		System.out.println(s);
-	}
-	 
+    public static void main(String[] args) throws IOException {
+        AjaxCodeGenerator acg = new AjaxCodeGenerator();
+        SourceParserContext parserContext = new SourceParserContext();
+        parserContext.initSource(new File(TestConstants.JAVA_SRC_ROOT));
+        parserContext.getCommentStore().print();
+        ClassParser cp = new ClassParser(parserContext.getCommentStore());
+        Optional<ModuleInfo> omi = cp.parseModule(RoleController.class);
+        List<ModuleInfo> modules = new ArrayList<>();
+        if (omi.isPresent()) {
+            modules.add(omi.get());
+        }
+        String serviceUrl = "/";
+        String s = acg.generate(modules, serviceUrl);
+        System.out.println(s);
+    }
+     
 }

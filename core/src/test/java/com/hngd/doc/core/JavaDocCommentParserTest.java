@@ -26,7 +26,7 @@ import com.hngd.parser.javadoc.JavaDocCommentParser;
 public class JavaDocCommentParserTest
 {
 
-	@Test
+    @Test
     public void main() throws URISyntaxException, IOException
     {
         URL url = JavaDocCommentParserTest.class.getResource("comment.txt");
@@ -39,8 +39,8 @@ public class JavaDocCommentParserTest
           .map(Description.class::cast)
           .findFirst()
           .ifPresent(description->{
-        	  Assert.assertTrue("处理告警信息".equals(description.getContent()));
-        	  System.out.println("java doc comment description:"+description.getContent());
+              Assert.assertTrue("处理告警信息".equals(description.getContent()));
+              System.out.println("java doc comment description:"+description.getContent());
           });
         pce.stream()
         .filter(BlockTag.class::isInstance)

@@ -31,84 +31,84 @@ import org.slf4j.LoggerFactory;
  */
 public class DirectoryWatcher {
 
-	/**
-	 * 
-	 * @author tqd
-	 *
-	 */
-	public interface FileListener {
-		/**
-		 * 目录下文件变化
-		 */
-		void onFileChange();
-	}
+    /**
+     * 
+     * @author tqd
+     *
+     */
+    public interface FileListener {
+        /**
+         * 目录下文件变化
+         */
+        void onFileChange();
+    }
 
-	static final Logger logger = LoggerFactory.getLogger(DirectoryWatcher.class);
-	String mFilePath;
-	FileListener mListener;
+    static final Logger logger = LoggerFactory.getLogger(DirectoryWatcher.class);
+    String mFilePath;
+    FileListener mListener;
 
-	public DirectoryWatcher(String mFilePath, FileListener listener) throws IOException {
-		mListener = listener;
-		this.mFilePath = mFilePath;
-		File file = new File(mFilePath);
-		if (file.exists() && file.isDirectory()) {
-			doWatch(file);
-		} else {
-			throw new RuntimeException("the file[" + mFilePath + "] is not exist or is not a directory");
-		}
+    public DirectoryWatcher(String mFilePath, FileListener listener) throws IOException {
+        mListener = listener;
+        this.mFilePath = mFilePath;
+        File file = new File(mFilePath);
+        if (file.exists() && file.isDirectory()) {
+            doWatch(file);
+        } else {
+            throw new RuntimeException("the file[" + mFilePath + "] is not exist or is not a directory");
+        }
 
-	}
-	
-	private void doWatch(File file) throws IOException {
-		Path path = file.toPath();
-		FileSystem fileSystem = FileSystems.getDefault();
-		WatchService watchService = fileSystem.newWatchService();
-		path.register(watchService, 
-				StandardWatchEventKinds.ENTRY_CREATE, 
-				StandardWatchEventKinds.ENTRY_DELETE,
-				StandardWatchEventKinds.ENTRY_MODIFY,
-				StandardWatchEventKinds.OVERFLOW);
-		for (;;) {
-			WatchKey watchKey = null;
-			try {
-				watchKey = watchService.take();
-			} catch (InterruptedException e) {
-				logger.error("", e);
-				break;
-			}
-			if (watchKey == null) {
-				continue;
-			}
-			List<WatchEvent<?>> watchEvents = watchKey.pollEvents();
-			if (watchEvents == null) {
-				continue;
-			}
-			for (WatchEvent<?> event : watchEvents) {
-				Kind<?> kind = event.kind();
-				Object context = event.context();
-				if (StandardWatchEventKinds.ENTRY_CREATE.equals(kind)) {
-					logger.info("create " + context);
-					mListener.onFileChange();
-				} else if (StandardWatchEventKinds.ENTRY_MODIFY.equals(kind)) {
-					logger.info("modify " + context);
-					mListener.onFileChange();
-				} else if (StandardWatchEventKinds.ENTRY_DELETE.equals(kind)) {
-					logger.info("delete " + context);
-					mListener.onFileChange();
-				} else if (StandardWatchEventKinds.OVERFLOW.equals(kind)) {
-					logger.info("OVERFLOW " + context);
-					mListener.onFileChange();
-				} else {
-					logger.info("unknow " + context);
-					mListener.onFileChange();
-				}
-			}
-			boolean valid = watchKey.reset();
-			if (!valid) {
-				logger.error("the watchKey is invalid");
-				break;
-			}
-		}
-	}
+    }
+    
+    private void doWatch(File file) throws IOException {
+        Path path = file.toPath();
+        FileSystem fileSystem = FileSystems.getDefault();
+        WatchService watchService = fileSystem.newWatchService();
+        path.register(watchService, 
+                StandardWatchEventKinds.ENTRY_CREATE, 
+                StandardWatchEventKinds.ENTRY_DELETE,
+                StandardWatchEventKinds.ENTRY_MODIFY,
+                StandardWatchEventKinds.OVERFLOW);
+        for (;;) {
+            WatchKey watchKey = null;
+            try {
+                watchKey = watchService.take();
+            } catch (InterruptedException e) {
+                logger.error("", e);
+                break;
+            }
+            if (watchKey == null) {
+                continue;
+            }
+            List<WatchEvent<?>> watchEvents = watchKey.pollEvents();
+            if (watchEvents == null) {
+                continue;
+            }
+            for (WatchEvent<?> event : watchEvents) {
+                Kind<?> kind = event.kind();
+                Object context = event.context();
+                if (StandardWatchEventKinds.ENTRY_CREATE.equals(kind)) {
+                    logger.info("create " + context);
+                    mListener.onFileChange();
+                } else if (StandardWatchEventKinds.ENTRY_MODIFY.equals(kind)) {
+                    logger.info("modify " + context);
+                    mListener.onFileChange();
+                } else if (StandardWatchEventKinds.ENTRY_DELETE.equals(kind)) {
+                    logger.info("delete " + context);
+                    mListener.onFileChange();
+                } else if (StandardWatchEventKinds.OVERFLOW.equals(kind)) {
+                    logger.info("OVERFLOW " + context);
+                    mListener.onFileChange();
+                } else {
+                    logger.info("unknow " + context);
+                    mListener.onFileChange();
+                }
+            }
+            boolean valid = watchKey.reset();
+            if (!valid) {
+                logger.error("the watchKey is invalid");
+                break;
+            }
+        }
+    }
 
 }

@@ -22,10 +22,10 @@ import io.swagger.v3.oas.models.media.Schema;
  * Unit test for simple App.
  */
 public class AppTest {
-	
+    
    @Test
    public void test() {
-	   File file=new File("./test-data/api.json");
+       File file=new File("./test-data/api.json");
        OpenAPI openAPI=OpenAPIUtils.loadFromFile(file);
       
        //File outputDirectory=new File("test-output");
@@ -34,7 +34,7 @@ public class AppTest {
        Optional<SchemaTable> optionalSt=SchemaResolver.newSchemaResolver(openAPI).schemaToTableCells("", schema);
        MarkupDocBuilder builder = MarkupDocBuilders.documentBuilder(MarkupLanguage.MARKDOWN);
        optionalSt.ifPresent(st->{
-    	   st.render(builder);
+           st.render(builder);
            System.out.println(builder.toString());
        });
         
