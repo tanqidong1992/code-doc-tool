@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.web.bind.annotation.RestController;
 
 public class ProjectClassLoaderTest {
 
@@ -33,5 +34,19 @@ public class ProjectClassLoaderTest {
         Class<?> cls=cl.loadClass("org.apache.logging.log4j.core.net.Priority");
         Assert.assertTrue(cls!=null);
   
+    }
+    
+    @Test
+    public void loadFromDirectoryTest() throws ClassNotFoundException {
+        
+        String s="../core-test/target/classes";
+        ProjectClassLoader cl=new ProjectClassLoader(getClass().getClassLoader());
+        cl.addClasspath(s);
+        cl.listAllClass().forEach(System.out::println); 
+        Class<?> cls=cl.loadClass("com.hngd.web.controller.RoleController");
+        Assert.assertTrue(cls!=null);
+        RestController rest=cls.getAnnotation(RestController.class);
+        Assert.assertTrue(rest!=null);
+
     }
 }

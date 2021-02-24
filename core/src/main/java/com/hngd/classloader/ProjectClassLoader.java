@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
-  *  工程类加载器
+ * 工程类加载器
  * @author tqd
  *
  */
@@ -43,7 +43,7 @@ public class ProjectClassLoader extends ClassLoader{
     private void resolveClasspath(String cp) {
         File file=new File(cp);
         if(!file.exists()) {
-            logger.warn("the classpath:{} is not found",cp);
+            logger.warn("The classpath:{} is not found",cp);
             return ;
         }
         if(file.isDirectory()) {
@@ -51,25 +51,24 @@ public class ProjectClassLoader extends ClassLoader{
         }else if(file.getName().endsWith(".jar")) {
             doAddJar(file);
         }
-        
     }
 
     private void doAddJar(File file) {
-        JarFile jf=null;
+        JarFile jarFile=null;
         try {
-            jf = new JarFile(file);
+            jarFile = new JarFile(file);
         } catch (IOException e) {
-            logger.error("",e);
+            logger.error("Read Jar file failed!",e);
             return;
         }
-        Enumeration<JarEntry> entries=jf.entries();
+        Enumeration<JarEntry> entries=jarFile.entries();
         while(entries.hasMoreElements()) {
             JarEntry entry=entries.nextElement();
             String entryName=entry.getName();
             if(entryName.endsWith(".class")) {
-                doAddClassFileFromJar(jf,entry);
+                doAddClassFileFromJar(jarFile,entry);
             }else if(entryName.endsWith(".jar")) {
-                doAddJarFromJar(jf,entry);
+                doAddJarFromJar(jarFile,entry);
             }
         }
     }
@@ -80,10 +79,10 @@ public class ProjectClassLoader extends ClassLoader{
         } catch (IOException e) {
             logger.error("",e);
         }
-        
     }
     private void doAddNestedJar(InputStream jarStream, JarEntry entry) {
         try{
+            //closed by caller
             JarInputStream jin=new JarInputStream(jarStream);
             JarEntry child=jin.getNextJarEntry();
             while(child!=null) {
@@ -127,10 +126,10 @@ public class ProjectClassLoader extends ClassLoader{
         }
     }
 
-    private void doAddDirectory(File directory) {
+    private void doAddDirectory(File rootDirectory) {
         Collection<File> classFiles=FileUtils
-                .listFiles(directory, new String[] {"class"}, true);
-        classFiles.forEach(cf->this.doAddClassFile(directory,cf));
+                .listFiles(rootDirectory, new String[] {"class"}, true);
+        classFiles.forEach(classFile->this.doAddClassFile(rootDirectory,classFile));
     }
     
     private void doAddClassFile(File classpath,File classFile) {
@@ -153,7 +152,8 @@ public class ProjectClassLoader extends ClassLoader{
     }
     
     public static String relativePathToClassName(String relativePath) {
-        String className=relativePath.substring(0, relativePath.lastIndexOf(".class")).replace("/", ".");
+        String className=relativePath.substring(0, relativePath.lastIndexOf(".class"))
+                .replace("/", ".");
         return className;
     }
     
@@ -218,14 +218,15 @@ public class ProjectClassLoader extends ClassLoader{
         if (i != -1) {
             String pkgname = className.substring(0, i);
             //Check if already defined:
-            Package pkg = getPackage(pkgname);
+            Package pkg = getDefinedPackage(pkgname);
             if (pkg == null) {
                 definePackage(pkgname, null, null, null, null, null, null, null);
             }
         }
     }
     public List<String> listAllClass() {
-        return byteCache.keySet().stream().collect(Collectors.toList());
+        return byteCache.keySet().stream()
+            .collect(Collectors.toList());
     }
     
     public byte[] getClassByteCache(String name) {
