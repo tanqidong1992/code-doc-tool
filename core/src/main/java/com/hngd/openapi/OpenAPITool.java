@@ -508,5 +508,4 @@ public class OpenAPITool {
                 //httpMethod.equalsIgnoreCase(RequestMethod.GET.name());
         return !mustNotHasBody;
     }
-
 }
