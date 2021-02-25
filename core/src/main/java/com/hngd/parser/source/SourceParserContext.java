@@ -76,7 +76,6 @@ public class SourceParserContext {
         ExtensionManager.enableExtension(AuthorBlock.class);
     }
 
-     
     public  void initSource(File sourceBaseDirectory) {
         boolean includeBasedir=true;
         try {
@@ -131,7 +130,6 @@ public class SourceParserContext {
     }
 
     private boolean isInclude(String name) {
-        
         if(includePatterns==null || includePatterns.matches(name, true)) {
             if(excludePatterns==null || !excludePatterns.matches(name, true)) {
                 return true;
@@ -153,10 +151,7 @@ public class SourceParserContext {
         commentStore.save(result);
     }
     public  void parse(File f) {
-         
         CompilationUnit cu=ClassUtils.parseClass(f);
         doParseCompilationUnit(cu);
     }
-     
-    
 }

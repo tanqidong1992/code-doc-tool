@@ -69,7 +69,6 @@ public class HttpParameter {
      * openapi schema
      */
     public Schema<?> schema;
-    
     /**
      * 参数在Java方法中的位置
      */

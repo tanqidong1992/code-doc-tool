@@ -209,7 +209,7 @@ public class OpenAPITool {
                 if(optionalParameterInBody.isPresent()) {
                     HttpParameter pc = optionalParameterInBody.get();
                     Type parameterType = pc.getJavaType();
-                    resolveParameterInfo(pc, parameterType);
+                    HttpParameterUtils.resolveParameterInfo(pc, parameterType);
                     String key = typeResolver.resolveAsSchema(parameterType, openAPI);
                     //如果是简单类型就会返回null
                     if(!StringUtils.isEmpty(key)) {
@@ -242,7 +242,7 @@ public class OpenAPITool {
                 for (int i = 0; i < httpInterface.httpParameters.size(); i++) {
                     HttpParameter pc = httpInterface.httpParameters.get(i);
                     Type parameterType = pc.getJavaType();
-                    resolveParameterInfo(pc, parameterType);
+                    HttpParameterUtils.resolveParameterInfo(pc, parameterType);
                     if (!pc.isPrimitive) {
                         typeResolver.resolveAsSchema(parameterType, openAPI);
                     }
@@ -267,18 +267,11 @@ public class OpenAPITool {
                             contentSchema.addRequiredItem(pc.name);
                         }
                         if (TypeUtils.isMultipartType(parameterType)) {
-                            Schema<?> propertiesItem = new Schema<>();
-                             propertiesItem.format("binary");
-                             propertiesItem.setType("string");
+                             Schema<?> propertiesItem = new FileSchema();
                              Class<?> type=(Class<?>) parameterType;
                              if(type.isArray()) {
                                  ArraySchema as=new ArraySchema();
-                                 //as.setDescription(pc.comment);
-                                 as.setType("array");
-                                 Schema<?> items=new Schema<>();
-                                 items.setType("string");
-                                 items.setFormat("binary");
-                                 as.setItems(items);
+                                 as.setItems(propertiesItem);
                                  propertiesItem=as;
                              }
                              propertiesItem.setDescription(pc.comment);
@@ -312,10 +305,7 @@ public class OpenAPITool {
                              if(type.isArray()) {
                                  ArraySchema as=new ArraySchema();
                                  as.setDescription(pc.comment);
-                                 as.setType("array");
-                                 Schema<?> items=new Schema<>();
-                                 items.setType("string");
-                                 items.setFormat("binary");
+                                 Schema<?> items=new FileSchema();
                                  as.setItems(items);
                                  propertiesItem=as;
                              }
@@ -343,7 +333,7 @@ public class OpenAPITool {
         for (int i = 0; i < httpParameters.size(); i++) {
             HttpParameter pc = httpParameters.get(i);
             Type parameterType = pc.getJavaType();
-            resolveParameterInfo(pc, parameterType);
+            HttpParameterUtils.resolveParameterInfo(pc, parameterType);
             if (!pc.isPrimitive) {
                 typeResolver.resolveAsSchema(parameterType, openAPI);
             }
@@ -411,92 +401,7 @@ public class OpenAPITool {
         op.setResponses(responses);
     }
 
-    public static void resolveParameterInfo(HttpParameter pc, Type parameterType) {
-        Class<?> argumentClass = null;
-        if (parameterType instanceof ParameterizedType) {
-            ParameterizedType ppt = (ParameterizedType) parameterType;
-            Type rawType = ppt.getRawType();
-            Class<?> argumentType = (Class<?>) ppt.getActualTypeArguments()[0];
-            if (rawType instanceof Class<?>) {
-                Class<?> rawClass = (Class<?>) rawType;
-                if (Collection.class.isAssignableFrom(rawClass)) {
-                    pc.isCollection = true;
-                    pc.javaParameterizedType=argumentType;
-                    if(!BeanUtils.isSimpleProperty(argumentType)) {
-                        pc.ref = TypeNameUtils.getTypeName(argumentType);
-                    } 
-                }else if(Map.class.isAssignableFrom(rawClass)) {
-                    //TODO parse map 
-                }
-            }
-            argumentClass=(Class<?>) rawType;
-        } else {
-            argumentClass = (Class<?>) parameterType;
-        }
-        if(pc.isCollection){
-            pc.openapiType="array";
-            ArraySchema as=new ArraySchema();
-            pc.schema=as;
-            ObjectSchema items=new ObjectSchema();
-            as.setItems(items);
-            if(pc.ref!=null) {
-                if (pc.ref.contains("<")) {
-                    pc.ref = pc.ref.replace("<", "").replace(">", "").replace(",", "");
-                }
-                items.set$ref("#/components/schemas/" + pc.ref);
-            }else {
-                SimpleTypeFormat tf=SimpleTypeFormat.convert(pc.javaParameterizedType);
-                items.setType(tf.getType());
-                items.setFormat(tf.getFormat());
-            }
-            
-        }else if (String.class.isAssignableFrom(argumentClass)) {
-            pc.openapiFormat = "string";
-            pc.openapiType = "string";
-            pc.isPrimitive = true;
-            pc.schema = new StringSchema();
-        } else if (Number.class.isAssignableFrom(argumentClass)) {
-            pc.openapiType = "number";
-            pc.openapiFormat = argumentClass.getSimpleName().toLowerCase();
-            pc.isPrimitive = true;
-            pc.schema = new NumberSchema();
-        } else if (Boolean.class.isAssignableFrom(argumentClass)) {
-            pc.openapiType = "boolean";
-            pc.openapiFormat = argumentClass.getSimpleName().toLowerCase();
-            pc.isPrimitive = true;
-            pc.schema = new BooleanSchema();
-        } else if (MultipartFile.class.isAssignableFrom(argumentClass)) {
-            //TODO fix it
-            pc.openapiFormat = "File";
-            pc.openapiType = argumentClass.getSimpleName();
-            pc.isPrimitive = true;
-            pc.schema = new FileSchema();
-        } else if (Date.class.isAssignableFrom(argumentClass) 
-                || LocalDate.class.isAssignableFrom(argumentClass)
-                || LocalDateTime.class.isAssignableFrom(argumentClass)) {
-            pc.openapiType = "date";
-            pc.isPrimitive = true;
-            DateSchema ds = new DateSchema();
-            ds.setFormat(pc.openapiFormat);
-            pc.schema = ds;
-        }else if(Map.class.isAssignableFrom(argumentClass) || MultiValueMap.class.isAssignableFrom(argumentClass)) {
-            pc.openapiType = "object";
-            pc.openapiFormat = argumentClass.getSimpleName();
-            pc.isPrimitive = false;
-            pc.schema = new ObjectSchema();
-        }else{
-            pc.openapiType = "object";
-            pc.openapiFormat = argumentClass.getSimpleName();
-            pc.isPrimitive = false;
-            pc.schema = new ObjectSchema();
-            pc.ref = TypeNameUtils.getTypeName(parameterType);
-            if (pc.ref.contains("<")) {
-                pc.ref = pc.ref.replace("<", "").replace(">", "").replace(",", "");;
-            }
-            pc.schema.set$ref("#/components/schemas/" + pc.ref);
-        }
-
-    }
+    
  
     public static boolean hasRequestBody(String httpMethod) {
         //CONNECT

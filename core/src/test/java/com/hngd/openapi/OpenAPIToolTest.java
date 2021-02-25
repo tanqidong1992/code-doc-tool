@@ -3,9 +3,16 @@ package com.hngd.openapi;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.reflect.TypeToken;
 import com.hngd.common.util.GsonUtils;
@@ -19,10 +26,12 @@ public class OpenAPIToolTest {
         HttpParameter pc=new HttpParameter();
         Type type=new TypeToken<List<String>>() {
         }.getType();
-        OpenAPITool.resolveParameterInfo(pc, type);
+        HttpParameterUtils.resolveParameterInfo(pc, type);
         System.out.println(pc);
         Assert.assertTrue(pc.isCollection);
         Assert.assertTrue(pc.getSchema().getType().equals("array"));
         Assert.assertTrue(((ArraySchema)pc.schema).getItems().getType().equals("string"));
     }
+    
+   
 }
