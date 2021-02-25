@@ -218,9 +218,7 @@ public class ClassParser {
                                 httpParams.get(0).setName(pi.getName());
                             }
                         }
-                    }
-                    
-                    
+                    }  
                 }
                 httpInterface.httpParameters.addAll(httpParams);
                 //根据第一个参数判定的原因是,一个MultipartFile类型的java参数只能解析出一个http请求参数,
@@ -229,7 +227,9 @@ public class ClassParser {
                 if (!httpInterface.isMultipart) {
                     httpInterface.isMultipart = TypeUtils.isMultipartType(firstHttpParameter.getJavaType());
                 }
-                httpInterface.hasRequestBody=!firstHttpParameter.getLocation().isParameter();
+                if(!httpInterface.hasRequestBody) {
+                    httpInterface.hasRequestBody=!firstHttpParameter.getLocation().isParameter();
+                }
             }else {
                 String parameterKey=ClassUtils.getParameterIdentifier(parameter);
                 log.warn("the http parameters extracted from {} is empty",parameterKey);
