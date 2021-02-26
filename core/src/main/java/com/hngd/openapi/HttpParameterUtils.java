@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,12 +17,9 @@ import com.hngd.utils.TypeNameUtils;
 
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.FileSchema;
-import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
-import io.swagger.v3.oas.models.media.StringSchema;
 
 public class HttpParameterUtils {
  
@@ -39,7 +35,7 @@ public class HttpParameterUtils {
                     pc.isCollection = true;
                     pc.javaParameterizedType=argumentType;
                     if(!BeanUtils.isSimpleProperty(argumentType)) {
-                        pc.ref = TypeNameUtils.getTypeName(argumentType);
+                        pc.ref = TypeNameUtils.buildTypeName(argumentType);
                     } 
                 }else if(Map.class.isAssignableFrom(rawClass)) {
                     //TODO parse map 
@@ -64,23 +60,14 @@ public class HttpParameterUtils {
                 items.setFormat(tf.getFormat());
             }
             
-        }else if (String.class.isAssignableFrom(argumentClass)) {
-            pc.openapiFormat = null;
-            pc.openapiType = "string";
-            pc.isPrimitive = true;
-            pc.schema = new StringSchema();
-        } else if (Number.class.isAssignableFrom(argumentClass)) {
+        } else if (Number.class.isAssignableFrom(argumentClass) ||
+                String.class.isAssignableFrom(argumentClass) ||
+                Boolean.class.isAssignableFrom(argumentClass) ) {
             PrimitiveType pt=PrimitiveType.fromType(argumentClass);
             pc.schema = pt.createProperty();
             pc.openapiType = pc.schema.getType();
             pc.openapiFormat = pc.schema.getFormat();
             pc.isPrimitive = true;
-           
-        } else if (Boolean.class.isAssignableFrom(argumentClass)) {
-            pc.openapiType = "boolean";
-            pc.openapiFormat = argumentClass.getSimpleName().toLowerCase();
-            pc.isPrimitive = true;
-            pc.schema = new BooleanSchema();
         } else if (MultipartFile.class.isAssignableFrom(argumentClass)) {
             //TODO fix it
             pc.openapiFormat = "File";
@@ -105,7 +92,7 @@ public class HttpParameterUtils {
             pc.openapiFormat = argumentClass.getSimpleName();
             pc.isPrimitive = false;
             pc.schema = new ObjectSchema();
-            pc.ref = TypeNameUtils.getTypeName(parameterType);
+            pc.ref = TypeNameUtils.buildTypeName(parameterType);
             resolveRef(pc);
             pc.schema.set$ref("#/components/schemas/" + pc.ref);
         }

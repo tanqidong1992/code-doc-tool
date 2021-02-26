@@ -20,7 +20,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hngd.constant.HttpParameterLocation;

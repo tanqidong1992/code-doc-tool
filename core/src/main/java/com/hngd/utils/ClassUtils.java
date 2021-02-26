@@ -12,6 +12,7 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,20 +25,22 @@ import com.github.javaparser.ParseResult;
 import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.hngd.exception.SourceParseException;
-import com.hngd.openapi.OpenAPITool;
 
 public class ClassUtils {
 
     private static final Logger logger=LoggerFactory.getLogger(ClassUtils.class);
     public static List<Class<?>> getClassBelowPacakge(String packageName) {
+        if(packageName==null) {
+            return Collections.emptyList();
+        }
         String packagePath = packageName.replaceAll("\\.", "/");
         Enumeration<URL> dirs = null;
         try {
-            dirs = OpenAPITool.class.getClassLoader().getResources(packagePath);
+            dirs = ClassUtils.class.getClassLoader().getResources(packagePath);
         } catch (IOException e) {
             logger.error("", e);
+            return Collections.emptyList();
         }
-
         List<Class<?>> clazzs = new LinkedList<>();
         while (dirs.hasMoreElements()) {
             URL url = dirs.nextElement();

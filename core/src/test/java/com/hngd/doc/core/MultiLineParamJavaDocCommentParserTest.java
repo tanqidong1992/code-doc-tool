@@ -30,7 +30,7 @@ public class MultiLineParamJavaDocCommentParserTest
     @Test
     public void main() throws URISyntaxException, IOException
     {
-        URL url = MultiLineParamJavaDocCommentParserTest.class.getResource("multili-block.txt");
+        URL url = MultiLineParamJavaDocCommentParserTest.class.getResource("multi-line-block.txt");
         Path path = Paths.get(url.toURI());
         List<String> lines = Files.readAllLines(path);
         List<JavaDocCommentElement> pce = new ArrayList<>();

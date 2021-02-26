@@ -11,6 +11,7 @@ import com.hngd.utils.TypeUtils;
 
 public class TypeUtilsTest {
 
+    @SuppressWarnings("serial")
     @Test
     public void testMultipart() {
         

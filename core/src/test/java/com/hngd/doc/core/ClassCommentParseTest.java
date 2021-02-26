@@ -11,7 +11,6 @@
 
 package com.hngd.doc.core;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -28,9 +27,6 @@ import com.hngd.parser.javadoc.BlockTag;
 import com.hngd.parser.javadoc.Description;
 import com.hngd.parser.javadoc.JavaDocCommentElement;
 import com.hngd.parser.javadoc.JavaDocCommentParser;
-import com.hngd.parser.javadoc.extension.ExtensionManager;
-import com.hngd.parser.javadoc.extension.MobileBlock;
-import com.hngd.parser.javadoc.extension.TimeBlock;
 
 /**
  * @author
@@ -41,7 +37,7 @@ public class ClassCommentParseTest
     @Test
     public void main() throws URISyntaxException, IOException
     {
-        URL url = ClassCommentParseTest.class.getResource("classcomment.txtx");
+        URL url = ClassCommentParseTest.class.getResource("class-comment.txt");
         Path path = Paths.get(url.toURI());
         List<String> commentLines = Files.readAllLines(path);
         List<JavaDocCommentElement>  ces= JavaDocCommentParser.parse(commentLines);

@@ -50,6 +50,11 @@ public class ParameterTypeTest {
         
         Assert.assertTrue(f64.getSchema().getType().equals("number"));
         Assert.assertTrue(f64.getSchema().getFormat().equals("double"));
+        
+        Parameter flag=OpenAPIUtils.parameterOfOperation(op, "flag").get();
+        
+        Assert.assertTrue(flag.getSchema().getType().equals("boolean"));
+        Assert.assertTrue(flag.getSchema().getFormat()==null);
     }
     
     @RestController
@@ -57,6 +62,7 @@ public class ParameterTypeTest {
         
         @GetMapping("/a")
         public String echo(
+                @RequestParam("flag")Boolean flag,
                 @RequestParam("name")String name,
                 @RequestParam("i32")Integer i32,
                 @RequestParam("i64")Long i64,

@@ -9,7 +9,7 @@ public final class TypeNameUtils {
         
     }
 
-    public static String getTypeName(Type type) {
+    public static String buildTypeName(Type type) {
         
         if(type==null){
             return null;
@@ -19,12 +19,12 @@ public final class TypeNameUtils {
             Type rawType=pt.getRawType();
             Type ownerType=pt.getOwnerType();
             Type[] subTypes=pt.getActualTypeArguments();
-            String rawTypeName=getTypeName(rawType);
-            String ownerTypeName=getTypeName(ownerType);
+            String rawTypeName=buildTypeName(rawType);
+            String ownerTypeName=buildTypeName(ownerType);
             StringBuilder sb=new StringBuilder();
             if(subTypes!=null){
                 for(Type subType :subTypes){
-                    String subTypeName=getTypeName(subType);
+                    String subTypeName=buildTypeName(subType);
                     sb.append(subTypeName);
                     sb.append(",");
                 }
@@ -51,10 +51,7 @@ public final class TypeNameUtils {
             Class<?> cls=(Class<?>)type;
             return cls.getSimpleName();
         }else{
-            
             return null;
         }
-        
-        
     }
 }
