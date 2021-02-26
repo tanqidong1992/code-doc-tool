@@ -37,8 +37,18 @@ public class SwaggerFileLoader {
     private static final Logger logger=LoggerFactory.getLogger(SwaggerFileLoader.class);
     public static File root=new File("./data").getAbsoluteFile();
     public static File history=new File("./history").getAbsoluteFile();
- 
+    
+    static {
+        if(!root.exists()) {
+            root.mkdirs();
+        }
+        if(!history.exists()) {
+            history.mkdirs();
+        }
+    }
+    
     public static Map<String,DocumentInfo> documents=new ConcurrentHashMap<>();
+    
     public static String buildKey(DocumentInfo di) {
         return di.getTitle();
     }
