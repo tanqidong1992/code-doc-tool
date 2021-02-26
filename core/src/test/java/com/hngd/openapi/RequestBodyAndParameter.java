@@ -26,7 +26,7 @@ import lombok.Data;
 public class RequestBodyAndParameter {
 
     @Test
-    public void test() {
+    public void testRequestBodyWithParameters() {
         OpenAPI openAPI=new OpenAPI();
         CommentStore commentStore=new CommentStore();
         OpenAPITool t=new OpenAPITool(openAPI, commentStore);

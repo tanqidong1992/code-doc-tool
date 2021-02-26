@@ -18,7 +18,7 @@ public class TypeUtilsTest {
         Boolean result=TypeUtils.isMultipartType(parameterType);
         Assert.assertTrue(result);
         parameterType=new TypeToken<MultipartFile>() {}.getType();
-         result=TypeUtils.isMultipartType(parameterType);
-         Assert.assertTrue(result);
+        result=TypeUtils.isMultipartType(parameterType);
+        Assert.assertTrue(result);
     }
 }

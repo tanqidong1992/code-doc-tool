@@ -19,7 +19,7 @@ import com.hngd.openapi.entity.HttpInterface;
 import com.hngd.openapi.entity.ModuleInfo;
 import com.hngd.parser.source.SourceParser;
  
-
+@Deprecated
 public class ModuleParserTest {
 
     
