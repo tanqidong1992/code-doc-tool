@@ -21,7 +21,9 @@ import org.slf4j.LoggerFactory;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
+import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
+import com.hngd.exception.SourceParseException;
 import com.hngd.openapi.OpenAPITool;
 
 public class ClassUtils {
@@ -88,7 +90,14 @@ public class ClassUtils {
         } catch (IOException e) {
             logger.error("", e);
         }
-        return cu.getResult().get();
+        if(cu.isSuccessful()) {
+            return cu.getResult().get();
+        }else {
+            List<Problem> problems=cu.getProblems();
+            Problem problem=problems.get(0);
+            throw new SourceParseException(problem.getMessage(),
+                    problem.getCause().orElse(null));
+        }  
     }
 
     public static String getMethodIdentifier(Method method) {

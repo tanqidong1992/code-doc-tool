@@ -117,15 +117,16 @@ public class SourceParserContext {
         }
         filteredJarEntries.stream()
             .parallel()
+            .filter(je->je.getName().endsWith(".java"))
             .forEach(je->doParseJarEntry(jarFile,je));
     }
     private void doParseJarEntry(JarFile jarFile, JarEntry je) {
         try(InputStream in=jarFile.getInputStream(je)){
             CompilationUnit cu= ClassUtils.parseClass(in);
             doParseCompilationUnit(cu);
-        }catch(IOException e) {
+        }catch(Exception e) {
             String msg="Parse file:"+jarFile.getName()+"!"+je.getName()+" failed!";
-             throw new SourceParseException(msg, e);
+            throw new SourceParseException(msg, e);
         }
     }
 
