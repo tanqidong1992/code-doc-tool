@@ -11,13 +11,8 @@
 
 package com.hngd.openapi;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.hngd.constant.HttpParameterLocation;
 import com.hngd.openapi.entity.HttpInterface;
@@ -44,7 +37,6 @@ import com.hngd.parser.source.CommentStore;
 import com.hngd.parser.spring.ClassParser;
 import com.hngd.utils.ClassUtils;
 import com.hngd.utils.ReflectionExtUtils;
-import com.hngd.utils.TypeNameUtils;
 import com.hngd.utils.TypeUtils;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -53,16 +45,12 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.PathItem.HttpMethod;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.Content;
-import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.FileSchema;
 import io.swagger.v3.oas.models.media.MediaType;
-import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
@@ -124,9 +112,6 @@ public class OpenAPITool {
         openAPI.getTags().add(moduleTag);
         for (HttpInterface interfaceInfo : moduleInfo.getInterfaceInfos()) {
             PathItem pathItem = buildPathItem(moduleInfo, interfaceInfo, moduleTag);
-            if (pathItem == null) {
-                continue;
-            }
             String pathKey = moduleInfo.getUrl() + interfaceInfo.getUrl();//+interfaceInfo.httpMethod;
             addPathItemToPaths(pathKey,pathItem);
         }
@@ -142,7 +127,7 @@ public class OpenAPITool {
         }
     }
     
-    public static Parameter createParameter(HttpParameter parameter) {
+    public static Optional<Parameter> createParameter(HttpParameter parameter) {
         if (parameter.getLocation().isParameter()) {
             Parameter param =(Parameter) ReflectionExtUtils
                     .newInstance(parameter.location.getParamClass());
@@ -158,14 +143,13 @@ public class OpenAPITool {
                 param.setContent(content);
             }
             param.setDescription(parameter.comment);
-            return param;
+            return Optional.of(param);
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 
     private PathItem buildPathItem(ModuleInfo moduleInfo, HttpInterface httpInterface, Tag moduleTag) {
- 
         PathItem path = new PathItem();
         Operation op = new Operation();
         List<String> operationTags = new ArrayList<>();
@@ -177,12 +161,19 @@ public class OpenAPITool {
         }
         op.setDeprecated(moduleInfo.getDeprecated() || httpInterface.deprecated);
         op.setTags(operationTags);
-        String operationId=buildOperationId(moduleInfo,httpInterface);
+        String operationId=OpenAPIUtils.buildOperationId(moduleInfo,httpInterface);
         op.setOperationId(operationId);
         op.setDescription(httpInterface.getDescription());
         op.setSummary(httpInterface.getSummary());
+        List<Parameter> parameters = buildPatameters(httpInterface, op);
+        op.setParameters(parameters);
+        resolveResponse(op, httpInterface);
+        OpenAPIUtils.addOpToPath(op,path,httpInterface.httpMethod);
+        return path;
+    }
+    
+    private List<Parameter> buildPatameters(HttpInterface httpInterface, Operation op) {
         List<Parameter> parameters = new ArrayList<>();
- 
         if (!hasRequestBody(httpInterface.httpMethod)) {
             //对于不在requestbody中的参数
             parameters=processHttpParameter(httpInterface.httpParameters);
@@ -282,8 +273,10 @@ public class OpenAPITool {
                         }
                         
                     } else if (pc.location.equals(HttpParameterLocation.path)) {
-                        Parameter pathParameter = createParameter(pc);
-                        parameters.add(pathParameter);
+                        Optional<Parameter> pathParameter = createParameter(pc);
+                        if(pathParameter.isPresent()) {
+                            parameters.add(pathParameter.get());
+                        }
                     }else if (pc.location.equals(HttpParameterLocation.body)) {
                         Schema<?> propertiesItem = new Schema<>();
                         propertiesItem.setDescription(pc.comment);
@@ -320,12 +313,7 @@ public class OpenAPITool {
             requestBody.setContent(content);
             op.setRequestBody(requestBody);
         }
-        op.setParameters(parameters);
-        resolveResponse(op, httpInterface);
-        String httpMethod=httpInterface.httpMethod;
-        addOpToPath(op,path,httpMethod);
-        return path;
-
+        return parameters;
     }
 
     private List<Parameter> processHttpParameter(List<HttpParameter> httpParameters) {
@@ -337,38 +325,13 @@ public class OpenAPITool {
             if (!pc.isPrimitive) {
                 typeResolver.resolveAsSchema(parameterType, openAPI);
             }
-            Parameter param = createParameter(pc);
-            parameters.add(param);
+            createParameter(pc).ifPresent(param->{
+                parameters.add(param);
+            });
         }
         return parameters;
     }
-
-    private String buildOperationId(ModuleInfo moduleInfo, HttpInterface interfaceInfo) {
-        String s=moduleInfo.getCanonicalClassName()+"#"+interfaceInfo.getJavaMethodName();
-        return s.replaceAll("\\.", "#");
-    }
-
-    public static void addOpToPath(Operation op, PathItem path, String httpMethod) {
-        // GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
-        if (httpMethod.equalsIgnoreCase(RequestMethod.GET.name())) {
-            path.setGet(op);
-        } else if (httpMethod.equalsIgnoreCase(RequestMethod.HEAD.name())) {
-            path.setHead(op);
-        } else if (httpMethod.equalsIgnoreCase(RequestMethod.POST.name())) {
-            path.setPost(op);
-        } else if (httpMethod.equalsIgnoreCase(RequestMethod.PUT.name())) {
-            path.setPut(op);
-        } else if (httpMethod.equalsIgnoreCase(RequestMethod.PATCH.name())) {
-            path.setPatch(op);
-        } else if (httpMethod.equalsIgnoreCase(RequestMethod.DELETE.name())) {
-            path.setDelete(op);
-        } else if (httpMethod.equalsIgnoreCase(RequestMethod.OPTIONS.name())) {
-            path.setOptions(op);
-        } else if (httpMethod.equalsIgnoreCase(RequestMethod.TRACE.name())) {
-            path.setTrace(op);
-        }
-    }
-
+ 
     private void resolveResponse(Operation op, HttpInterface interfaceInfo) {
         ApiResponses responses = new ApiResponses();
         ApiResponse resp = new ApiResponse();

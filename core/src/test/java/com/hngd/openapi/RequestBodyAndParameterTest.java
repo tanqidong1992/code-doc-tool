@@ -23,7 +23,7 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import lombok.Data;
 
-public class RequestBodyAndParameter {
+public class RequestBodyAndParameterTest {
 
     @Test
     public void testRequestBodyWithParameters() {
@@ -80,6 +80,35 @@ public class RequestBodyAndParameter {
 
         @PostMapping("/b")
         public String echo(@RequestBody User user) {
+            return "";
+        }
+    }
+    
+    
+    @Test
+    public void testSimpleRequestBody() {
+        OpenAPI openAPI=new OpenAPI();
+        CommentStore commentStore=new CommentStore();
+        OpenAPITool t=new OpenAPITool(openAPI, commentStore);
+        t.parse(Arrays.asList(C.class));
+        Json.prettyPrint(openAPI);
+        
+        Operation op=OpenAPIUtils.getOperation(openAPI, "/c", "post").get();
+        Assert.assertTrue(op.getParameters().isEmpty());
+        io.swagger.v3.oas.models.parameters.RequestBody body=op.getRequestBody();
+        MediaType mt=body.getContent().get(Constants.DEFAULT_PRODUCE_TYPE);
+        Schema<?> s=mt.getSchema();
+        
+        Assert.assertTrue(s.getType().equals("string"));
+    
+    }
+
+
+    @RestController
+    public static class C{
+
+        @PostMapping("/c")
+        public String echo(@RequestBody String user) {
             return "";
         }
     }
