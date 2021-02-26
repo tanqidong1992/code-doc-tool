@@ -32,7 +32,7 @@ public class MultipartParameterTest {
         Operation op=OpenAPIUtils.getOperation(openAPI, "/a", "post").get();
         MediaType mt=op.getRequestBody().getContent().get("multipart/form-data");
         Assert.assertTrue(mt!=null);
-        Schema file=(Schema) mt.getSchema().getProperties().get("file");
+        Schema<?> file=(Schema<?>) mt.getSchema().getProperties().get("file");
         Assert.assertTrue(file.getType().equals("string"));
         Assert.assertTrue(file.getFormat().equals("binary"));
          

@@ -8,21 +8,11 @@ import java.util.Arrays;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.PrettyPrinter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javaparser.ParseException;
-import com.google.gson.reflect.TypeToken;
-import com.hngd.common.web.result.RestResponse;
 import com.hngd.constant.Constants;
 import com.hngd.openapi.OpenAPITool;
 import com.hngd.parser.source.SourceParserContext;
-import com.hngd.web.controller.AttachmentController;
-import com.hngd.web.controller.AutoInjectParameterTestController;
-import com.hngd.web.controller.RoleController;
 import com.hngd.web.controller.TempController;
-import com.hngd.web.controller.TeacherController;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;

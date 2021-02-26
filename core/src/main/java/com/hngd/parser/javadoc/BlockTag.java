@@ -75,7 +75,7 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
             int index = line.indexOf(" ");
             if(index>0) {
                 paramName=line.substring(0, index);
-                return line.substring(index, line.length());
+                return line.substring(index, line.length()).trim();
             }else {
                 paramName=line;
                 return "";

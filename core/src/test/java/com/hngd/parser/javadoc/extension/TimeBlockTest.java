@@ -1,15 +1,13 @@
-package com.hngd.doc.core.plugin;
+package com.hngd.parser.javadoc.extension;
 
 import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.hngd.parser.javadoc.extension.TimeBlock;
+public class TimeBlockTest {
 
-
-public class TimeElementTest {
-
+    @SuppressWarnings("deprecation")
     @Test
     public void test() {
         String timeStr = "2017年3月15日 下午16:30:06";

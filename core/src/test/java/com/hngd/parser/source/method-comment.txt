@@ -3,5 +3,5 @@
 	 * @summary summary for deleteTeacher
 	 * @description description for deleteTeacher
 	 * @param id 待删除老师的ID
-	 * @return
+	 * @return return comment
 	 */

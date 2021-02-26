@@ -41,7 +41,7 @@ public class DateFormatTest {
                 .equals("yyyy-MM-dd"));
         
         Parameter birthday=OpenAPIUtils.parameterOfOperation(op, "birthday").get();
-        Assert.assertTrue(date.getSchema().getFormat()
+        Assert.assertTrue(birthday.getSchema().getFormat()
                 .equals("yyyy-MM-dd"));
          
     }
