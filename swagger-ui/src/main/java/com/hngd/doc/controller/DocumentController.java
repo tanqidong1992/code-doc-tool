@@ -11,7 +11,7 @@ import java.util.Optional;
 import com.hngd.common.exception.HNException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.assertj.core.util.Files;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.common.io.Files;
 import com.hngd.common.error.ErrorCode;
 import com.hngd.common.result.Result;
 import com.hngd.common.web.RestResponses;
@@ -174,7 +175,7 @@ public class DocumentController {
     public ResponseEntity<byte[]> exportDocumentAsMarkdown(@PathVariable("filename") String filename)
             throws IOException {
         File file = new File(openAPIManager.getData(), filename);
-        File outputDirectory = Files.newTemporaryFolder();
+        File outputDirectory = Files.createTempDir();
         File markdownFile = OpenAPIToMarkdown.openAPIToMarkdown(file, null, outputDirectory);
         byte[] data = FileUtils.readFileToByteArray(markdownFile);
         String fileName = markdownFile.getName();
@@ -230,7 +231,7 @@ public class DocumentController {
         TagFilter tagFilter = new TagFilter(tag);
         SpecFilter filter = new SpecFilter();
         OpenAPI filteredOpenAPI = filter.filter(openAPI.get(), tagFilter, null, null, null);
-        File outputDirectory = Files.newTemporaryFolder();
+        File outputDirectory = Files.createTempDir();
         File markdownFile = OpenAPIToMarkdown
                 .openAPIToMarkdown(filteredOpenAPI, null, outputDirectory);
         byte[] data = FileUtils.readFileToByteArray(markdownFile);

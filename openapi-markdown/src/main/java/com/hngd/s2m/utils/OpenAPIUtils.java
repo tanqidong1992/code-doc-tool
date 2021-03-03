@@ -2,8 +2,9 @@ package com.hngd.s2m.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ public class OpenAPIUtils {
     public static OpenAPI loadFromFile(File file) {
         String s=null;
         try {
-            s = FileUtils.readFileToString(file, "utf-8");
+            s=Files.readString(file.toPath(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             logger.error("",e);
         }

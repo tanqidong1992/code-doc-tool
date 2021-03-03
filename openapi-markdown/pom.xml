@@ -20,26 +20,31 @@
 			<groupId>io.github.robwin</groupId>
 			<artifactId>markup-document-builder</artifactId>
 			<version>1.1.2</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.vavr</groupId>
 			<artifactId>vavr</artifactId>
 			<version>0.10.2</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>ch.netzwerg</groupId>
 			<artifactId>paleo-core</artifactId>
 			<version>0.13.2</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.asciidoctor</groupId>
 			<artifactId>asciidoctorj</artifactId>
 			<version>1.6.2</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-configuration2</artifactId>
 			<version>2.6</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>
@@ -55,6 +60,7 @@
 			<groupId>io.github.robwin</groupId>
 			<artifactId>assertj-diff</artifactId>
 			<version>0.1.1</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -64,24 +70,15 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.github.java-json-tools</groupId>
-			<artifactId>json-schema-validator</artifactId>
-			<version>2.2.11</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.fge</groupId>
-			<artifactId>json-patch</artifactId>
-			<version>1.9</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.5.10</version>
-		</dependency>
-		<dependency>
 			<groupId>io.github.swagger2markup</groupId>
 			<artifactId>markup-document-builder</artifactId>
 			<version>1.1.1</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.15</version>
+		</dependency>
+
 	</dependencies>
 </project>
