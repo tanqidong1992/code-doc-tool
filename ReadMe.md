@@ -49,7 +49,7 @@
                     <!-- controller类所在包名称 -->
                     <packageFilter>com.hngd.web.controller</packageFilter>
                     <!-- 配置生成openapi文档的基础信息配置文件所在位置 
-                    <confFilePath>${project.basedir}/build-config/swagger-config.json</confFilePath> -->
+                    <confFilePath>${project.basedir}/build-config/openapi.json</confFilePath> -->
                     <!--Swagger UI 服务地址,配置后接口文档将自动上传到该服务 -->
                     <swaggerUIServer>localhost:8080</swaggerUIServer>
                     <!-- 源码分析排除路径 -->
@@ -65,3 +65,4 @@
    ```shell
    mvn compile codegen:openapi
    ```
+3. 在目录${basedir}/target/openapi下可以看到输出的openapi json文档

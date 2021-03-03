@@ -24,10 +24,10 @@ public class PdfConverterTest {
         String html=PdfConverter.convertToHtml(markdown,css);
         File testHtml=new File("test-out/test.html");
         FileUtils.writeAllText(html,testHtml,StandardCharsets.UTF_8);
-        Desktop.getDesktop().open(testHtml);
+        //Desktop.getDesktop().open(testHtml);
         File pdfFile=new File("test-out/test.pdf");
         OutputStream out=new FileOutputStream(pdfFile);
         PdfConverter.convertToPdf(markdown, out);
-        Desktop.getDesktop().open(pdfFile);
+        //Desktop.getDesktop().open(pdfFile);
     }
 }
