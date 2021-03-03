@@ -37,9 +37,6 @@ import com.hngd.test.dto.RoleForm;
 @Validated
 public class RoleController {
 
-     
- 
-    //必要的注释,尽可能详细
     /**
      * 新增或者修改系统角色,如果role参数的id字段为空,则新增一个系统角色,否则根据Id修改已有系统角色
      * @param role 待新增或修改的系统角色信息,
@@ -49,7 +46,6 @@ public class RoleController {
      * @time 2018年7月13日 下午3:25:48
      */
     @PostMapping("/save")
-    //如果是复杂的对象记得加@Valid注解
     public RestResponse<String> saveRole(@Valid @RequestBody RoleForm role) {
          return null;
     }
@@ -153,6 +149,4 @@ public class RoleController {
              @RequestParam("permissionIds") List<String> permissionIds) {
         return null;
     }
-    
-    
 }

@@ -7,10 +7,10 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
-import com.hngd.openapi.ProjectAnalysis;
-import com.hngd.openapi.config.ServerConfig;
 import com.hngd.openapi.validator.OpenAPIValidator;
 import com.hngd.openapi.validator.ValidationResponse;
+import com.hngd.tool.ProjectAnalysis;
+import com.hngd.tool.config.ServerConfig;
 
 import io.swagger.util.Json;
 

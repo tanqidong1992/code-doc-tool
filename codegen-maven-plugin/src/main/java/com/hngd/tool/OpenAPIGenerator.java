@@ -15,11 +15,10 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import com.hngd.openapi.ProjectAnalysis;
-import com.hngd.openapi.config.ServerConfig;
 import com.hngd.openapi.validator.OpenAPIValidator;
 import com.hngd.openapi.validator.ValidationResponse;
 import com.hngd.s2m.OpenAPIToMarkdown;
+import com.hngd.tool.config.ServerConfig;
 import com.hngd.tool.utils.ProjectUtils;
 
 import io.swagger.util.Json;

@@ -1,8 +1,8 @@
-package com.hngd.openapi;
+package com.hngd.tool;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,27 +11,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hngd.classloader.ProjectClassLoader;
-import com.hngd.openapi.config.ServerConfig;
+import com.hngd.openapi.OpenAPITool;
 import com.hngd.parser.source.SourceParserContext;
+import com.hngd.tool.config.ServerConfig;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.security.OAuthFlow;
-import io.swagger.v3.oas.models.security.OAuthFlows;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
-import io.swagger.v3.oas.models.security.SecurityScheme.In;
-import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 
 public class ProjectAnalysis {
 
     private static final Logger logger=LoggerFactory.getLogger(ProjectAnalysis.class);
-    public static String process(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,File jarFilePath,String packageFilter,ServerConfig config) {
-        ProjectClassLoader loader=new ProjectClassLoader(ProjectAnalysis.class.getClassLoader());
-        loader.addClasspath(jarFilePath.getAbsolutePath());
-        return doProcess(sourceRoots,sourceJarFiles,includes,excludes, loader, packageFilter, config);
-    }
-    
+
     private static String doProcess(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,ProjectClassLoader loader,String packageFilter,ServerConfig config) {
         SourceParserContext pc=new SourceParserContext(includes,excludes);
         for(File sourceRoot:sourceRoots) {
@@ -55,10 +45,14 @@ public class ProjectAnalysis {
             .filter(clazz->!clazz.isInterface())
             .collect(Collectors.toList());
         openAPITool.parse(clazzes);
-        String s = Json.pretty(openApi);
-        return s;
+        return Json.pretty(openApi);
     }
-    
+
+    @Deprecated
+    public static String process(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,File jarFilePath,String packageFilter,ServerConfig config) {
+        return process(sourceRoots,sourceJarFiles,includes,excludes, Arrays.asList(jarFilePath),packageFilter,config);
+    }
+
     public static String process(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,List<File> classFilePaths,String packageFilter,ServerConfig config) {
         ProjectClassLoader loader=new ProjectClassLoader(ProjectAnalysis.class.getClassLoader());
         for(File classFilePath:classFilePaths) {

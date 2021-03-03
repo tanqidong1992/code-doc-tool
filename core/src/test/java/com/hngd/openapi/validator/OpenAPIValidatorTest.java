@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
-import com.hngd.openapi.constant.Constant;
+import com.hngd.constant.Constants;
 
 import io.swagger.v3.core.util.Json;
 
@@ -23,7 +23,7 @@ public class OpenAPIValidatorTest {
     @Test
     public void test1() throws IOException {
         OpenAPIValidator oav=new OpenAPIValidator();
-        String s=FileUtils.readFileToString(new File("./test-data/api.json"), Constant.DEFAULT_CHARSET);
+        String s=FileUtils.readFileToString(new File("./test-data/api.json"), Constants.DEFAULT_CHARSET);
         ValidationResponse vr=oav.validate(s);
         System.out.println(Json.pretty(vr));
     }

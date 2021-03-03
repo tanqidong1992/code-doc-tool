@@ -1,4 +1,4 @@
-package com.hngd.doc.core;
+package com.hngd.parser.source;
 
 import java.io.File;
 import java.util.List;
@@ -9,8 +9,6 @@ import org.junit.Test;
 
 import com.hngd.openapi.OpenAPITool;
 import com.hngd.openapi.TypeResolver;
-import com.hngd.parser.source.CommentStore;
-import com.hngd.parser.source.SourceParserContext;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -23,7 +21,7 @@ public class ResolveTypeTests {
     public void main() {
         OpenAPI openAPI=new OpenAPI();
         SourceParserContext parserContext=new SourceParserContext();
-        parserContext.parse(new File("./src/test/java/com/hngd/doc/core/ResolveTypeTests.java"));
+        parserContext.parse(new File("./src/test/java/com/hngd/parser/source/ResolveTypeTests.java"));
         CommentStore cs=parserContext.getCommentStore();
         cs.print();
         OpenAPITool opt=new OpenAPITool(openAPI, cs);

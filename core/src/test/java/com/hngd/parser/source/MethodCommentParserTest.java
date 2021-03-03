@@ -1,5 +1,6 @@
 package com.hngd.parser.source;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -24,8 +25,7 @@ public class MethodCommentParserTest {
 
     @Test
     public void test() throws URISyntaxException, IOException {
-        URL url = MethodCommentParserTest.class.getResource("method-comment.txt");
-        Path path = Paths.get(url.toURI());
+        Path path = new File("./test-data/method-comment.txt").toPath();
         List<String> commentLines = Files.readAllLines(path);
             
         List<JavaDocCommentElement> jdc=JavaDocCommentParser.parse(commentLines);

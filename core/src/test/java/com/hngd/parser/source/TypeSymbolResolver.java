@@ -1,4 +1,4 @@
-package com.hngd.doc.core;
+package com.hngd.parser.source;
 
 import java.io.File;
 import java.io.FileNotFoundException;

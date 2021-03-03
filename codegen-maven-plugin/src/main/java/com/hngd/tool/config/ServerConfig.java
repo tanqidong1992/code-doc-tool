@@ -8,7 +8,7 @@
  * @备注：
  * @版本:
  */
-package com.hngd.openapi.config;
+package com.hngd.tool.config;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hngd.openapi.constant.Constant;
+import com.hngd.constant.Constants;
 
 import io.swagger.util.Json;
 import io.swagger.v3.oas.models.info.Info;
@@ -37,7 +37,6 @@ public class ServerConfig {
     public Info info;
     private static final Logger logger=LoggerFactory.getLogger(ServerConfig.class);
     public static Optional<ServerConfig> load(String filePath) {
-         
         File file = new File(filePath);
         Path path = file.toPath();
         byte[] data = null;
@@ -49,7 +48,7 @@ public class ServerConfig {
         if (data == null) {
             return Optional.empty();
         }
-        String src = new String(data, Charset.forName(Constant.DEFAULT_CHARSET_NAME));
+        String src = new String(data, Charset.forName(Constants.DEFAULT_CHARSET_NAME));
         ServerConfig config=null;
         try {
             config= Json.mapper().readValue(src, ServerConfig.class);
@@ -58,5 +57,4 @@ public class ServerConfig {
         }
         return Optional.ofNullable(config);
     }
-
 }

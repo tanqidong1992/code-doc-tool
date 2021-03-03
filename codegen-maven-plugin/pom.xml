@@ -22,17 +22,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.hngd.tool</groupId>
-			<artifactId>openapi-doc</artifactId>
-			<version>${code.tool.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.github.fge</groupId>
-					<artifactId>jackson-coreutils</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.hngd.tool</groupId>
 			<artifactId>codegen</artifactId>
 			<version>${code.tool.version}</version>
 		</dependency>

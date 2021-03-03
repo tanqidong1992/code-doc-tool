@@ -58,7 +58,6 @@
 	</build>
 	<modules>
 		<module>core</module>
-		<module>openapi-doc</module>
 		<module>codegen</module>
 		<module>openapi-markdown</module>
 		<module>swagger-ui</module>

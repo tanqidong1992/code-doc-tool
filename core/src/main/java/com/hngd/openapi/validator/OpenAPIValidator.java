@@ -7,7 +7,6 @@ import java.io.InputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -18,7 +17,7 @@ import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.hngd.openapi.constant.Constant;
+import com.hngd.constant.Constants;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
@@ -33,7 +32,7 @@ public class OpenAPIValidator {
     public static final String SCHEMA_V2 = "schema-v2.json";
     public static final String SCHEMA_V3 = "schema-v3.json";
     public ValidationResponse validate(File file) throws IOException  {
-        String s=FileUtils.readFileToString(file, Constant.DEFAULT_CHARSET);
+        String s=FileUtils.readFileToString(file, Constants.DEFAULT_CHARSET);
         return debugByContent(s);
          
     }
@@ -46,9 +45,9 @@ public class OpenAPIValidator {
 
         try (InputStream in = getClass().getResourceAsStream(SCHEMA_PATH + "/" + SCHEMA_V3)) {
             // TODO MAX JSON FILE SIZE
-            byte[] buffer = new byte[Constant.MAX_OPENAPI_FILE_SIZE];
+            byte[] buffer = new byte[Constants.MAX_OPENAPI_FILE_SIZE];
             int size = IOUtils.read(in, buffer);
-            String schemaStr = new String(buffer, 0, size, Constant.DEFAULT_CHARSET);
+            String schemaStr = new String(buffer, 0, size, Constants.DEFAULT_CHARSET);
             JsonSchema schemaV3 = resolveJsonSchema(schemaStr, true);
             return schemaV3;
         } catch (Exception e) {

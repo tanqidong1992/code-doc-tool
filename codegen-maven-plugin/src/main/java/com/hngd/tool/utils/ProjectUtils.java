@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hngd.classloader.ProjectClassLoader;
-import com.hngd.openapi.ProjectAnalysis;
+import com.hngd.tool.ProjectAnalysis;
 import com.hngd.tool.RestJavaAPIGenerator;
 
 public class ProjectUtils {

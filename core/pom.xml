@@ -18,6 +18,7 @@
 		<swagger.version>2.1.7</swagger.version>
 		<javaparser.version>3.19.0</javaparser.version>
 		<jackson.version>2.10.0</jackson.version>
+		<swagger-inflector-version>2.0.4</swagger-inflector-version>
 	</properties>
 
 	<dependencies>
@@ -132,18 +133,28 @@
 			<artifactId>file-management</artifactId>
 			<version>3.0.0</version>
 		</dependency>
+		
+		<dependency>
+            <groupId>com.github.fge</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>2.2.6</version>
+        </dependency>
+ 
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-inflector</artifactId>
+            <version>${swagger-inflector-version}</version>
+        </dependency>
 	</dependencies>
 
 	<build>
 		<resources>
 			<resource>
-			    <directory>${basedir}/src/test/</directory>
-				<includes>
-					<include>
-                      **/*.txt
-	                </include>
-				</includes>
-			</resource>
+                <directory>${basedir}/src/main/java</directory>
+                <includes>
+                    <include>**/*.json</include>
+                </includes>
+            </resource>
 		</resources>
 	</build>
 </project>
