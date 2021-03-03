@@ -11,4 +11,8 @@ public class DocumentProperties {
      * 系统名称
      */
     private String systemName;
+    /**
+     * 工作目录
+     */
+    private String workDirectory=".";
 }

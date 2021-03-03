@@ -3,7 +3,9 @@ package com.hngd.doc;
 import java.io.File;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hngd.doc.core.OpenAPIFileManager;
 import com.hngd.doc.swagger.TagFilter;
+import com.hngd.doc.utils.OpenAPIFileUtils;
 
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Json;
@@ -16,7 +18,7 @@ public class FilterTest {
         
         File file=new File("./data/test.json");
         String tag="设备检验检测记录管理";
-        OpenAPI openAPI=SwaggerFileLoader.loadFromFile(file);
+        OpenAPI openAPI=OpenAPIFileUtils.loadFromFile(file).get();
         TagFilter tagFilter=new TagFilter(tag);
         SpecFilter filter=new SpecFilter();
         OpenAPI openAPI1=filter.filter(openAPI, tagFilter, null, null, null);

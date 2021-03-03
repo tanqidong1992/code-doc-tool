@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.parboiled.common.FileUtils;
 
 import com.google.common.io.Files;
-import com.hngd.doc.SwaggerFileLoader;
+import com.hngd.doc.core.OpenAPIFileManager;
 import com.hngd.s2m.OpenAPIToMarkdown;
 
 import io.swagger.v3.oas.models.OpenAPI;

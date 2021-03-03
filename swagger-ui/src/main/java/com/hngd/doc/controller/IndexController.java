@@ -1,7 +1,7 @@
 package com.hngd.doc.controller;
 
-import com.hngd.doc.SwaggerFileLoader;
 import com.hngd.doc.config.DocumentProperties;
+import com.hngd.doc.core.OpenAPIFileManager;
 import com.hngd.doc.entity.DocumentInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/")
 public class IndexController {
-    
+    @Autowired
+    private OpenAPIFileManager openAPIManager;
     @Autowired
     private DocumentProperties docProperties;
     /**
@@ -25,7 +26,7 @@ public class IndexController {
      */
     @GetMapping("")
     public String index(Model model) {
-        List<DocumentInfo> documents= SwaggerFileLoader.loadAll();
+        List<DocumentInfo> documents= openAPIManager.getAllDocuments();
         injectCommentAttributes(model);
         model.addAttribute("documents",documents);
         return "index.html";
@@ -37,7 +38,7 @@ public class IndexController {
      */
     @GetMapping("/setting")
     public String setting(Model model) {
-        List<DocumentInfo> documents= SwaggerFileLoader.loadAll();
+        List<DocumentInfo> documents= openAPIManager.getAllDocuments();
         injectCommentAttributes(model);
         model.addAttribute("documents",documents);
         return "setting.html";

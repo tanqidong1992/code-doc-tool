@@ -2,8 +2,6 @@ package com.hngd.doc.entity;
 
 import java.util.List;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.tags.Tag;
 import lombok.Data;
 /**
  * 接口文档信息
@@ -32,6 +30,6 @@ public class DocumentInfo {
     /**
      * 子模块
      */
-    private List<MyTag> tags;
+    private List<DocumentTag> tags;
 
 }
