@@ -40,7 +40,7 @@ public class OpenAPITest {
         SourceParserContext pc=new SourceParserContext();
         pc.initSource(f);
         OpenAPI openapi = new OpenAPI();
-        ServerConfig config=ServerConfig.load("test-data/openapi-info.json");
+        ServerConfig config=ServerConfig.load("test-data/openapi-info.json").get();
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         config.info.setDescription("最后更新时间:"+sdf.format(new Date()));
         openapi.setInfo(config.info);

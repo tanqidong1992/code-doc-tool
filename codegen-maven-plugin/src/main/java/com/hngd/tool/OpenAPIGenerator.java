@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Optional;
 
 import okhttp3.*;
 import org.apache.commons.io.FileUtils;
@@ -110,9 +110,13 @@ public class OpenAPIGenerator extends BaseMojo{
             //throw new MojoFailureException("找不到OpenAPI基础信息配置文件:"+confFilePath);
             config=new ServerConfig();
         }else {
-            config=ServerConfig.load(confFilePath);
+            Optional<ServerConfig> loadResult=ServerConfig.load(confFilePath);
+            if(loadResult.isPresent()) {
+                config=loadResult.get();
+            }else {
+                config=new ServerConfig();
+            }
         }
-        
         autoFillConfig(config);
         
         List<File> classPaths=ProjectUtils.resolveAllClassPath(mavenProject,session,projectDependenciesResolver,projects);

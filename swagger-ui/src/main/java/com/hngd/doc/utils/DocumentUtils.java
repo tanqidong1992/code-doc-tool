@@ -1,6 +1,7 @@
 package com.hngd.doc.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -8,10 +9,16 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.hngd.common.error.ErrorCode;
+import com.hngd.common.result.Result;
+import com.hngd.common.result.Results;
+import com.hngd.doc.constants.Constants;
 import com.hngd.doc.entity.DocumentInfo;
 import com.hngd.doc.entity.DocumentTag;
 
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.tags.Tag;
@@ -53,6 +60,25 @@ public class DocumentUtils {
 
     public static String buildKey(DocumentInfo di) {
         return di.getTitle();
+    }
+    
+    public static Result<Void> isValidFile(MultipartFile file) throws IOException {
+        byte[] data=file.getBytes();
+        String s=new String(data,Constants.DEFAULT_CHARSET_NAME);
+        OpenAPI openAPI=null;
+        try {
+            openAPI=Json.mapper().readValue(s, OpenAPI.class);
+        }catch( Exception e) {
+            logger.error("",e);
+        }
+        if(openAPI==null) {
+            return Results.newFailResult(ErrorCode.INVALID_PARAMETER, "文档不符合《OpenAPI Specification 3.0.2》规范");
+        }
+        Info info=openAPI.getInfo();
+        if(info==null) {
+            return Results.newFailResult(ErrorCode.INVALID_PARAMETER, "文档的基本信息缺失");
+        }
+        return Results.newSuccessResult(null);
     }
 
 }

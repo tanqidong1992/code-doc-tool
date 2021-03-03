@@ -21,7 +21,7 @@ public class OpenAPITest {
         String projectBaseDir="W:\\workspaces\\build-tools\\hnvmns-java-sample";
         String confFilePath=
                 projectBaseDir+"\\build-config\\swagger-config.json";
-        ServerConfig config=ServerConfig.load(confFilePath);
+        ServerConfig config=ServerConfig.load(confFilePath).get();
         String jarFilePath=
                 projectBaseDir+"\\target\\hnvmns-java-sample-0.0.1.jar";
         

@@ -11,7 +11,6 @@
 
 package com.hngd.codegen;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -25,18 +24,11 @@ import org.springframework.util.CollectionUtils;
 
 import com.hngd.codegen.exception.CodeGenerateException;
 import com.hngd.constant.Constants;
-import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.openapi.entity.ModuleInfo;
-import com.hngd.parser.entity.MethodInfo;
-import com.hngd.parser.source.SourceParserContext;
-import com.hngd.parser.spring.ClassParser;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author tqd
  */
-@Slf4j
 public class AjaxCodeGenerator extends CodeTemplate{
     public AjaxCodeGenerator() {
         super("axios", "js-api-ajax.btl", TemplateEngines.BEETL);
@@ -61,10 +53,7 @@ public class AjaxCodeGenerator extends CodeTemplate{
         GroupTemplate gt = new GroupTemplate(resourceLoader, cfg);
         Template t = gt.getTemplate(templateFilePath);
         t.binding(map);
-        String str = t.render();
-        return str;
-        
+        return t.render();
     }
  
-     
 }

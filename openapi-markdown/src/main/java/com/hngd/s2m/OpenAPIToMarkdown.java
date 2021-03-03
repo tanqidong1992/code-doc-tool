@@ -1,18 +1,13 @@
 package com.hngd.s2m;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import io.swagger.v3.oas.models.servers.Server;
@@ -26,18 +21,15 @@ import com.hngd.s2m.entity.OperationWrapper;
 import com.hngd.s2m.exception.GenerateException;
 import com.hngd.s2m.utils.OpenAPIUtils;
 import com.hngd.s2m.utils.SchemaResolver;
-import com.hngd.s2m.utils.SchemaUtils;
 
 import io.github.swagger2markup.markup.builder.MarkupDocBuilder;
 import io.github.swagger2markup.markup.builder.MarkupDocBuilders;
 import io.github.swagger2markup.markup.builder.MarkupLanguage;
-import io.github.swagger2markup.markup.builder.MarkupTableColumn;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;

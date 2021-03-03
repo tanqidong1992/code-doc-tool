@@ -16,13 +16,15 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hngd.openapi.constant.Constant;
 
+import io.swagger.util.Json;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
 
@@ -34,8 +36,8 @@ public class ServerConfig {
     public List<Server> servers;
     public Info info;
     private static final Logger logger=LoggerFactory.getLogger(ServerConfig.class);
-    public static ServerConfig load(String filePath) {
-        Gson gson = new Gson();
+    public static Optional<ServerConfig> load(String filePath) {
+         
         File file = new File(filePath);
         Path path = file.toPath();
         byte[] data = null;
@@ -45,10 +47,16 @@ public class ServerConfig {
             logger.error("",e);
         }
         if (data == null) {
-            return null;
+            return Optional.empty();
         }
         String src = new String(data, Charset.forName(Constant.DEFAULT_CHARSET_NAME));
-        return gson.fromJson(src, ServerConfig.class);
+        ServerConfig config=null;
+        try {
+            config= Json.mapper().readValue(src, ServerConfig.class);
+        } catch (JsonProcessingException e) {
+            logger.error("",e);
+        }
+        return Optional.ofNullable(config);
     }
 
 }

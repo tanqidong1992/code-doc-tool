@@ -35,6 +35,7 @@ import com.hngd.doc.constants.Constants;
 import com.hngd.doc.core.OpenAPIFileManager;
 import com.hngd.doc.entity.DocumentInfo;
 import com.hngd.doc.swagger.TagFilter;
+import com.hngd.doc.utils.DocumentUtils;
 import com.hngd.doc.utils.FileDigest;
 import com.hngd.doc.utils.OpenAPIFileUtils;
 import com.hngd.s2m.OpenAPIToMarkdown;
@@ -75,7 +76,7 @@ public class DocumentController {
         if (!"json".equals(ext)) {
             return RestResponses.newFailResponse(ErrorCode.INVALID_PARAMETER, "必须是Json文件");
         }
-        Result<Void> r = OpenAPIFileManager.isValidFile(file);
+        Result<Void> r = DocumentUtils.isValidFile(file);
         if (!r.isSuccess()) {
             return RestResponses.newResponseFromResult(r);
         }
