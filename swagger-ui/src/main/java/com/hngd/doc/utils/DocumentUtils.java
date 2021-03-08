@@ -30,7 +30,7 @@ public class DocumentUtils {
     
     public static Optional<DocumentInfo> readDocument(File file) {
         Optional<OpenAPI> openAPI=OpenAPIFileUtils.loadFromFile(file);
-        if(openAPI.isEmpty()) {
+        if(!openAPI.isPresent()) {
             return Optional.empty();
         }
         DocumentInfo di=new DocumentInfo();

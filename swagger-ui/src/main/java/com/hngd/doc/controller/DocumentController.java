@@ -205,7 +205,7 @@ public class DocumentController {
             return "";
         } else {
             Optional<OpenAPI> openAPI = OpenAPIFileUtils.loadFromFile(file);
-            if(openAPI.isEmpty()) {
+            if(!openAPI.isPresent()) {
                 return "";
             }
             TagFilter tagFilter = new TagFilter(tag);

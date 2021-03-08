@@ -24,8 +24,8 @@ public class TypeSymbolResolver {
 
     public static void main(String[] args) throws FileNotFoundException {
         
-        String filePath="../core-test/src/main/java/com/hngd/web/controller/RoleController.java";
-        File srcDir=new File("../core-test/src/main/java");
+        String filePath="./src/test/java/com/hngd/web/controller/RoleController.java";
+        File srcDir=new File("./src/test/java");
          
          
         CompilationUnit    cu = ClassUtils.parseClass(new File(filePath));

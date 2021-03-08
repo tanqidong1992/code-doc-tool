@@ -1,14 +1,10 @@
 package com.hngd.web.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
-import com.hngd.common.web.auth.User;
-import com.hngd.common.web.context.HttpRequestContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,14 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hngd.common.error.ErrorCode;
-import com.hngd.common.result.Result;
-import com.hngd.common.web.RestResponses;
-import com.hngd.common.web.page.PagedData;
 import com.hngd.common.web.result.RestResponse;
 import com.hngd.model.Role;
 import com.hngd.test.dto.RoleForm;
-
 
 /**
  * 系统角色管理

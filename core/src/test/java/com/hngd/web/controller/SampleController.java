@@ -1,7 +1,6 @@
 package com.hngd.web.controller;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,6 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -25,10 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hngd.common.error.ErrorCode;
-import com.hngd.common.util.GsonUtils;
 import com.hngd.common.web.RestResponses;
-import com.hngd.common.web.parameter.GsonEditor;
 import com.hngd.common.web.result.RestResponse;
 import com.hngd.test.dto.ComplexDTO;
 import com.hngd.test.dto.FormWithDate;
@@ -125,12 +120,7 @@ public class SampleController {
     public RestResponse<FormWithJson> bodyWithJson(@RequestBody FormWithJson json) {
         return RestResponses.newSuccessResponse(json);
     }
-    @InitBinder
-    public void onDataBinderInit(WebDataBinder binder) {
-        //formWithJson
-        //used to convert json str to OtherInfo object
-        binder.registerCustomEditor(OtherInfo.class, new GsonEditor(OtherInfo.class));
-    }
+    
     /**
      * form json 测试
      * @param json json

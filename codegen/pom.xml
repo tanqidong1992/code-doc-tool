@@ -66,12 +66,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.hngd.tool</groupId>
-            <artifactId>core-test</artifactId>
-            <version>${code.tool.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.10</version>

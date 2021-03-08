@@ -218,7 +218,7 @@ public class ProjectClassLoader extends ClassLoader{
         if (i != -1) {
             String pkgname = className.substring(0, i);
             //Check if already defined:
-            Package pkg = getDefinedPackage(pkgname);
+            Package pkg = getPackage(pkgname);
             if (pkg == null) {
                 definePackage(pkgname, null, null, null, null, null, null, null);
             }
