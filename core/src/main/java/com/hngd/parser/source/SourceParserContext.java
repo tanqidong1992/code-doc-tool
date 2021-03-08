@@ -15,15 +15,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.shared.utils.io.FileUtils;
-import org.codehaus.plexus.util.MatchPatterns;
 import org.springframework.util.CollectionUtils;
 
 import com.github.javaparser.ast.CompilationUnit;
@@ -46,24 +44,12 @@ import lombok.extern.slf4j.Slf4j;
 public class SourceParserContext {
     
     private CommentStore commentStore;
-    private String excludes;
-    private String includes;
-    MatchPatterns includePatterns;
-    MatchPatterns excludePatterns;
+    private FileFilter fileFilter;
     public CommentStore getCommentStore() {
         return this.commentStore;
     }
     public SourceParserContext(String includes,String excludes) {
-        this.excludes = excludes;
-        this.includes = includes;
-        if(StringUtils.isNotBlank(excludes)) {
-            String []excludeArray=StringUtils.split(excludes, ",");
-            excludePatterns=MatchPatterns.from(excludeArray);
-        }
-        if(StringUtils.isNotBlank(includes)) {
-            String []includeArray=StringUtils.split(includes, ",");
-            includePatterns=MatchPatterns.from(includeArray);
-        }
+        fileFilter=new FileFilter(includes, excludes);
         commentStore=new CommentStore();
     }
     
@@ -77,16 +63,11 @@ public class SourceParserContext {
     }
 
     public  void initSource(File sourceBaseDirectory) {
-        boolean includeBasedir=true;
-        try {
-            List<File> files=FileUtils.getFiles(sourceBaseDirectory, includes, excludes, includeBasedir);
-            files.stream()
-              .parallel()
-              .filter(JavaFileUtils::isJavaSourceFile)
-              .forEach(this::parse);
-        } catch (IOException e) {
-            throw new SourceParseException("读取源代码列表失败", e);
-        }
+        Collection<File> files=fileFilter.filterFiles(sourceBaseDirectory);
+        files.stream()
+            .parallel()
+            .filter(JavaFileUtils::isJavaSourceFile)
+            .forEach(this::parse);
     }
     public  void initSourceInJar(List<File> sourceJarFiles) {
          if(CollectionUtils.isEmpty(sourceJarFiles)) {
@@ -111,7 +92,7 @@ public class SourceParserContext {
         while(entries.hasMoreElements()) {
             JarEntry entry=entries.nextElement();
             String name=entry.getName();
-            if(isInclude(name)) {
+            if(fileFilter.isInclude(name)) {
                 filteredJarEntries.add(entry);
             }
         }
@@ -129,15 +110,7 @@ public class SourceParserContext {
             throw new SourceParseException(msg, e);
         }
     }
-
-    private boolean isInclude(String name) {
-        if(includePatterns==null || includePatterns.matches(name, true)) {
-            if(excludePatterns==null || !excludePatterns.matches(name, true)) {
-                return true;
-            }
-        }
-        return false;
-    }
+ 
     private void doParseCompilationUnit(CompilationUnit cu) {
         Optional<PackageDeclaration>  optionalPackageDeclaration=cu.getPackageDeclaration();
         String packageName="";

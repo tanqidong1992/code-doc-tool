@@ -2,19 +2,8 @@ package com.hngd.base;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
-import org.apache.maven.shared.utils.io.DirectoryScanner;
-import org.apache.maven.shared.utils.io.FileUtils;
-import org.codehaus.plexus.util.MatchPatterns;
-
-import com.github.javaparser.ast.CompilationUnit;
 import com.hngd.parser.source.SourceParserContext;
-import com.hngd.utils.ClassUtils;
 
 public class SwaggerSourceParseTest {
 
