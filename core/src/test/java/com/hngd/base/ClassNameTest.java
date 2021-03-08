@@ -1,4 +1,4 @@
-package com.hngd.doc.core;
+package com.hngd.base;
 
 public class ClassNameTest {
 

@@ -56,7 +56,14 @@ public class TypeResolver {
      */
     @SuppressWarnings({ "rawtypes" })
     public String resolveAsSchema(Type type, OpenAPI openapi) {
-        Map<String, Schema> schemas = ModelConverters.getInstance().read(type);
+        //Caused by: java.lang.IllegalArgumentException: Conflicting setter definitions for property "date": org.springframework.http.HttpHeaders#setDate(1 params) vs org.springframework.http.HttpHeaders#setDate(1 params)
+        Map<String, Schema> schemas =null;
+        try {
+            schemas=ModelConverters.getInstance().read(type);
+        }catch(Exception e) {
+            logger.error("",e);
+            return null;
+        }
         if (type instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) type;
             Type[] subTypes = pt.getActualTypeArguments();

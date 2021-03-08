@@ -1,4 +1,4 @@
-package com.hngd.doc.core.web;
+package com.hngd.utils;
 
 import java.lang.reflect.Type;
 
