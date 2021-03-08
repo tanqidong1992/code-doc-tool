@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 import okhttp3.*;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.model.Developer;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -30,7 +32,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
+
 
 @Mojo(name="openapi",defaultPhase = LifecyclePhase.COMPILE)
 public class OpenAPIGenerator extends BaseMojo{

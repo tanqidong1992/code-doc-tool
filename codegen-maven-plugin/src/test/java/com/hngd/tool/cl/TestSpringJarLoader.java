@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.hngd.classloader.ProjectClassLoader;
 import com.hngd.parser.source.SourceParserContext;
@@ -49,7 +48,7 @@ public class TestSpringJarLoader {
             ClassParser cp=new ClassParser(parserContext.getCommentStore());
             
             cp.parseModule(clazz);
-            RestController a=clazz.getAnnotation(RestController.class);
+            //RestController a=clazz.getAnnotation(RestController.class);
              
             /**
             for(Method method:clazz.getDeclaredMethods()) {
