@@ -64,7 +64,6 @@
 	</build>
 	<modules>
 		<module>core</module>
-		<module>codegen</module>
 		<module>openapi-markdown</module>
 		<module>swagger-ui</module>
 		<module>codegen-maven-plugin</module>

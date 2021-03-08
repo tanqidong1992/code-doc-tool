@@ -23,10 +23,10 @@ import org.slf4j.LoggerFactory;
 
 import com.hngd.classloader.ProjectClassLoader;
 import com.hngd.tool.ProjectAnalysis;
-import com.hngd.tool.RestJavaAPIGenerator;
 
 public class ProjectUtils {
 
+    static final   Logger logger=LoggerFactory.getLogger(ProjectUtils.class);
     
     public static String generateJarFileName(MavenProject mavenProject) {
         String artifactId = mavenProject.getArtifactId();
@@ -40,7 +40,7 @@ public class ProjectUtils {
         String jarFilePath = buildOutputPath + File.separator + jarFileName;
         return jarFilePath;
     }
-    static final   Logger logger=LoggerFactory.getLogger(RestJavaAPIGenerator.class);
+    
     public static List<Class<?>> loadControllerClass(List<File> classpaths,String packageFilter){
         ProjectClassLoader loader=new ProjectClassLoader(ProjectUtils.class.getClassLoader());
         for(File classpath:classpaths) {

@@ -22,9 +22,8 @@
     <dependencies>
         <dependency>
             <groupId>com.hngd.tool</groupId>
-            <artifactId>codegen</artifactId>
+            <artifactId>core</artifactId>
             <version>${code.tool.version}</version>
-   
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
