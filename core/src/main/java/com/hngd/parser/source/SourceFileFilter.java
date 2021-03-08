@@ -9,13 +9,13 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.MatchPatterns;
 
-public class FileFilter {
+public class SourceFileFilter {
 
     MatchPatterns includePatterns;
     MatchPatterns excludePatterns;
     private String excludes;
     private String includes;
-    public FileFilter(String includes,String excludes) {
+    public SourceFileFilter(String includes,String excludes) {
         this.excludes = excludes;
         this.includes = includes;
         if(StringUtils.isNotBlank(excludes)) {

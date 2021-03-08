@@ -6,7 +6,7 @@ import java.util.Collection;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class FileFilterTest {
+public class SourceFileFilterTest {
 
     @Test
     public void test() {
@@ -14,7 +14,7 @@ public class FileFilterTest {
         String includes="**/*.java";
         boolean includeBasedir=true;
         String excludes="**/test/**/*.java,**/com/hngd/dao/*.*";
-        FileFilter ff=new FileFilter(includes, excludes);
+        SourceFileFilter ff=new SourceFileFilter(includes, excludes);
         Collection<File> filteredFiles=ff.filterFiles(directory);
         filteredFiles.forEach(f->{
             Assert.assertTrue(f.getName().endsWith(".java"));
@@ -28,7 +28,7 @@ public class FileFilterTest {
         String includes="**/*.java";
         boolean includeBasedir=true;
         String excludes="**/test/**/*.java,**/com/hngd/dao/*.*";
-        FileFilter ff=new FileFilter(includes, excludes);
+        SourceFileFilter ff=new SourceFileFilter(includes, excludes);
         boolean ret=ff.isInclude("/work/workspaces/build-tools/hn-code-tool/core/./src/test/java/com/hngd/test/dto/Person.java");
         Assert.assertTrue(!ret);
     }

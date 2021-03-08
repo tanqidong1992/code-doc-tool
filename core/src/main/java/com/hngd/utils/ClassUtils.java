@@ -24,6 +24,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
+import com.hngd.constant.Constants;
 import com.hngd.exception.SourceParseException;
 
 public class ClassUtils {
@@ -74,24 +75,21 @@ public class ClassUtils {
         return cls.getAnnotation(Deprecated.class)!=null;
     }
     public static CompilationUnit parseClass(File f) {
-        
-        ParseResult<CompilationUnit> cu=null;
         try(InputStream in=new FileInputStream(f)) {
-            Reader reader=new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            cu = new JavaParser().parse(reader);//.parse(reader, true);
+            return parseClass(in);
         } catch (IOException e) {
-            logger.error("", e);
+            throw new SourceParseException("解析类源码文件:"+f.getAbsolutePath()+"失败",e);
         }
-        return cu.getResult().get();
     }
     
     public static CompilationUnit parseClass(InputStream in) {
         ParseResult<CompilationUnit> cu=null;
         try {
-            Reader reader=new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            Reader reader=new BufferedReader(
+                    new InputStreamReader(in, Constants.DEFAULT_CHARSET_NAME));
             cu = new JavaParser().parse(reader);//.parse(reader, true);
         } catch (IOException e) {
-            logger.error("", e);
+            throw new SourceParseException("不支持"+Constants.DEFAULT_CHARSET_NAME+"编码",e);
         }
         if(cu.isSuccessful()) {
             return cu.getResult().get();

@@ -44,12 +44,12 @@ import lombok.extern.slf4j.Slf4j;
 public class SourceParserContext {
     
     private CommentStore commentStore;
-    private FileFilter fileFilter;
+    private SourceFileFilter sourceFileFilter;
     public CommentStore getCommentStore() {
         return this.commentStore;
     }
     public SourceParserContext(String includes,String excludes) {
-        fileFilter=new FileFilter(includes, excludes);
+        sourceFileFilter=new SourceFileFilter(includes, excludes);
         commentStore=new CommentStore();
     }
     
@@ -63,9 +63,8 @@ public class SourceParserContext {
     }
 
     public  void initSource(File sourceBaseDirectory) {
-        Collection<File> files=fileFilter.filterFiles(sourceBaseDirectory);
-        files.stream()
-            .parallel()
+        Collection<File> files=sourceFileFilter.filterFiles(sourceBaseDirectory);
+        files.parallelStream()
             .filter(JavaFileUtils::isJavaSourceFile)
             .forEach(this::parse);
     }
@@ -73,33 +72,30 @@ public class SourceParserContext {
          if(CollectionUtils.isEmpty(sourceJarFiles)) {
              return ;
          }
-         sourceJarFiles.stream()
-             .parallel()
-             .forEach(jarFile -> {
-                try {
-                    doParseSourceJarFile(jarFile);
-                } catch (IOException e) {
-                    String msg="Read file:"+jarFile.getName()+" failed!";
-                    log.warn(msg,e);
-                    //throw new SourceParseException(msg, e);
-                }
-            });
+         sourceJarFiles.parallelStream()
+             .forEach(this::doParseSourceJarFile);
     }
-    public void doParseSourceJarFile(File file) throws IOException{
-        JarFile jarFile= new JarFile(file);
+    public void doParseSourceJarFile(File file) {
+        JarFile jarFile=null;
+        try {
+            jarFile = new JarFile(file);
+        } catch (IOException e) {
+            log.warn("Read jar file:"+file.getAbsolutePath()+" failed!",e);
+            return ;
+        }
         Enumeration<JarEntry> entries=jarFile.entries();
         List<JarEntry> filteredJarEntries=new ArrayList<>();
         while(entries.hasMoreElements()) {
             JarEntry entry=entries.nextElement();
             String name=entry.getName();
-            if(fileFilter.isInclude(name)) {
+            if(sourceFileFilter.isInclude(name)) {
                 filteredJarEntries.add(entry);
             }
         }
-        filteredJarEntries.stream()
-            .parallel()
-            .filter(je->je.getName().endsWith(".java"))
-            .forEach(je->doParseJarEntry(jarFile,je));
+        JarFile immutableJarFile=jarFile;
+        filteredJarEntries.parallelStream()
+            .filter(entry->entry.getName().endsWith(".java"))
+            .forEach(entry->doParseJarEntry(immutableJarFile,entry));
     }
     private void doParseJarEntry(JarFile jarFile, JarEntry je) {
         try(InputStream in=jarFile.getInputStream(je)){
