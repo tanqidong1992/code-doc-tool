@@ -11,7 +11,6 @@
 
 package com.hngd.utils;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import org.springframework.web.multipart.MultipartFile;

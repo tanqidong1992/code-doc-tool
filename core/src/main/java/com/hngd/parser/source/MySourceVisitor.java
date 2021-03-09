@@ -135,7 +135,7 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
         if (trimComment.length() > 0) {
             context.saveFieldComment(fullFieldName, new FieldInfo(trimComment, fieldName, field));
         } else {
-            log.debug("the java document comment for field:{} is empty",fullFieldName);
+            log.debug("The java document comment for field:{} is empty",fullFieldName);
         }
         return true;
     }
@@ -149,7 +149,7 @@ public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
     private static String extractFieldName(FieldDeclaration field) {
         NodeList<VariableDeclarator> variables=field.getVariables();
         if(CollectionUtils.isEmpty(variables)) {
-            log.error("the veriables for field:{} is empty",field);
+            log.error("The veriables for field:{} is empty",field);
             return null;
         }
         VariableDeclarator variable = field.getVariables().get(0);

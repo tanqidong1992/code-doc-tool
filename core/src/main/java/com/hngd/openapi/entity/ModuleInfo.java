@@ -20,6 +20,10 @@ import lombok.experimental.Accessors;
 public class ModuleInfo extends CommentDecoratedTarget{
  
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    /**
      * 模块基础路径
      */
     private String url;

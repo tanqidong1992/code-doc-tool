@@ -88,19 +88,13 @@ public class OpenAPITool {
     }
 
     public void parse(List<Class<?>> clses) {
-
         clses.stream()
             .map(classParser::parseModule)
             .filter(Optional::isPresent)
             .map(Optional::get)
             .forEach(this::buildPaths);
     }
-    public void parse(Class<?>... clazz) {
-        for(Class<?> c : clazz) {
-            Optional<ModuleInfo> optionalModule=classParser.parseModule(c);
-            optionalModule.ifPresent(this::buildPaths);    
-        }
-    }
+
     private void buildPaths(ModuleInfo moduleInfo) {
         String classComment = moduleInfo.getComment();
         if (StringUtils.isBlank(classComment)) {

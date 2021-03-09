@@ -2,6 +2,7 @@ package com.hngd.openapi;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import org.junit.Assert;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,7 +26,7 @@ public class DateFormatTest {
         OpenAPI openAPI=new OpenAPI();
         CommentStore commentStore=new CommentStore();
         OpenAPITool t=new OpenAPITool(openAPI,commentStore);
-        t.parse(Test.class);
+        t.parse(Arrays.asList(Test.class));
         Json.prettyPrint(openAPI);
         Operation op=OpenAPIUtils.getOperation(openAPI, "/test", "get").get();
         Parameter localDate=OpenAPIUtils.parameterOfOperation(op, "localDate").get();

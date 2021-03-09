@@ -75,8 +75,7 @@ public class ProjectUtils {
             MavenSession session,
             ProjectDependenciesResolver projectDependenciesResolver,
             List<MavenProject> projects) throws MojoExecutionException{
-        Set<String> projectArtifacts =
-                projects
+        Set<String> projectArtifacts = projects
                     .stream()
                     .map(MavenProject::getArtifact)
                     .map(Artifact::toString)
@@ -137,7 +136,7 @@ public class ProjectUtils {
             File[] files=file.listFiles();
             if(files!=null) {
                 for(File f:files) {
-                    //TODO validate diractory?
+                    //TODO validate directory?
                     sourceRoots.add(f);
                 }
             }

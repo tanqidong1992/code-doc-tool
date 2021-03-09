@@ -14,6 +14,10 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 public class ParameterInfo extends CommentDecoratedTarget{
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    /**
      * 参数类型名称
      */
     private String typeName;

@@ -11,13 +11,11 @@ import org.codehaus.plexus.util.MatchPatterns;
 
 public class SourceFileFilter {
 
-    MatchPatterns includePatterns;
-    MatchPatterns excludePatterns;
-    private String excludes;
-    private String includes;
+    private MatchPatterns includePatterns;
+    private MatchPatterns excludePatterns;
+
     public SourceFileFilter(String includes,String excludes) {
-        this.excludes = excludes;
-        this.includes = includes;
+
         if(StringUtils.isNotBlank(excludes)) {
             String []excludeArray=StringUtils.split(excludes, ",");
             excludePatterns=MatchPatterns.from(excludeArray);

@@ -1,5 +1,6 @@
 package com.hngd.parser.entity;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +20,12 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class CommentDecoratedTarget {
+public class CommentDecoratedTarget implements Serializable{
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     /**
      * 被修饰者名称
      */
