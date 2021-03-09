@@ -22,6 +22,6 @@ public class ClassInfo extends CommentDecoratedTarget{
     /**
      * 类声明代码
      */
-    private ClassOrInterfaceDeclaration classOrInterfaceDetail;
+    private transient ClassOrInterfaceDeclaration classOrInterfaceDetail;
     
 }

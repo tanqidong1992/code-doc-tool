@@ -86,9 +86,24 @@ public class OpenAPIGenerator extends BaseMojo{
      */
     @Parameter(required = false,defaultValue = "http://localhost:8080")
     private String openAPIServerURL;
-    
+    /**
+     * 注释解析缓存目录,默认为${basedir}/target/codegen-cache
+     */
+    @Parameter(required = false)
+    private File cacheDirectory;
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        
+        if(cacheDirectory==null) {
+            String buildOutputPath = mavenProject.getBuild().getDirectory();
+            cacheDirectory=new File(buildOutputPath+File.separator+"codegen-cache");
+            if(cacheDirectory.exists() || cacheDirectory.mkdirs()){
+                
+            }else {
+                throw new MojoFailureException("创建缓存目录失败:"+cacheDirectory.getAbsolutePath());
+            }
+        }
+        
         if(openAPIOutput==null){
             String buildOutputPath = mavenProject.getBuild().getDirectory();
             openAPIOutput=new File(buildOutputPath+File.separator+"openapi");
@@ -127,7 +142,7 @@ public class OpenAPIGenerator extends BaseMojo{
         });
         getLog().debug("---class paths end---");
         List<File> sourceJarFiles=ProjectUtils.resolveSourceJarFiles(classPaths);
-        String s=ProjectAnalysis.process(getSourceRoots(),sourceJarFiles,includes,excludes, classPaths, packageFilter, config);
+        String s=ProjectAnalysis.process(getSourceRoots(),sourceJarFiles,includes,excludes, classPaths, packageFilter, config,cacheDirectory);
         File apiJsonFile=new File(openAPIOutput, API_FILE_NAME);
         try {
             FileUtils.write(apiJsonFile, s,"utf-8");

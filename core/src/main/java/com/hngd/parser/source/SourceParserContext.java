@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Stream;
 
 import org.springframework.util.CollectionUtils;
 
@@ -66,22 +67,24 @@ public class SourceParserContext {
         Collection<File> files=sourceFileFilter.filterFiles(sourceBaseDirectory);
         files.parallelStream()
             .filter(JavaFileUtils::isJavaSourceFile)
-            .forEach(this::parse);
+            .map(this::doParseSourceFile)
+            .forEach(this.commentStore::save);
     }
     public  void initSourceInJar(List<File> sourceJarFiles) {
          if(CollectionUtils.isEmpty(sourceJarFiles)) {
              return ;
          }
          sourceJarFiles.parallelStream()
-             .forEach(this::doParseSourceJarFile);
+             .flatMap(this::doParseSourceJarFile)
+             .forEach(this.commentStore::save);
     }
-    public void doParseSourceJarFile(File file) {
+    public Stream<FileParseResult> doParseSourceJarFile(File file) {
         JarFile jarFile=null;
         try {
             jarFile = new JarFile(file);
         } catch (IOException e) {
             log.warn("Read jar file:"+file.getAbsolutePath()+" failed!",e);
-            return ;
+            return Stream.empty();
         }
         Enumeration<JarEntry> entries=jarFile.entries();
         List<JarEntry> filteredJarEntries=new ArrayList<>();
@@ -93,21 +96,21 @@ public class SourceParserContext {
             }
         }
         JarFile immutableJarFile=jarFile;
-        filteredJarEntries.parallelStream()
+        return filteredJarEntries.parallelStream()
             .filter(entry->entry.getName().endsWith(".java"))
-            .forEach(entry->doParseJarEntry(immutableJarFile,entry));
+            .map(entry->doParseJarSourceEntry(immutableJarFile,entry));
     }
-    private void doParseJarEntry(JarFile jarFile, JarEntry je) {
+    public FileParseResult doParseJarSourceEntry(JarFile jarFile, JarEntry je) {
         try(InputStream in=jarFile.getInputStream(je)){
             CompilationUnit cu= ClassUtils.parseClass(in);
-            doParseCompilationUnit(cu);
+            return doParseCompilationUnit(cu);
         }catch(Exception e) {
             String msg="Parse file:"+jarFile.getName()+"!"+je.getName()+" failed!";
             throw new SourceParseException(msg, e);
         }
     }
- 
-    private void doParseCompilationUnit(CompilationUnit cu) {
+
+    protected FileParseResult doParseCompilationUnit(CompilationUnit cu) {
         Optional<PackageDeclaration>  optionalPackageDeclaration=cu.getPackageDeclaration();
         String packageName="";
         if(optionalPackageDeclaration.isPresent()) {
@@ -115,13 +118,12 @@ public class SourceParserContext {
             packageName=pd.getNameAsString();
         }
         FileVisitorContext context=new FileVisitorContext(packageName);
-        cu.accept(new MySourceVisitor(), context);
+        cu.accept(new SourceVisitor(), context);
+        return context.getParseResult();
         
-        FileParseResult result=context.getParseResult();
-        commentStore.save(result);
     }
-    public  void parse(File f) {
+    public FileParseResult doParseSourceFile(File f) {
         CompilationUnit cu=ClassUtils.parseClass(f);
-        doParseCompilationUnit(cu);
+        return doParseCompilationUnit(cu);
     }
 }

@@ -29,6 +29,11 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlockTagParseListener{
  
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public static final String TAG_PREFIX="@";
     
     private String tag;

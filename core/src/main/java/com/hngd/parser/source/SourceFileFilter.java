@@ -29,11 +29,9 @@ public class SourceFileFilter {
     public boolean isInclude(String name) {
         if(includePatterns==null || includePatterns.matches(name, true)) {
             if(excludePatterns==null || !excludePatterns.matches(name, true)) {
-                System.out.println("true: "+name);
                 return true;
             }
         }
-        System.out.println("false: "+name);
         return false;
     }
 

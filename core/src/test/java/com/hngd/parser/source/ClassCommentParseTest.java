@@ -79,7 +79,7 @@ public class ClassCommentParseTest{
         
         File f=new File("./src/test/java/com/hngd/parser/source/ClassCommentParseTest.java");
         SourceParserContext pc=new SourceParserContext();
-        pc.parse(f);
+        pc.doParseSourceFile(f);
         CommentStore cs=pc.getCommentStore();
         cs.print();
         Class<?> clazz=RoleController.class;

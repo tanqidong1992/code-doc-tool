@@ -30,7 +30,7 @@ import com.hngd.utils.JavaParserUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class MySourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
+public class SourceVisitor extends VoidVisitorAdapter<FileVisitorContext>{
     @Override
     public void visit(ClassOrInterfaceDeclaration classOrInterface, FileVisitorContext context) {
 

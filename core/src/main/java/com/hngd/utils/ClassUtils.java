@@ -82,6 +82,24 @@ public class ClassUtils {
         }
     }
     
+    public static CompilationUnit parseClass(byte[] fileContent) {
+        ParseResult<CompilationUnit> cu=null;
+        try {
+            String content=new String(fileContent,Constants.DEFAULT_CHARSET_NAME);
+            cu = new JavaParser().parse(content);
+        } catch (IOException e) {
+            throw new SourceParseException("不支持"+Constants.DEFAULT_CHARSET_NAME+"编码",e);
+        }
+        if(cu.isSuccessful()) {
+            return cu.getResult().get();
+        }else {
+            List<Problem> problems=cu.getProblems();
+            Problem problem=problems.get(0);
+            throw new SourceParseException(problem.getMessage(),
+                    problem.getCause().orElse(null));
+        }  
+    }
+    
     public static CompilationUnit parseClass(InputStream in) {
         ParseResult<CompilationUnit> cu=null;
         try {

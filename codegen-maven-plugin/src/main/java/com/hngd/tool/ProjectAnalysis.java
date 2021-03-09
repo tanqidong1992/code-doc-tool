@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.hngd.classloader.ProjectClassLoader;
 import com.hngd.openapi.OpenAPITool;
+import com.hngd.parser.source.CachedSourceParserContext;
 import com.hngd.parser.source.SourceParserContext;
 import com.hngd.tool.config.ServerConfig;
 
@@ -22,8 +23,15 @@ public class ProjectAnalysis {
 
     private static final Logger logger=LoggerFactory.getLogger(ProjectAnalysis.class);
 
-    private static String doProcess(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,ProjectClassLoader loader,String packageFilter,ServerConfig config) {
-        SourceParserContext pc=new SourceParserContext(includes,excludes);
+    private static String doProcess(List<File> sourceRoots,List<File> sourceJarFiles,
+            String includes,String excludes,ProjectClassLoader loader,
+            String packageFilter,ServerConfig config,File cacheDirectory) {
+        SourceParserContext pc;
+        if(cacheDirectory!=null) {
+            pc=new CachedSourceParserContext(includes,excludes,cacheDirectory.getAbsolutePath());
+        }else {
+            pc=new SourceParserContext(includes,excludes);
+        }
         for(File sourceRoot:sourceRoots) {
             pc.initSource(sourceRoot);
         }
@@ -49,11 +57,17 @@ public class ProjectAnalysis {
     }
 
     @Deprecated
-    public static String process(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,File jarFilePath,String packageFilter,ServerConfig config) {
-        return process(sourceRoots,sourceJarFiles,includes,excludes, Arrays.asList(jarFilePath),packageFilter,config);
+    public static String process(List<File> sourceRoots,List<File> sourceJarFiles,
+            String includes,String excludes,
+            File jarFilePath,String packageFilter,
+            ServerConfig config) {
+        return process(sourceRoots,sourceJarFiles,includes,excludes, Arrays.asList(jarFilePath),packageFilter,config,null);
     }
 
-    public static String process(List<File> sourceRoots,List<File> sourceJarFiles,String includes,String excludes,List<File> classFilePaths,String packageFilter,ServerConfig config) {
+    public static String process(List<File> sourceRoots,List<File> sourceJarFiles,
+            String includes,String excludes,
+            List<File> classFilePaths,String packageFilter,
+            ServerConfig config,File cacheDirectory) {
         ProjectClassLoader loader=new ProjectClassLoader(ProjectAnalysis.class.getClassLoader());
         for(File classFilePath:classFilePaths) {
             if(classFilePath.isDirectory() || classFilePath.getName().endsWith("jar")) {
@@ -63,7 +77,7 @@ public class ProjectAnalysis {
                 logger.warn("文件{},既不是目录也不是Jar",classFilePath.getAbsolutePath());
             }
         }
-        return doProcess(sourceRoots,sourceJarFiles,includes,excludes, loader, packageFilter, config);
+        return doProcess(sourceRoots,sourceJarFiles,includes,excludes, loader, packageFilter, config,cacheDirectory);
     }
 
     public static Class<?> loadClassFromNestedJar(ProjectClassLoader loader,String className){

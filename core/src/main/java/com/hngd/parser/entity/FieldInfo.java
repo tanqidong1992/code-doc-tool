@@ -20,8 +20,8 @@ public class FieldInfo extends CommentDecoratedTarget{
      * 
      */
     private static final long serialVersionUID = 1L;
+    
     public FieldInfo(String comment, String fieldName, FieldDeclaration fieldDetail) {
-         
         this.setComment(comment)
             .setName(fieldName);
         this.fieldDetail = fieldDetail;
@@ -29,6 +29,6 @@ public class FieldInfo extends CommentDecoratedTarget{
     /**
      * 类成员变量声明代码
      */
-    private FieldDeclaration fieldDetail;
+    private transient FieldDeclaration fieldDetail;
     
 }

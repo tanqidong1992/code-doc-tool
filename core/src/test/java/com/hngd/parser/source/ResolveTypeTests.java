@@ -21,7 +21,7 @@ public class ResolveTypeTests {
     public void main() {
         OpenAPI openAPI=new OpenAPI();
         SourceParserContext parserContext=new SourceParserContext();
-        parserContext.parse(new File("./src/test/java/com/hngd/parser/source/ResolveTypeTests.java"));
+        parserContext.doParseSourceFile(new File("./src/test/java/com/hngd/parser/source/ResolveTypeTests.java"));
         CommentStore cs=parserContext.getCommentStore();
         cs.print();
         OpenAPITool opt=new OpenAPITool(openAPI, cs);
