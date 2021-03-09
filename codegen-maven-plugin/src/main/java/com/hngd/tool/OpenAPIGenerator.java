@@ -70,6 +70,11 @@ public class OpenAPIGenerator extends BaseMojo{
     @Parameter(required=false)
     private List<String> includeTags;
     /**
+     * 是否输出markdown文件,默认不输出
+     */
+    @Parameter(required=false)
+    private Boolean outputMarkdown=false;
+    /**
      * SwaggerUI服务地址,HOST+IP,配置后将自动将生成的openapi文档推送到该服务
      */
     @Parameter(required = false)
@@ -159,7 +164,9 @@ public class OpenAPIGenerator extends BaseMojo{
                 throw new MojoFailureException("校验OpenAPI失败");
             }
         }
-        OpenAPIToMarkdown.openAPIToMarkdown(apiJsonFile, includeTags, openAPIOutput);
+        if(outputMarkdown) {
+            OpenAPIToMarkdown.openAPIToMarkdown(apiJsonFile, includeTags, openAPIOutput);
+        }
         if(StringUtils.isNotEmpty(swaggerUIServer)){
             pushToSwaggerUIServer(apiJsonFile,swaggerUIServer);
         }
