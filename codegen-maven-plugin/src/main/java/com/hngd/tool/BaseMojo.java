@@ -27,14 +27,13 @@ public abstract class BaseMojo extends AbstractMojo {
     @Component
     protected MavenProject mavenProject;
     
-    
     protected List<File> getSourceRoots(){
         List<File> sourceRoots=mavenProject.getCompileSourceRoots().stream()
-                .map(File::new)
-                .collect(Collectors.toList());
-            //add generate source if needed;
-            List<File> generatedSourceRoots=ProjectUtils.getGeneratedSourceRoots(mavenProject);
-            generatedSourceRoots.forEach(sourceRoots::add);
-            return sourceRoots;
+            .map(File::new)
+            .collect(Collectors.toList());
+        //add generate source if needed;
+        List<File> generatedSourceRoots=ProjectUtils.getGeneratedSourceRoots(mavenProject);
+        generatedSourceRoots.forEach(sourceRoots::add);
+        return sourceRoots;
     }
 }

@@ -98,13 +98,10 @@ public class OpenAPIGenerator extends BaseMojo{
     private File cacheDirectory;
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        
         if(cacheDirectory==null) {
             String buildOutputPath = mavenProject.getBuild().getDirectory();
             cacheDirectory=new File(buildOutputPath+File.separator+"codegen-cache");
-            if(cacheDirectory.exists() || cacheDirectory.mkdirs()){
-                
-            }else {
+            if(!(cacheDirectory.exists() || cacheDirectory.mkdirs())){
                 throw new MojoFailureException("创建缓存目录失败:"+cacheDirectory.getAbsolutePath());
             }
         }
@@ -112,23 +109,18 @@ public class OpenAPIGenerator extends BaseMojo{
         if(openAPIOutput==null){
             String buildOutputPath = mavenProject.getBuild().getDirectory();
             openAPIOutput=new File(buildOutputPath+File.separator+"openapi");
-            if(openAPIOutput.exists() || openAPIOutput.mkdirs()){
-                
-            }else {
+            if(!(openAPIOutput.exists() || openAPIOutput.mkdirs())){
                 throw new MojoFailureException("创建输出目录失败:"+openAPIOutput.getAbsolutePath());
             }
         }
-        
         if(confFilePath==null) {
             confFilePath=mavenProject.getBasedir().getAbsolutePath()
-                    +File.separator+"build-config"+
-                    File.separator+"openapi.json";
+                    +File.separator+"build-config"+File.separator+"openapi.json";
             getLog().info("Using the default openapi config file path:"+confFilePath);
         }
         //判断配置文件是否存在
         ServerConfig config;
         if(!(new File(confFilePath).exists())) {
-            //throw new MojoFailureException("找不到OpenAPI基础信息配置文件:"+confFilePath);
             config=new ServerConfig();
         }else {
             Optional<ServerConfig> loadResult=ServerConfig.load(confFilePath);
@@ -147,7 +139,18 @@ public class OpenAPIGenerator extends BaseMojo{
         });
         getLog().debug("---class paths end---");
         List<File> sourceJarFiles=ProjectUtils.resolveSourceJarFiles(classPaths);
-        String s=ProjectAnalysis.process(getSourceRoots(),sourceJarFiles,includes,excludes, classPaths, packageFilter, config,cacheDirectory);
+        String s=ProjectAnalyst.builder()
+            .withSourceRoots(getSourceRoots())
+            .withSourceJarFiles(sourceJarFiles)
+            .withIncludes(includes)
+            .withExcludes(excludes)
+            .withClassPaths(classPaths)
+            .withPackageFilter(packageFilter)
+            .withServerConfig(config)
+            .withCacheDirectory(cacheDirectory)
+            .build()
+            .process();
+        
         File apiJsonFile=new File(openAPIOutput, API_FILE_NAME);
         try {
             FileUtils.write(apiJsonFile, s,"utf-8");

@@ -1,7 +1,6 @@
 package com.hngd.tool.utils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hngd.classloader.ProjectClassLoader;
-import com.hngd.tool.ProjectAnalysis;
 
 public class ProjectUtils {
 
@@ -49,7 +47,7 @@ public class ProjectUtils {
         List<String> allClass=loader.listAllClass();
         List<Class<?>>clazzes=allClass.stream()
             .filter(name->name.startsWith(packageFilter))
-            .map(name->ProjectAnalysis.loadClassFromNestedJar(loader, name))
+            .map(name->loadClassFromNestedJar(loader, name))
             .filter(clazz -> clazz != null)
             .collect(Collectors.toList());
         return clazzes;
@@ -64,53 +62,49 @@ public class ProjectUtils {
         List<String> allClass=loader.listAllClass();
         List<Class<?>>clazzes=allClass.stream()
             .filter(name->name.startsWith(packageFilter))
-            .map(name->ProjectAnalysis.loadClassFromNestedJar(loader, name))
+            .map(name->loadClassFromNestedJar(loader, name))
             .filter(clazz -> clazz != null)
             .collect(Collectors.toList());
         return clazzes;
     }
     
     
-    public static List<File> getDependencies(MavenProject project,
-            MavenSession session,
+    public static List<File> getDependencies(MavenProject project,MavenSession session,
             ProjectDependenciesResolver projectDependenciesResolver,
             List<MavenProject> projects) throws MojoExecutionException{
         Set<String> projectArtifacts = projects
-                    .stream()
-                    .map(MavenProject::getArtifact)
-                    .map(Artifact::toString)
-                    .collect(Collectors.toSet());
-        DependencyFilter ignoreProjectDependenciesFilter =
-                (node, parents) -> {
-                  if (node == null || node.getDependency() == null) {
-                    // if nothing, then ignore
-                    return false;
-                  }
-                  if (projectArtifacts.contains(node.getArtifact().toString())) {
-                    // ignore project dependency artifacts
-                    return false;
-                  }
-                  // we only want compile/runtime deps
-                  return Artifact.SCOPE_COMPILE_PLUS_RUNTIME.contains(node.getDependency().getScope());
-                };
-
-            try {
-              DependencyResolutionResult resolutionResult =
-                  projectDependenciesResolver.resolve(
-                      new DefaultDependencyResolutionRequest(project, session.getRepositorySession())
-                          .setResolutionFilter(ignoreProjectDependenciesFilter));
-             
-              List<File> files=resolutionResult
-                  .getDependencies()
-                  .stream()
-                  .map(Dependency::getArtifact)
-                  //.filter(org.eclipse.aether.artifact.Artifact::isSnapshot)
-                  .map(org.eclipse.aether.artifact.Artifact::getFile)
-                  .collect(Collectors.toList());
-              return files;
-            } catch (DependencyResolutionException ex) {
-              throw new MojoExecutionException("Failed to resolve dependencies", ex);
+            .stream()
+            .map(MavenProject::getArtifact)
+            .map(Artifact::toString)
+            .collect(Collectors.toSet());
+        DependencyFilter ignoreProjectDependenciesFilter = (node, parents) -> {
+            if (node == null || node.getDependency() == null) {
+                return false;
             }
+            if (projectArtifacts.contains(node.getArtifact().toString())) {
+                // ignore project dependency artifacts
+                return false;
+            }
+            // we only want compile/runtime deps
+            return Artifact.SCOPE_COMPILE_PLUS_RUNTIME.contains(node.getDependency().getScope());
+        };
+        try {
+            DependencyResolutionResult resolutionResult =
+                projectDependenciesResolver.resolve(
+                    new DefaultDependencyResolutionRequest(project, session.getRepositorySession())
+                        .setResolutionFilter(ignoreProjectDependenciesFilter));
+             
+            List<File> files=resolutionResult
+                .getDependencies()
+                .stream()
+                .map(Dependency::getArtifact)
+                //.filter(org.eclipse.aether.artifact.Artifact::isSnapshot)
+                .map(org.eclipse.aether.artifact.Artifact::getFile)
+                .collect(Collectors.toList());
+            return files;
+        } catch (DependencyResolutionException ex) {
+            throw new MojoExecutionException("Failed to resolve dependencies", ex);
+        }
     }
     
     public static List<File> resolveAllClassPath(MavenProject project,
@@ -145,19 +139,28 @@ public class ProjectUtils {
     }
 
     public static List<File> resolveSourceJarFiles(List<File> classPaths) {
-        List<File> sourceJarFiles=new ArrayList<>();
-        classPaths.stream()
+        return classPaths.stream()
             .filter(File::isFile)
             .filter(file->file.getName().endsWith(".jar"))
-            .forEach(file->{
-                File parent=file.getParentFile();
-                String baseName=FilenameUtils.getBaseName(file.getName());
-                String sourceJarFileName=baseName+"-sources.jar";
-                File sourceJarFile=new File(parent, sourceJarFileName);
-                if(sourceJarFile.exists() || sourceJarFile.isFile()) {
-                    sourceJarFiles.add(sourceJarFile);
-                }
-            });
-        return sourceJarFiles;
+            .map(ProjectUtils::resolveSourceJarFile)
+            .filter(sourceJarFile->sourceJarFile.exists() && sourceJarFile.isFile())
+            .collect(Collectors.toList());
+    }
+    
+    public static File resolveSourceJarFile(File jarFile) {
+        File parent=jarFile.getParentFile();
+        String baseName=FilenameUtils.getBaseName(jarFile.getName());
+        String sourceJarFileName=baseName+"-sources.jar";
+        File sourceJarFile=new File(parent, sourceJarFileName);
+        return sourceJarFile;
+    }
+    
+    public static Class<?> loadClassFromNestedJar(ProjectClassLoader loader,String className){
+        try {
+            return loader.loadClass(className,true);
+        } catch (ClassNotFoundException e) {
+            logger.error("",e);
+        }
+        return null;
     }
 }
