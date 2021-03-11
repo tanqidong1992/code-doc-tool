@@ -7,6 +7,8 @@ import java.io.InputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -31,18 +33,13 @@ public class OpenAPIValidator {
     public static final String SCHEMA_PATH = "/com/hngd/openapi/schemas/";
     public static final String SCHEMA_V2 = "schema-v2.json";
     public static final String SCHEMA_V3 = "schema-v3.json";
-    public ValidationResponse validate(File file) throws IOException  {
-        String s=FileUtils.readFileToString(file, Constants.DEFAULT_CHARSET);
-        return debugByContent(s);
-         
-    }
-    public ValidationResponse validate(String s)  {
-        return debugByContent(s);
-         
-    }
 
+    public ValidationResponse validate(File file) throws IOException {
+        String s = FileUtils.readFileToString(file, Constants.DEFAULT_CHARSET);
+        return validate(s);
+    }
+ 
     private JsonSchema getSchemaV3() {
-
         try (InputStream in = getClass().getResourceAsStream(SCHEMA_PATH + "/" + SCHEMA_V3)) {
             // TODO MAX JSON FILE SIZE
             byte[] buffer = new byte[Constants.MAX_OPENAPI_FILE_SIZE];
@@ -59,11 +56,7 @@ public class OpenAPIValidator {
 
     static ObjectMapper JsonMapper = Json.mapper();
     static ObjectMapper YamlMapper = Yaml.mapper();
-
-    private JsonSchema resolveJsonSchema(String schemaAsString) throws Exception {
-        return resolveJsonSchema(schemaAsString, false);
-    }
-
+ 
     private JsonSchema resolveJsonSchema(String schemaAsString, boolean removeId) throws Exception {
         JsonNode schemaObject = JsonMapper.readTree(schemaAsString);
         if (removeId) {
@@ -82,79 +75,78 @@ public class OpenAPIValidator {
         return factory.getJsonSchema(schemaObject);
 
     }
-
-    private ValidationResponse debugByContent(String s){
-        ValidationResponse output=new ValidationResponse();
-        JsonNode spec = readNode(s);
-         
-        if (spec == null) {
-            ProcessingMessage pm = new ProcessingMessage();
+    public static SchemaValidationError buildError(String msg,Throwable cause) {
+        ProcessingMessage pm;
+        if(cause!=null) {
+            pm=new ProcessingException(msg,cause).getProcessingMessage();
+        }else {
+            pm = new ProcessingMessage();
             pm.setLogLevel(LogLevel.ERROR);
-            pm.setMessage("Unable to read content.  It may be invalid JSON or YAML");
-            output.addValidationMessage(new SchemaValidationError(pm.asJson()));
+            pm.setMessage(msg);
+        }
+        return new SchemaValidationError(pm.asJson());
+    }
+    public ValidationResponse validate(String openAPIContent) {
+        ValidationResponse output = new ValidationResponse();
+        JsonNode spec;
+        try {
+            spec = parseNode(openAPIContent);
+        } catch (JsonProcessingException e) {
+            SchemaValidationError error =
+                buildError("Unable to read content from openAPIContent.It may be invalid JSON or YAML", e);
+            output.addValidationMessage(error);
             return output;
         }
-        
-        
-         SwaggerParseResult result = null;
-         try {
-             result = readOpenApi(s);
-         } catch (Exception e) {
-             log.error("can't read OpenAPI contents", e);
-             ProcessingMessage pm = new ProcessingMessage();
-             pm.setLogLevel(LogLevel.ERROR);
-             pm.setMessage("unable to parse OpenAPI: " + e.getMessage());
-             output.addValidationMessage(new SchemaValidationError(pm.asJson()));
-             return output;
-         }
-         if (result != null) {
-             for (String message : result.getMessages()) {
-                 output.addMessage(message);
-             }
-         }
-        
-        // do actual JSON schema validation
-        JsonSchema schema = getSchemaV3();
-        
-        ProcessingReport report=null;
+        SwaggerParseResult result = null;
         try {
-            report = schema.validate(spec,true);
+            result = readOpenApi(openAPIContent);
+        } catch (Exception e) {
+            log.error("Parse OpenAPI content failed!", e);
+            SchemaValidationError error = buildError("Unable to parse OpenAPI: " + e.getMessage(), e);
+            output.addValidationMessage(error);
+            return output;
+        }
+        for (String message : result.getMessages()) {
+            output.addMessage(message);
+        }
+        JsonSchema schema = getSchemaV3();
+        ProcessingReport report = null;
+        try {
+            report = schema.validate(spec, true);
         } catch (ProcessingException e) {
-            log.error("",e);
+            log.error("", e);
+            SchemaValidationError error = buildError("Validation processing failed!: " + e.getMessage(), e);
+            output.addValidationMessage(error);
+            return output;
         }
         ListProcessingReport lp = new ListProcessingReport();
         try {
             lp.mergeWith(report);
         } catch (ProcessingException e) {
-            log.error("",e);
+            log.error("", e);
         }
         java.util.Iterator<ProcessingMessage> it = lp.iterator();
         while (it.hasNext()) {
             ProcessingMessage pm = it.next();
-            if(pm.getLogLevel().equals(LogLevel.ERROR)) {
+            if (pm.getLogLevel().equals(LogLevel.ERROR)) {
                 output.addValidationMessage(new SchemaValidationError(pm.asJson()));
-            }else if(pm.getLogLevel().equals(LogLevel.WARNING)){
+            } else if (pm.getLogLevel().equals(LogLevel.WARNING)) {
                 log.warn(Json.pretty(pm.asJson()));
             }
         }
         return output;
     }
 
-     private SwaggerParseResult readOpenApi(String content) throws IllegalArgumentException {
-            OpenAPIV3Parser parser = new OpenAPIV3Parser();
-            return parser.readContents(content, null, null);
+    private SwaggerParseResult readOpenApi(String content) throws IllegalArgumentException {
+        OpenAPIV3Parser parser = new OpenAPIV3Parser();
+        return parser.readContents(content, null, null);
+    }
 
+    private JsonNode parseNode(String text) throws JsonMappingException, JsonProcessingException {
+        if (text.trim().startsWith("{")) {
+            return JsonMapper.readTree(text);
+        } else {
+            return YamlMapper.readTree(text);
         }
-     
-        private JsonNode readNode(String text) {
-            try {
-                if (text.trim().startsWith("{")) {
-                    return JsonMapper.readTree(text);
-                } else {
-                    return YamlMapper.readTree(text);
-                }
-            } catch (IOException e) {
-                return null;
-            }
-        }
+    }
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.hngd.constant.Constants;
@@ -17,10 +18,20 @@ public class OpenAPIValidatorTest {
         OpenAPIValidator oav=new OpenAPIValidator();
         String s="{}";
         ValidationResponse vr=oav.validate(s);
-        //System.out.println(Json.pretty(vr));
+        System.out.println(Json.pretty(vr));
+        Assert.assertTrue(vr.getSchemaValidationMessages().size()>0);
+        
     }
-    
     @Test
+    public void testInvalidedContent() {
+        OpenAPIValidator oav=new OpenAPIValidator();
+        String s="{XXXXX";
+        ValidationResponse vr=oav.validate(s);
+        System.out.println(Json.pretty(vr));
+        Assert.assertTrue(vr.getSchemaValidationMessages().size()>0);
+
+    }
+    //@Test
     public void test1() throws IOException {
         OpenAPIValidator oav=new OpenAPIValidator();
         String s=FileUtils.readFileToString(new File("./test-data/api.json"), Constants.DEFAULT_CHARSET);
