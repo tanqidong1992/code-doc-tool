@@ -13,7 +13,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hngd.openapi.entity.HttpParameter;
-import com.hngd.utils.TypeNameUtils;
+import com.hngd.utils.TypeUtils;
 
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -35,7 +35,7 @@ public class HttpParameterUtils {
                     pc.isCollection = true;
                     pc.javaParameterizedType=argumentType;
                     if(!BeanUtils.isSimpleProperty(argumentType)) {
-                        pc.ref = TypeNameUtils.buildTypeName(argumentType);
+                        pc.ref = TypeUtils.toTypeName(argumentType);
                     } 
                 }else if(Map.class.isAssignableFrom(rawClass)) {
                     //TODO parse map 
@@ -92,7 +92,7 @@ public class HttpParameterUtils {
             pc.openapiFormat = argumentClass.getSimpleName();
             pc.isPrimitive = false;
             pc.schema = new ObjectSchema();
-            pc.ref = TypeNameUtils.buildTypeName(parameterType);
+            pc.ref = TypeUtils.toTypeName(parameterType);
             resolveRef(pc);
             pc.schema.set$ref("#/components/schemas/" + pc.ref);
         }

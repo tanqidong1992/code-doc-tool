@@ -11,8 +11,6 @@
 
 package com.hngd.parser.javadoc;
 
-import java.util.Objects;
-
 import org.apache.commons.lang3.StringUtils;
 
 import com.hngd.parser.entity.CommentDecoratedTarget;
@@ -25,41 +23,31 @@ import lombok.EqualsAndHashCode;
 /** 
  * @author
  */
-@Data
 @EqualsAndHashCode(callSuper = true)
-public class BlockTag extends JavaDocCommentElement implements BlockTagParseListener{
+public class BlockTag extends Tag implements BlockTagParseListener{
  
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
-    public static final String TAG_PREFIX="@";
-    
-    private String tag;
     /**
-     * @param tag
+     * @param keyword
      * @author
      * @since 0.0.1
      */
-    public BlockTag(String tag) {
-        Objects.requireNonNull(tag);
-        if(!tag.startsWith(TAG_PREFIX)) {
-            throw new RuntimeException("Java Doc Comment Block Tag must start with "+TAG_PREFIX);
-        }
-        this.tag = tag;
-        BlockTagParserContext.register(tag, this.getClass());
+    public BlockTag(String keyword) {
+        super(keyword);
+        BlockTagParserContext.register(keyword, this.getClass());
     }
     
+    
     public void onParseEnd(CommentDecoratedTarget parent) {
-        String key=tag;
+        String key=keyword;
         key=key.replace(TAG_PREFIX, "");
         if(StringUtils.isNotBlank(getContent())) {
             parent.addExtension(key, this);
         }
     }
     public String onParseStart(String startLine) {
-        return startLine.replace(tag, "").trim();
+        return startLine.replace(keyword, "").trim();
     }
     @Override
     public BlockTag getResult() {
@@ -69,9 +57,7 @@ public class BlockTag extends JavaDocCommentElement implements BlockTagParseList
     @Data
     @EqualsAndHashCode(callSuper = true)
     public static class ParamBlockTag extends BlockTag {
-        /**
-         * 
-         */
+ 
         private static final long serialVersionUID = 1L;
         private String paramName;
         public ParamBlockTag() {
@@ -102,9 +88,7 @@ public class BlockTag extends JavaDocCommentElement implements BlockTagParseList
     }
 
     public static class ReturnBlockTag extends BlockTag {
-        /**
-         * 
-         */
+ 
         private static final long serialVersionUID = 1L;
 
         public ReturnBlockTag() {
@@ -120,9 +104,7 @@ public class BlockTag extends JavaDocCommentElement implements BlockTagParseList
     }
 
     public static class SeeBlockTag extends BlockTag {
-        /**
-         * 
-         */
+ 
         private static final long serialVersionUID = 1L;
 
         public SeeBlockTag() {
@@ -131,9 +113,7 @@ public class BlockTag extends JavaDocCommentElement implements BlockTagParseList
     }
   
     public static class ThrowsBlockTag extends BlockTag {
-        /**
-         * 
-         */
+ 
         private static final long serialVersionUID = 1L;
 
         public ThrowsBlockTag() {
@@ -142,9 +122,7 @@ public class BlockTag extends JavaDocCommentElement implements BlockTagParseList
     }
 
     public static class SinceBlockTag extends BlockTag {
-        /**
-         * 
-         */
+ 
         private static final long serialVersionUID = 1L;
 
         public SinceBlockTag() {
@@ -152,9 +130,7 @@ public class BlockTag extends JavaDocCommentElement implements BlockTagParseList
         }
     }
     public static class AuthorBlockTag extends BlockTag{
-        /**
-         * 
-         */
+ 
         private static final long serialVersionUID = 1L;
 
         public AuthorBlockTag(){

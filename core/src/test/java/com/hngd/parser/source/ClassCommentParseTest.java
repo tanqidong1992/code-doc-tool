@@ -63,7 +63,7 @@ public class ClassCommentParseTest{
             .map(BlockTag.class::cast)
             .forEach(ce ->{
                 Assert.assertTrue(StringUtils.isNotEmpty(ce.getContent()));
-                System.out.println(ce+"-->"+ce.getTag() + "-->" + ce.getContent());
+                System.out.println(ce+"-->"+ce.getKeyword() + "-->" + ce.getContent());
             });
     }
     

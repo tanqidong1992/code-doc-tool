@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BlockTagParserContext {
 
-    private static Map<String, Class<? extends BlockTagParseListener>> commentElementParsers = new HashMap<>();
+    private static Map<String, Class<? extends BlockTagParseListener>> blockTagParsers = new HashMap<>();
     static {
         // register internal parse type
         new ParamBlockTag();
@@ -38,27 +38,27 @@ public class BlockTagParserContext {
     
     public static synchronized void register(String parserName,Class<? extends BlockTagParseListener> parserType) {
         
-        if (!commentElementParsers.containsKey(parserName)) {
-            commentElementParsers.put(parserName, parserType);
+        if (!blockTagParsers.containsKey(parserName)) {
+            blockTagParsers.put(parserName, parserType);
         }
     }
     
     
     public static Optional<BlockTagParseListener> findElementParser(String line) {
-        Set<String> parserNames = commentElementParsers.keySet();
-        Optional<BlockTagParseListener> optionalElementParser=parserNames.stream()
+        Set<String> parserNames = blockTagParsers.keySet();
+        Optional<BlockTagParseListener> blockTagParser=parserNames.stream()
           .filter(parserName->line.startsWith(parserName))
           .map(BlockTagParserContext::newParser)
           .filter(parser->parser!=null)
           .findFirst();
-        return optionalElementParser;
+        return blockTagParser;
     }
     
     private static BlockTagParseListener newParser(String parserName) {
         if(StringUtils.isEmpty(parserName)) {
             return null;
         }
-        Class<? extends BlockTagParseListener> parserType = commentElementParsers.get(parserName);
+        Class<? extends BlockTagParseListener> parserType = blockTagParsers.get(parserName);
         BlockTagParseListener parser=null;
         try {
             parser = parserType.newInstance();

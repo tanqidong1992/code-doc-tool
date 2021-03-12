@@ -44,9 +44,9 @@ public class MultiLineParamJavaDocCommentParserTest{
         .map(BlockTag.class::cast)
         .forEach(ce ->{
             if(ce instanceof ParamBlockTag) {
-                System.out.println(ce.getTag() + "-->"+((ParamBlockTag)ce).getParamName()+"-->" + ce.getContent());
+                System.out.println(ce.getKeyword() + "-->"+((ParamBlockTag)ce).getParamName()+"-->" + ce.getContent());
             }else {
-                System.out.println(ce.getTag() + "-->" + ce.getContent());
+                System.out.println(ce.getKeyword() + "-->" + ce.getContent());
             }
             
         });

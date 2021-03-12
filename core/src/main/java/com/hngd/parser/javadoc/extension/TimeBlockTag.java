@@ -24,9 +24,6 @@ import com.hngd.parser.javadoc.BlockTag;
  * @author tqd
  */
 public class TimeBlockTag extends BlockTag {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(TimeBlockTag.class);
     public Date createTime;

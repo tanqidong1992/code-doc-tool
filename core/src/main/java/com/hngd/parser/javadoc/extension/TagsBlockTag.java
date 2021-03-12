@@ -22,16 +22,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * https://swagger.io/specification/#pathItemObject tags
+ * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#operationObject" >OpenAPI PathItem Tags</a> 
  * @author tqd
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class TagsBlockTag extends BlockTag
 {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     public static String TAG_DELIMITER=",";
     private List<String> pathItemTags=new ArrayList<>();

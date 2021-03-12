@@ -11,10 +11,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class MainDescription extends JavaDocCommentElement{
-    
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = 1L;
 
 }

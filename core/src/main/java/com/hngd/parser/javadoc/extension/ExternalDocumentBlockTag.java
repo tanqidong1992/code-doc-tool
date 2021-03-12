@@ -18,9 +18,6 @@ import com.hngd.parser.javadoc.BlockTag;
  */
 public class ExternalDocumentBlockTag extends BlockTag
 {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     /**

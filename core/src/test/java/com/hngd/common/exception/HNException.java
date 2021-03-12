@@ -35,7 +35,4 @@ public class HNException extends RuntimeException{
 	public void setErrorCode(Integer errorCode) {
 		this.errorCode = errorCode;
 	}
-    
-    
- 
 }

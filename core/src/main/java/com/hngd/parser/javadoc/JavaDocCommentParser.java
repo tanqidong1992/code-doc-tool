@@ -21,10 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Java文档注释解析类,用于解析javadoc comment
- * 参考 <a href="https://www.oracle.com/technetwork/java/javase/documentation/index-137868.html">How to Write Doc Comments for the Javadoc Tool</a>
- * </br>
- * see <a href="https://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html#documentationcomments">documentationcomments</a>
+ * Java文档注释解析类
+ * <a href="https://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html#documentationcomments">documentationcomments</a>
  * @author tqd
  * @version 0.0.1
  */
@@ -140,17 +138,17 @@ public class JavaDocCommentParser {
                 parseResult.endIndex = i;
                 break;
             } else {
-                Optional<BlockTagParseListener> optionalElementParser = BlockTagParserContext.findElementParser(line);
-                if (optionalElementParser.isPresent()) {
-                    line = optionalElementParser.get().onParseStart(line);
+                Optional<BlockTagParseListener> blockTagParserListener =
+                    BlockTagParserContext.findElementParser(line);
+                if (blockTagParserListener.isPresent()) {
+                    line = blockTagParserListener.get().onParseStart(line);
                     content.append(line);
-                    element = optionalElementParser.get().getResult();
+                    element = blockTagParserListener.get().getResult();
                 } else {
                     logger.warn("Could not parse line:{}", line);
                 }
                 isFoundAt = true;
             }
-
         }
         if (parseResult.endIndex == -1) {
             parseResult.endIndex = lines.size();

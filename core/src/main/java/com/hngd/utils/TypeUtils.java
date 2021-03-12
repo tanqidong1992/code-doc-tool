@@ -11,6 +11,7 @@
 
 package com.hngd.utils;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -19,12 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author
  */
 public class TypeUtils {
-    /**
-     * @param parameterType
-     * @return
-     * @author
-     * @since 0.0.1
-     */
+ 
     public static boolean isPrimitiveType(Type parameterType) {
         if (!(parameterType instanceof Class<?>)) {
             return false;
@@ -56,5 +52,50 @@ public class TypeUtils {
             return true;
         }
         return false;
+    }
+    
+    public static String toTypeName(Type type) {
+        if(type==null){
+            return null;
+        }
+        if(type instanceof ParameterizedType){
+            ParameterizedType pt=(ParameterizedType) type;
+            Type rawType=pt.getRawType();
+            Type ownerType=pt.getOwnerType();
+            Type[] subTypes=pt.getActualTypeArguments();
+            String rawTypeName=toTypeName(rawType);
+            String ownerTypeName=toTypeName(ownerType);
+            StringBuilder sb=new StringBuilder();
+            if(subTypes!=null){
+                for(Type subType :subTypes){
+                    String subTypeName=toTypeName(subType);
+                    sb.append(subTypeName);
+                    sb.append(",");
+                }
+            }
+            String subTypesName=null;
+            if(sb.length()>0){
+                subTypesName=sb.substring(0, sb.length()-1);
+            }
+            StringBuilder simpleTypeName=new StringBuilder();
+            if(ownerTypeName!=null){
+                simpleTypeName.append(ownerTypeName);
+                simpleTypeName.append(".");
+            }
+            if(rawTypeName!=null){
+                simpleTypeName.append(rawTypeName);
+            }
+            if(subTypesName!=null){
+                simpleTypeName.append("<");
+                simpleTypeName.append(subTypesName);
+                simpleTypeName.append(">");
+            }
+            return simpleTypeName.toString();
+        }else if(type instanceof Class){
+            Class<?> cls=(Class<?>)type;
+            return cls.getSimpleName();
+        }else{
+            return null;
+        }
     }
 }

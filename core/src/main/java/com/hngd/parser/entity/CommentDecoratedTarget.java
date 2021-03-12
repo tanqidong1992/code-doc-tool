@@ -21,10 +21,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class CommentDecoratedTarget implements Serializable{
-
-    /**
-     * 
-     */
+ 
     private static final long serialVersionUID = 1L;
     /**
      * 被修饰者名称

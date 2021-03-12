@@ -5,9 +5,6 @@ import java.lang.reflect.Parameter;
 
 public class ClassParseException extends ParseException {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     public ClassParseException(String msg,Throwable cause) {
         super(msg);

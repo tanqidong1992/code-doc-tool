@@ -15,10 +15,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class FieldInfo extends CommentDecoratedTarget{
-
-    /**
-     * 
-     */
+ 
     private static final long serialVersionUID = 1L;
     
     public FieldInfo(String comment, String fieldName, FieldDeclaration fieldDetail) {

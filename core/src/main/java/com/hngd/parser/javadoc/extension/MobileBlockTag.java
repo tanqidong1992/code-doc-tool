@@ -17,9 +17,6 @@ import com.hngd.parser.javadoc.BlockTag;
  */
 public class MobileBlockTag extends BlockTag
 {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     /**

@@ -15,9 +15,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class ClassInfo extends CommentDecoratedTarget{
-    /**
-     * 
-     */
+ 
     private static final long serialVersionUID = 1L;
     /**
      * 类声明代码
