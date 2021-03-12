@@ -20,7 +20,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import com.hngd.openapi.validator.OpenAPIValidator;
 import com.hngd.openapi.validator.ValidationResponse;
 import com.hngd.s2m.OpenAPIToMarkdown;
-import com.hngd.tool.config.ServerConfig;
+import com.hngd.tool.config.OpenAPIConfig;
 import com.hngd.tool.utils.ProjectUtils;
 
 import io.swagger.util.Json;
@@ -32,7 +32,6 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 @Mojo(name="openapi",defaultPhase = LifecyclePhase.COMPILE)
 public class OpenAPIGenerator extends BaseMojo{
@@ -119,15 +118,15 @@ public class OpenAPIGenerator extends BaseMojo{
             getLog().info("Using the default openapi config file path:"+confFilePath);
         }
         //判断配置文件是否存在
-        ServerConfig config;
+        OpenAPIConfig config;
         if(!(new File(confFilePath).exists())) {
-            config=new ServerConfig();
+            config=new OpenAPIConfig();
         }else {
-            Optional<ServerConfig> loadResult=ServerConfig.load(confFilePath);
+            Optional<OpenAPIConfig> loadResult=OpenAPIConfig.load(confFilePath);
             if(loadResult.isPresent()) {
                 config=loadResult.get();
             }else {
-                config=new ServerConfig();
+                config=new OpenAPIConfig();
             }
         }
         autoFillConfig(config);
@@ -139,7 +138,7 @@ public class OpenAPIGenerator extends BaseMojo{
         });
         getLog().debug("---class paths end---");
         List<File> sourceJarFiles=ProjectUtils.resolveSourceJarFiles(classPaths);
-        String s=ProjectAnalyst.builder()
+        String openAPI=ProjectAnalyst.builder()
             .withSourceRoots(getSourceRoots())
             .withSourceJarFiles(sourceJarFiles)
             .withIncludes(includes)
@@ -153,7 +152,7 @@ public class OpenAPIGenerator extends BaseMojo{
         
         File apiJsonFile=new File(openAPIOutput, API_FILE_NAME);
         try {
-            FileUtils.write(apiJsonFile, s,"utf-8");
+            FileUtils.write(apiJsonFile, openAPI,"utf-8");
         } catch (IOException e) {
             getLog().error(e);
             throw new MojoFailureException("写入OpenAPI Json文件失败",e);
@@ -175,7 +174,7 @@ public class OpenAPIGenerator extends BaseMojo{
         }
     }
  
-    private void autoFillConfig(ServerConfig config) {
+    private void autoFillConfig(OpenAPIConfig config) {
         
         if(CollectionUtils.isEmpty(config.servers)) {
             Server server=new Server();

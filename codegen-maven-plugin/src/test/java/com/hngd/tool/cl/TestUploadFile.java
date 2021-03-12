@@ -11,8 +11,6 @@ public class TestUploadFile {
     public static void main(String[]args){
 
         File file=new File("./pom.xml");
-
-
         OpenAPIGenerator.pushToSwaggerUIServer(file,"192.168.0.140:8888");
     }
 }

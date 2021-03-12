@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.hngd.openapi.validator.OpenAPIValidator;
 import com.hngd.openapi.validator.ValidationResponse;
-import com.hngd.tool.config.ServerConfig;
+import com.hngd.tool.config.OpenAPIConfig;
 
 import io.swagger.util.Json;
 
@@ -21,7 +21,7 @@ public class ProjectAnalystTest {
         String projectBaseDir="../../hnvmns-java-sample";
         String confFilePath=
                 projectBaseDir+"/build-config/openapi.json";
-        ServerConfig config=ServerConfig.load(confFilePath).get();
+        OpenAPIConfig config=OpenAPIConfig.load(confFilePath).get();
         String jarFilePath=
                 projectBaseDir+"/target/hnvmns-java-sample-0.0.1.jar";
         

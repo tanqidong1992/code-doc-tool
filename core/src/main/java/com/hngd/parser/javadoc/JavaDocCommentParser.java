@@ -126,11 +126,8 @@ public class JavaDocCommentParser {
         }
         if(element!=null) {
             parseResult.element = element;
-        }
-        if (parseResult.element != null) {
             parseResult.element.setContent(content.toString());
         }
         return parseResult;
     }
-
 }

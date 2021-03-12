@@ -41,8 +41,8 @@ public class TagsBlock extends BlockTag
         super("@tags");
     }
     @Override
-    public void onParseEnd(CommentDecoratedTarget baseInfo) {
-        super.onParseEnd(baseInfo);
+    public void onParseEnd(CommentDecoratedTarget parent) {
+        super.onParseEnd(parent);
         String content=this.getContent();
         if(content.contains(TAG_DELIMITER)) {
             String[] items=content.split(TAG_DELIMITER);

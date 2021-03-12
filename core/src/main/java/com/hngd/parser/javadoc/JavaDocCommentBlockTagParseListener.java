@@ -14,9 +14,9 @@ public interface JavaDocCommentBlockTagParseListener {
     public String onParseStart(String firstLine);
     /**
      * 
-     * @param target
+     * @param parent
      */
-    public void onParseEnd(CommentDecoratedTarget target) ;
+    public void onParseEnd(CommentDecoratedTarget parent) ;
     /**
      * 
      * @return

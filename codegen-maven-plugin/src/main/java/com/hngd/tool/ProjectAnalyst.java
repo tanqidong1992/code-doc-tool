@@ -13,7 +13,7 @@ import com.hngd.classloader.ProjectClassLoader;
 import com.hngd.openapi.OpenAPITool;
 import com.hngd.parser.source.CachedSourceParserContext;
 import com.hngd.parser.source.SourceParserContext;
-import com.hngd.tool.config.ServerConfig;
+import com.hngd.tool.config.OpenAPIConfig;
 import com.hngd.tool.utils.ProjectUtils;
 
 import io.swagger.v3.core.util.Json;
@@ -27,7 +27,7 @@ public class ProjectAnalyst {
     private String includes;
     private String excludes;
     private String packageFilter;
-    private ServerConfig config;
+    private OpenAPIConfig config;
     private File cacheDirectory;
     
     private static final Logger logger=LoggerFactory.getLogger(ProjectAnalyst.class);
@@ -61,7 +61,7 @@ public class ProjectAnalyst {
             projectAnalyst.packageFilter=packageFilter;
             return this;
         }
-        public ProjectAnalystBuilder withServerConfig(ServerConfig config) {
+        public ProjectAnalystBuilder withServerConfig(OpenAPIConfig config) {
             projectAnalyst.config=config;
             return this;
         }

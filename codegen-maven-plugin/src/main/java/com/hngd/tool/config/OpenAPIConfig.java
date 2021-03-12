@@ -32,11 +32,11 @@ import io.swagger.v3.oas.models.servers.Server;
  * openapi配置
  * @author tqd
  */
-public class ServerConfig {
+public class OpenAPIConfig {
     public List<Server> servers;
     public Info info;
-    private static final Logger logger=LoggerFactory.getLogger(ServerConfig.class);
-    public static Optional<ServerConfig> load(String filePath) {
+    private static final Logger logger=LoggerFactory.getLogger(OpenAPIConfig.class);
+    public static Optional<OpenAPIConfig> load(String filePath) {
         File file = new File(filePath);
         Path path = file.toPath();
         byte[] data = null;
@@ -49,9 +49,9 @@ public class ServerConfig {
             return Optional.empty();
         }
         String src = new String(data, Charset.forName(Constants.DEFAULT_CHARSET_NAME));
-        ServerConfig config=null;
+        OpenAPIConfig config=null;
         try {
-            config= Json.mapper().readValue(src, ServerConfig.class);
+            config= Json.mapper().readValue(src, OpenAPIConfig.class);
         } catch (JsonProcessingException e) {
             logger.error("",e);
         }
