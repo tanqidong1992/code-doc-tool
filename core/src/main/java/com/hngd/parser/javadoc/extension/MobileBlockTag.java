@@ -13,18 +13,22 @@ package com.hngd.parser.javadoc.extension;
 import com.hngd.parser.javadoc.BlockTag;
 
 /**
- * https://swagger.io/specification/#pathItemObject summary
- * @author tqd
+ * @author 
  */
-public class SummaryBlock extends BlockTag
+public class MobileBlockTag extends BlockTag
 {
     /**
      * 
-     * @author tqd
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 
+     * @author 
      * @since 0.0.1 
      */
-    public SummaryBlock()
+    public MobileBlockTag()
     {
-        super("@summary");
+        super("@MobieAPI");
     }
 }

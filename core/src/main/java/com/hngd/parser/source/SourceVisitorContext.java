@@ -9,15 +9,15 @@ import com.hngd.parser.entity.MethodInfo;
 import lombok.Data;
 
 @Data
-public class FileVisitorContext {
+public class SourceVisitorContext {
     private String packageName;
     
-    private FileParseResult parseResult=new FileParseResult();
+    private SourceParseResult parseResult=new SourceParseResult();
  
-    public FileVisitorContext() {
+    public SourceVisitorContext() {
         
     }
-    public FileVisitorContext(String packageName) {
+    public SourceVisitorContext(String packageName) {
         this.packageName=packageName;
     }
     

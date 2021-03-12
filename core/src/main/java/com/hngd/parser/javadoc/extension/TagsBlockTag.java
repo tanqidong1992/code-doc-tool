@@ -27,8 +27,12 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class TagsBlock extends BlockTag
+public class TagsBlockTag extends BlockTag
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     public static String TAG_DELIMITER=",";
     private List<String> pathItemTags=new ArrayList<>();
     /**
@@ -36,7 +40,7 @@ public class TagsBlock extends BlockTag
      * @author tqd
      * @since 0.0.1 
      */
-    public TagsBlock()
+    public TagsBlockTag()
     {
         super("@tags");
     }

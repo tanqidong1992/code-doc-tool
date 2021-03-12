@@ -53,7 +53,7 @@ public class CachedSourceParserContext extends SourceParserContext {
     }
 
     @Override
-    public FileParseResult doParseSourceFile(File f) {
+    public SourceParseResult doParseSourceFile(File f) {
         byte[] fileContent=null;
         try {
             fileContent = FileUtils.readFileToByteArray(f);
@@ -61,7 +61,7 @@ public class CachedSourceParserContext extends SourceParserContext {
             e.printStackTrace();
         }
         byte[] sha2=JavaFileUtils.sha2(fileContent);
-        Optional<FileParseResult> result=readCachedResult(sha2);
+        Optional<SourceParseResult> result=readCachedResult(sha2);
         if(result.isPresent()) {
             return result.get();
         }else {
@@ -70,7 +70,7 @@ public class CachedSourceParserContext extends SourceParserContext {
     }
     
     @Override
-    public FileParseResult doParseJarSourceEntry(JarFile jarFile, JarEntry je) {
+    public SourceParseResult doParseJarSourceEntry(JarFile jarFile, JarEntry je) {
         
         try(InputStream in=jarFile.getInputStream(je)){
             byte[] buffer=new byte[1024];
@@ -81,7 +81,7 @@ public class CachedSourceParserContext extends SourceParserContext {
             }
             byte[] fileContent=baos.toByteArray();
             byte[] sha2=JavaFileUtils.sha2(fileContent);
-            Optional<FileParseResult> result=readCachedResult(sha2);
+            Optional<SourceParseResult> result=readCachedResult(sha2);
             if(result.isPresent()) {
                 System.out.println("Parsing "+jarFile.getName()+"!"+je.getName()+" from cache");
                 return result.get();
@@ -96,9 +96,9 @@ public class CachedSourceParserContext extends SourceParserContext {
         
     }
 
-    private FileParseResult parseAndCache(byte[] sha2, byte[] fileContent) {
+    private SourceParseResult parseAndCache(byte[] sha2, byte[] fileContent) {
         CompilationUnit cu=ClassUtils.parseClass(fileContent);
-        FileParseResult result=super.doParseCompilationUnit(cu);
+        SourceParseResult result=super.doParseCompilationUnit(cu);
         if(result!=null) {
             ByteArrayOutputStream baos=new ByteArrayOutputStream();
             try {
@@ -111,15 +111,15 @@ public class CachedSourceParserContext extends SourceParserContext {
         return result;
     }
 
-    private Optional<FileParseResult> readCachedResult(byte[] sha2) {
+    private Optional<SourceParseResult> readCachedResult(byte[] sha2) {
         byte[] data=db.get(sha2);
         if(data==null) {
             return Optional.empty();
         }
         ByteArrayInputStream in=new ByteArrayInputStream(data);
-        FileParseResult result=null;
+        SourceParseResult result=null;
         try {
-            result = (FileParseResult) new ObjectInputStream(in).readObject();
+            result = (SourceParseResult) new ObjectInputStream(in).readObject();
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }

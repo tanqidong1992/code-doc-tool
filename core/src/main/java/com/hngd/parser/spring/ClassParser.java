@@ -30,9 +30,9 @@ import com.hngd.openapi.entity.ModuleInfo;
 import com.hngd.parser.entity.ClassInfo;
 import com.hngd.parser.entity.MethodInfo;
 import com.hngd.parser.entity.ParameterInfo;
-import com.hngd.parser.javadoc.extension.DescriptionBlock;
-import com.hngd.parser.javadoc.extension.SummaryBlock;
-import com.hngd.parser.javadoc.extension.TagsBlock;
+import com.hngd.parser.javadoc.extension.DescriptionBlockTag;
+import com.hngd.parser.javadoc.extension.SummaryBlockTag;
+import com.hngd.parser.javadoc.extension.TagsBlockTag;
 import com.hngd.parser.source.CommentStore;
 import com.hngd.parser.spring.parameter.CookieValueParameterExtractor;
 import com.hngd.parser.spring.parameter.HttpParameterExtractor;
@@ -111,7 +111,7 @@ public class ClassParser {
                 moduleInfo.getInterfaceInfos().add(hi);
                 //attach class tags to pathItem if exists
                 if(classInfo!=null) {
-                    Optional<TagsBlock> optionalTags=classInfo.findAnyExtension(TagsBlock.class);
+                    Optional<TagsBlockTag> optionalTags=classInfo.findAnyExtension(TagsBlockTag.class);
                     optionalTags.ifPresent(tagsBlock-> {
                         tagsBlock.getPathItemTags().forEach(hi.getTags()::add);
                     });
@@ -166,21 +166,21 @@ public class ClassParser {
         httpInterface.comment=mi.getComment();
         httpInterface.respComment=mi.getRetComment();
         //SummaryBlock 
-        Optional<SummaryBlock> optionalSummary=mi.findAnyExtension(SummaryBlock.class);
+        Optional<SummaryBlockTag> optionalSummary=mi.findAnyExtension(SummaryBlockTag.class);
         String summary=mi.getComment();
         if(optionalSummary.isPresent()) {
             summary=optionalSummary.get().getContent();
         }
         httpInterface.setSummary(summary);
         //DescriptionBlock 
-        Optional<DescriptionBlock> optionalDdescription=mi.findAnyExtension(DescriptionBlock.class);
+        Optional<DescriptionBlockTag> optionalDdescription=mi.findAnyExtension(DescriptionBlockTag.class);
         String description=mi.getComment();
         if(optionalDdescription.isPresent()) {
             description=optionalDdescription.get().getContent();
         }
         httpInterface.setDescription(description);
    
-        Optional<TagsBlock> optionalTags=mi.findAnyExtension(TagsBlock.class);
+        Optional<TagsBlockTag> optionalTags=mi.findAnyExtension(TagsBlockTag.class);
         if(optionalTags.isPresent()) {
             List<String> tags=optionalTags.get().getPathItemTags();
             tags.forEach(httpInterface.getTags()::add);

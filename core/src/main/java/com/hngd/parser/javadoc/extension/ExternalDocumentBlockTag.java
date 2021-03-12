@@ -13,18 +13,23 @@ package com.hngd.parser.javadoc.extension;
 import com.hngd.parser.javadoc.BlockTag;
 
 /**
- * https://swagger.io/specification/#pathItemObject description
+ * https://swagger.io/specification/#pathItemObject externalDocs
  * @author tqd
  */
-public class DescriptionBlock extends BlockTag
+public class ExternalDocumentBlockTag extends BlockTag
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     /**
      * 
      * @author tqd
      * @since 0.0.1 
      */
-    public DescriptionBlock()
+    public ExternalDocumentBlockTag()
     {
-        super("@description");
+        super("@externalDocument");
     }
 }

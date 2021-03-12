@@ -11,7 +11,7 @@ import com.hngd.parser.entity.MethodInfo;
 import lombok.Data;
 
 @Data
-public class FileParseResult implements Serializable{
+public class SourceParseResult implements Serializable{
 
     /**
      * 

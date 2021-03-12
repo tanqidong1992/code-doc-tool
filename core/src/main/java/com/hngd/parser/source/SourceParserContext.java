@@ -29,10 +29,10 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.hngd.exception.SourceParseException;
 
-import com.hngd.parser.javadoc.BlockTag.AuthorBlock;
+import com.hngd.parser.javadoc.BlockTag.AuthorBlockTag;
 import com.hngd.parser.javadoc.extension.ExtensionManager;
-import com.hngd.parser.javadoc.extension.MobileBlock;
-import com.hngd.parser.javadoc.extension.TimeBlock;
+import com.hngd.parser.javadoc.extension.MobileBlockTag;
+import com.hngd.parser.javadoc.extension.TimeBlockTag;
 import com.hngd.utils.ClassUtils;
 import com.hngd.utils.JavaFileUtils;
 
@@ -58,9 +58,9 @@ public class SourceParserContext {
         this(null,null);
     }
     static {
-        ExtensionManager.enableExtension(TimeBlock.class);
-        ExtensionManager.enableExtension(MobileBlock.class);
-        ExtensionManager.enableExtension(AuthorBlock.class);
+        ExtensionManager.enableExtension(TimeBlockTag.class);
+        ExtensionManager.enableExtension(MobileBlockTag.class);
+        ExtensionManager.enableExtension(AuthorBlockTag.class);
     }
 
     public  void initSource(File sourceBaseDirectory) {
@@ -78,7 +78,7 @@ public class SourceParserContext {
              .flatMap(this::doParseSourceJarFile)
              .forEach(this.commentStore::save);
     }
-    public Stream<FileParseResult> doParseSourceJarFile(File file) {
+    public Stream<SourceParseResult> doParseSourceJarFile(File file) {
         JarFile jarFile=null;
         try {
             jarFile = new JarFile(file);
@@ -100,7 +100,7 @@ public class SourceParserContext {
             .filter(entry->entry.getName().endsWith(".java"))
             .map(entry->doParseJarSourceEntry(immutableJarFile,entry));
     }
-    public FileParseResult doParseJarSourceEntry(JarFile jarFile, JarEntry je) {
+    public SourceParseResult doParseJarSourceEntry(JarFile jarFile, JarEntry je) {
         try(InputStream in=jarFile.getInputStream(je)){
             CompilationUnit cu= ClassUtils.parseClass(in);
             return doParseCompilationUnit(cu);
@@ -110,19 +110,19 @@ public class SourceParserContext {
         }
     }
 
-    protected FileParseResult doParseCompilationUnit(CompilationUnit cu) {
+    protected SourceParseResult doParseCompilationUnit(CompilationUnit cu) {
         Optional<PackageDeclaration>  optionalPackageDeclaration=cu.getPackageDeclaration();
         String packageName="";
         if(optionalPackageDeclaration.isPresent()) {
             PackageDeclaration pd=optionalPackageDeclaration.get();
             packageName=pd.getNameAsString();
         }
-        FileVisitorContext context=new FileVisitorContext(packageName);
+        SourceVisitorContext context=new SourceVisitorContext(packageName);
         cu.accept(new SourceVisitor(), context);
         return context.getParseResult();
         
     }
-    public FileParseResult doParseSourceFile(File f) {
+    public SourceParseResult doParseSourceFile(File f) {
         CompilationUnit cu=ClassUtils.parseClass(f);
         return doParseCompilationUnit(cu);
     }

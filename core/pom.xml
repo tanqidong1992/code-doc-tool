@@ -148,13 +148,13 @@
 		<dependency>
 			<groupId>org.openjdk.jmh</groupId>
 			<artifactId>jmh-core</artifactId>
-			<version>1.28</version>
+			<version>1.27</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.openjdk.jmh</groupId>
 			<artifactId>jmh-generator-annprocess</artifactId>
-			<version>1.28</version>
+			<version>1.27</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

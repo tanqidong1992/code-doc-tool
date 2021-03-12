@@ -14,7 +14,8 @@ public class FieldCommentParserTest {
         SourceParserContext pc=new SourceParserContext();
         String path="./src/test/java/com/hngd/test/dto/MenuTreeNode.java";
         File f=new File(path);
-        pc.doParseSourceFile(f);
+        SourceParseResult result=pc.doParseSourceFile(f);
+        pc.getCommentStore().save(result);
         pc.getCommentStore().print();
         String pageUrlComment=pc.getCommentStore()
                 .getFieldComment(MenuTreeNode.class.getCanonicalName(), "pageUrl");

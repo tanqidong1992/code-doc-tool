@@ -108,7 +108,7 @@ import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.type.WildcardType;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.hngd.parser.source.FileVisitorContext;
+import com.hngd.parser.source.SourceVisitorContext;
 import com.hngd.utils.JavaParserUtils;
 
 import lombok.Data;
@@ -130,25 +130,25 @@ public class ClassNameParserTest {
             PackageDeclaration pd=optionalPackageDeclaration.get();
             packageName=pd.getNameAsString();
         }
-        FileVisitorContext context=new FileVisitorContext(packageName);
+        SourceVisitorContext context=new SourceVisitorContext(packageName);
         cu.accept(new MyClassVisitor(), context);
     }
 
-    static class MyClassVisitor extends VoidVisitorAdapter<FileVisitorContext>{
+    static class MyClassVisitor extends VoidVisitorAdapter<SourceVisitorContext>{
         @Override
-        public void visit(ClassOrInterfaceDeclaration n, FileVisitorContext context) {
+        public void visit(ClassOrInterfaceDeclaration n, SourceVisitorContext context) {
             String name=JavaParserUtils.getParentNodeNameList(n);
             System.out.println("visit class:"+context.getPackageName()+"."+name);
             super.visit(n, context);
         }
         @Override
-        public void visit(FieldDeclaration n, FileVisitorContext context) {
+        public void visit(FieldDeclaration n, SourceVisitorContext context) {
             String fullName=getNodeFullName(n, context);
             System.out.println(fullName);
             super.visit(n, context);
         }
         @Override
-        public void visit(MethodDeclaration n, FileVisitorContext context) {
+        public void visit(MethodDeclaration n, SourceVisitorContext context) {
             String fullName=getNodeFullName(n, context);
             System.out.println(fullName);
             super.visit(n, context);
@@ -156,7 +156,7 @@ public class ClassNameParserTest {
         
     }
     
-    public static String getNodeFullName(Node node,FileVisitorContext context) {
+    public static String getNodeFullName(Node node,SourceVisitorContext context) {
         String name=JavaParserUtils.getParentNodeNameList(node);
         String packageName=context.getPackageName();
         return StringUtils.isBlank(packageName)?name:packageName+"."+name;

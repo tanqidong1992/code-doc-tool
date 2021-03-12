@@ -20,7 +20,7 @@ public class CommentStore {
     private  Map<String, MethodInfo> methodComments = new ConcurrentHashMap<>();
     private  Map<String, FieldInfo> fieldComments = new ConcurrentHashMap<>();
     
-    public void save(FileParseResult result) {
+    public void save(SourceParseResult result) {
         result.getClassComments().forEach((k,v)->{
             this.classComments.put(k, v);
         });

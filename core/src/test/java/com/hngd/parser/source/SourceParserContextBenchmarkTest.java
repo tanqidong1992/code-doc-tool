@@ -16,7 +16,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 public class SourceParserContextBenchmarkTest {
 
-    @Test
+    //@Test
     public void test() throws RunnerException {
         Options opts=new OptionsBuilder()
                 .include(SourceParserContextBenchmarkTest.class.getSimpleName())

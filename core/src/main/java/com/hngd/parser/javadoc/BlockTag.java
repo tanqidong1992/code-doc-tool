@@ -22,12 +22,12 @@ import com.hngd.parser.entity.ParameterInfo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/**
+/** 
  * @author
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlockTagParseListener{
+public class BlockTag extends JavaDocCommentElement implements BlockTagParseListener{
  
     /**
      * 
@@ -48,7 +48,7 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
             throw new RuntimeException("Java Doc Comment Block Tag must start with "+TAG_PREFIX);
         }
         this.tag = tag;
-        CommentBlockParserContext.register(tag, this.getClass());
+        BlockTagParserContext.register(tag, this.getClass());
     }
     
     public void onParseEnd(CommentDecoratedTarget parent) {
@@ -57,10 +57,9 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
         if(StringUtils.isNotBlank(getContent())) {
             parent.addExtension(key, this);
         }
-        
     }
-    public String onParseStart(String line) {
-        return line.replace(tag, "").trim();
+    public String onParseStart(String startLine) {
+        return startLine.replace(tag, "").trim();
     }
     @Override
     public BlockTag getResult() {
@@ -69,9 +68,13 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
     
     @Data
     @EqualsAndHashCode(callSuper = true)
-    public static class ParamBlock extends BlockTag {
+    public static class ParamBlockTag extends BlockTag {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
         private String paramName;
-        public ParamBlock() {
+        public ParamBlockTag() {
             super("@param");
         }
         @Override
@@ -90,7 +93,7 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
         public void onParseEnd(CommentDecoratedTarget parent) {
             if(parent instanceof MethodInfo) {
                 ParameterInfo parameterInfo = new ParameterInfo();
-                ParamBlock paramElement = this;
+                ParamBlockTag paramElement = this;
                 parameterInfo.setName(paramElement.paramName);
                 parameterInfo.setComment(paramElement.getContent());
                 ((MethodInfo)parent).getParameters().add(parameterInfo);
@@ -98,8 +101,13 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
         }
     }
 
-    public static class ReturnBlock extends BlockTag {
-        public ReturnBlock() {
+    public static class ReturnBlockTag extends BlockTag {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
+        public ReturnBlockTag() {
             super("@return");
         }
         
@@ -111,25 +119,45 @@ public class BlockTag extends JavaDocCommentElement implements JavaDocCommentBlo
         }
     }
 
-    public static class SeeBlock extends BlockTag {
-        public SeeBlock() {
+    public static class SeeBlockTag extends BlockTag {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
+        public SeeBlockTag() {
             super("@see");
         }
     }
   
-    public static class ThrowsBlock extends BlockTag {
-        public ThrowsBlock() {
+    public static class ThrowsBlockTag extends BlockTag {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
+        public ThrowsBlockTag() {
             super("@throws");
         }
     }
 
-    public static class SinceBlock extends BlockTag {
-        public SinceBlock() {
+    public static class SinceBlockTag extends BlockTag {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
+        public SinceBlockTag() {
             super("@since");
         }
     }
-    public static class AuthorBlock extends BlockTag{
-        public AuthorBlock(){
+    public static class AuthorBlockTag extends BlockTag{
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
+        public AuthorBlockTag(){
             super("@author");
         }
     }

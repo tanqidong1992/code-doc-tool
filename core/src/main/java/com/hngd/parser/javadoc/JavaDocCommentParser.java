@@ -23,14 +23,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Java文档注释解析类,用于解析javadoc comment
  * 参考 <a href="https://www.oracle.com/technetwork/java/javase/documentation/index-137868.html">How to Write Doc Comments for the Javadoc Tool</a>
+ * </br>
+ * see <a href="https://docs.oracle.com/javase/1.5.0/docs/tooldocs/windows/javadoc.html#documentationcomments">documentationcomments</a>
  * @author tqd
  * @version 0.0.1
  */
 public class JavaDocCommentParser {
-    /**
-     * java doc comment must has two lines
-     */
-    public static final int JAVA_DOC_COMMENT_MIN_LINE_SIZE=2;
+
     private static final Logger logger = LoggerFactory.getLogger(JavaDocCommentParser.class);
 
     private static class ParseResult {
@@ -45,18 +44,16 @@ public class JavaDocCommentParser {
     }
 
     public static List<JavaDocCommentElement> parse(List<String> commentLines) {
-        if (commentLines==null || commentLines.size() <= JAVA_DOC_COMMENT_MIN_LINE_SIZE) {
+        if (commentLines==null || commentLines.isEmpty()) {
             return Collections.emptyList();
         }
-        //remove the first line and last line
-        List<String> lines = commentLines.subList(1, commentLines.size() - 1);
+        List<String> lines = preprocess(commentLines);
         List<JavaDocCommentElement> commentElements = new ArrayList<>();
-        //parse description
-        ParseResult result = parseDescription(lines);
+        ParseResult result = parseMainDescription(lines);
         if(result.hasResult()) {
             commentElements.add(result.element);
         }
-        //parse block tags
+        //parse tag section
         while (result.endIndex < lines.size()) {
             result = parseElement(lines, result.endIndex);
             if(result.hasResult()) {
@@ -65,8 +62,42 @@ public class JavaDocCommentParser {
         }
         return commentElements;
     }
-    
-    private static ParseResult parseDescription(List<String> lines) {
+    /**
+     * remove start and end of javadoc comment
+     * @param commentLines
+     * @return
+     */
+    private static List<String> preprocess(List<String> commentLines) {
+        if(commentLines==null || commentLines.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<String> processedLines=new ArrayList<>(commentLines.size());
+        if(commentLines.size()==1) {
+            String line=commentLines.get(0);
+            line=line.trim().replace("/**", "").replace("*/", "").trim();
+            if(line.length()>0) {
+                processedLines.add(line);
+            }
+            return processedLines;
+        }else {
+            String firstLine=commentLines.get(0);
+            firstLine=firstLine.trim().replace("/**", "").trim();
+            if(firstLine.length()>0) {
+                processedLines.add(firstLine);
+            }
+            for(int i=1;i<commentLines.size()-1;i++) {
+                processedLines.add(commentLines.get(i));
+            }
+            String lastLine=commentLines.get(commentLines.size()-1);
+            lastLine=lastLine.trim().replace("*/", "").trim();
+            if(lastLine.length()>0) {
+                processedLines.add(lastLine);
+            }
+        }
+        return processedLines;
+    }
+
+    private static ParseResult parseMainDescription(List<String> lines) {
         ParseResult result = new ParseResult();
         result.startIndex = 0;
         StringBuilder desc = new StringBuilder();
@@ -81,7 +112,7 @@ public class JavaDocCommentParser {
                 desc.append(line);
             }
         }
-        Description description = new Description();
+        MainDescription description = new MainDescription();
         description.setContent(desc.toString());
         result.element = description;
         if (result.endIndex == ParseResult.UNSET_INDEX_VALUE) {
@@ -109,7 +140,7 @@ public class JavaDocCommentParser {
                 parseResult.endIndex = i;
                 break;
             } else {
-                Optional<JavaDocCommentBlockTagParseListener> optionalElementParser = CommentBlockParserContext.findElementParser(line);
+                Optional<BlockTagParseListener> optionalElementParser = BlockTagParserContext.findElementParser(line);
                 if (optionalElementParser.isPresent()) {
                     line = optionalElementParser.get().onParseStart(line);
                     content.append(line);

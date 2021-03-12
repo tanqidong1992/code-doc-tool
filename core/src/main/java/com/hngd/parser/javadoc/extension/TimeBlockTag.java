@@ -23,8 +23,12 @@ import com.hngd.parser.javadoc.BlockTag;
 /**
  * @author tqd
  */
-public class TimeBlock extends BlockTag {
-    private static final Logger logger = LoggerFactory.getLogger(TimeBlock.class);
+public class TimeBlockTag extends BlockTag {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(TimeBlockTag.class);
     public Date createTime;
     public String createTimeStr;
 
@@ -32,7 +36,7 @@ public class TimeBlock extends BlockTag {
      * @author
      * @since 0.0.1
      */
-    public TimeBlock() {
+    public TimeBlockTag() {
         super("@time");
     }
 
