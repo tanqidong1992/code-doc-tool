@@ -25,13 +25,13 @@ public class ProjectClassLoaderTest {
     @Test
     public void testNestedJarLoad() throws ClassNotFoundException{
         
-        String s="./test-data/hnvmns-java-sample-0.0.1.jar";
+        String s="./test-data/nested-sample.jar";
         ProjectClassLoader cl=
                 new ProjectClassLoader(this.getClass().getClassLoader());
         cl.addClasspath(s);
         List<String> classes=cl.listAllClass();
         classes.forEach(System.out::println);
-        Class<?> cls=cl.loadClass("org.apache.logging.log4j.core.net.Priority");
+        Class<?> cls=cl.loadClass("com.fasterxml.jackson.core.JsonEncoding");
         Assert.assertTrue(cls!=null);
   
     }

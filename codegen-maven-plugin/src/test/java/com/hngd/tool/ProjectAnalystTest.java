@@ -16,7 +16,7 @@ import io.swagger.util.Json;
 
 public class ProjectAnalystTest {
 
-    @Test
+    
     public void test() throws IOException {
         String projectBaseDir="../../hnvmns-java-sample";
         String confFilePath=
@@ -34,7 +34,8 @@ public class ProjectAnalystTest {
         String packageFilter="com.hngd.web.controller";
         //sourceRoots=Arrays.asList(new File("/work/company/projects/education-training-system/education-training-system/src/main/java"));
         List<File> classPaths=Arrays.asList(
-                new File(projectBaseDir,"target/classes")
+                new File(projectBaseDir,"target/classes"),
+                new File(jarFilePath)
                 );
         String s=ProjectAnalyst.builder()
                 .withSourceRoots(sourceRoots)
