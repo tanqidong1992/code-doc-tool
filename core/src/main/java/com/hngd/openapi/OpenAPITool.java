@@ -159,157 +159,144 @@ public class OpenAPITool {
         op.setOperationId(operationId);
         op.setDescription(httpInterface.getDescription());
         op.setSummary(httpInterface.getSummary());
-        List<Parameter> parameters = buildPatameters(httpInterface, op);
+        List<Parameter> parameters = processHttpParameter(httpInterface.httpParameters);
         op.setParameters(parameters);
+        Optional<RequestBody> requestBody=buildRequestBody(httpInterface);
+        if(requestBody.isPresent()) {
+            op.setRequestBody(requestBody.get());
+        }
         resolveResponse(op, httpInterface);
         OpenAPIUtils.addOpToPath(op,path,httpInterface.httpMethod);
         return path;
     }
     
-    private List<Parameter> buildPatameters(HttpInterface httpInterface, Operation op) {
-        List<Parameter> parameters = new ArrayList<>();
+    private Optional<RequestBody> buildRequestBody(HttpInterface httpInterface) {
+
         if (!hasRequestBody(httpInterface.httpMethod)) {
-            //对于不在requestbody中的参数
-            parameters=processHttpParameter(httpInterface.httpParameters);
-        } else{
-            MediaType mediaTypeContent = new MediaType();
-            Content content = new Content();
-            //requestbody只有一部分的情况
-            if (httpInterface.hasRequestBody && !httpInterface.isMultipart()) {
-                
-                List<String> consumes=httpInterface.getConsumes();
-                if(CollectionUtils.isEmpty(consumes)) {
-                    content.addMediaType(Constants.DEFAULT_CONSUME_TYPE, mediaTypeContent);
-                }else {
-                    for(String consume:consumes) {
-                        content.addMediaType(consume, mediaTypeContent);
-                    }
-                }
-                //RequestBody只有一部分,所以被RequestBody注解修饰的方法参数只有一个
-                List<HttpParameter>  httpParameters=httpInterface.getHttpParameters();
-                Optional<HttpParameter> optionalParameterInBody=httpParameters.stream()
-                    .filter(hp->!hp.getLocation().isParameter())
-                    .findFirst();
-                
-                if(optionalParameterInBody.isPresent()) {
-                    HttpParameter pc = optionalParameterInBody.get();
-                    Type parameterType = pc.getJavaType();
-                    HttpParameterUtils.resolveParameterInfo(pc, parameterType);
-                    String key = typeResolver.resolveAsSchema(parameterType, openAPI);
-                    //如果是简单类型就会返回null
-                    if(!StringUtils.isEmpty(key)) {
-                        Schema<?> schema = openAPI.getComponents().getSchemas().get(key);
-                        mediaTypeContent.setSchema(schema);
-                    }else {
-                        Schema<?> paramSchema=pc.schema;
-                        mediaTypeContent.setSchema(paramSchema);
-                        if(paramSchema!=null && StringUtils.isEmpty(paramSchema.getDescription())) {
-                            pc.schema.setDescription(pc.comment);
-                        }
-                    }
-                }
-                List<HttpParameter> filterHttpParameters=httpParameters.stream()
-                    .filter(hp->hp.getLocation().isParameter())
-                    .collect(Collectors.toList());
-                if(!CollectionUtils.isEmpty(filterHttpParameters)) {
-                    parameters=processHttpParameter(filterHttpParameters);
-                }
+            return Optional.empty();
+        }
+        MediaType mediaTypeContent = new MediaType();
+        Content content = new Content();
+        // requestbody只有一部分的情况
+        if (httpInterface.hasRequestBody && !httpInterface.isMultipart()) {
+            List<String> consumes = httpInterface.getConsumes();
+            if (CollectionUtils.isEmpty(consumes)) {
+                content.addMediaType(Constants.DEFAULT_CONSUME_TYPE, mediaTypeContent);
             } else {
-                if (httpInterface.isMultipart()) {
-                    content.addMediaType(Constants.MULTIPART_FORM_DATA, mediaTypeContent);
-                } else {
-                    content.addMediaType(Constants.APPLICATION_FORM_URLENCODED_VALUE, mediaTypeContent);
+                for (String consume : consumes) {
+                    content.addMediaType(consume, mediaTypeContent);
                 }
-                ObjectSchema contentSchema = new ObjectSchema();
-                mediaTypeContent.setSchema(contentSchema);
-                Map<String, Encoding> contentEncodings = new HashMap<>();
-                mediaTypeContent.setEncoding(contentEncodings);
-                for (int i = 0; i < httpInterface.httpParameters.size(); i++) {
-                    HttpParameter pc = httpInterface.httpParameters.get(i);
-                    Type parameterType = pc.getJavaType();
-                    HttpParameterUtils.resolveParameterInfo(pc, parameterType);
-                    if (!pc.isPrimitive) {
-                        typeResolver.resolveAsSchema(parameterType, openAPI);
-                    }
-                    Encoding encoding = new Encoding();
-                    if (parameterType instanceof Class && BeanUtils.isSimpleProperty((Class<?>) parameterType)) {
-                        if (parameterType.equals(String.class)) {
-                            encoding.setContentType("string");
-                        } else {
-                            encoding.setContentType("text/plain");
-                        }
-                    } else {
-                        if (TypeUtils.isMultipartType(parameterType)) {
-                            encoding.setContentType(Constants.MULTIPART_FILE_TYPE);
-                        } else {
-                            encoding.setContentType(Constants.DEFAULT_CONSUME_TYPE);
-                        }
-                    }
-                    contentEncodings.put(pc.name, encoding);
-                    if (pc.location.equals(HttpParameterLocation.query)) {
-                        // item.setSchema(pc.schema);
-                        if (pc.isRequired()) {
-                            contentSchema.addRequiredItem(pc.name);
-                        }
-                        if (TypeUtils.isMultipartType(parameterType)) {
-                             Schema<?> propertiesItem = new FileSchema();
-                             Class<?> type=(Class<?>) parameterType;
-                             if(type.isArray()) {
-                                 ArraySchema as=new ArraySchema();
-                                 as.setItems(propertiesItem);
-                                 propertiesItem=as;
-                             }
-                             propertiesItem.setDescription(pc.comment);
-                             contentSchema.addProperties(pc.name, propertiesItem);
-                        } else {
-                            pc.schema.setDescription(pc.comment);
-                            contentSchema.addProperties(pc.name, pc.schema);
-                        }
-                        
-                    } else if (pc.location.equals(HttpParameterLocation.path)) {
-                        Optional<Parameter> pathParameter = createParameter(pc);
-                        if(pathParameter.isPresent()) {
-                            parameters.add(pathParameter.get());
-                        }
-                    }else if (pc.location.equals(HttpParameterLocation.body)) {
-                        Schema<?> propertiesItem = new Schema<>();
-                        propertiesItem.setDescription(pc.comment);
-                        propertiesItem.setType(pc.openapiType);
-                        propertiesItem.set$ref(pc.ref);
-                        if (pc.ref != null && pc.schema instanceof ObjectSchema) {
-                            @SuppressWarnings("rawtypes")
-                            Map<String, Schema> properties = new HashMap<>();
-                            properties.put(pc.ref, pc.schema);
-                            propertiesItem.setProperties(properties);
-                        }
-                        if (pc.isRequired()) {
-                            contentSchema.addRequiredItem(pc.name);
-                        }
-                        if (TypeUtils.isMultipartType(parameterType)) {
-                            propertiesItem.format("binary");
-                            propertiesItem.setType("string");
-                             Class<?> type=(Class<?>) parameterType;
-                             if(type.isArray()) {
-                                 ArraySchema as=new ArraySchema();
-                                 as.setDescription(pc.comment);
-                                 Schema<?> items=new FileSchema();
-                                 as.setItems(items);
-                                 propertiesItem=as;
-                             }
-                        } else {
-                            propertiesItem.format(pc.openapiFormat);
-                        }
-                        contentSchema.addProperties(pc.name, propertiesItem);
+            }
+            // RequestBody只有一部分,所以被RequestBody注解修饰的方法参数只有一个
+            List<HttpParameter> httpParameters = httpInterface.getHttpParameters();
+            Optional<HttpParameter> optionalParameterInBody = httpParameters.stream()
+                    .filter(hp -> !hp.getLocation().isParameter()).findFirst();
+            if (optionalParameterInBody.isPresent()) {
+                HttpParameter pc = optionalParameterInBody.get();
+                Type parameterType = pc.getJavaType();
+                HttpParameterUtils.resolveParameterInfo(pc, parameterType);
+                String key = typeResolver.resolveAsSchema(parameterType, openAPI);
+                // 如果是简单类型就会返回null
+                if (!StringUtils.isEmpty(key)) {
+                    Schema<?> schema = openAPI.getComponents().getSchemas().get(key);
+                    mediaTypeContent.setSchema(schema);
+                } else {
+                    Schema<?> paramSchema = pc.schema;
+                    mediaTypeContent.setSchema(paramSchema);
+                    if (paramSchema != null && StringUtils.isEmpty(paramSchema.getDescription())) {
+                        pc.schema.setDescription(pc.comment);
                     }
                 }
             }
-            RequestBody requestBody = new RequestBody();
-            requestBody.setContent(content);
-            op.setRequestBody(requestBody);
-        }
-        return parameters;
-    }
+        } else {
+            if (httpInterface.isMultipart()) {
+                content.addMediaType(Constants.MULTIPART_FORM_DATA, mediaTypeContent);
+            } else {
+                content.addMediaType(Constants.APPLICATION_FORM_URLENCODED_VALUE, mediaTypeContent);
+            }
+            ObjectSchema contentSchema = new ObjectSchema();
+            mediaTypeContent.setSchema(contentSchema);
+            Map<String, Encoding> contentEncodings = new HashMap<>();
+            mediaTypeContent.setEncoding(contentEncodings);
+            for (int i = 0; i < httpInterface.httpParameters.size(); i++) {
+                HttpParameter pc = httpInterface.httpParameters.get(i);
+                Type parameterType = pc.getJavaType();
+                HttpParameterUtils.resolveParameterInfo(pc, parameterType);
+                if (!pc.isPrimitive) {
+                    typeResolver.resolveAsSchema(parameterType, openAPI);
+                }
+                Encoding encoding = new Encoding();
+                if (parameterType instanceof Class && BeanUtils.isSimpleProperty((Class<?>) parameterType)) {
+                    if (parameterType.equals(String.class)) {
+                        encoding.setContentType("string");
+                    } else {
+                        encoding.setContentType("text/plain");
+                    }
+                } else {
+                    if (TypeUtils.isMultipartType(parameterType)) {
+                        encoding.setContentType(Constants.MULTIPART_FILE_TYPE);
+                    } else {
+                        encoding.setContentType(Constants.DEFAULT_CONSUME_TYPE);
+                    }
+                }
+                contentEncodings.put(pc.name, encoding);
+                if (pc.location.equals(HttpParameterLocation.query)) {
+                    if (pc.isRequired()) {
+                        contentSchema.addRequiredItem(pc.name);
+                    }
+                    if (TypeUtils.isMultipartType(parameterType)) {
+                        Schema<?> propertiesItem = new FileSchema();
+                        Class<?> type = (Class<?>) parameterType;
+                        if (type.isArray()) {
+                            ArraySchema as = new ArraySchema();
+                            as.setItems(propertiesItem);
+                            propertiesItem = as;
+                        }
+                        propertiesItem.setDescription(pc.comment);
+                        contentSchema.addProperties(pc.name, propertiesItem);
+                    } else {
+                        pc.schema.setDescription(pc.comment);
+                        contentSchema.addProperties(pc.name, pc.schema);
+                    }
 
+                } else if (pc.location.equals(HttpParameterLocation.body)) {
+                    Schema<?> propertiesItem = new Schema<>();
+                    propertiesItem.setDescription(pc.comment);
+                    propertiesItem.setType(pc.openapiType);
+                    propertiesItem.set$ref(pc.ref);
+                    if (pc.ref != null && pc.schema instanceof ObjectSchema) {
+                        @SuppressWarnings("rawtypes")
+                        Map<String, Schema> properties = new HashMap<>();
+                        properties.put(pc.ref, pc.schema);
+                        propertiesItem.setProperties(properties);
+                    }
+                    if (pc.isRequired()) {
+                        contentSchema.addRequiredItem(pc.name);
+                    }
+                    if (TypeUtils.isMultipartType(parameterType)) {
+                        propertiesItem.format("binary");
+                        propertiesItem.setType("string");
+                        Class<?> type = (Class<?>) parameterType;
+                        if (type.isArray()) {
+                            ArraySchema as = new ArraySchema();
+                            as.setDescription(pc.comment);
+                            Schema<?> items = new FileSchema();
+                            as.setItems(items);
+                            propertiesItem = as;
+                        }
+                    } else {
+                        propertiesItem.format(pc.openapiFormat);
+                    }
+                    contentSchema.addProperties(pc.name, propertiesItem);
+                }
+            }
+        }
+        RequestBody requestBody = new RequestBody();
+        requestBody.setContent(content);
+        return Optional.of(requestBody);
+
+    }
+ 
     private List<Parameter> processHttpParameter(List<HttpParameter> httpParameters) {
         List<Parameter> parameters=new ArrayList<>();
         for (int i = 0; i < httpParameters.size(); i++) {

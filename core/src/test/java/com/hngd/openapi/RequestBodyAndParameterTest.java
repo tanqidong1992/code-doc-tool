@@ -4,12 +4,16 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.hngd.base.OpenAPIUtils;
 import com.hngd.constant.Constants;
@@ -27,85 +31,83 @@ public class RequestBodyAndParameterTest {
 
     @Test
     public void testRequestBodyWithParameters() {
-        OpenAPI openAPI=new OpenAPI();
-        CommentStore commentStore=new CommentStore();
-        OpenAPITool t=new OpenAPITool(openAPI, commentStore);
+        OpenAPI openAPI = new OpenAPI();
+        CommentStore commentStore = new CommentStore();
+        OpenAPITool t = new OpenAPITool(openAPI, commentStore);
         t.parse(Arrays.asList(A.class));
         Json.prettyPrint(openAPI);
-        Operation op=OpenAPIUtils.getOperation(openAPI, "/a/{area}", "post").get();
-        Parameter area=OpenAPIUtils.parameterOfOperation(op, "area").get();
+        Operation op = OpenAPIUtils.getOperation(openAPI, "/a/{area}", "post").get();
+        Parameter area = OpenAPIUtils.parameterOfOperation(op, "area").get();
         Assert.assertTrue(area.getIn().equals("path"));
-        MediaType mt=op.getRequestBody().getContent().get(Constants.DEFAULT_PRODUCE_TYPE);
+        MediaType mt = op.getRequestBody().getContent().get(Constants.DEFAULT_PRODUCE_TYPE);
         Assert.assertTrue(mt.getSchema().getProperties().containsKey("name"));
         Assert.assertTrue(mt.getSchema().getProperties().containsKey("age"));
-        
-        Parameter name=OpenAPIUtils.parameterOfOperation(op, "name").get();
-        Parameter age=OpenAPIUtils.parameterOfOperation(op, "age").get();
-        Parameter clazz=OpenAPIUtils.parameterOfOperation(op, "class").get();
+
+        Parameter name = OpenAPIUtils.parameterOfOperation(op, "name").get();
+        Parameter age = OpenAPIUtils.parameterOfOperation(op, "age").get();
+        Parameter clazz = OpenAPIUtils.parameterOfOperation(op, "class").get();
         Assert.assertTrue(name.getIn().equals("query"));
         Assert.assertTrue(age.getIn().equals("query"));
         Assert.assertTrue(clazz.getIn().equals("query"));
     }
-    
+
     @RestController
     @RequestMapping("/a")
-    public static class A{
-        
+    public static class A {
+
         @PostMapping("/{area}")
-        public String echo(User u1,@RequestParam("class")String clazz,@RequestBody User user,@PathVariable("area")String area) {
+        public String echo(User u1, @RequestParam("class") String clazz, @RequestBody User user,
+                @PathVariable("area") String area) {
             return "";
         }
     }
-    
+
     @Test
     public void testRequestBody() {
-        OpenAPI openAPI=new OpenAPI();
-        CommentStore commentStore=new CommentStore();
-        OpenAPITool t=new OpenAPITool(openAPI, commentStore);
+        OpenAPI openAPI = new OpenAPI();
+        CommentStore commentStore = new CommentStore();
+        OpenAPITool t = new OpenAPITool(openAPI, commentStore);
         t.parse(Arrays.asList(B.class));
         Json.prettyPrint(openAPI);
 
-        Operation op=OpenAPIUtils.getOperation(openAPI, "/b", "post").get();
+        Operation op = OpenAPIUtils.getOperation(openAPI, "/b", "post").get();
         Assert.assertTrue(op.getParameters().isEmpty());
-        io.swagger.v3.oas.models.parameters.RequestBody body=op.getRequestBody();
-        MediaType mt=body.getContent().get(Constants.DEFAULT_PRODUCE_TYPE);
-        Schema<?> s=mt.getSchema();
+        io.swagger.v3.oas.models.parameters.RequestBody body = op.getRequestBody();
+        MediaType mt = body.getContent().get(Constants.DEFAULT_PRODUCE_TYPE);
+        Schema<?> s = mt.getSchema();
         Assert.assertTrue(s.getProperties().containsKey("name"));
         Assert.assertTrue(s.getProperties().containsKey("age"));
     }
 
-
     @RestController
-    public static class B{
+    public static class B {
 
         @PostMapping("/b")
         public String echo(@RequestBody User user) {
             return "";
         }
     }
-    
-    
+
     @Test
     public void testSimpleRequestBody() {
-        OpenAPI openAPI=new OpenAPI();
-        CommentStore commentStore=new CommentStore();
-        OpenAPITool t=new OpenAPITool(openAPI, commentStore);
+        OpenAPI openAPI = new OpenAPI();
+        CommentStore commentStore = new CommentStore();
+        OpenAPITool t = new OpenAPITool(openAPI, commentStore);
         t.parse(Arrays.asList(C.class));
         Json.prettyPrint(openAPI);
-        
-        Operation op=OpenAPIUtils.getOperation(openAPI, "/c", "post").get();
+
+        Operation op = OpenAPIUtils.getOperation(openAPI, "/c", "post").get();
         Assert.assertTrue(op.getParameters().isEmpty());
-        io.swagger.v3.oas.models.parameters.RequestBody body=op.getRequestBody();
-        MediaType mt=body.getContent().get(Constants.DEFAULT_PRODUCE_TYPE);
-        Schema<?> s=mt.getSchema();
-        
+        io.swagger.v3.oas.models.parameters.RequestBody body = op.getRequestBody();
+        MediaType mt = body.getContent().get(Constants.DEFAULT_PRODUCE_TYPE);
+        Schema<?> s = mt.getSchema();
+
         Assert.assertTrue(s.getType().equals("string"));
-    
+
     }
 
-
     @RestController
-    public static class C{
+    public static class C {
 
         @PostMapping("/c")
         public String echo(@RequestBody String user) {
@@ -114,8 +116,30 @@ public class RequestBodyAndParameterTest {
     }
 
     @Data
-    static class User{
+    static class User {
         public String name;
         public Integer age;
+    }
+
+    @RestController
+    public class SampleController {
+
+        @GetMapping("/sample")
+        public String get() {
+            return "sample";
+        }
+
+        @PostMapping("/param")
+        public String get1(@CookieValue("user") String user, @RequestParam("name") String name,
+                @RequestPart("file") MultipartFile file) {
+            return "param[name]:" + name + ",cookit[user]" + user;
+        }
+
+        @PostMapping("/param/{id}")
+        public String get2(@PathVariable("id") String id, @CookieValue("user") String user,
+                @RequestParam("name") String name, @RequestPart("file") MultipartFile file) {
+            return "param[name]:" + name + ",cookit[user]" + user;
+        }
+
     }
 }
