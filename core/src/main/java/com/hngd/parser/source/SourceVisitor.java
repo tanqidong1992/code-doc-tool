@@ -61,7 +61,7 @@ public class SourceVisitor extends VoidVisitorAdapter<SourceVisitorContext>{
                 String classOrInterfaceName=classOrInterfaceDeclaration.getNameAsString();
                 ci.setName(classOrInterfaceName);
                 ci.setComment(description.getContent());
-                ci.setClassOrInterfaceDetail(classOrInterfaceDeclaration);
+                //ci.setClassOrInterfaceDetail(classOrInterfaceDeclaration);
                 context.saveClassComment(classFullName, ci);
             });
             commentElements.stream()

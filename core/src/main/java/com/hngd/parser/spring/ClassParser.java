@@ -213,7 +213,8 @@ public class ClassParser {
                         //补全在注解中没有指明名称且参数类型为简单类型的参数的名称
                         if(httpParams.size()==1) {
                             String name=httpParams.get(0).getName();
-                            if(StringUtils.isBlank(name)) {
+                            if(StringUtils.isBlank(name) || 
+                                    httpParams.get(0).isNeedOverrideParameterName()) {
                                 httpParams.get(0).setName(pi.getName());
                             }
                         }
@@ -268,6 +269,7 @@ public class ClassParser {
             // requestparam
             HttpParameter httpParam = new HttpParameter();
             httpParam.name = parameter.getName();
+            httpParam.setNeedOverrideParameterName(true);
             httpParam.location = HttpParameterLocation.query;
             httpParam.required = false;
             httpParam.javaType = parameter.getType();
@@ -276,6 +278,16 @@ public class ClassParser {
             if (dateFormat.isPresent()) {
                 httpParam.openapiFormat = dateFormat.get();
             }
+            httpParam.isPrimitive = BeanUtils.isSimpleProperty(parameter.getType());
+            return Arrays.asList(httpParam);
+        }else if(TypeUtils.isMultipartType(parameter.getType())){
+         // requestparam
+            HttpParameter httpParam = new HttpParameter();
+            httpParam.name = parameter.getName();
+            httpParam.setNeedOverrideParameterName(true);
+            httpParam.location = HttpParameterLocation.body;
+            httpParam.required = true;
+            httpParam.javaType = parameter.getType();
             httpParam.isPrimitive = BeanUtils.isSimpleProperty(parameter.getType());
             return Arrays.asList(httpParam);
         }else{

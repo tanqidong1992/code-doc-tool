@@ -239,8 +239,8 @@ public class OpenAPITool {
                         encoding.setContentType(Constants.DEFAULT_CONSUME_TYPE);
                     }
                 }
-                contentEncodings.put(pc.name, encoding);
                 if (pc.location.equals(HttpParameterLocation.query)) {
+                    contentEncodings.put(pc.name, encoding);
                     if (pc.isRequired()) {
                         contentSchema.addRequiredItem(pc.name);
                     }
@@ -260,6 +260,7 @@ public class OpenAPITool {
                     }
 
                 } else if (pc.location.equals(HttpParameterLocation.body)) {
+                    contentEncodings.put(pc.name, encoding);
                     Schema<?> propertiesItem = new Schema<>();
                     propertiesItem.setDescription(pc.comment);
                     propertiesItem.setType(pc.openapiType);

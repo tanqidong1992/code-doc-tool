@@ -63,6 +63,12 @@ public class SourceParserContext {
         ExtensionManager.enableExtension(AuthorBlockTag.class);
     }
 
+    public  void initJavaSourceFile(File javaSourceFile) {
+        if(JavaFileUtils.isJavaSourceFile(javaSourceFile)) {
+            this.commentStore.save(doParseSourceFile(javaSourceFile));
+        }
+    }
+    
     public  void initSource(File sourceBaseDirectory) {
         Collection<File> files=sourceFileFilter.filterFiles(sourceBaseDirectory);
         files.parallelStream()

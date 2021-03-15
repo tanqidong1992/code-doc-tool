@@ -30,6 +30,10 @@ public class HttpParameter {
      */
     public String name;
     /**
+     * 是否需要覆盖参数名称
+     */
+    public boolean needOverrideParameterName=false;
+    /**
      * 是否必须
      */
     public boolean required;

@@ -12,7 +12,7 @@ public class JavaFileUtils {
     private static final Logger logger=LoggerFactory.getLogger(JavaFileUtils.class);
      
      public static boolean isJavaSourceFile(File file){
-         return file.getName().endsWith(".java");
+         return file.isFile() && file.getName().endsWith(".java");
      }
      
      public static byte[] sha2(byte[] fileContent) {
