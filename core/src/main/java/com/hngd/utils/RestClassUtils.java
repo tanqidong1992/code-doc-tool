@@ -115,7 +115,7 @@ public class RestClassUtils {
         return Optional.ofNullable(method);
     }
     
-    public static List<String> extractCosumes(Annotation req){
+    public static List<String> extractConsumes(Annotation req){
         String[] consumes=null;
         Method method=getAnnotationMethod(req, "consumes");
         try {

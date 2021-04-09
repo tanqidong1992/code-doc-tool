@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -295,7 +294,6 @@ public class OpenAPITool {
         RequestBody requestBody = new RequestBody();
         requestBody.setContent(content);
         return Optional.of(requestBody);
-
     }
  
     private List<Parameter> processHttpParameter(List<HttpParameter> httpParameters) {
@@ -307,9 +305,7 @@ public class OpenAPITool {
             if (!pc.isPrimitive) {
                 typeResolver.resolveAsSchema(parameterType, openAPI);
             }
-            createParameter(pc).ifPresent(param->{
-                parameters.add(param);
-            });
+            createParameter(pc).ifPresent(parameters::add);
         }
         return parameters;
     }
@@ -346,8 +342,6 @@ public class OpenAPITool {
         op.setResponses(responses);
     }
 
-    
- 
     public static boolean hasRequestBody(String httpMethod) {
         //CONNECT
         boolean mustNotHasBody=httpMethod.equalsIgnoreCase(RequestMethod.GET.name()) ||

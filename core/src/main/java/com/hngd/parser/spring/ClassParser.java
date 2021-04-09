@@ -138,7 +138,7 @@ public class ClassParser {
         Annotation mappingAnnotation=optionalAnnotation.get();
         httpInterface.deprecated=isMethodDeprecated(method);
         //extract consumes
-        httpInterface.consumes=RestClassUtils.extractCosumes(mappingAnnotation);
+        httpInterface.consumes=RestClassUtils.extractConsumes(mappingAnnotation);
         //extract produces
         httpInterface.produces=RestClassUtils.extractProduces(mappingAnnotation);
         //extract http url

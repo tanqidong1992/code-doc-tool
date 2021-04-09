@@ -30,7 +30,7 @@ import com.github.javaparser.ast.PackageDeclaration;
 import com.hngd.exception.SourceParseException;
 
 import com.hngd.parser.javadoc.BlockTag.AuthorBlockTag;
-import com.hngd.parser.javadoc.extension.ExtensionManager;
+import com.hngd.parser.javadoc.extension.BlockTagExtensionManager;
 import com.hngd.parser.javadoc.extension.MobileBlockTag;
 import com.hngd.parser.javadoc.extension.TimeBlockTag;
 import com.hngd.utils.ClassUtils;
@@ -58,9 +58,9 @@ public class SourceParserContext {
         this(null,null);
     }
     static {
-        ExtensionManager.enableExtension(TimeBlockTag.class);
-        ExtensionManager.enableExtension(MobileBlockTag.class);
-        ExtensionManager.enableExtension(AuthorBlockTag.class);
+        BlockTagExtensionManager.enableExtension(TimeBlockTag.class);
+        BlockTagExtensionManager.enableExtension(MobileBlockTag.class);
+        BlockTagExtensionManager.enableExtension(AuthorBlockTag.class);
     }
 
     public  void initJavaSourceFile(File javaSourceFile) {

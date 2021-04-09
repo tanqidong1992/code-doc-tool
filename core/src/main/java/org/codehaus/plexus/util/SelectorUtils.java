@@ -114,7 +114,6 @@ public final class SelectorUtils
             && pattern.startsWith( ANT_HANDLER_PREFIX ) && pattern.endsWith( PATTERN_HANDLER_SUFFIX );
     }
 
-    @SuppressWarnings( "SimplifiableIfStatement" )
     static boolean matchAntPathPatternStart( MatchPattern pattern, String str, String separator,
                                              boolean isCaseSensitive )
     {

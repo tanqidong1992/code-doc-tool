@@ -1,7 +1,6 @@
 package com.hngd.openapi.validator;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.util.List;
 
@@ -62,7 +61,7 @@ public class SchemaValidationError {
 
         prop = node.get("required");
         if (prop != null && prop.isArray()) {
-            ArrayNode an = (ArrayNode) prop;
+            //ArrayNode an = (ArrayNode) prop;
         }
     }
 
