@@ -83,8 +83,8 @@ public class MultipartFileTest {
         
         Parameter user=OpenAPIUtils.parameterOfOperation(mfWithParams, "user").get();
         Assert.assertEquals("cookie", user.getIn());
-        Parameter name=OpenAPIUtils.parameterOfOperation(mfWithParams, "name").get();
-        Assert.assertEquals("query", name.getIn());
+        //Parameter name=OpenAPIUtils.parameterOfOperation(mfWithParams, "name").get();
+        //Assert.assertEquals("query", name.getIn());
         Parameter id=OpenAPIUtils.parameterOfOperation(mfWithParams, "id").get();
         Assert.assertEquals("path", id.getIn());
         

@@ -1,0 +1,1367 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Java示例模块接口文档",
+    "description" : "最后更新时间:2019/11/02 20:57:47",
+    "termsOfService" : "api",
+    "contact" : {
+      "name" : "谭奇栋",
+      "url" : "http://192.168.0.239/web",
+      "email" : "903843602@qq.com"
+    },
+    "license" : {
+      "name" : "参考资料",
+      "url" : "http://192.168.0.239/hndoc/"
+    },
+    "version" : "V1.0.1"
+  },
+  "servers" : [ {
+    "url" : "https://192.168.0.140:18888/sample",
+    "description" : "140网关"
+  }, {
+    "url" : "http://localhost:8080",
+    "description" : "本地测试"
+  } ],
+  "tags" : [ {
+    "name" : "系统角色管理"
+  }, {
+    "name" : "Excel导出示例"
+  }, {
+    "name" : "文件上传接口测试"
+  }, {
+    "name" : "示例"
+  } ],
+  "paths" : {
+    "/role/permission/deprive" : {
+      "post" : {
+        "tags" : [ "2018年08月10日", "系统角色管理" ],
+        "summary" : "剥夺角色所拥有的权限",
+        "description" : "剥夺角色所拥有的权限",
+        "operationId" : "com#hngd#web#controller#RoleController#deprivePermission",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "required" : [ "permissionIds", "roleId" ],
+                "type" : "object",
+                "properties" : {
+                  "roleId" : {
+                    "type" : "string"
+                  },
+                  "permissionIds" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "encoding" : {
+                "roleId" : {
+                  "contentType" : "string"
+                },
+                "permissionIds" : {
+                  "contentType" : "application/json"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseVoid"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/role/list" : {
+      "get" : {
+        "tags" : [ "2018年07月13日", "系统角色管理" ],
+        "summary" : "加载系统角色列表(所有)",
+        "description" : "加载系统角色列表(所有)",
+        "operationId" : "com#hngd#web#controller#RoleController#getRolesList",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseListRole"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/role/permission/reset" : {
+      "post" : {
+        "tags" : [ "2018年08月10日", "系统角色管理" ],
+        "summary" : "重新授予角色权限,将会覆盖原有权限",
+        "description" : "重新授予角色权限,将会覆盖原有权限",
+        "operationId" : "com#hngd#web#controller#RoleController#resetPermission",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "required" : [ "permissionIds", "roleId" ],
+                "type" : "object",
+                "properties" : {
+                  "roleId" : {
+                    "type" : "string"
+                  },
+                  "permissionIds" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "encoding" : {
+                "roleId" : {
+                  "contentType" : "string"
+                },
+                "permissionIds" : {
+                  "contentType" : "application/json"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseVoid"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/role/delete" : {
+      "delete" : {
+        "tags" : [ "2018年07月13日", "系统角色管理" ],
+        "summary" : "删除系统角色",
+        "description" : "删除系统角色",
+        "operationId" : "com#hngd#web#controller#RoleController#deleteRole",
+        "parameters" : [ {
+          "name" : "roleId",
+          "in" : "query",
+          "description" : " 待删除角色的Id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseVoid"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/role/permission/grant" : {
+      "post" : {
+        "tags" : [ "2018年08月10日", "系统角色管理" ],
+        "summary" : "授予角色权限",
+        "description" : "授予角色权限",
+        "operationId" : "com#hngd#web#controller#RoleController#grantPermission",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "required" : [ "permissionIds", "roleId" ],
+                "type" : "object",
+                "properties" : {
+                  "roleId" : {
+                    "type" : "string"
+                  },
+                  "permissionIds" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "encoding" : {
+                "roleId" : {
+                  "contentType" : "string"
+                },
+                "permissionIds" : {
+                  "contentType" : "application/json"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseVoid"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/role/save" : {
+      "post" : {
+        "tags" : [ "2018年07月13日", "系统角色管理" ],
+        "summary" : "新增或者修改系统角色,如果role参数的id字段为空,则新增一个系统角色,否则根据Id修改已有系统角色",
+        "description" : "新增或者修改系统角色,如果role参数的id字段为空,则新增一个系统角色,否则根据Id修改已有系统角色",
+        "operationId" : "com#hngd#web#controller#RoleController#saveRole",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "required" : [ "name" ],
+                "type" : "object",
+                "properties" : {
+                  "name" : {
+                    "maxLength" : 40,
+                    "minLength" : 0,
+                    "type" : "string",
+                    "description" : " 角色名称"
+                  },
+                  "remark" : {
+                    "maxLength" : 200,
+                    "minLength" : 0,
+                    "type" : "string",
+                    "description" : " 角色描述"
+                  },
+                  "id" : {
+                    "maxLength" : 32,
+                    "minLength" : 32,
+                    "type" : "string",
+                    "description" : " 角色Id"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseString"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/role/paged/list" : {
+      "get" : {
+        "tags" : [ "2018年07月13日", "系统角色管理" ],
+        "summary" : "分页加载系统角色列表",
+        "description" : "分页加载系统角色列表",
+        "operationId" : "com#hngd#web#controller#RoleController#getPagedRoles",
+        "parameters" : [ {
+          "name" : "pageNo",
+          "in" : "query",
+          "description" : " 页号",
+          "required" : true,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "description" : " 分页大小",
+          "required" : true,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "roleName",
+          "in" : "query",
+          "description" : " 角色名称,可选查询条件,模糊查询",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseListRole"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/excel/export" : {
+      "get" : {
+        "tags" : [ "Excel导出示例" ],
+        "summary" : "导出学生列表",
+        "description" : "导出学生列表",
+        "operationId" : "com#hngd#web#controller#ExcelController#exportStudents",
+        "parameters" : [ {
+          "name" : "count",
+          "in" : "query",
+          "description" : " 待导出的数量",
+          "required" : true,
+          "schema" : {
+            "type" : "number"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/vnd.ms-excel" : { }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/attachment/batch/upload" : {
+      "post" : {
+        "tags" : [ "文件上传接口测试" ],
+        "summary" : "批量上传附件",
+        "description" : "批量上传附件",
+        "operationId" : "com#hngd#web#controller#AttachmentController#uploadBatchAttachment",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "required" : [ "files", "ownerId" ],
+                "type" : "object",
+                "properties" : {
+                  "files" : {
+                    "type" : "array",
+                    "description" : " 附件集合",
+                    "items" : {
+                      "type" : "string",
+                      "format" : "binary"
+                    }
+                  },
+                  "ownerId" : {
+                    "type" : "string",
+                    "description" : " 业务对象Id",
+                    "format" : "string"
+                  },
+                  "ownerTypeCode" : {
+                    "type" : "string",
+                    "description" : " 业务对象类型代码,默认值为-1",
+                    "format" : "string"
+                  },
+                  "typeCode" : {
+                    "type" : "string",
+                    "description" : " 附件类型代码,默认值为-1",
+                    "format" : "string"
+                  },
+                  "tags" : {
+                    "type" : "string",
+                    "description" : " 附件标签,多个以','分隔",
+                    "format" : "string"
+                  }
+                }
+              },
+              "encoding" : {
+                "ownerTypeCode" : {
+                  "contentType" : "string"
+                },
+                "files" : {
+                  "contentType" : "application/octet-stream"
+                },
+                "ownerId" : {
+                  "contentType" : "string"
+                },
+                "typeCode" : {
+                  "contentType" : "string"
+                },
+                "tags" : {
+                  "contentType" : "string"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseString"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/attachment/upload" : {
+      "post" : {
+        "tags" : [ "文件上传接口测试" ],
+        "summary" : "上传附件",
+        "description" : "上传附件",
+        "operationId" : "com#hngd#web#controller#AttachmentController#uploadAttachment",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "required" : [ "file", "ownerId" ],
+                "type" : "object",
+                "properties" : {
+                  "file" : {
+                    "type" : "string",
+                    "description" : " 附件",
+                    "format" : "binary"
+                  },
+                  "ownerId" : {
+                    "type" : "string",
+                    "description" : " 业务对象Id",
+                    "format" : "string"
+                  },
+                  "ownerTypeCode" : {
+                    "type" : "string",
+                    "description" : " 业务对象类型代码,默认值为-1",
+                    "format" : "string"
+                  },
+                  "typeCode" : {
+                    "type" : "string",
+                    "description" : " 附件类型代码,默认值为-1",
+                    "format" : "string"
+                  },
+                  "tags" : {
+                    "type" : "string",
+                    "description" : " 附件标签,多个以','分隔",
+                    "format" : "string"
+                  }
+                }
+              },
+              "encoding" : {
+                "file" : {
+                  "contentType" : "application/octet-stream"
+                },
+                "ownerTypeCode" : {
+                  "contentType" : "string"
+                },
+                "ownerId" : {
+                  "contentType" : "string"
+                },
+                "typeCode" : {
+                  "contentType" : "string"
+                },
+                "tags" : {
+                  "contentType" : "string"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseString"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/invoke" : {
+      "get" : {
+        "tags" : [ "示例" ],
+        "summary" : "远程调用测试",
+        "description" : "远程调用测试",
+        "operationId" : "com#hngd#web#controller#SampleController#invoke",
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "query",
+          "description" : " 参数",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseVoid"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/body/with/string/list" : {
+      "post" : {
+        "tags" : [ "示例" ],
+        "summary" : "str list test",
+        "description" : "str list test",
+        "operationId" : "com#hngd#web#controller#SampleController#bodyWithListString",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseVoid"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/body/with/jackson/date" : {
+      "post" : {
+        "tags" : [ "示例" ],
+        "summary" : "body里面的jackson日期测试",
+        "description" : "body里面的jackson日期测试",
+        "operationId" : "com#hngd#web#controller#SampleController#bodyWithJacksonDate",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "date" : {
+                    "type" : "string",
+                    "format" : "date-time"
+                  },
+                  "name" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseFormWithJacksonDate"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/form/with/date/list" : {
+      "get" : {
+        "tags" : [ "示例" ],
+        "summary" : "list test",
+        "description" : "list test",
+        "operationId" : "com#hngd#web#controller#SampleController#queryWithListDate",
+        "parameters" : [ {
+          "name" : "dates",
+          "in" : "query",
+          "description" : " list items",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/FormWithDate"
+                }
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseVoid"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/body/string" : {
+      "post" : {
+        "tags" : [ "示例" ],
+        "summary" : "body simple string 测试",
+        "description" : "body simple string 测试",
+        "operationId" : "com#hngd#web#controller#SampleController#bodyWithString",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseString"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/echo/time" : {
+      "get" : {
+        "tags" : [ "示例" ],
+        "summary" : "时间戳测试",
+        "description" : "时间戳测试",
+        "operationId" : "com#hngd#web#controller#SampleController#echoTime",
+        "parameters" : [ {
+          "name" : "startTime",
+          "in" : "query",
+          "description" : " 开始时间",
+          "required" : true,
+          "schema" : {
+            "type" : "number"
+          }
+        }, {
+          "name" : "endTime",
+          "in" : "query",
+          "description" : " 结束时间",
+          "required" : true,
+          "schema" : {
+            "type" : "number"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseVoid"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/body/with/date" : {
+      "post" : {
+        "tags" : [ "示例" ],
+        "summary" : "body里面的日期测试",
+        "description" : "body里面的日期测试",
+        "operationId" : "com#hngd#web#controller#SampleController#bodyWithDate",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "date" : {
+                    "type" : "string",
+                    "format" : "date-time"
+                  },
+                  "name" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseFormWithDate"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/form/with/json" : {
+      "post" : {
+        "tags" : [ "示例" ],
+        "summary" : "form json 测试",
+        "description" : "form json 测试",
+        "operationId" : "com#hngd#web#controller#SampleController#formWithJson",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "info" : {
+                    "$ref" : "#/components/schemas/OtherInfo"
+                  },
+                  "name" : {
+                    "type" : "string"
+                  }
+                }
+              },
+              "encoding" : {
+                "name" : {
+                  "contentType" : "string"
+                },
+                "info" : {
+                  "contentType" : "application/json"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseFormWithJson"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/body/with/json" : {
+      "post" : {
+        "tags" : [ "示例" ],
+        "summary" : "body json 测试",
+        "description" : "body json 测试",
+        "operationId" : "com#hngd#web#controller#SampleController#bodyWithJson",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "name" : {
+                    "type" : "string"
+                  },
+                  "info" : {
+                    "$ref" : "#/components/schemas/OtherInfo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseFormWithJson"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/form/with/date" : {
+      "post" : {
+        "tags" : [ "示例" ],
+        "summary" : "表单里面日期测试",
+        "description" : "表单里面日期测试",
+        "operationId" : "com#hngd#web#controller#SampleController#formWithDate",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "date" : {
+                    "type" : "string",
+                    "format" : "yyyy-MM-dd"
+                  },
+                  "name" : {
+                    "type" : "string"
+                  }
+                }
+              },
+              "encoding" : {
+                "date" : {
+                  "contentType" : "text/plain"
+                },
+                "name" : {
+                  "contentType" : "string"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseFormWithDate"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/model/attribute/test" : {
+      "get" : {
+        "tags" : [ "示例" ],
+        "summary" : "ModelAttribute注解测试",
+        "description" : "ModelAttribute注解测试",
+        "operationId" : "com#hngd#web#controller#SampleController#modelTest",
+        "parameters" : [ {
+          "name" : "address",
+          "in" : "query",
+          "description" : " 地址",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "age",
+          "in" : "query",
+          "description" : " 年龄",
+          "required" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseOtherInfo"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/echo/date" : {
+      "get" : {
+        "tags" : [ "示例" ],
+        "summary" : "query参数中的日期测试",
+        "description" : "query参数中的日期测试",
+        "operationId" : "com#hngd#web#controller#SampleController#echoDate",
+        "parameters" : [ {
+          "name" : "date",
+          "in" : "query",
+          "description" : " 日期",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "yyyy-MM-dd"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseVoid"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/model/attribute/test1" : {
+      "get" : {
+        "tags" : [ "示例" ],
+        "summary" : "Test1",
+        "description" : "Test1",
+        "operationId" : "com#hngd#web#controller#SampleController#modelTest1",
+        "parameters" : [ {
+          "name" : "address",
+          "in" : "query",
+          "description" : " 地址",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "age",
+          "in" : "query",
+          "description" : " 年龄",
+          "required" : false,
+          "schema" : {
+            "type" : "number"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseOtherInfo"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    },
+    "/sample/body/with/date/list" : {
+      "post" : {
+        "tags" : [ "示例" ],
+        "summary" : "list test",
+        "description" : "list test",
+        "operationId" : "com#hngd#web#controller#SampleController#bodyWithListDate",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/FormWithDate"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "无描述",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestResponseVoid"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "RestResponseVoid" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "object"
+          },
+          "success" : {
+            "type" : "boolean"
+          },
+          "extra" : {
+            "type" : "object"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "errorCode" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dataSize" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "Role" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "maxLength" : 50,
+            "minLength" : 0,
+            "type" : "string",
+            "description" : "角色编码，不是必须的，有角色权限的部分可以使用"
+          },
+          "creationTime" : {
+            "type" : "string",
+            "description" : "null",
+            "format" : "date-time"
+          },
+          "createdBy" : {
+            "maxLength" : 100,
+            "minLength" : 0,
+            "type" : "string",
+            "description" : "null"
+          },
+          "inbuilt" : {
+            "type" : "integer",
+            "description" : "是否系统内置角色(0:不是,1:是)",
+            "format" : "int32"
+          },
+          "modificationTime" : {
+            "type" : "string",
+            "description" : "null",
+            "format" : "date-time"
+          },
+          "deleteStatus" : {
+            "maxLength" : 1,
+            "minLength" : 0,
+            "type" : "string",
+            "description" : "null"
+          },
+          "name" : {
+            "maxLength" : 40,
+            "minLength" : 0,
+            "type" : "string",
+            "description" : "角色名称"
+          },
+          "remark" : {
+            "maxLength" : 256,
+            "minLength" : 0,
+            "type" : "string",
+            "description" : "备注"
+          },
+          "modifiedBy" : {
+            "maxLength" : 100,
+            "minLength" : 0,
+            "type" : "string",
+            "description" : "null"
+          },
+          "id" : {
+            "maxLength" : 32,
+            "minLength" : 0,
+            "type" : "string",
+            "description" : "角色ID"
+          },
+          "state" : {
+            "type" : "integer",
+            "description" : "是否禁用(1:启用,0:禁用)",
+            "format" : "int32"
+          }
+        }
+      },
+      "RestResponseListRole" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Role"
+            }
+          },
+          "success" : {
+            "type" : "boolean"
+          },
+          "extra" : {
+            "type" : "object"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "errorCode" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dataSize" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "RoleForm" : {
+        "required" : [ "name" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "maxLength" : 40,
+            "minLength" : 0,
+            "type" : "string",
+            "description" : " 角色名称"
+          },
+          "remark" : {
+            "maxLength" : 200,
+            "minLength" : 0,
+            "type" : "string",
+            "description" : " 角色描述"
+          },
+          "id" : {
+            "maxLength" : 32,
+            "minLength" : 32,
+            "type" : "string",
+            "description" : " 角色Id"
+          }
+        }
+      },
+      "RestResponseString" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "string"
+          },
+          "success" : {
+            "type" : "boolean"
+          },
+          "extra" : {
+            "type" : "object"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "errorCode" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dataSize" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "FormWithJacksonDate" : {
+        "type" : "object",
+        "properties" : {
+          "date" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "RestResponseFormWithJacksonDate" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "$ref" : "#/components/schemas/FormWithJacksonDate"
+          },
+          "success" : {
+            "type" : "boolean"
+          },
+          "extra" : {
+            "type" : "object"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "errorCode" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dataSize" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "FormWithDate" : {
+        "type" : "object",
+        "properties" : {
+          "date" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "RestResponseFormWithDate" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "$ref" : "#/components/schemas/FormWithDate"
+          },
+          "success" : {
+            "type" : "boolean"
+          },
+          "extra" : {
+            "type" : "object"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "errorCode" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dataSize" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "OtherInfo" : {
+        "type" : "object",
+        "properties" : {
+          "address" : {
+            "type" : "string",
+            "description" : " 地址"
+          },
+          "age" : {
+            "type" : "integer",
+            "description" : " 年龄",
+            "format" : "int32"
+          }
+        }
+      },
+      "FormWithJson" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "info" : {
+            "$ref" : "#/components/schemas/OtherInfo"
+          }
+        }
+      },
+      "RestResponseFormWithJson" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "$ref" : "#/components/schemas/FormWithJson"
+          },
+          "success" : {
+            "type" : "boolean"
+          },
+          "extra" : {
+            "type" : "object"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "errorCode" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dataSize" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "RestResponseOtherInfo" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "$ref" : "#/components/schemas/OtherInfo"
+          },
+          "success" : {
+            "type" : "boolean"
+          },
+          "extra" : {
+            "type" : "object"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "errorCode" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dataSize" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      }
+    }
+  }
+}

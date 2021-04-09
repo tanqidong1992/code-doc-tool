@@ -8,7 +8,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hngd.constant.Constants;
-import com.hngd.openapi.ParameterConverterUtils;
 import com.hngd.openapi.SimpleTypeFormat;
 import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.utils.TypeUtils;

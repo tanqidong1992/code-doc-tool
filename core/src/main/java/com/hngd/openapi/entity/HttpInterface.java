@@ -1,4 +1,3 @@
-
 package com.hngd.openapi.entity;
 
 import java.lang.reflect.Type;

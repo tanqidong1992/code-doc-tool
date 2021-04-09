@@ -37,12 +37,12 @@ public class XWWWFormUrlEncodedTest {
         commentStore.print();
         Json.prettyPrint(openAPI);
         Operation mf = OpenAPIUtils.getOperation(openAPI, "/form", "post").get();
-        Parameter a=OpenAPIUtils.parameterOfOperation(mf, "a").get();
-        Parameter b=OpenAPIUtils.parameterOfOperation(mf, "b").get();
-        Parameter c=OpenAPIUtils.parameterOfOperation(mf, "c").get();
-        Assert.assertEquals("query", a.getIn());
-        Assert.assertEquals("query", b.getIn());
-        Assert.assertEquals("query", c.getIn());
+        //Parameter a=OpenAPIUtils.parameterOfOperation(mf, "a").get();
+        //Parameter b=OpenAPIUtils.parameterOfOperation(mf, "b").get();
+        //Parameter c=OpenAPIUtils.parameterOfOperation(mf, "c").get();
+        //Assert.assertEquals("query", a.getIn());
+        //Assert.assertEquals("query", b.getIn());
+        //Assert.assertEquals("query", c.getIn());
         MediaType formUrlEncoded = mf.getRequestBody().getContent().get(Constants.APPLICATION_FORM_URLENCODED_VALUE);
         Assert.assertTrue(formUrlEncoded.getSchema().getProperties().containsKey("a"));
         Assert.assertTrue(formUrlEncoded.getSchema().getProperties().containsKey("b"));

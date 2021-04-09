@@ -3,7 +3,6 @@ package com.hngd.openapi.converter;
 import java.lang.reflect.Type;
 
 import com.hngd.constant.Constants;
-import com.hngd.openapi.ParameterConverterUtils;
 import com.hngd.openapi.entity.HttpParameter;
 import com.hngd.utils.TypeUtils;
 

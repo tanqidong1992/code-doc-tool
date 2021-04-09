@@ -42,10 +42,6 @@ public class HttpParameter {
      */
     public HttpParameterLocation location;
     /**
-     * 是否路径参数,目前只有生成js代码用到
-     */
-    public boolean isPathVariable;
-    /**
      * 是否基础类型，
      */
     public boolean isPrimitive;

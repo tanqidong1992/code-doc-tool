@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -43,10 +44,8 @@ import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.PathItem.HttpMethod;
 import io.swagger.v3.oas.models.Paths;
-import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Encoding;
-import io.swagger.v3.oas.models.media.FileSchema;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
@@ -159,11 +158,18 @@ public class OpenAPITool {
         op.setDescription(httpInterface.getDescription());
         op.setSummary(httpInterface.getSummary());
         List<Parameter> parameters = processHttpParameter(httpInterface.httpParameters);
-        op.setParameters(parameters);
+        
         Optional<RequestBody> requestBody=buildRequestBody(httpInterface);
         if(requestBody.isPresent()) {
             op.setRequestBody(requestBody.get());
+            //TODO fix if exist request body,filter query param
+            if(httpInterface.isMultipart || !httpInterface.hasRequestBody) {
+                parameters=parameters.stream()
+                        .filter(param->!param.getIn().equals("query"))
+                        .collect(Collectors.toList());
+            }
         }
+        op.setParameters(parameters);
         resolveResponse(op, httpInterface);
         OpenAPIUtils.addOpToPath(op,path,httpInterface.httpMethod);
         return path;
