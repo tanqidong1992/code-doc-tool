@@ -193,7 +193,7 @@ public class OpenAPITool {
             if (optionalParameterInBody.isPresent()) {
                 HttpParameter pc = optionalParameterInBody.get();
                 Type parameterType = pc.getJavaType();
-                HttpParameterUtils.resolveParameterInfo(pc, parameterType);
+                ParameterConverterUtils.resolveParameterInfo(pc, parameterType);
                 String key = typeResolver.resolveAsSchema(parameterType, openAPI);
                 // 如果是简单类型就会返回null
                 if (!StringUtils.isEmpty(key)) {
@@ -220,7 +220,7 @@ public class OpenAPITool {
             for (int i = 0; i < httpInterface.httpParameters.size(); i++) {
                 HttpParameter pc = httpInterface.httpParameters.get(i);
                 Type parameterType = pc.getJavaType();
-                HttpParameterUtils.resolveParameterInfo(pc, parameterType);
+                ParameterConverterUtils.resolveParameterInfo(pc, parameterType);
                 if (!pc.isPrimitive) {
                     typeResolver.resolveAsSchema(parameterType, openAPI);
                 }
@@ -301,7 +301,7 @@ public class OpenAPITool {
         for (int i = 0; i < httpParameters.size(); i++) {
             HttpParameter pc = httpParameters.get(i);
             Type parameterType = pc.getJavaType();
-            HttpParameterUtils.resolveParameterInfo(pc, parameterType);
+            ParameterConverterUtils.resolveParameterInfo(pc, parameterType);
             if (!pc.isPrimitive) {
                 typeResolver.resolveAsSchema(parameterType, openAPI);
             }

@@ -18,9 +18,9 @@ public class OpenAPIToolTest {
         HttpParameter pc=new HttpParameter();
         @SuppressWarnings("serial")
         Type type=new TypeToken<List<String>>() {}.getType();
-        HttpParameterUtils.resolveParameterInfo(pc, type);
+        ParameterConverterUtils.resolveParameterInfo(pc, type);
         System.out.println(pc);
-        Assert.assertTrue(pc.isCollection);
+        Assert.assertTrue(pc.isCollection());
         Assert.assertTrue(pc.getSchema().getType().equals("array"));
         Assert.assertTrue(((ArraySchema)pc.schema).getItems().getType().equals("string"));
     }

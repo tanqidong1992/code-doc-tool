@@ -14,6 +14,8 @@ package com.hngd.utils;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+import javax.annotation.Nonnull;
+
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -42,7 +44,6 @@ public class TypeUtils {
         if (!(parameterType instanceof Class<?>)) {
             return false;
         }
-
         if (MultipartFile.class.equals(parameterType)) {
             return true;
         }
@@ -53,7 +54,13 @@ public class TypeUtils {
         }
         return false;
     }
-    
+    /**
+     * 
+     * @param type
+     * @deprecated replaced by toRef
+     * @return
+     */
+    @Deprecated
     public static String toTypeName(Type type) {
         if(type==null){
             return null;
@@ -91,6 +98,38 @@ public class TypeUtils {
                 simpleTypeName.append(">");
             }
             return simpleTypeName.toString();
+        }else if(type instanceof Class){
+            Class<?> cls=(Class<?>)type;
+            return cls.getSimpleName();
+        }else{
+            return null;
+        }
+    }
+    
+    public static String toRef(@Nonnull Type type) {
+        if(type==null){
+            return null;
+        }
+        if(type instanceof ParameterizedType){
+            ParameterizedType pt=(ParameterizedType) type;
+            Type rawType=pt.getRawType();
+            Type[] subTypes=pt.getActualTypeArguments();
+            String rawTypeName=toRef(rawType);
+            StringBuilder ref=new StringBuilder();
+            if(rawTypeName!=null){
+                ref.append(rawTypeName);
+            }
+            
+            if(subTypes!=null){
+                StringBuilder sb=new StringBuilder();
+                for(Type subType :subTypes){
+                    String subTypeName=toRef(subType);
+                    sb.append(subTypeName);
+                }
+                String subTypesName=sb.toString();
+                ref.append(subTypesName);
+            }
+            return ref.toString();
         }else if(type instanceof Class){
             Class<?> cls=(Class<?>)type;
             return cls.getSimpleName();

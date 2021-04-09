@@ -25,4 +25,7 @@ public class Constants {
      * 最大的文件20M
      */
     public static final int MAX_OPENAPI_FILE_SIZE=1024*1024*20;
+    
+    
+    public static final String SCHEMA_REF_PREFIX="#/components/schemas/";
 }

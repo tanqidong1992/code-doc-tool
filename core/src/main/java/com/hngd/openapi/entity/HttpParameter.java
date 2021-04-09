@@ -22,9 +22,9 @@ public class HttpParameter {
      */
     public Type javaType;
     /**
-     * 参数java类型
+     * 集合或数组的类型参数
      */
-    public Class<?> javaParameterizedType;
+    public Class<?> componentType;
     /**
      * 参数名称
      */
@@ -58,10 +58,6 @@ public class HttpParameter {
      */
     public String ref;
     /**
-     * 是否集合
-     */
-    public boolean isCollection;
-    /**
      * openapi schema
      */
     public Schema<?> schema;
@@ -73,10 +69,12 @@ public class HttpParameter {
      * 参数默认值
      */
     public String defaultValue;
-    
     /**
      * 日期时间格式
      */
     public String dateFormat;
  
+    public boolean isCollection() {
+        return componentType!=null;
+    }
 }
