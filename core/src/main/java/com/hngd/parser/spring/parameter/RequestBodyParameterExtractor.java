@@ -30,7 +30,7 @@ public class RequestBodyParameterExtractor extends HttpParameterExtractor<Reques
         Annotation[] annotations=parameter.getAnnotations();
         Optional<String> dateFormat=MethodArgUtils.extractDateFormat(annotations);
         if(dateFormat.isPresent()) {
-            httpParam.openapiFormat=dateFormat.get();
+            httpParam.dateFormat=dateFormat.get();
         }
         httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
         return Arrays.asList(httpParam);

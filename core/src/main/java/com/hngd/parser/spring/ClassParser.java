@@ -276,7 +276,7 @@ public class ClassParser {
             Annotation[] annotations=parameter.getAnnotations();
             Optional<String> dateFormat = MethodArgUtils.extractDateFormat(annotations);
             if (dateFormat.isPresent()) {
-                httpParam.openapiFormat = dateFormat.get();
+                httpParam.dateFormat = dateFormat.get();
             }
             httpParam.isPrimitive = BeanUtils.isSimpleProperty(parameter.getType());
             return Arrays.asList(httpParam);
@@ -352,7 +352,7 @@ public class ClassParser {
             httpParam.comment=commentStore.getFieldComment(field);
             Optional<String> dateFormat=extractPropertyDateFormat(clazz,property);
             if(dateFormat.isPresent()) {
-                httpParam.openapiFormat=dateFormat.get();
+                httpParam.dateFormat=dateFormat.get();
             }
             httpParam.isPrimitive=BeanUtils.isSimpleProperty(parameter.getType());
             httpParams.add(httpParam);

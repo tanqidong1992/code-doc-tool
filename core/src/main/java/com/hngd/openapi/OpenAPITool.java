@@ -262,7 +262,7 @@ public class OpenAPITool {
                     contentEncodings.put(pc.name, encoding);
                     Schema<?> propertiesItem = new Schema<>();
                     propertiesItem.setDescription(pc.comment);
-                    propertiesItem.setType(pc.openapiType);
+                    propertiesItem.setType(pc.schema.getType());
                     propertiesItem.set$ref(pc.ref);
                     if (pc.ref != null && pc.schema instanceof ObjectSchema) {
                         @SuppressWarnings("rawtypes")
@@ -285,7 +285,7 @@ public class OpenAPITool {
                             propertiesItem = as;
                         }
                     } else {
-                        propertiesItem.format(pc.openapiFormat);
+                        propertiesItem.format(pc.schema.getFormat());
                     }
                     contentSchema.addProperties(pc.name, propertiesItem);
                 }

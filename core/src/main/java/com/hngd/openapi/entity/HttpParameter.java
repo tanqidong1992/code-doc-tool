@@ -54,10 +54,6 @@ public class HttpParameter {
      */
     public String comment;
     /**
-     * 参数类型(openapi)
-     */
-    public String openapiType;
-    /**
      * openapi schema引用路径
      */
     public String ref;
@@ -65,10 +61,6 @@ public class HttpParameter {
      * 是否集合
      */
     public boolean isCollection;
-    /**
-     * openapi format
-     */
-    public String openapiFormat;
     /**
      * openapi schema
      */
@@ -81,5 +73,10 @@ public class HttpParameter {
      * 参数默认值
      */
     public String defaultValue;
+    
+    /**
+     * 日期时间格式
+     */
+    public String dateFormat;
  
 }

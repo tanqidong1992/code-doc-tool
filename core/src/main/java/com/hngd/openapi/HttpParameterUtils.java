@@ -46,7 +46,6 @@ public class HttpParameterUtils {
             argumentClass = (Class<?>) parameterType;
         }
         if(pc.isCollection){
-            pc.openapiType="array";
             ArraySchema arraySchema=new ArraySchema();
             ObjectSchema items=new ObjectSchema();
             arraySchema.setItems(items);
@@ -59,37 +58,28 @@ public class HttpParameterUtils {
                 items.setType(tf.getType());
                 items.setFormat(tf.getFormat());
             }
-            
         } else if (Number.class.isAssignableFrom(argumentClass) ||
                 String.class.isAssignableFrom(argumentClass) ||
                 Boolean.class.isAssignableFrom(argumentClass) ) {
             PrimitiveType pt=PrimitiveType.fromType(argumentClass);
             pc.schema = pt.createProperty();
-            pc.openapiType = pc.schema.getType();
-            pc.openapiFormat = pc.schema.getFormat();
             pc.isPrimitive = true;
         } else if (MultipartFile.class.isAssignableFrom(argumentClass)) {
             //TODO fix it
-            pc.openapiFormat = "File";
-            pc.openapiType = argumentClass.getSimpleName();
             pc.isPrimitive = true;
             pc.schema = new FileSchema();
         } else if (Date.class.isAssignableFrom(argumentClass) 
                 || LocalDate.class.isAssignableFrom(argumentClass)
                 || LocalDateTime.class.isAssignableFrom(argumentClass)) {
-            pc.openapiType = "date";
             pc.isPrimitive = true;
             DateSchema ds = new DateSchema();
-            ds.setFormat(pc.openapiFormat);
+            //TODO fix date format
+            ds.setFormat(pc.dateFormat);
             pc.schema = ds;
         }else if(Map.class.isAssignableFrom(argumentClass) || MultiValueMap.class.isAssignableFrom(argumentClass)) {
-            pc.openapiType = "object";
-            pc.openapiFormat = argumentClass.getSimpleName();
             pc.isPrimitive = false;
             pc.schema = new ObjectSchema();
         }else{
-            pc.openapiType = "object";
-            pc.openapiFormat = argumentClass.getSimpleName();
             pc.isPrimitive = false;
             pc.schema = new ObjectSchema();
             pc.ref = TypeUtils.toTypeName(parameterType);
