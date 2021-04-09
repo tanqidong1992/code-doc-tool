@@ -170,7 +170,6 @@ public class OpenAPITool {
     }
     
     private Optional<RequestBody> buildRequestBody(HttpInterface httpInterface) {
-
         if (!hasRequestBody(httpInterface.httpMethod)) {
             return Optional.empty();
         }
@@ -189,7 +188,8 @@ public class OpenAPITool {
             // RequestBody只有一部分,所以被RequestBody注解修饰的方法参数只有一个
             List<HttpParameter> httpParameters = httpInterface.getHttpParameters();
             Optional<HttpParameter> optionalParameterInBody = httpParameters.stream()
-                    .filter(hp -> !hp.getLocation().isParameter()).findFirst();
+                    .filter(hp -> !hp.getLocation().isParameter())
+                    .findFirst();
             if (optionalParameterInBody.isPresent()) {
                 HttpParameter pc = optionalParameterInBody.get();
                 Type parameterType = pc.getJavaType();
@@ -200,9 +200,8 @@ public class OpenAPITool {
                     Schema<?> schema = openAPI.getComponents().getSchemas().get(key);
                     mediaTypeContent.setSchema(schema);
                 } else {
-                    Schema<?> paramSchema = pc.schema;
-                    mediaTypeContent.setSchema(paramSchema);
-                    if (paramSchema != null && StringUtils.isEmpty(paramSchema.getDescription())) {
+                    mediaTypeContent.setSchema(pc.schema);
+                    if (pc.schema != null && StringUtils.isEmpty(pc.schema.getDescription())) {
                         pc.schema.setDescription(pc.comment);
                     }
                 }
@@ -224,70 +223,17 @@ public class OpenAPITool {
                 if (!pc.isPrimitive) {
                     typeResolver.resolveAsSchema(parameterType, openAPI);
                 }
-                Encoding encoding = new Encoding();
-                if (parameterType instanceof Class && BeanUtils.isSimpleProperty((Class<?>) parameterType)) {
-                    if (parameterType.equals(String.class)) {
-                        encoding.setContentType("string");
-                    } else {
-                        encoding.setContentType("text/plain");
-                    }
-                } else {
-                    if (TypeUtils.isMultipartType(parameterType)) {
-                        encoding.setContentType(Constants.MULTIPART_FILE_TYPE);
-                    } else {
-                        encoding.setContentType(Constants.DEFAULT_CONSUME_TYPE);
-                    }
-                }
-                if (pc.location.equals(HttpParameterLocation.query)) {
+                if (pc.location.equals(HttpParameterLocation.query) ||
+                        pc.location.equals(HttpParameterLocation.body) ) {
+                    Encoding encoding = new Encoding();
+                    encoding.setContentType(extractContentType(parameterType));
                     contentEncodings.put(pc.name, encoding);
                     if (pc.isRequired()) {
                         contentSchema.addRequiredItem(pc.name);
                     }
-                    if (TypeUtils.isMultipartType(parameterType)) {
-                        Schema<?> propertiesItem = new FileSchema();
-                        Class<?> type = (Class<?>) parameterType;
-                        if (type.isArray()) {
-                            ArraySchema as = new ArraySchema();
-                            as.setItems(propertiesItem);
-                            propertiesItem = as;
-                        }
-                        propertiesItem.setDescription(pc.comment);
-                        contentSchema.addProperties(pc.name, propertiesItem);
-                    } else {
-                        pc.schema.setDescription(pc.comment);
-                        contentSchema.addProperties(pc.name, pc.schema);
-                    }
-
-                } else if (pc.location.equals(HttpParameterLocation.body)) {
-                    contentEncodings.put(pc.name, encoding);
-                    Schema<?> propertiesItem = new Schema<>();
-                    propertiesItem.setDescription(pc.comment);
-                    propertiesItem.setType(pc.schema.getType());
-                    propertiesItem.set$ref(pc.ref);
-                    if (pc.ref != null && pc.schema instanceof ObjectSchema) {
-                        @SuppressWarnings("rawtypes")
-                        Map<String, Schema> properties = new HashMap<>();
-                        properties.put(pc.ref, pc.schema);
-                        propertiesItem.setProperties(properties);
-                    }
-                    if (pc.isRequired()) {
-                        contentSchema.addRequiredItem(pc.name);
-                    }
-                    if (TypeUtils.isMultipartType(parameterType)) {
-                        propertiesItem.format("binary");
-                        propertiesItem.setType("string");
-                        Class<?> type = (Class<?>) parameterType;
-                        if (type.isArray()) {
-                            ArraySchema as = new ArraySchema();
-                            as.setDescription(pc.comment);
-                            Schema<?> items = new FileSchema();
-                            as.setItems(items);
-                            propertiesItem = as;
-                        }
-                    } else {
-                        propertiesItem.format(pc.schema.getFormat());
-                    }
-                    contentSchema.addProperties(pc.name, propertiesItem);
+                    pc.schema.setDescription(pc.comment);
+                    contentSchema.addProperties(pc.name, pc.schema);  
+                    pc.schema.set$ref(pc.ref);
                 }
             }
         }
@@ -295,7 +241,24 @@ public class OpenAPITool {
         requestBody.setContent(content);
         return Optional.of(requestBody);
     }
- 
+    
+    public static String extractContentType(Type parameterType) {
+        if (parameterType instanceof Class && 
+                BeanUtils.isSimpleProperty((Class<?>) parameterType)) {
+            if (parameterType.equals(String.class)) {
+                return "string";
+            } else {
+                return "text/plain";
+            }
+        } else {
+            if (TypeUtils.isMultipartType(parameterType)) {
+                return Constants.MULTIPART_FILE_TYPE;
+            } else {
+                return Constants.DEFAULT_CONSUME_TYPE;
+            }
+        }
+    }
+    
     private List<Parameter> processHttpParameter(List<HttpParameter> httpParameters) {
         List<Parameter> parameters=new ArrayList<>();
         for (int i = 0; i < httpParameters.size(); i++) {
@@ -318,7 +281,7 @@ public class OpenAPITool {
             String firstKey = typeResolver.resolveAsSchema(interfaceInfo.javaReturnType, openAPI);
             if(firstKey!=null) {
                 Schema<?> schema = new ObjectSchema();
-                schema.set$ref("#/components/schemas/" + firstKey);
+                schema.set$ref(Constants.SCHEMA_REF_PREFIX + firstKey);
                 mt.setSchema(schema);
             }
         }
@@ -331,7 +294,6 @@ public class OpenAPITool {
         }else {
             respContent.put(Constants.DEFAULT_CONSUME_TYPE, mt);
         }
- 
         resp.setContent(respContent);
         String respComment=interfaceInfo.respComment;
         if(StringUtils.isEmpty(respComment)) {

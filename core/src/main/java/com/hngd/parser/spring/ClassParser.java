@@ -281,7 +281,6 @@ public class ClassParser {
             httpParam.isPrimitive = BeanUtils.isSimpleProperty(parameter.getType());
             return Arrays.asList(httpParam);
         }else if(TypeUtils.isMultipartType(parameter.getType())){
-         // requestparam
             HttpParameter httpParam = new HttpParameter();
             httpParam.name = parameter.getName();
             httpParam.setNeedOverrideParameterName(true);
@@ -295,8 +294,6 @@ public class ClassParser {
             return extractParametersFromModel(parameter);
         }
         //ClassParseException.throwParameterParseException(parameter, "Not Supported Parameter Type",null); 
-         
-         
     }
     private Optional<String> extractPropertyDateFormat(Class<?> clazz,PropertyDescriptor pd) {
         String propertyName=pd.getName();
@@ -359,5 +356,4 @@ public class ClassParser {
         }
         return  httpParams;
     }
-
 }

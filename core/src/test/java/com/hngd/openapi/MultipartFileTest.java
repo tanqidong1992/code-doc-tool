@@ -63,7 +63,7 @@ public class MultipartFileTest {
         Assert.assertEquals("binary", schema.getFormat());
         
         
-        Operation mfWithParams = OpenAPIUtils.getOperation(openAPI, "/mf/with/params", "post").get();
+        Operation mfWithParams = OpenAPIUtils.getOperation(openAPI, "/mf/with/params/{id}", "post").get();
         
         mt = mfWithParams.getRequestBody().getContent().get(Constants.MULTIPART_FORM_DATA);
         Assert.assertTrue(mt.getSchema().getProperties().containsKey("file"));
@@ -106,7 +106,7 @@ public class MultipartFileTest {
          * @param file
          * @return
          */
-        @PostMapping("/mf/with/params")
+        @PostMapping("/mf/with/params/{id}")
         public String mfWithParams(
                 @PathVariable("id")String id,
                 @CookieValue("user")String user,
