@@ -6,11 +6,12 @@
 - 支持分析外部源代码Jar文件。
 - 提供Maven插件用于项目集成。
 - 支持生成Markdown文档。
+- 支持缓存源码解析结果。
 ## 使用
 ### 部署接口文档管理工具
 1. 编译成docker镜像
    ```shell
-   cd swagger-ui
+   cd openapi-ui
    mvn compile jib:buildTar
    ```
 2. 导入docker镜像
@@ -19,14 +20,14 @@
    ```
 3. 配置运行
    ```shell
-   docker run --rm -ti -e SYSTEM_NAME="XXX系统接口文档" -p 8080:80/tcp 192.168.0.140:8082/hnvmns/swagger-ui:0.0.2
+   docker run --rm -ti -e SYSTEM_NAME="XXX系统接口文档" -p 8080:80/tcp 192.168.0.140:8082/hnvmns/openapi-ui:0.0.2
    ```
    docker-compose参考
    ```yml
    version: "2.4"
    services:
      hnvmns9000:
-      image: hnvmns/swagger-ui:0.0.2
+      image: hnvmns/openapi-ui:0.0.2
       restart: always
       ports:
         - 9000:80/tcp
