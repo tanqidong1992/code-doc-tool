@@ -30,6 +30,7 @@ public class ProjectAnalyst {
     private OpenAPIConfig config;
     private File cacheDirectory;
     
+    @SuppressWarnings("unused")
     private static final Logger logger=LoggerFactory.getLogger(ProjectAnalyst.class);
     
     private ProjectAnalyst() {}

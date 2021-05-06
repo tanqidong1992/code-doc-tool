@@ -2,7 +2,7 @@
  * Copyright (c) 2017,湖南华南光电科技股份有限公司
  * All rights reserved.
  *
- * @文件名：ServerConfig.java
+ * @文件名：OpenAPIConfig.java
  * @时间：2017年7月7日 上午11:50:27
  * @作者：
  * @备注：

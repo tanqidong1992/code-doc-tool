@@ -37,9 +37,7 @@ public class MultipartParameterTest {
         Assert.assertTrue(file.getFormat().equals("binary"));
          
     }
-    
-    
-    
+
     @RestController
     public static class A{
         

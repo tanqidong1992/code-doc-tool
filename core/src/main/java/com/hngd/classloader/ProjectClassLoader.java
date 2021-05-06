@@ -109,7 +109,7 @@ public class ProjectClassLoader extends ClassLoader{
             out.close();
             byte[] classBytes = out.toByteArray();
             String className = relativePathToClassName(relativePath);
-            //support Spring Boot Flat Jar
+            //support Spring Boot Fat Jar
             if(className.startsWith("BOOT-INF.classes.")){
                 className=className.replace("BOOT-INF.classes.", "");
             }

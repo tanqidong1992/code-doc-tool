@@ -3,8 +3,6 @@ package com.hngd.doc;
 import java.io.File;
 import java.util.Arrays;
 
-import org.apache.commons.io.FileUtils;
-
 import com.hngd.doc.controller.DocumentController;
 import com.hngd.openapi.OpenAPITool;
 import com.hngd.parser.source.SourceParserContext;
