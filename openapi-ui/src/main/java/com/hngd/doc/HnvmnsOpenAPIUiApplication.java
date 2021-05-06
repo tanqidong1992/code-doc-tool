@@ -19,12 +19,12 @@ import com.hngd.doc.config.DocumentProperties;
         CacheAutoConfiguration.class,
         HibernateJpaAutoConfiguration.class})
 @EnableConfigurationProperties(value = {DocumentProperties.class})
-public class HnvmnsSwaggerUiApplication {
+public class HnvmnsOpenAPIUiApplication {
 
     @SuppressWarnings("unused")
-    private static final Logger logger=LoggerFactory.getLogger(HnvmnsSwaggerUiApplication.class);
+    private static final Logger logger=LoggerFactory.getLogger(HnvmnsOpenAPIUiApplication.class);
     public static void main(String[] args) {
-        SpringApplication.run(HnvmnsSwaggerUiApplication.class, args);
+        SpringApplication.run(HnvmnsOpenAPIUiApplication.class, args);
     }
     @Bean
      public FilterRegistrationBean<CorsFilter> corsFilter() {

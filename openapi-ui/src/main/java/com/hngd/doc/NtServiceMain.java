@@ -74,7 +74,7 @@ public class NtServiceMain {
         mBootstrapThread = new Thread(() -> {
             while (!isStoped && mApplicationContext == null) {
                 try {
-                    mApplicationContext = SpringApplication.run(HnvmnsSwaggerUiApplication.class, args);
+                    mApplicationContext = SpringApplication.run(HnvmnsOpenAPIUiApplication.class, args);
                 } catch (Exception e) {
                     logger.error("start app...", e);
                 }

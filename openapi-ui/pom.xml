@@ -179,25 +179,17 @@
                 <version>2.5.2</version>
                 <configuration>
                     <to>
-                        <image>192.168.0.140:8082/${docker.image.prefix}/${project.artifactId}</image>
-                        <auth>
-                            <username>deployer</username>
-                            <password>hngd5618</password>
-                        </auth>
+                        <image>${docker.image.prefix}/${project.artifactId}</image>
                         <tags>
                             <tag>${maven.build.timestamp}</tag>
                             <tag>${project.version}</tag>
                         </tags>
                     </to>
                     <from>
-                        <image>47.115.117.222:8084/anapsix/alpine-java:8u192b12_server-jre</image>
-                        <auth>
-                            <username>deployer</username>
-                            <password>hngd5618</password>
-                        </auth>
+                        <image>anapsix/alpine-java:8u192b12_server-jre</image>
                     </from>
                     <container>
-                        <mainClass>com.hngd.doc.HnvmnsSwaggerUiApplication</mainClass>
+                        <mainClass>com.hngd.doc.HnvmnsOpenAPIUiApplication</mainClass>
                         <!-- <jvmFlags> <jvmFlag> -Xdebug </jvmFlag> <jvmFlag> -Xrunjdwp:transport=dt_socket,address=81,server=y,suspend=n 
                             </jvmFlag> </jvmFlags> -->
                         <jvmFlags>

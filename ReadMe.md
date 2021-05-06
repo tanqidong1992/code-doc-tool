@@ -20,7 +20,7 @@
    ```
 3. 配置运行
    ```shell
-   docker run --rm -ti -e SYSTEM_NAME="XXX系统接口文档" -p 8080:80/tcp 192.168.0.140:8082/hnvmns/openapi-ui:0.0.2
+   docker run --rm -ti -e SYSTEM_NAME="XXX系统接口文档" -p 8080:80/tcp hnvmns/openapi-ui:0.0.2
    ```
    docker-compose参考
    ```yml
