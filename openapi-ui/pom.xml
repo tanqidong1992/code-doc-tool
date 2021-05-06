@@ -10,10 +10,10 @@
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.hngd.tool</groupId>
-    <artifactId>swagger-ui</artifactId>
+    <artifactId>openapi-ui</artifactId>
     <version>0.0.2</version>
-    <name>swagger-ui</name>
-    <description>swagger ui</description>
+    <name>openapi-ui</name>
+    <description>openapi ui</description>
 
     <properties>
         <docker.image.prefix>hnvmns</docker.image.prefix>
