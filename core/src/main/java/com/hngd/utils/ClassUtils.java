@@ -48,12 +48,16 @@ public class ClassUtils {
             File file = new File(url.getFile());
             // 把此目录下的所有文件列出
             String[] fileNames = file.list();
+            if(fileNames==null) {
+                continue;
+            }
             // 循环此数组，并把.class去掉
             for (String fileName : fileNames) {
                 if (!fileName.endsWith(".class")) {
                     logger.warn("the file {} is not a class",file.getAbsolutePath() + fileName );
                     continue;
                 }
+                //substract '.class'
                 fileName = fileName.substring(0, fileName.length() - 6);
                 // 拼接上包名，变成全限定名
                 String qName = packageName + "." + fileName;

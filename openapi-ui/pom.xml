@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.6.RELEASE</version>
+        <version>2.4.5</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.hngd.tool</groupId>
@@ -128,13 +128,13 @@
             <plugin>
                 <groupId>com.hngd.tool</groupId>
                 <artifactId>codegen-maven-plugin</artifactId>
-                <version>2.5.0-SNAPSHOT</version>
+                <version>2.6.0-SNAPSHOT</version>
                 <configuration>
                     <serviceUrl>/doc</serviceUrl>
                     <confFilePath>${basedir}/build-config/swagger-config.json</confFilePath>
                     <outputDirectory>${basedir}/src/main/resources/static/js/api</outputDirectory>
                     <jsClientType>axios</jsClientType>
-                    <swaggerUIServer>localhost:8080</swaggerUIServer>
+                    <openAPIUIServer>localhost:8080</openAPIUIServer>
                     <excludes>**/com/hngd/model/*Example.java,**/com/hngd/dao/*.java</excludes>
                     <includes>**/com/hngd/**/*.java,com/hngd/**/*.java</includes>
                     <packageFilter>com.hngd.doc.web.controller</packageFilter>
