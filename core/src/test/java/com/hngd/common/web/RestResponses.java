@@ -1,13 +1,3 @@
-/**
- * Copyright (c) 2015,湖南华南光电科技股份有限公司
- * All rights reserved.
- *
- * 文件名：ResponseEntityGenerator.java
- * 时间：2015年11月12日 下午3:01:36
- * 作者：Administrator
- * 备注：
- */
-
 package com.hngd.common.web;
 
 import java.lang.reflect.Array;
@@ -17,8 +7,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hngd.common.error.ErrorCode;
-import com.hngd.common.result.Result;
 import com.hngd.common.web.result.RestResponse;
 
 /**
@@ -63,7 +51,7 @@ public class RestResponses {
 	 * @备注:
 	 */
 	public static <T> RestResponse<T> newSuccessResponse(String description, T data, Object extra) {
-		return newResponse(ErrorCode.NO_ERROR, description, data, extra);
+		return newResponse(RestResponse.NO_ERROR, description, data, extra);
 	}
 
 	/**
@@ -77,10 +65,10 @@ public class RestResponses {
 	 * @备注:
 	 */
 	public static <T> RestResponse<T> newSuccessResponse(String description, T data) {
-		return newResponse(ErrorCode.NO_ERROR, description, data, null);
+		return newResponse(RestResponse.NO_ERROR, description, data, null);
 	}
 	public static <T> RestResponse<T> newSuccessResponse(T data) {
-		return newResponse(ErrorCode.NO_ERROR, "", data, null);
+		return newResponse(RestResponse.NO_ERROR, "", data, null);
 	}
 	/**
 	 * 创建一个Http请求,操作失败的返回结果对象
@@ -127,21 +115,7 @@ public class RestResponses {
 	public static RestResponse<Void> newSuccessResponse() {
 		return newSuccessResponse("");
 	}
-    /**
-     * 根据result对象创建一个http响应对象
-     * @param <T> result对象
-     * @param result
-     * @return
-     */
-	public static <T> RestResponse<T> newResponseFromResult(Result<T> result) {
-		if (result.isSuccess()) {
-			T data = result.getData();
-			return newSuccessResponse(result.getDescription(), data);
-		} else {
-			return newFailResponse(result.getErrorCode(), result.getDescription());
-		}
-	}
-
+   
 	/**
 	 * 计算数据大小，数组，集合，map
 	 * @param <T>
@@ -163,16 +137,5 @@ public class RestResponses {
 			return ((Map<?, ?>) data).size();
 		}
 		return 1;
-	}
-	
-    /**
-     * 创建一个失败的响应
-     * @param <T>
-     * @param result 错误信息实体
-     * @return
-     * @since 2.0.0
-     */
-	public static <T> RestResponse<T> newFailFromResult(Result<?> result) {
-		return newResponse(result.getErrorCode(), result.getDescription(), null, null);
 	}
 }
