@@ -1,13 +1,3 @@
-/**
- * Copyright (c) 2015,湖南华南光电科技股份有限公司
- * All rights reserved.
- *
- * @文件名：ResultGenerator.java
- * @时间：2016年3月23日 上午10:55:12
- * @作者：Administrator
- * @备注：
- * @版本:
- */
 package com.hngd.common.result;
 
 import com.hngd.common.error.ErrorCode;

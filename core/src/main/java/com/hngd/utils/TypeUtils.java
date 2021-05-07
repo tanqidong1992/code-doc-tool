@@ -1,14 +1,3 @@
-/**
- * Copyright (c) 2015,湖南华南光电科技股份有限公司
- * All rights reserved.
- *
- * @文件名：TypeUtils.java
- * @时间：2016年8月28日 下午2:09:37
- * @作者：
- * @备注：
- * @版本:
- */
-
 package com.hngd.utils;
 
 import java.lang.reflect.ParameterizedType;

@@ -1,9 +1,3 @@
-/**
- * @FileName RestResponseEntity.java
- * @Author tqd
- * @Date 2015年9月3日 下午11:41:01
- * @description
- */
 package com.hngd.common.web.result;
 
 import com.hngd.common.error.ErrorCode;

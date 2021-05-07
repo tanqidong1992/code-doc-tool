@@ -1,14 +1,3 @@
-/**
- * Copyright (c) 2017,湖南华南光电科技股份有限公司
- * All rights reserved.
- *
- * @文件名：TestClassCommentParser.java
- * @时间：2017年2月14日 下午5:24:57
- * @作者：
- * @备注：
- * @版本:
- */
-
 package com.hngd.parser.source;
 
 import java.io.File;

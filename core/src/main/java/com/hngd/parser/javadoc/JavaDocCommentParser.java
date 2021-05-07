@@ -1,14 +1,3 @@
-/**
- * Copyright (c) 2017,湖南华南光电科技股份有限公司
- * All rights reserved.
- *
- * @文件名：ClassCommentParser.java
- * @时间：2017年2月14日 下午4:15:09
- * @作者：
- * @备注：
- * @版本:
- */
-
 package com.hngd.parser.javadoc;
 
 import java.util.ArrayList;
