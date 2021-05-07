@@ -74,10 +74,10 @@ public class OpenAPIGenerator extends BaseMojo{
     @Parameter(required=false)
     private Boolean outputMarkdown=false;
     /**
-     * SwaggerUI服务地址,HOST+IP,配置后将自动将生成的openapi文档推送到该服务
+     * OpenAPIUI服务地址,HOST+IP,配置后将自动将生成的openapi文档推送到该服务
      */
     @Parameter(required = false)
-    private String swaggerUIServer;
+    private String openAPIUIServer;
     
     /**
      * 是否禁用OpenAPI文件校验,默认禁用,如果开启校验,校验失败后将不会上传到SwaggerUI服务
@@ -123,14 +123,9 @@ public class OpenAPIGenerator extends BaseMojo{
             config=new OpenAPIConfig();
         }else {
             Optional<OpenAPIConfig> loadResult=OpenAPIConfig.load(confFilePath);
-            if(loadResult.isPresent()) {
-                config=loadResult.get();
-            }else {
-                config=new OpenAPIConfig();
-            }
+            config=loadResult.orElseGet(()->new OpenAPIConfig());
         }
         autoFillConfig(config);
-        
         List<File> classPaths=ProjectUtils.resolveAllClassPath(mavenProject,session,projectDependenciesResolver,projects);
         getLog().debug("---class paths---");
         classPaths.forEach(cp->{
@@ -169,8 +164,8 @@ public class OpenAPIGenerator extends BaseMojo{
         if(outputMarkdown) {
             OpenAPIToMarkdown.openAPIToMarkdown(apiJsonFile, includeTags, openAPIOutput);
         }
-        if(StringUtils.isNotEmpty(swaggerUIServer)){
-            pushToSwaggerUIServer(apiJsonFile,swaggerUIServer);
+        if(StringUtils.isNotEmpty(openAPIUIServer)){
+            pushToOpenAPIUIServer(apiJsonFile,openAPIUIServer);
         }
     }
  
@@ -233,7 +228,7 @@ public class OpenAPIGenerator extends BaseMojo{
         return vr;
     }
     
-    public static  void pushToSwaggerUIServer(File apiFile,String server){
+    public static  void pushToOpenAPIUIServer(File apiFile,String server){
 
         OkHttpClient client=new OkHttpClient.Builder().build();
         String url="http://"+server+"/doc/api/document/upload";
