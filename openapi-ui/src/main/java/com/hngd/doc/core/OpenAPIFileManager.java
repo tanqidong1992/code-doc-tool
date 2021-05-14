@@ -113,7 +113,6 @@ public class OpenAPIFileManager {
     public void cleanAllLoadedDocument() {
         loadedDocuments.clear();
     }
-    
 
     public void addOpenAPIFile(File file) {
         Optional<DocumentInfo> documentInfo=DocumentUtils.readDocument(file);

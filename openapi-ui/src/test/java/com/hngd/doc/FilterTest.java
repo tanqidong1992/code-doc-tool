@@ -4,7 +4,7 @@ import java.io.File;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hngd.doc.core.OpenAPIFileManager;
-import com.hngd.doc.swagger.TagFilter;
+import com.hngd.doc.openapi.TagFilter;
 import com.hngd.doc.utils.OpenAPIFileUtils;
 
 import io.swagger.v3.core.filter.SpecFilter;

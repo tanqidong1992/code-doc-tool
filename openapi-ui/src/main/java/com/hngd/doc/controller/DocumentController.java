@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.common.io.Files;
 import com.hngd.common.error.ErrorCode;
 import com.hngd.common.result.Result;
 import com.hngd.common.web.RestResponses;
@@ -35,7 +35,7 @@ import com.hngd.common.web.result.RestResponse;
 import com.hngd.doc.constants.Constants;
 import com.hngd.doc.core.OpenAPIFileManager;
 import com.hngd.doc.entity.DocumentInfo;
-import com.hngd.doc.swagger.TagFilter;
+import com.hngd.doc.openapi.TagFilter;
 import com.hngd.doc.utils.DocumentUtils;
 import com.hngd.doc.utils.FileDigest;
 import com.hngd.doc.utils.OpenAPIFileUtils;
@@ -175,7 +175,8 @@ public class DocumentController {
     public ResponseEntity<byte[]> exportDocumentAsMarkdown(@PathVariable("filename") String filename)
             throws IOException {
         File file = new File(openAPIManager.getData(), filename);
-        File outputDirectory = Files.createTempDir();
+        File outputDirectory = Files.createTempDirectory(Constants.TEMP_DIRECTORY_PREFIX)
+                .toFile();
         File markdownFile = OpenAPIToMarkdown.openAPIToMarkdown(file, null, outputDirectory);
         byte[] data = FileUtils.readFileToByteArray(markdownFile);
         String fileName = markdownFile.getName();
@@ -231,7 +232,8 @@ public class DocumentController {
         TagFilter tagFilter = new TagFilter(tag);
         SpecFilter filter = new SpecFilter();
         OpenAPI filteredOpenAPI = filter.filter(openAPI.get(), tagFilter, null, null, null);
-        File outputDirectory = Files.createTempDir();
+        File outputDirectory = Files.createTempDirectory(Constants.TEMP_DIRECTORY_PREFIX)
+                .toFile();
         File markdownFile = OpenAPIToMarkdown
                 .openAPIToMarkdown(filteredOpenAPI, null, outputDirectory);
         byte[] data = FileUtils.readFileToByteArray(markdownFile);

@@ -57,7 +57,6 @@ public class DocumentUtils {
         return Optional.ofNullable(di);
     }
     
-
     public static String buildKey(DocumentInfo di) {
         return di.getTitle();
     }

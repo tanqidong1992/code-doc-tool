@@ -17,6 +17,8 @@ import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.hngd.exception.SourceParseException;
@@ -25,6 +27,7 @@ import com.hngd.utils.JavaFileUtils;
 
 public class CachedSourceParserContext extends SourceParserContext {
 
+    private static final Logger logger=LoggerFactory.getLogger(CachedSourceParserContext.class);
     private DB db ;
     public CachedSourceParserContext(String cacheDirectory) {
         this(null,null,cacheDirectory);
@@ -58,7 +61,7 @@ public class CachedSourceParserContext extends SourceParserContext {
         try {
             fileContent = FileUtils.readFileToByteArray(f);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Read Source File Failed! "+f.getAbsolutePath(),e);
         }
         byte[] sha2=JavaFileUtils.sha2(fileContent);
         Optional<SourceParseResult> result=readCachedResult(sha2);
@@ -83,10 +86,10 @@ public class CachedSourceParserContext extends SourceParserContext {
             byte[] sha2=JavaFileUtils.sha2(fileContent);
             Optional<SourceParseResult> result=readCachedResult(sha2);
             if(result.isPresent()) {
-                System.out.println("Parsing "+jarFile.getName()+"!"+je.getName()+" from cache");
+                logger.debug("Parsing {}!{} from cache",jarFile.getName(),je.getName());
                 return result.get();
             }else {
-                System.out.println("Parsing "+jarFile.getName()+"!"+je.getName()+" from file");
+                logger.debug("Parsing {}!{} from file",jarFile.getName(),je.getName());
                 return parseAndCache(sha2,fileContent);
             }
         }catch(Exception e) {
@@ -104,7 +107,7 @@ public class CachedSourceParserContext extends SourceParserContext {
             try {
                 new ObjectOutputStream(baos).writeObject(result);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("",e);
             }
             db.put(sha2, baos.toByteArray());
         }
@@ -121,7 +124,7 @@ public class CachedSourceParserContext extends SourceParserContext {
         try {
             result = (SourceParseResult) new ObjectInputStream(in).readObject();
         } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
+            logger.error("",e);
         }
         return Optional.ofNullable(result);
     }

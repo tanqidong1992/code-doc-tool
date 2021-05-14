@@ -12,4 +12,6 @@ public class Constants {
      * 默认编码
      */
     public static final String DEFAULT_CHARSET_NAME=StandardCharsets.UTF_8.name();
+    
+    public static final String TEMP_DIRECTORY_PREFIX="openui-temp-";
 }

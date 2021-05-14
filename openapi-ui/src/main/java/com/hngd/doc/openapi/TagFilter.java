@@ -1,4 +1,4 @@
-package com.hngd.doc.swagger;
+package com.hngd.doc.openapi;
 
 import java.util.List;
 import java.util.Map;
