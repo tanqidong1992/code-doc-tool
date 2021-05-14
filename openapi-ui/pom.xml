@@ -133,7 +133,6 @@
                     <serviceUrl>/doc</serviceUrl>
                     <confFilePath>${basedir}/build-config/swagger-config.json</confFilePath>
                     <outputDirectory>${basedir}/src/main/resources/static/js/api</outputDirectory>
-                    <jsClientType>axios</jsClientType>
                     <openAPIUIServer>localhost:8080</openAPIUIServer>
                     <excludes>**/com/hngd/model/*Example.java,**/com/hngd/dao/*.java</excludes>
                     <includes>**/com/hngd/**/*.java,com/hngd/**/*.java</includes>

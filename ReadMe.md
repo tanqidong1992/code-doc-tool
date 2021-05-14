@@ -1,12 +1,13 @@
 # OpenAPI文档工具
-这是一个分析Spring项目中的Java源代码(注释)以及class文件生成openapi文档的工具.
+这是一个分析Spring项目中的Java源代码(注释)以及class文件生成OpenAPI接口文档的工具.
 ## 功能特性
 - 提供集中式的接口文档管理工具(集成Swagger-UI，Swagger-Editor)。
-- 分析注释生成openapi接口文档，无需Swagger注解。
-- 支持分析外部源代码Jar文件。
+- 分析注释生成OpenAPI接口文档，无需Swagger注解。
+- 支持分析Maven外部源代码Jar文件。
 - 提供Maven插件用于项目集成。
 - 支持生成Markdown文档。
 - 支持缓存源码解析结果。
+- 支持OpenAPI校验。
 ## 使用
 ### 部署接口文档管理工具
 1. 编译成docker镜像
@@ -45,14 +46,14 @@
             <plugin>
                 <groupId>com.hngd.tool</groupId>
                 <artifactId>codegen-maven-plugin</artifactId>
-                <version>2.4.0-SNAPSHOT</version>
+                <version>2.6.0-SNAPSHOT</version>
                 <configuration>
                     <!-- controller类所在包名称 -->
                     <packageFilter>com.hngd.web.controller</packageFilter>
                     <!-- 配置生成openapi文档的基础信息配置文件所在位置 
                     <confFilePath>${project.basedir}/build-config/openapi.json</confFilePath> -->
-                    <!--Swagger UI 服务地址,配置后接口文档将自动上传到该服务 -->
-                    <swaggerUIServer>localhost:8080</swaggerUIServer>
+                    <!--OpenAPI UI 服务地址,配置后接口文档将自动上传到该服务 -->
+                    <openAPIUIServer>localhost:8080</openAPIUIServer>
                     <!-- 源码分析排除路径 -->
                     <excludes>**/com/hngd/model/*Example.java,**/com/hngd/dao/*.java</excludes>
                     <!-- 源码分析包含路径 -->
