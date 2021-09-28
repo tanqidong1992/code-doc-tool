@@ -39,7 +39,7 @@ public class ProjectClassLoaderTest {
     @Test
     public void loadFromDirectoryTest() throws ClassNotFoundException {
         
-        String s="../core-test/target/classes";
+        String s="../core/target/test-classes";
         ProjectClassLoader cl=new ProjectClassLoader(getClass().getClassLoader());
         cl.addClasspath(s);
         cl.listAllClass().forEach(System.out::println); 

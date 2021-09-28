@@ -6,7 +6,6 @@
 - 支持分析Maven外部源代码Jar文件。
 - 提供Maven插件用于项目集成。
 - 支持生成Markdown文档。
-- 支持缓存源码解析结果。
 - 支持OpenAPI校验。
 ## 使用
 ### 部署接口文档管理工具
@@ -27,14 +26,14 @@
    ```yml
    version: "2.4"
    services:
-     hnvmns9000:
+     test:
       image: hnvmns/openapi-ui:0.0.2
       restart: always
       ports:
         - 9000:80/tcp
       volumes:
-        - /data/app/apidoc/hnvmns9000/data:/data
-        - /data/app/apidoc/hnvmns9000/history:/history
+        - /data/app/apidoc/test/data:/data
+        - /data/app/apidoc/test/history:/history
       mem_limit: "1024M"
       environment:
         SYSTEM_NAME: "XXX系统接口文档"
@@ -59,7 +58,7 @@
                     <!-- 源码分析包含路径 -->
                     <includes>**/com/hngd/**/*.java,com/hngd/**/*.java</includes>
                     <!-- openapi接口基础地址 -->
-                    <openAPIServerURL>https://192.168.0.140:8899/api</openAPIServerURL>
+                    <openAPIServerURL>https://localhost:8080/api</openAPIServerURL>
                 </configuration>
             </plugin>
    ```
